@@ -1,0 +1,646 @@
+{
+  "0523": {
+    "1300": {
+      "Medications": {
+        "oxycodone": "5mg"
+      },
+      "Pain": {
+        "quads": "6-7-8",
+        "back": "6-7-8",
+        "glutes": "6-7-8"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": " Pain is focused on lower back with stabbing shooting pains down my hips and outside of my quads. Cannot perform log roll to sit up straight"
+    },
+    "0800": {
+      "Medications": {
+        "oxycodone": "5mg"
+      },
+      "Pain": {
+        "back": "6-7-8"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": "This goes on all day with doses of oxycodone. They raised it to 10mg at some point which did not help"
+    },
+    "Sleep": "7:39",
+    "1400": {
+      "Medications": {
+        "journavx": "100mg"
+      },
+      "Pain": {
+        "back": "6-7-8"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1500": {
+      "Medications": {
+        "journavx": "100mg"
+      },
+      "Pain": {
+        "back": "6-7"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": "cannot perform log roll to sit up straight"
+    },
+    "1600": {
+      "Medications": {
+        "journavx": "100mg",
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "6-7"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": "cannot perform log roll to sit up straight"
+    },
+    "1700": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "5-6"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": "able to log roll to sit up straight"
+    },
+    "1800": {
+      "Medications": {},
+      "Pain": {
+        "back": "4-5"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": "able to stand up"
+    },
+    "2000": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "5-6",
+        "legs": "5-6"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "2030": {
+      "Medications": {},
+      "Pain": {},
+      "Activities": {},
+      "o2": "88",
+      "bpr": "129/59",
+      "note": ""
+    }
+  },
+  "0525": {
+    "1100": {
+      "Medications": {
+        "journavx": "100mg"
+      },
+      "Pain": {
+        "back": "6-7"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1300": {
+      "Medications": {},
+      "Pain": {
+        "back": "4-5",
+        "righthip": "5-6"
+      },
+      "Activities": {
+        "standing": 5
+      },
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1227": {
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "Pain": {
+        "back": "4-5",
+        "righthip": "5-6"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1400": {
+      "Medications": {
+        "valium": "5mg",
+        "tylenol": "1g"
+      },
+      "Pain": {},
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1430": {
+      "Medications": {},
+      "Pain": {
+        "back": "3-4"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1600": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "3-4"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1750": {
+      "Medications": {},
+      "Pain": {
+        "back": "3-4"
+      },
+      "Activities": {
+        "standing": 5
+      },
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "2000": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "4-5"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "2200": {
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg",
+        "journavx": "100mg"
+      },
+      "Pain": {
+        "back": "3-4"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    }
+  },
+  "0526": {
+    "0800": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "4-5"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": "went back to sleep"
+    },
+    "1000": {
+      "Medications": {
+        "journavx": "100mg"
+      },
+      "Pain": {
+        "back": "3-4"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": "does not hurt as much to lie on back anymore"
+    },
+    "1200": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "4-5"
+      },
+      "Activities": {
+        "walking": 10
+      },
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1230": {
+      "Medications": {},
+      "Pain": {
+        "back": "5-6"
+      },
+      "Activities": {
+        "walking": 3
+      },
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1400": {
+      "Medications": {
+        "valium": "5mg"
+      },
+      "Pain": {
+        "back": "5-6"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1600": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "5-6"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": "the pain is focused as a line from my upper glute to lower back, right side"
+    },
+    "2000": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "4-5"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "Sleep": "8:35"
+  },
+  "0527": {
+    "ScarImage": "./img/0527.png",
+    "Sleep": "9:10",
+    "0000": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {},
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1000": {
+      "Medications": {
+        "journavx": "100mg"
+      },
+      "Pain": {
+        "back": "3-4"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1030": {
+      "Medications": {},
+      "Pain": {
+        "back": "4-5"
+      },
+      "Activities": {
+        "walking": 10
+      },
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1400": {
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "Pain": {
+        "back": "3-4"
+      },
+      "Activities": {},
+      "o2": "90",
+      "bpr": "110/65",
+      "note": ""
+    },
+    "1500": {
+      "Medications": {},
+      "Pain": {
+        "back": "3-4"
+      },
+      "Activities": {
+        "walking": 5
+      },
+      "o2": "94",
+      "bpr": "111/70",
+      "note": ""
+    },
+    "1600": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "3-4"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1700": {
+      "Medications": {},
+      "Pain": {
+        "back": "4-5"
+      },
+      "Activities": {
+        "standing": 15
+      },
+      "o2": "",
+      "bpr": "",
+      "note": "Shower!"
+    },
+    "1900": {
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "Pain": {
+        "back": "3-4"
+      },
+      "Activities": {},
+      "o2": "94",
+      "bpr": "103/63",
+      "note": ""
+    }
+  },
+  "0528": {
+    "0800": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "5-6"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": "havent felt pain in legs/glutes since last time i noted it"
+    },
+    "1200": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "4-5"
+      },
+      "Activities": {
+        "stairs": 1,
+        "walking": 10
+      },
+      "o2": "95",
+      "bpr": "126/79",
+      "note": ""
+    },
+    "1400": {
+      "Medications": {
+        "valium": "5mg"
+      },
+      "Pain": {
+        "back": "3-4"
+      },
+      "Activities": {},
+      "o2": "90",
+      "bpr": "119/74",
+      "note": ""
+    },
+    "1600": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "4-5"
+      },
+      "Activities": {},
+      "o2": "94",
+      "bpr": "105/72",
+      "note": ""
+    },
+    "1900": {
+      "Medications": {},
+      "Pain": {
+        "back": "4-5"
+      },
+      "Activities": {
+        "walking": 10
+      },
+      "o2": "96",
+      "bpr": "104/70",
+      "note": ""
+    },
+    "2000": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "3-4"
+      },
+      "Activities": {},
+      "o2": "91",
+      "bpr": "99/70",
+      "note": ""
+    },
+    "Sleep": "4:56"
+  },
+  "0529": {
+    "1200": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {},
+      "Activities": {},
+      "o2": "90",
+      "bpr": "93/63",
+      "note": ""
+    },
+    "Sleep": "9:43",
+    "1320": {
+      "Medications": {},
+      "Pain": {
+        "back": "3-4",
+        "righthip": "5-6"
+      },
+      "Activities": {},
+      "o2": "89",
+      "bpr": "105/70",
+      "note": "first poop"
+    },
+    "1400": {
+      "Medications": {
+        "valium": "5mg"
+      },
+      "Pain": {
+        "back": "3-4",
+        "righthip": "5-6"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1600": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "3-4",
+        "righthip": "2-3"
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "1800": {
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "Pain": {
+        "back": "3-4",
+        "righthip": "1-2"
+      },
+      "Activities": {},
+      "o2": "91",
+      "bpr": "107/74",
+      "note": ""
+    },
+    "2000": {
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "Pain": {},
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": ""
+    },
+    "2200": {
+      "Medications": {},
+      "Pain": {
+        "back": "4-5"
+      },
+      "Activities": {},
+      "o2": "89",
+      "bpr": "92/61",
+      "note": ""
+    },
+    "2300": {
+      "Medications": {},
+      "Pain": {},
+      "Activities": {},
+      "o2": "94",
+      "bpr": "128/74",
+      "note": "poop!"
+    }
+  },
+  "0530": {
+    "0800": {
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "Pain": {
+        "back": "4-5",
+        "righthip": "5-6"
+      },
+      "Activities": {},
+      "o2": "94",
+      "bpr": "110/76",
+      "note": "slept on right hip, VERY tight"
+    },
+    "Sleep": "6:03",
+    "1200": {
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "Pain": {
+        "back": "4-5",
+        "righthip": "4-5"
+      },
+      "Activities": {},
+      "o2": "91",
+      "bpr": "106/74",
+      "note": ""
+    },
+    "1400": {
+      "Medications": {
+        "valium": "5mg"
+      },
+      "Pain": {
+        "back": "4-5",
+        "righthip": "2-3"
+      },
+      "Activities": {},
+      "o2": "92",
+      "bpr": "120/80",
+      "note": ""
+    },
+    "1500": {
+      "Medications": {},
+      "Pain": {
+        "back": "3-4",
+        "righthip": "1-2"
+      },
+      "Activities": {
+        "walking": 16
+      },
+      "o2": "92",
+      "bpr": "128/80",
+      "note": ""
+    },
+    "1840": {
+      "Medications": {},
+      "Pain": {
+        "back": "3-4"
+      },
+      "Activities": {},
+      "o2": "93",
+      "bpr": "90/69",
+      "note": ""
+    }
+  }
+}
