@@ -1,1 +1,1 @@
-﻿New-PSUEndpoint -Url "/test" -Description "return a string" -Method @('GET') -Authentication -Path "/endpoints/test/test.ps1"
+﻿New-PSUEndpoint -Url "/test" -Description "return a string" -Method @('GET') -Path "/endpoints/test/test.ps1"
