@@ -1,0 +1,1 @@
+﻿New-PSUPublishedFolder -RequestPath "/img" -Path "/home/data/Repository/fusion-data/img" -Name "HealingImages"
