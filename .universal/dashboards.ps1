@@ -1,0 +1,1 @@
+﻿New-PSUApp -Name "gallery" -FilePath "dashboards/gallery/gallery.ps1" -BaseUrl "/gallery" -AutoDeploy -Description "Gallery of incision healing"
