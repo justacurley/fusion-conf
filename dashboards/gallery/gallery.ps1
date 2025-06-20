@@ -1,16 +1,16 @@
 ﻿New-UDApp -Content {
-    New-UDLayout -Columns 2 -content {
+    New-UDLayout -Columns 3 -Content {
         $imagePath = "/home/data/Repository/fusion-data/img"
         $imageFiles = Get-ChildItem -Path $imagePath -File
-        
-        foreach ($img in $imageFiles) {
-            $relativePath = $img.FullName.Replace($imagePath,"").TrimStart("/")
-            $imageUrl = "/img/$relativePath"
 
+        foreach ($img in $imageFiles) {
+            $relativePath = $img.FullName.Replace($imagePath, "").TrimStart("/")
+            $imageUrl = "/img/$relativePath"
+            $Text = "$($img.Name.Substring(0, 2))/$($img.Name.Substring(2, 2))"
+            
             New-UDCard -Content {
-                New-UDImage -url $imageUrl -Width 200 -Height 200
-                New-UDTypography -Text $img.Name -Variant subtitle1
-            } -Elevation 2
+                New-UDImage -Url $imageUrl -Width 400 -Height 400
+            } -Elevation 2 -Style @{width = 501; height = 501} -Title $Text -TitleAlignment Center 
         }
     }
 }
