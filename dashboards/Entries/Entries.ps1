@@ -123,7 +123,6 @@
             # Photo upload
             New-UDUpload -Id "photo" -Text "Upload Photo" -Accept ".jpg,.jpeg,.png,.gif"
         } -OnSubmit {
-        } -OnSubmit {
             param($Data)
             
             # Get form data
