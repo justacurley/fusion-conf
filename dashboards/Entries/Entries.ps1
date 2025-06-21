@@ -21,47 +21,29 @@
             New-UDGrid -Container -Content {
                 New-UDGrid -Item -ExtraSmallSize 4 -Content {
                     New-UDCheckbox -Id "med_oxycodone" -Label "Oxycodone"
-                    New-UDSelect -Id "oxycodone_dose" -Label "Dose" -Option {
-                        New-UDSelectOption -Name "5mg" -Value "5mg"
-                        New-UDSelectOption -Name "10mg" -Value "10mg"
-                    } -Disabled
+                    New-UDSelect -Id "oxycodone_dose" -Label "Dose" -Option @("5mg", "10mg") -Disabled
                 }
                 New-UDGrid -Item -ExtraSmallSize 4 -Content {
                     New-UDCheckbox -Id "med_dilaudid" -Label "Dilaudid"
-                    New-UDSelect -Id "dilaudid_dose" -Label "Dose" -Option {
-                        New-UDSelectOption -Name "4mg" -Value "4mg"
-                        New-UDSelectOption -Name "8mg" -Value "8mg"
-                    } -Disabled
+                    New-UDSelect -Id "dilaudid_dose" -Label "Dose" -Option @("4mg", "8mg") -Disabled
                 }
                 New-UDGrid -Item -ExtraSmallSize 4 -Content {
                     New-UDCheckbox -Id "med_journavx" -Label "Journavx"
-                    New-UDSelect -Id "journavx_dose" -Label "Dose" -Option {
-                        New-UDSelectOption -Name "100mg" -Value "100mg"
-                        New-UDSelectOption -Name "200mg" -Value "200mg"
-                    } -Disabled
+                    New-UDSelect -Id "journavx_dose" -Label "Dose" -Option @("100mg", "200mg") -Disabled
                 }
             }
             New-UDGrid -Container -Content {
                 New-UDGrid -Item -ExtraSmallSize 4 -Content {
                     New-UDCheckbox -Id "med_tylenol" -Label "Tylenol"
-                    New-UDSelect -Id "tylenol_dose" -Label "Dose" -Option {
-                        New-UDSelectOption -Name "1g" -Value "1g"
-                        New-UDSelectOption -Name "500mg" -Value "500mg"
-                    } -Disabled
+                    New-UDSelect -Id "tylenol_dose" -Label "Dose" -Option @("1g", "500mg") -Disabled
                 }
                 New-UDGrid -Item -ExtraSmallSize 4 -Content {
                     New-UDCheckbox -Id "med_valium" -Label "Valium"
-                    New-UDSelect -Id "valium_dose" -Label "Dose" -Option {
-                        New-UDSelectOption -Name "5mg" -Value "5mg"
-                        New-UDSelectOption -Name "10mg" -Value "10mg"
-                    } -Disabled
+                    New-UDSelect -Id "valium_dose" -Label "Dose" -Option @("5mg", "10mg") -Disabled
                 }
                 New-UDGrid -Item -ExtraSmallSize 4 -Content {
                     New-UDCheckbox -Id "med_lexapro" -Label "Lexapro"
-                    New-UDSelect -Id "lexapro_dose" -Label "Dose" -Option {
-                        New-UDSelectOption -Name "1mg" -Value "1mg"
-                        New-UDSelectOption -Name "2mg" -Value "2mg"
-                    } -Disabled
+                    New-UDSelect -Id "lexapro_dose" -Label "Dose" -Option @("1mg", "2mg") -Disabled
                 }
             }
             
