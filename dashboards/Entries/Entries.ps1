@@ -5,11 +5,14 @@
         New-UDForm -Content {
             # Date and Time fields
             New-UDGrid -Container -Content {
+                $MSTDate = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId((Get-Date), 'Mountain Standard Time') | ForEach-Object { $_.ToString("MMdd HHmm") }
+                $MSTMMDD = $MSTDate.split(" ")[0]
+                $MSTHHMM = $MSTDate.split(" ")[1]
                 New-UDGrid -Item -ExtraSmallSize 6 -Content {
-                    New-UDTextbox -Id "date" -Label "Date (MMDD)" -Placeholder "0620" -FullWidth -Value (Get-Date -Format "MMdd")
+                    New-UDTextbox -Id "date" -Label "Date (MMDD)" -Placeholder "0620" -FullWidth -Value $MSTMMDD
                 }
                 New-UDGrid -Item -ExtraSmallSize 6 -Content {
-                    New-UDTextbox -Id "timestamp" -Label "Time (HHMM)" -Placeholder "1430" -FullWidth -Value (Get-Date -Format "HHmm")
+                    New-UDTextbox -Id "timestamp" -Label "Time (HHMM)" -Placeholder "1430" -FullWidth -Value $MSTHHMM
                 }
             }
             
