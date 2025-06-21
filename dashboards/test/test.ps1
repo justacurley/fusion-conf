@@ -28,9 +28,8 @@
                 catch {
                     Write-Error "Failed to get or parse data $_"
                 }
-                for ($key -in $Dosages.keys) {
-                    Show-UDToast -Message $key -Duration 5
-                    New-UDSelectOption -Name $key -Value "poop"
+                foreach ($key in $Dosages.keys) {
+                    New-UDSelectOption -Name $key -Value $key
                 }               
             } -Multiple
             # -Multiple -PlaceHolder "Select Options" -OnChange {
