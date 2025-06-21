@@ -6,10 +6,10 @@
             # Date and Time fields
             New-UDGrid -Container -Content {
                 New-UDGrid -Item -ExtraSmallSize 6 -Content {
-                    New-UDTextbox -Id "date" -Label "Date (MMDD)" -Placeholder "0620" -FullWidth
+                    New-UDTextbox -Id "date" -Label "Date (MMDD)" -Placeholder "0620" -FullWidth -Value (Get-Date -Format "MMdd")
                 }
                 New-UDGrid -Item -ExtraSmallSize 6 -Content {
-                    New-UDTextbox -Id "timestamp" -Label "Time (HHMM)" -Placeholder "1430" -FullWidth
+                    New-UDTextbox -Id "timestamp" -Label "Time (HHMM)" -Placeholder "1430" -FullWidth -Value (Get-Date -Format "HHmm")
                 }
             }
             
