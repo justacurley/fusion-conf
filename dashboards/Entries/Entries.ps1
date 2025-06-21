@@ -18,32 +18,50 @@
             
             # Medications section
             New-UDTypography -Text "Medications" -Variant h6 -Style @{marginTop = "20px"; marginBottom = "10px"}
-            New-UDDynamic -Id "medications-section" -Content {
-                New-UDGrid -Container -Content {
-                    # Initial medication row
-                    New-UDGrid -Item -ExtraSmallSize 12 -Content {
-                        New-UDGrid -Container -Content {
-                            New-UDGrid -Item -ExtraSmallSize 5 -Content {
-                                New-UDSelect -Id "medication_1" -Label "Medication" -Option @(
-                                    New-UDSelectOption -Name "Select..." -Value ""
-                                    New-UDSelectOption -Name "Oxycodone" -Value "oxycodone"
-                                    New-UDSelectOption -Name "Dilaudid" -Value "dilaudid"
-                                    New-UDSelectOption -Name "Journavx" -Value "journavx"
-                                    New-UDSelectOption -Name "Tylenol" -Value "tylenol"
-                                    New-UDSelectOption -Name "Valium" -Value "valium"
-                                    New-UDSelectOption -Name "Lexapro" -Value "lexapro"
-                                )
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 5 -Content {
-                                New-UDSelect -Id "dose_1" -Label "Dose" -Option @(
-                                    New-UDSelectOption -Name "Select..." -Value ""
-                                ) -Disabled
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
-                                New-UDButton -Text "+" -Id "add-medication" -Color primary -Size small
-                            }
-                        }
-                    }
+            New-UDGrid -Container -Content {
+                New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                    New-UDCheckbox -Id "med_oxycodone" -Label "Oxycodone"
+                    New-UDSelect -Id "oxycodone_dose" -Label "Dose" -Option @(
+                        New-UDSelectOption -Name "5mg" -Value "5mg"
+                        New-UDSelectOption -Name "10mg" -Value "10mg"
+                    ) -Disabled
+                }
+                New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                    New-UDCheckbox -Id "med_dilaudid" -Label "Dilaudid"
+                    New-UDSelect -Id "dilaudid_dose" -Label "Dose" -Option @(
+                        New-UDSelectOption -Name "4mg" -Value "4mg"
+                        New-UDSelectOption -Name "8mg" -Value "8mg"
+                    ) -Disabled
+                }
+                New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                    New-UDCheckbox -Id "med_journavx" -Label "Journavx"
+                    New-UDSelect -Id "journavx_dose" -Label "Dose" -Option @(
+                        New-UDSelectOption -Name "100mg" -Value "100mg"
+                        New-UDSelectOption -Name "200mg" -Value "200mg"
+                    ) -Disabled
+                }
+            }
+            New-UDGrid -Container -Content {
+                New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                    New-UDCheckbox -Id "med_tylenol" -Label "Tylenol"
+                    New-UDSelect -Id "tylenol_dose" -Label "Dose" -Option @(
+                        New-UDSelectOption -Name "1g" -Value "1g"
+                        New-UDSelectOption -Name "500mg" -Value "500mg"
+                    ) -Disabled
+                }
+                New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                    New-UDCheckbox -Id "med_valium" -Label "Valium"
+                    New-UDSelect -Id "valium_dose" -Label "Dose" -Option @(
+                        New-UDSelectOption -Name "5mg" -Value "5mg"
+                        New-UDSelectOption -Name "10mg" -Value "10mg"
+                    ) -Disabled
+                }
+                New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                    New-UDCheckbox -Id "med_lexapro" -Label "Lexapro"
+                    New-UDSelect -Id "lexapro_dose" -Label "Dose" -Option @(
+                        New-UDSelectOption -Name "1mg" -Value "1mg"
+                        New-UDSelectOption -Name "2mg" -Value "2mg"
+                    ) -Disabled
                 }
             }
             
@@ -117,15 +135,12 @@
             
             # Build medications object
             $Medications = @{}
-            $medicationCounter = 1
-            while ($Data.ContainsKey("medication_$medicationCounter")) {
-                $med = $Data["medication_$medicationCounter"]
-                $dose = $Data["dose_$medicationCounter"]
-                if ($med -and $dose) {
-                    $Medications[$med] = $dose
-                }
-                $medicationCounter++
-            }
+            if ($Data.med_oxycodone -and $Data.oxycodone_dose) { $Medications["oxycodone"] = $Data.oxycodone_dose }
+            if ($Data.med_dilaudid -and $Data.dilaudid_dose) { $Medications["dilaudid"] = $Data.dilaudid_dose }
+            if ($Data.med_journavx -and $Data.journavx_dose) { $Medications["journavx"] = $Data.journavx_dose }
+            if ($Data.med_tylenol -and $Data.tylenol_dose) { $Medications["tylenol"] = $Data.tylenol_dose }
+            if ($Data.med_valium -and $Data.valium_dose) { $Medications["valium"] = $Data.valium_dose }
+            if ($Data.med_lexapro -and $Data.lexapro_dose) { $Medications["lexapro"] = $Data.lexapro_dose }
             
             # Build pain object
             $Pain = @{}
@@ -221,13 +236,11 @@
             }
             
             # Reset the form
-            @("date", "timestamp", "pain_back", "pain_legs", "pain_quads", "pain_glutes", "pain_righthip", "pain_other", "pain_other_level",
+            @("date", "timestamp", "med_oxycodone", "med_dilaudid", "med_journavx", "med_tylenol", "med_valium", "med_lexapro",
+              "pain_back", "pain_legs", "pain_quads", "pain_glutes", "pain_righthip", "pain_other", "pain_other_level",
               "activity_standing", "activity_walking", "o2", "bpr", "notes", "sleep", "photo") | ForEach-Object {
                 Clear-UDElement -Id $_
             }
-            
-            # Reset medications section
-            Sync-UDElement -Id "medications-section"
             
             # Refresh the submissions display
             Sync-UDElement -Id "submissions"
@@ -295,116 +308,28 @@
         } -Id "submissions"
     }
     
-    # Add JavaScript for medication interactions
+    # Add JavaScript for medication checkbox interactions
     New-UDElement -Tag "script" -Content {
         "
-        let medicationCount = 1;
-        
-        const medicationDoses = {
-            'oxycodone': ['5mg', '10mg'],
-            'dilaudid': ['4mg', '2mg'],
-            'journavx': ['100mg', '50mg'],
-            'tylenol': ['1g', '500mg'],
-            'valium': ['5mg', '2.5mg'],
-            'lexapro': ['10mg', '20mg']
-        };
-        
-        function updateDoseOptions(medicationSelect, doseSelect) {
-            const medication = medicationSelect.value;
-            
-            // Clear existing options
-            doseSelect.innerHTML = '<option value=\"\">Select...</option>';
-            
-            if (medication && medicationDoses[medication]) {
-                doseSelect.disabled = false;
-                medicationDoses[medication].forEach(dose => {
-                    const option = document.createElement('option');
-                    option.value = dose;
-                    option.textContent = dose;
-                    doseSelect.appendChild(option);
-                });
-            } else {
-                doseSelect.disabled = true;
-            }
-        }
-        
-        function addMedicationRow() {
-            medicationCount++;
-            const container = document.querySelector('#medications-section .MuiGrid-container');
-            
-            if (container) {
-                const newRow = document.createElement('div');
-                newRow.className = 'MuiGrid-item MuiGrid-grid-xs-12';
-                newRow.innerHTML = `
-                    <div class=\"MuiGrid-container MuiGrid-spacing-xs-3\">
-                        <div class=\"MuiGrid-item MuiGrid-grid-xs-5\">
-                            <div class=\"MuiFormControl-root\">
-                                <label class=\"MuiInputLabel-root\">Medication</label>
-                                <select id=\"medication_${medicationCount}\" class=\"MuiSelect-root medication-select\">
-                                    <option value=\"\">Select...</option>
-                                    <option value=\"oxycodone\">Oxycodone</option>
-                                    <option value=\"dilaudid\">Dilaudid</option>
-                                    <option value=\"journavx\">Journavx</option>
-                                    <option value=\"tylenol\">Tylenol</option>
-                                    <option value=\"valium\">Valium</option>
-                                    <option value=\"lexapro\">Lexapro</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class=\"MuiGrid-item MuiGrid-grid-xs-5\">
-                            <div class=\"MuiFormControl-root\">
-                                <label class=\"MuiInputLabel-root\">Dose</label>
-                                <select id=\"dose_${medicationCount}\" class=\"MuiSelect-root dose-select\" disabled>
-                                    <option value=\"\">Select...</option>
-                                </select>
-                            </div>
-                        </div>
-                        <div class=\"MuiGrid-item MuiGrid-grid-xs-2\">
-                            <button type=\"button\" class=\"MuiButton-root remove-medication\" onclick=\"removeMedicationRow(this)\">-</button>
-                        </div>
-                    </div>
-                `;
-                
-                container.appendChild(newRow);
-                
-                // Add event listener to the new medication select
-                const newMedicationSelect = document.getElementById(`medication_${medicationCount}`);
-                const newDoseSelect = document.getElementById(`dose_${medicationCount}`);
-                
-                newMedicationSelect.addEventListener('change', function() {
-                    updateDoseOptions(this, newDoseSelect);
-                });
-            }
-        }
-        
-        function removeMedicationRow(button) {
-            const row = button.closest('.MuiGrid-item.MuiGrid-grid-xs-12');
-            if (row) {
-                row.remove();
-            }
-        }
-        
         document.addEventListener('DOMContentLoaded', function() {
-            // Handle initial medication dropdown
-            const initialMedSelect = document.getElementById('medication_1');
-            const initialDoseSelect = document.getElementById('dose_1');
+            const medications = ['oxycodone', 'dilaudid', 'journavx', 'tylenol', 'valium', 'lexapro'];
             
-            if (initialMedSelect && initialDoseSelect) {
-                initialMedSelect.addEventListener('change', function() {
-                    updateDoseOptions(this, initialDoseSelect);
-                });
-            }
-            
-            // Handle add medication button
-            const addButton = document.getElementById('add-medication');
-            if (addButton) {
-                addButton.addEventListener('click', addMedicationRow);
-            }
+            medications.forEach(med => {
+                const checkbox = document.querySelector('#med_' + med + ' input');
+                const select = document.querySelector('#' + med + '_dose');
+                
+                if (checkbox && select) {
+                    checkbox.addEventListener('change', function() {
+                        if (this.checked) {
+                            select.removeAttribute('disabled');
+                        } else {
+                            select.setAttribute('disabled', 'disabled');
+                            select.value = '';
+                        }
+                    });
+                }
+            });
         });
-        
-        // Make functions globally available
-        window.addMedicationRow = addMedicationRow;
-        window.removeMedicationRow = removeMedicationRow;
         "
     }
 }
