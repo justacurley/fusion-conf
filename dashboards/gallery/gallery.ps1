@@ -1,6 +1,6 @@
 ﻿New-UDApp -Content {
     New-UDLayout -Columns 3 -Content {
-        $imagePath = "/home/data/Repository/fusion-data/img"
+        $imagePath = "/home/data/fusion-data/img"
         $imageFiles = Get-ChildItem -Path $imagePath -File
 
         foreach ($img in $imageFiles) {
