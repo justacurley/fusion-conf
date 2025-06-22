@@ -19,11 +19,9 @@
             New-UDTypography -Text "Medications" -Variant h6 -Style @{marginTop = "20px" }
             
             New-UDSelect -Id "meds" -Option {
-                # Get Medication Data
                 try {
                     $MedData = Get-Content -Path "/home/data/Repository/fusion-data/entries/schema.json" | ConvertFrom-Json -AsHashtable
                     $Dosages = $MedData['Medications']
-                    ##$EmptyEntry = $MedData['EmptyEntry']
                 }
                 catch {
                     Write-Error "Failed to get or parse data $_"
@@ -31,11 +29,15 @@
                 foreach ($key in $Dosages.keys) {
                     New-UDSelectOption -Name $key -Value $key
                 }               
-            } -Multiple
-            # -Multiple -PlaceHolder "Select Options" -OnChange {
-            #     $EventData = $body | ConvertFrom-Json 
-            #     Show-UDToast -Message "selected $($EventData -join ","")"
-            # }
+            } -Multiple 
+            New-UDSelect -Id "doses" -Option {
+                foreach ($item in $EventData.meds) {
+                    Show-UDToast -Message $item -Persistent
+                }
+            }
+            foreach ($item in $EventData.meds) {
+                Show-UDToast -Message "$item was selected" -Duration 5000
+            }
         } -OnSubmit {
             param($Data)
             Write-Output $Data
