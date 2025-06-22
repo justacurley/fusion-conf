@@ -15,29 +15,52 @@
                     New-UDTextbox -Id "timestamp" -Label "Time (HHMM)" -Placeholder $MMSTHHMM -FullWidth -Value $MSTHHMM
                 }
             }
+            New-UDSelect -Id 'FirstSelect' -Option {
+                New-UDSelectOption -Name 'Category A' -Value 'A'
+                New-UDSelectOption -Name 'Category B' -Value 'B'
+            } -Multiple -OnChange {
+                Sync-UDElement -Id 'DynamicSection'
+            }
+            New-UDDynamic -Id 'DynamicSection' -Content {
+                # Logic to determine options for the second dropdown based on the first select's value
+                $selectedValue = (Get-UDElement -Id 'FirstSelect').Value
+
+                if ($selectedValue -eq 'A') {
+                    New-UDSelect -Id 'SecondSelect' -Option {
+                        New-UDSelectOption -Name 'Item 1A' -Value '1A'
+                        New-UDSelectOption -Name 'Item 2A' -Value '2A'
+                    }
+                }
+                elseif ($selectedValue -eq 'B') {
+                    New-UDSelect -Id 'SecondSelect' -Option {
+                        New-UDSelectOption -Name 'Item 1B' -Value '1B'
+                        New-UDSelectOption -Name 'Item 2B' -Value '2B'
+                    }
+                }
+            }
             # Medicatins Sectin
-            New-UDTypography -Text "Medications" -Variant h6 -Style @{marginTop = "20px" }
-            
-            New-UDSelect -Id "meds" -Option {
-                try {
-                    $MedData = Get-Content -Path "/home/data/Repository/fusion-data/entries/schema.json" | ConvertFrom-Json -AsHashtable
-                    $Dosages = $MedData['Medications']
-                }
-                catch {
-                    Write-Error "Failed to get or parse data $_"
-                }
-                foreach ($key in $Dosages.keys) {
-                    New-UDSelectOption -Name $key -Value $key
-                }               
-            } -Multiple 
-            New-UDSelect -Id "doses" -Option {
-                foreach ($item in $EventData.meds) {
-                    Show-UDToast -Message $item -Persistent
-                }
-            }
-            foreach ($item in $EventData.meds) {
-                Show-UDToast -Message "$item was selected" -Duration 5000
-            }
+            # New-UDTypography -Text "Medications" -Variant h6 -Style @{marginTop = "20px" }
+            # New-UDSelect -Id "meds" -Option {
+            #     try {
+            #         $MedData = Get-Content -Path "/home/data/Repository/fusion-data/entries/schema.json" | ConvertFrom-Json -AsHashtable
+            #         $Dosages = $MedData['Medications']
+            #     }
+            #     catch {
+            #         Write-Error "Failed to get or parse data $_"
+            #     }
+            #     foreach ($key in $Dosages.keys) {
+            #         New-UDSelectOption -Name $key -Value $key
+            #     }               
+            # } -Multiple -OnChange {
+            #     New-UDSelect -Id "doses" -Option {
+            #         foreach ($item in $EventData.meds) {
+            #             Show-UDToast -Message $item -Persistent
+            #         }
+            #     }
+            #     foreach ($item in $EventData.meds) {
+            #         Show-UDToast -Message "$item was selected" -Duration 5000
+            #     }            
+            #     }
         } -OnSubmit {
             param($Data)
             Write-Output $Data
