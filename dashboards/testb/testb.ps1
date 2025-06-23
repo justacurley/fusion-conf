@@ -83,7 +83,7 @@
             }
             
             # Here you can save the painEntries to a database or file as needed
-            Write-Output "Pain Entries: $($painEntries | ConvertTo-Json)"
+            Write-Information "Pain Entries: $($painEntries | ConvertTo-Json)"
         }
     }
 }
