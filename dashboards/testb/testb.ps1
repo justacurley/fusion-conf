@@ -5,7 +5,7 @@
         
         New-UDForm -Content {
             # Add Pain checkbox
-            Wrtie-Debug "Adding Pain Entry Checkbox"
+            Write-Debug "Adding Pain Entry Checkbox"
             New-UDCheckbox -Id "add_pain" -Label "Add Pain Entry" -OnChange {
                 if ($EventData) {
                     Write-Debug "Pain Entry Checkbox is checked"
