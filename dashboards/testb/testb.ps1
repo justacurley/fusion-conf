@@ -67,6 +67,7 @@
             New-UDElement -Id "pain_section" -Tag "div"
         } -OnSubmit {
             # Handle form submission logic here
+            Wait-Debugger
             $painLocations = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_location_*" }
             $painLevels = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_level_*" }
             Write-Information $painEntries | ConvertTo-Json | Out-String
