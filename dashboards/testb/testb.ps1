@@ -1,11 +1,14 @@
 ﻿New-UDApp -Content { 
+    $DebugPreference = "Continue"
     New-UDContainer -Content {
         New-UDTypography -Text "Dynamic Pain Entry Form" -Variant h4 -Style @{marginBottom = "20px" }
         
         New-UDForm -Content {
             # Add Pain checkbox
+            Wrtie-Debug "Adding Pain Entry Checkbox"
             New-UDCheckbox -Id "add_pain" -Label "Add Pain Entry" -OnChange {
                 if ($EventData) {
+                    Write-Debug "Pain Entry Checkbox is checked"
                     $SelectOptions = {
                         New-UDSelectOption -Name "Back" -Value "back"
                         New-UDSelectOption -Name "RQuad" -Value "rquads"
@@ -26,7 +29,7 @@
                                 New-UDSelect -Id "pain_location_1" -Label "Pain Location" -Option $SelectOptions
                             }
                             New-UDGrid -Item -ExtraSmallSize 4 -Content {
-                                New-UDTextbox -Id "pain_level_1" -Label "Pain Level (0-10)" -Type number -Placeholder "0-10"
+                                New-UDTextbox -Id "pain_level_1" -Label "Pain Level (0-10)" -Type text -Placeholder "3-4"
                             }
                             New-UDGrid -Item -ExtraSmallSize 3 -Content {
                                 New-UDButton -Text "Add More" -OnClick {
