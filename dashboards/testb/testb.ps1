@@ -81,6 +81,25 @@
             New-UDButton -Text "Submit Form" -OnClick {
                 Show-UDToast -Message "Form submitted successfully!" -MessageColor Success
             } -Style @{marginTop = "20px"}
+        } -OnSubmit {
+            # Handle form submission logic here
+            $painEntries = @()
+            $painLocations = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_location_*" }
+            $painLevels = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_level_*" }
+            
+            for ($i = 0; $i -lt $painLocations.Count; $i++) {
+                $location = $painLocations[$i].Value
+                $level = $painLevels[$i].Value
+                if ($location -and $level) {
+                    $painEntries += @{
+                        Location = $location
+                        Level = [int]$level
+                    }
+                }
+            }
+            
+            # Here you can save the painEntries to a database or file as needed
+            Write-Output "Pain Entries: $($painEntries | ConvertTo-Json)"
         }
     }
 }
