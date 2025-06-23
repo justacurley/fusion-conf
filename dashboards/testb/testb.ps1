@@ -15,7 +15,7 @@
                             
                             # Initial pain entry
                             New-UDGrid -Item -ExtraSmallSize 5 -Content {
-                                New-UDSelect -Id "pain_location_1" -Label "Pain Location" -Option @(
+                                New-UDSelect -Id "pain_location_1" -Label "Pain Location" -Option {
                                     New-UDSelectOption -Name "Back" -Value "back"
                                     New-UDSelectOption -Name "Legs" -Value "legs"
                                     New-UDSelectOption -Name "Quads" -Value "quads"
@@ -26,7 +26,7 @@
                                     New-UDSelectOption -Name "Shoulders" -Value "shoulders"
                                     New-UDSelectOption -Name "Arms" -Value "arms"
                                     New-UDSelectOption -Name "Other" -Value "other"
-                                )
+                                }
                             }
                             New-UDGrid -Item -ExtraSmallSize 4 -Content {
                                 New-UDTextbox -Id "pain_level_1" -Label "Pain Level (0-10)" -Type number -Placeholder "0-10"
