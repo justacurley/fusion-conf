@@ -1,6 +1,6 @@
 ﻿New-UDApp -Content { 
     New-UDContainer -Content {
-        New-UDTypography -Text "Dynamic Pain Entry Form" -Variant h4 -Style @{marginBottom = "20px"}
+        New-UDTypography -Text "Dynamic Pain Entry Form" -Variant h4 -Style @{marginBottom = "20px" }
         
         New-UDForm -Content {
             # Add Pain checkbox
@@ -10,7 +10,7 @@
                     Set-UDElement -Id "pain_section" -Content {
                         New-UDGrid -Container -Content {
                             New-UDGrid -Item -ExtraSmallSize 12 -Content {
-                                New-UDTypography -Text "Pain Entries" -Variant h6 -Style @{marginTop = "10px"; marginBottom = "10px"}
+                                New-UDTypography -Text "Pain Entries" -Variant h6 -Style @{marginTop = "10px"; marginBottom = "10px" }
                             }
                             
                             # Initial pain entry
@@ -40,7 +40,7 @@
                                     Add-UDElement -ParentId "pain_section" -Content {
                                         New-UDGrid -Container -Content {
                                             New-UDGrid -Item -ExtraSmallSize 5 -Content {
-                                                New-UDSelect -Id "pain_location_$entryCount" -Label "Pain Location" -Option @(
+                                                New-UDSelect -Id "pain_location_$entryCount" -Label "Pain Location" -Option {
                                                     New-UDSelectOption -Name "Back" -Value "back"
                                                     New-UDSelectOption -Name "Legs" -Value "legs"
                                                     New-UDSelectOption -Name "Quads" -Value "quads"
@@ -51,7 +51,7 @@
                                                     New-UDSelectOption -Name "Shoulders" -Value "shoulders"
                                                     New-UDSelectOption -Name "Arms" -Value "arms"
                                                     New-UDSelectOption -Name "Other" -Value "other"
-                                                )
+                                                }
                                             }
                                             New-UDGrid -Item -ExtraSmallSize 4 -Content {
                                                 New-UDTextbox -Id "pain_level_$entryCount" -Label "Pain Level (0-10)" -Type number -Placeholder "0-10"
@@ -68,7 +68,8 @@
                             }
                         }
                     }
-                } else {
+                }
+                else {
                     # Checkbox is unchecked - hide pain section
                     Set-UDElement -Id "pain_section" -Content { }
                 }
@@ -80,7 +81,7 @@
             # Submit button
             New-UDButton -Text "Submit Form" -OnClick {
                 Show-UDToast -Message "Form submitted successfully!" -MessageColor Success
-            } -Style @{marginTop = "20px"}
+            } -Style @{marginTop = "20px" }
         } -OnSubmit {
             # Handle form submission logic here
             $painEntries = @()
@@ -93,7 +94,7 @@
                 if ($location -and $level) {
                     $painEntries += @{
                         Location = $location
-                        Level = [int]$level
+                        Level    = [int]$level
                     }
                 }
             }
