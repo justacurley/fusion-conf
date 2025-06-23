@@ -70,8 +70,8 @@
             $painEntries = @()
             $painLocations = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_location_*" }
             $painLevels = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_level_*" }
-            Write-Information $painEntries
-            Write-Information $painLevels
+            Write-Information $painEntries | ConvertTo-Json | Out-String
+            Write-Information $painLevels| ConvertTo-Json | Out-String
             for ($i = 0; $i -lt $painLocations.Count; $i++) {
                 $location = $painLocations[$i].Value
                 $level = $painLevels[$i].Value
