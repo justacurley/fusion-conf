@@ -67,18 +67,17 @@
             New-UDElement -Id "pain_section" -Tag "div"
         } -OnSubmit {
             # Handle form submission logic here
-            $painEntries = @()
             $painLocations = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_location_*" }
             $painLevels = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_level_*" }
             Write-Information $painEntries | ConvertTo-Json | Out-String
-            Write-Information $painLevels| ConvertTo-Json | Out-String
-            for ($i = 0; $i -lt $painLocations.Count; $i++) {
+            Write-Information $painLevels | ConvertTo-Json | Out-String
+            $painEntries = for ($i = 0; $i -lt $painLocations.Count; $i++) {
                 $location = $painLocations[$i].Value
                 $level = $painLevels[$i].Value
                 if ($location -and $level) {
                     $painEntries += @{
                         Location = $location
-                        Level    = [int]$level
+                        Level    = $level
                     }
                 }
             }
