@@ -6,6 +6,14 @@
             # Add Pain checkbox
             New-UDCheckbox -Id "add_pain" -Label "Add Pain Entry" -OnChange {
                 if ($EventData) {
+                    $SelectOptions = {
+                        New-UDSelectOption -Name "Back" -Value "back"
+                        New-UDSelectOption -Name "RQuad" -Value "rquads"
+                        New-UDSelectOption -Name "LQuad" -Value "lquad"
+                        New-UDSelectOption -Name "Glutes" -Value "glutes"
+                        New-UDSelectOption -Name "Right Hip" -Value "righthip"
+                        New-UDSelectOption -Name "LHip" -Value "lhip"
+                    }
                     # Checkbox is checked - show pain entry section
                     Set-UDElement -Id "pain_section" -Content {
                         New-UDGrid -Container -Content {
@@ -15,18 +23,7 @@
                             
                             # Initial pain entry
                             New-UDGrid -Item -ExtraSmallSize 5 -Content {
-                                New-UDSelect -Id "pain_location_1" -Label "Pain Location" -Option {
-                                    New-UDSelectOption -Name "Back" -Value "back"
-                                    New-UDSelectOption -Name "Legs" -Value "legs"
-                                    New-UDSelectOption -Name "Quads" -Value "quads"
-                                    New-UDSelectOption -Name "Glutes" -Value "glutes"
-                                    New-UDSelectOption -Name "Right Hip" -Value "righthip"
-                                    New-UDSelectOption -Name "Left Hip" -Value "lefthip"
-                                    New-UDSelectOption -Name "Neck" -Value "neck"
-                                    New-UDSelectOption -Name "Shoulders" -Value "shoulders"
-                                    New-UDSelectOption -Name "Arms" -Value "arms"
-                                    New-UDSelectOption -Name "Other" -Value "other"
-                                }
+                                New-UDSelect -Id "pain_location_1" -Label "Pain Location" -Option $SelectOptions
                             }
                             New-UDGrid -Item -ExtraSmallSize 4 -Content {
                                 New-UDTextbox -Id "pain_level_1" -Label "Pain Level (0-10)" -Type number -Placeholder "0-10"
@@ -40,18 +37,7 @@
                                     Add-UDElement -ParentId "pain_section" -Content {
                                         New-UDGrid -Container -Content {
                                             New-UDGrid -Item -ExtraSmallSize 5 -Content {
-                                                New-UDSelect -Id "pain_location_$entryCount" -Label "Pain Location" -Option {
-                                                    New-UDSelectOption -Name "Back" -Value "back"
-                                                    New-UDSelectOption -Name "Legs" -Value "legs"
-                                                    New-UDSelectOption -Name "Quads" -Value "quads"
-                                                    New-UDSelectOption -Name "Glutes" -Value "glutes"
-                                                    New-UDSelectOption -Name "Right Hip" -Value "righthip"
-                                                    New-UDSelectOption -Name "Left Hip" -Value "lefthip"
-                                                    New-UDSelectOption -Name "Neck" -Value "neck"
-                                                    New-UDSelectOption -Name "Shoulders" -Value "shoulders"
-                                                    New-UDSelectOption -Name "Arms" -Value "arms"
-                                                    New-UDSelectOption -Name "Other" -Value "other"
-                                                }
+                                                New-UDSelect -Id "pain_location_$entryCount" -Label "Pain Location" -Option $SelectOptions
                                             }
                                             New-UDGrid -Item -ExtraSmallSize 4 -Content {
                                                 New-UDTextbox -Id "pain_level_$entryCount" -Label "Pain Level (0-10)" -Type number -Placeholder "0-10"
