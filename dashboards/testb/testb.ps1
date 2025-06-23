@@ -22,8 +22,7 @@
                         New-UDGrid -Container -Content {
                             New-UDGrid -Item -ExtraSmallSize 12 -Content {
                                 New-UDTypography -Text "Pain Entries" -Variant h6 -Style @{marginTop = "10px"; marginBottom = "10px" }
-                            }
-                            
+                            }                            
                             # Initial pain entry
                             New-UDGrid -Item -ExtraSmallSize 5 -Content {
                                 New-UDSelect -Id "pain_location_1" -Label "Pain Location" -Option $SelectOptions
@@ -66,11 +65,6 @@
             
             # Dynamic pain section container
             New-UDElement -Id "pain_section" -Tag "div"
-            
-            # Submit button
-            New-UDButton -Text "Submit Form" -OnClick {
-                Show-UDToast -Message "Form submitted successfully!" -MessageColor Success
-            } -Style @{marginTop = "20px" }
         } -OnSubmit {
             # Handle form submission logic here
             $painEntries = @()
