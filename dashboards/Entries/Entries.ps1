@@ -19,7 +19,7 @@
             New-UDTypography -Text "Medications" -Variant h6 -Style @{marginTop = "20px" }
             New-UDSelect -Id "meds" -Option {
                 try {
-                    $MedData = Get-Content -Path "/home/alex/src/fusion-conf/Modules/fusion/medications_lookup.json" | ConvertFrom-Json -AsHashtable
+                    $MedData = Get-Content -Path "/home/data/Repository/fusion-data/entries/medications_lookup.json" | ConvertFrom-Json -AsHashtable
                     $Dosages = $MedData['Medications']
                 }
                 catch {
