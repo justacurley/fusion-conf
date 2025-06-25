@@ -166,6 +166,23 @@
             Write-Information "`nFull Entry JSON (ready for entries.json):"
             Write-Information "=========================================="
             Write-Information ($entry | ConvertTo-Json -Depth 99)
+            # Save the entry to the entries.json file
+            try {
+                $saveResult = Save-ConvertedEntry -ConvertedEntry $entry
+                if ($saveResult) {
+                    Write-Information "Successfully saved entry to entries.json"
+                    Show-UDToast -Message "Entry saved successfully!" -MessageColor Green -Duration 3000
+                }
+                else {
+                    Write-Warning "Failed to save entry - function returned false"
+                    Show-UDToast -Message "Failed to save entry" -MessageColor Red -Duration 5000
+                }
+            }
+            catch {
+                Write-Error "Error saving entry: $($_.Exception.Message)"
+                Write-Error "Stack trace: $($_.ScriptStackTrace)"
+                Show-UDToast -Message "Error saving entry: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+            }
         }
     }
 }
