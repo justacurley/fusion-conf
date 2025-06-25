@@ -79,8 +79,6 @@
                     Set-UDElement -Id "activities_section" -Content { }
                 }
             }           
-            # Dynamic pain section container
-            New-UDElement -Id "pain_section" -Tag "div"
             # Dynamic activities section container
             New-UDElement -Id "activities_section" -Tag "div"
             #pain section
