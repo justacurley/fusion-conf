@@ -1,5 +1,5 @@
-# $global:EntriesPath = Join-Path $PSScriptRoot "entries.json"
-# $global:SchemaPath = Join-Path $PSScriptRoot "schema.json"
+$global:EntriesPath =  "/home/data/fusion-data/entries/entries.json"
+
 function Add-Entry {
     [CmdletBinding()]
     param (
@@ -23,6 +23,9 @@ function Add-Entry {
         [string]$Sleep
     )    
     begin {
+        # Save and set InformationAction
+        $CurrentInformationAction = $InformationPreference
+        $InformationPreference = 'Continue'
         # Do some param validation we cant do in ValidateScript
         if (($Activities -and $ActivitiesDuration) -and ($Activities.Count -ne $ActivitiesDuration.Count)) {
             throw "Activities Count ne ActivitiesDuration $Activities : $($ActivitiesDuration -join ",")"
@@ -74,6 +77,9 @@ function Add-Entry {
         
         $Entries[$Date][$Time] = $CurrentEntry
         Out-File $EntriesPath -InputObject ($Entries | convertto-json -depth 99)
+        
+        # Restore InformationAction
+        $InformationPreference = $CurrentInformationAction
     }
 }
 Set-Alias -Name ae -Value Add-Entry
@@ -85,6 +91,10 @@ function ConvertTo-EntriesFormat {
         [Parameter(Mandatory = $true)]
         [pscustomobject]$Entry
     )
+    
+    # Save and set InformationAction
+    $CurrentInformationAction = $InformationPreference
+    $InformationPreference = 'Continue'
     
     # Convert to entries.json format
     Write-Host "Converting entry to entries.json format..."
@@ -188,11 +198,112 @@ function ConvertTo-EntriesFormat {
     }
 
     # Return the result
-    return @{
+    $Result = @{
         FullEntry = $FullEntry
         EntryStructure = $EntryStructure
         Date = $Date
         Timestamp = $Timestamp
     }
+    
+    # Restore InformationAction
+    $InformationPreference = $CurrentInformationAction
+    
+    return $Result
 }
 Export-ModuleMember -Function ConvertTo-EntriesFormat
+
+function Save-ConvertedEntry {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$ConvertedEntry,
+        
+        [Parameter(Mandatory = $false)]
+        [string]$EntriesFilePath = $global:EntriesPath
+    )
+    
+    begin {
+        # Save and set InformationAction
+        $CurrentInformationAction = $InformationPreference
+        $InformationPreference = 'Continue'
+        
+        Write-Information "Starting Save-ConvertedEntry"
+        
+        # Validate the ConvertedEntry structure
+        if (-not $ConvertedEntry.ContainsKey("Date") -or 
+            -not $ConvertedEntry.ContainsKey("Timestamp") -or 
+            -not $ConvertedEntry.ContainsKey("EntryStructure")) {
+            throw "ConvertedEntry must contain Date, Timestamp, and EntryStructure keys"
+        }
+        
+        $Date = $ConvertedEntry.Date
+        $Timestamp = $ConvertedEntry.Timestamp
+        $EntryData = $ConvertedEntry.EntryStructure
+        
+        Write-Information "Processing entry for Date: $Date, Timestamp: $Timestamp"
+    }
+    
+    process {
+        try {
+            # Load existing entries or create new structure
+            $Entries = @{}
+            if (Test-Path $EntriesFilePath) {
+                $Entries = Get-Content $EntriesFilePath | ConvertFrom-Json -AsHashtable
+                Write-Information "Loaded existing entries file with $($Entries.Keys.Count) dates"
+            } else {
+                Write-Information "Creating new entries file"
+                # Ensure directory exists
+                $Directory = Split-Path $EntriesFilePath -Parent
+                if (-not (Test-Path $Directory)) {
+                    New-Item -ItemType Directory -Path $Directory -Force
+                    Write-Information "Created directory: $Directory"
+                }
+            }
+            
+            # Auto-determine action based on what exists
+            if (-not $Entries.ContainsKey($Date)) {
+                # Date doesn't exist - add entire date entry
+                $Entries[$Date] = @{
+                    $Timestamp = $EntryData
+                }
+                Write-Information "Added new date entry for: $Date with timestamp: $Timestamp"
+            } elseif (-not $Entries[$Date].ContainsKey($Timestamp)) {
+                # Date exists but timestamp doesn't - add timestamp entry
+                $Entries[$Date][$Timestamp] = $EntryData
+                Write-Information "Added new timestamp entry for existing date $Date at timestamp: $Timestamp"
+            } else {
+                # Both date and timestamp exist - overwrite
+                $Entries[$Date][$Timestamp] = $EntryData
+                Write-Information "Overwrote existing entry for $Date at timestamp: $Timestamp"
+            }
+            
+            # Create backup before saving
+            if (Test-Path $EntriesFilePath) {
+                $BackupTimestamp = Get-Date -Format "yyyyMMdd_HHmmss"
+                $BackupPath = $EntriesFilePath -replace '\.json$', "_backup_$BackupTimestamp.json"
+                Copy-Item -Path $EntriesFilePath -Destination $BackupPath -Force
+                Write-Information "Created backup: $BackupPath"
+            }
+            
+            # Save back to file
+            $JsonOutput = $Entries | ConvertTo-Json -Depth 10
+            $JsonOutput | Out-File $EntriesFilePath -Encoding UTF8
+            Write-Information "Successfully saved entries to: $EntriesFilePath"
+            
+            # Restore InformationAction
+            $InformationPreference = $CurrentInformationAction
+            
+            return $true
+            
+        } catch {
+            Write-Error "Error saving entry: $($_.Exception.Message)"
+            Write-Error "Stack trace: $($_.ScriptStackTrace)"
+            
+            # Restore InformationAction even on error
+            $InformationPreference = $CurrentInformationAction
+            
+            return $false
+        }
+    }
+}
+Export-ModuleMember -Function Save-ConvertedEntry
