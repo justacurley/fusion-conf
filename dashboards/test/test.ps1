@@ -92,6 +92,7 @@
             New-UDElement -Id "pain_section" -Tag "div"
 
         } -OnSubmit {
+            Write-Information "Form submitted: Certainly is couldnt be as easy as $($eventData | ConvertTo-Json)"
             Write-Information "Date: $MSTMMDD, Time: $MSTHHMM"
             # Handle form submission logic here
             $painLocations = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_location_*" }
