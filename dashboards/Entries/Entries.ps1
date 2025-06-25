@@ -105,27 +105,19 @@
                     New-UDTextbox -Id "notes" -Label "Additional Notes" -Type text -Placeholder "Any additional information" -FullWidth
                 }
             }
+            # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)"
+            New-UDGrid -Container -Content {
+                New-UDGrid -Item -ExtraSmallSize 6 -Content {
+                    New-UDTextbox -Id "activity" -Label "Activity" -Type text -Placeholder "e.g., Walking, Running" -FullWidth
+                }
+                New-UDGrid -Item -ExtraSmallSize 6 -Content {
+                    New-UDTextbox -Id "duration" -Label "Duration (minutes)" -Type number -Placeholder "e.g., 30" -FullWidth
+                }
+            }
 
         } -OnSubmit {
-            Write-Information "Form submitted: Certainly is couldnt be as easy as $($eventData | ConvertTo-Json)"
-            Write-Information "Date: $MSTMMDD, Time: $MSTHHMM"
             # Handle form submission logic here
-            $painLocations = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_location_*" }
-            $painLevels = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_level_*" }
-            Write-Information $painEntries | ConvertTo-Json | Out-String
-            Write-Information $painLevels | ConvertTo-Json | Out-String
-            $painEntries = for ($i = 0; $i -lt $painLocations.Count; $i++) {
-                $location = $painLocations[$i].Value
-                $level = $painLevels[$i].Value
-                if ($location -and $level) {
-                    $painEntries += @{
-                        Location = $location
-                        Level    = $level
-                    }
-                }
-            }            
-            # Here you can save the painEntries to a database or file as needed
-            Write-Information "Pain Entries: $($painEntries | ConvertTo-Json)"
+            Write-Information "Form submitted: Certainly is couldnt be as easy as $($eventData | ConvertTo-Json)"
         }
     }
 }
