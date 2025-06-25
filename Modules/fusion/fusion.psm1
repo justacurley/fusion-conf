@@ -6,7 +6,7 @@ function Add-Entry {
         [string]$Date = (Get-Date -f "MMdd"),
         [string]$Time = (Get-Date -f "HHmm"),
         [parameter()]
-        [ValidateSet("tylenol1", "dilaudid4", "valium5", "vitaminD5", "lexapro2", "lexapro1", "journavx", "oxycodone")]
+        [ValidateSet("tylenol", "dilaudid", "valium", "vitaminD", "lexapro", "journavx", "oxycodone")]
         [string[]]$Medications,
         [string]$ScarImage,
         [parameter(Mandatory = $false)]
