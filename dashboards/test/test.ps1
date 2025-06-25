@@ -68,7 +68,7 @@
                                                 New-UDSelect -Id "pain_location_$entryCount" -Label "Pain Location" -Option $SelectOptions
                                             }
                                             New-UDGrid -Item -ExtraSmallSize 4 -Content {
-                                                New-UDTextbox -Id "pain_level_$entryCount" -Label "Pain Level (0-10)" -Type number -Placeholder "0-10"
+                                                New-UDTextbox -Id "pain_level_$entryCount" -Label "Pain Level (0-10)" -Type text -Placeholder "0-10"
                                             }
                                             New-UDGrid -Item -ExtraSmallSize 3 -Content {
                                                 New-UDButton -Text "Remove" -Color secondary -OnClick {
