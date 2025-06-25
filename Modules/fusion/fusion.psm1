@@ -332,3 +332,184 @@ function Save-ConvertedEntry {
     }
 }
 Export-ModuleMember -Function Save-ConvertedEntry
+
+function Sync-EntriesToDynamoDB {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $false)]
+        [string]$EntriesFilePath = $global:EntriesPath,
+        
+        [Parameter(Mandatory = $false)]
+        [string]$TableName = "fusion-health-entries",
+        
+        [Parameter(Mandatory = $false)]
+        [string]$Region = "us-west-2",
+        
+        [Parameter(Mandatory = $false)]
+        [switch]$WhatIf
+    )
+    
+    begin {
+        # Save and set InformationAction
+        $CurrentInformationAction = $InformationPreference
+        $InformationPreference = 'Continue'
+        
+        Write-Information "Starting Sync-EntriesToDynamoDB"
+        Write-Information "Table: $TableName, Region: $Region"
+        Write-Information "Source file: $EntriesFilePath"
+        
+        if ($WhatIf) {
+            Write-Information "WhatIf mode - no actual changes will be made"
+        }
+        
+        # Verify entries file exists
+        if (-not (Test-Path $EntriesFilePath)) {
+            throw "Entries file not found: $EntriesFilePath"
+        }
+        
+        # Check if AWS CLI is available
+        try {
+            $awsVersion = aws --version 2>$null
+            Write-Information "AWS CLI detected: $awsVersion"
+        } catch {
+            throw "AWS CLI not found. Please install AWS CLI and configure credentials."
+        }
+    }
+    
+    process {
+        try {
+            # Load entries from JSON file
+            $entries = Get-Content $EntriesFilePath | ConvertFrom-Json -AsHashtable
+            Write-Information "Loaded entries file with $($entries.Keys.Count) dates"
+            
+            $totalItems = 0
+            $processedItems = 0
+            
+            # Count total items for progress tracking
+            foreach ($date in $entries.Keys) {
+                $timestampKeys = $entries[$date].Keys | Where-Object { $_ -match '^\d{4}$' }
+                $totalItems += $timestampKeys.Count
+            }
+            Write-Information "Total items to process: $totalItems"
+            
+            if (-not $WhatIf) {
+                # Clear existing table data (scan and delete all items)
+                Write-Information "Clearing existing table data..."
+                $scanCommand = "aws dynamodb scan --table-name $TableName --region $Region --select ALL_ATTRIBUTES --output json"
+                $existingItems = Invoke-Expression $scanCommand | ConvertFrom-Json
+                
+                if ($existingItems.Items -and $existingItems.Items.Count -gt 0) {
+                    Write-Information "Found $($existingItems.Items.Count) existing items to delete"
+                    
+                    # Delete existing items in batches
+                    $batchSize = 25
+                    for ($i = 0; $i -lt $existingItems.Items.Count; $i += $batchSize) {
+                        $batch = $existingItems.Items[$i..([Math]::Min($i + $batchSize - 1, $existingItems.Items.Count - 1))]
+                        
+                        $deleteRequests = @()
+                        foreach ($item in $batch) {
+                            $deleteRequests += @{
+                                DeleteRequest = @{
+                                    Key = @{
+                                        date = $item.date
+                                        timestamp = $item.timestamp
+                                    }
+                                }
+                            }
+                        }
+                        
+                        $batchDeleteRequest = @{
+                            RequestItems = @{
+                                $TableName = $deleteRequests
+                            }
+                        } | ConvertTo-Json -Depth 10 -Compress
+                        
+                        $deleteCommand = "aws dynamodb batch-write-item --region $Region --request-items '$batchDeleteRequest'"
+                        Invoke-Expression $deleteCommand | Out-Null
+                        Write-Information "Deleted batch of $($batch.Count) items"
+                    }
+                }
+            }
+            
+            # Process each date and timestamp
+            foreach ($date in $entries.Keys) {
+                Write-Information "Processing date: $date"
+                
+                # Skip non-timestamp keys like "Sleep", "ScarImage"
+                $timestampKeys = $entries[$date].Keys | Where-Object { $_ -match '^\d{4}$' }
+                
+                foreach ($timestamp in $timestampKeys) {
+                    $entry = $entries[$date][$timestamp]
+                    $processedItems++
+                    
+                    # Calculate GSI fields if they don't exist
+                    if (-not $entry.ContainsKey("medication_taken")) {
+                        $entry["medication_taken"] = if ($entry.Medications -and $entry.Medications.Count -gt 0) { 
+                            ($entry.Medications.Keys -join ",") 
+                        } else { "" }
+                    }
+                    
+                    if (-not $entry.ContainsKey("max_pain_level")) {
+                        $maxPain = 0
+                        if ($entry.Pain -and $entry.Pain.Count -gt 0) {
+                            foreach ($level in $entry.Pain.Values) {
+                                $numbers = $level -split '[-,\s]' | Where-Object { $_ -match '^\d+$' } | ForEach-Object { [int]$_ }
+                                if ($numbers) {
+                                    $levelMax = ($numbers | Measure-Object -Maximum).Maximum
+                                    if ($levelMax -gt $maxPain) { $maxPain = $levelMax }
+                                }
+                            }
+                        }
+                        $entry["max_pain_level"] = $maxPain
+                    }
+                    
+                    # Build DynamoDB item
+                    $dynamoItem = @{
+                        date = @{ S = $date }
+                        timestamp = @{ S = $timestamp }
+                        medication_taken = @{ S = $entry.medication_taken }
+                        max_pain_level = @{ N = $entry.max_pain_level.ToString() }
+                        medications = @{ S = ($entry.Medications | ConvertTo-Json -Compress) }
+                        pain = @{ S = ($entry.Pain | ConvertTo-Json -Compress) }
+                        activities = @{ S = ($entry.Activities | ConvertTo-Json -Compress) }
+                        o2 = @{ S = $entry.o2 }
+                        bpr = @{ S = $entry.bpr }
+                        note = @{ S = $entry.note }
+                    }
+                    
+                    if ($WhatIf) {
+                        Write-Information "Would insert: $date[$timestamp] - Meds: '$($entry.medication_taken)', Max Pain: $($entry.max_pain_level)"
+                    } else {
+                        # Insert item into DynamoDB
+                        $itemJson = $dynamoItem | ConvertTo-Json -Depth 10 -Compress
+                        $putCommand = "aws dynamodb put-item --table-name $TableName --region $Region --item '$itemJson'"
+                        
+                        try {
+                            Invoke-Expression $putCommand | Out-Null
+                            Write-Information "[$processedItems/$totalItems] Inserted: $date[$timestamp]"
+                        } catch {
+                            Write-Error "Failed to insert $date[$timestamp]: $($_.Exception.Message)"
+                        }
+                    }
+                }
+            }
+            
+            Write-Information "Sync completed. Processed $processedItems items."
+            
+            # Restore InformationAction
+            $InformationPreference = $CurrentInformationAction
+            
+            return $true
+            
+        } catch {
+            Write-Error "Error syncing to DynamoDB: $($_.Exception.Message)"
+            Write-Error "Stack trace: $($_.ScriptStackTrace)"
+            
+            # Restore InformationAction even on error
+            $InformationPreference = $CurrentInformationAction
+            
+            return $false
+        }
+    }
+}
+Export-ModuleMember -Function Sync-EntriesToDynamoDB
