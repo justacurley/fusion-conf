@@ -157,6 +157,8 @@
             }
         } -OnSubmit {
             # Handle form submission logic here
+            Write-Information ($EventData | ConvertTo-Json -Depth 99)
+            Write-Information ($EventData.Gettype().FullName)
             $entry = $EventData
 
             # Convert to entries.json format
