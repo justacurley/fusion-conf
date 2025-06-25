@@ -157,7 +157,7 @@
             }
         } -OnSubmit {
             # Handle form submission logic here
-            Write-Information "Form submitted: Certainly is couldnt be as easy as $($eventData | ConvertTo-Json -depth 99 -AsHashtable)"
+            Write-Information "Form submitted: Certainly is couldnt be as easy as $($eventData | ConvertTo-Json -depth 99)"
             $EntryRaw = $EventData | ConvertTo-Json -Depth 99
             <#{            
                 "bpr": "",
