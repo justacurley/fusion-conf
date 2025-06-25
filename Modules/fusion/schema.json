@@ -1,0 +1,19 @@
+{
+    "EmptyEntry": {
+        "Medications": {},
+        "Pain": {},
+        "Activities": {},
+        "o2": "",
+        "bpr": "",
+        "note": ""
+    },
+    "Medications": {
+        "oxycodone": ["2.5mg","5mg"],
+        "tylenol": ["500mg","1g"],
+        "dilaudid": ["2mg","4mg"],
+        "valium": ["2.5mg","5mg"],
+        "journavx": ["100mg"],
+        "vitaminD": ["500mg"],
+        "lexapro": ["10mg","20mg"]
+    }
+}

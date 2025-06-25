@@ -75,11 +75,22 @@ function Add-Entry {
             $Entries[$Date]['ScarImage'] = $ScarImage
         }
         
-        $Entries[$Date][$Time] = $CurrentEntry
-        Out-File $EntriesPath -InputObject ($Entries | convertto-json -depth 99)
+        # Create the output structure compatible with Save-ConvertedEntry
+        $Result = @{
+            FullEntry = @{
+                $Date = @{
+                    $Time = $CurrentEntry
+                }
+            }
+            EntryStructure = $CurrentEntry
+            Date = $Date
+            Timestamp = $Time
+        }
         
         # Restore InformationAction
         $InformationPreference = $CurrentInformationAction
+        
+        return $Result
     }
 }
 Set-Alias -Name ae -Value Add-Entry
