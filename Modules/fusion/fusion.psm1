@@ -6,11 +6,10 @@ function Add-Entry {
         [string]$Date = (Get-Date -f "MMdd"),
         [string]$Time = (Get-Date -f "HHmm"),
         [parameter()]
-        [ValidateSet("tylenol1", "dilaudid4", "valium5", "vitaminD5", "lexapro2", "lexapro1", "journavx", "oxycodone")]
+        [ValidateSet("tylenol1", "dilaudid4", "valium5", "vitaminD", "lexapro2", "lexapro1", "journavx", "oxycodone")]
         [string[]]$Medications,
         [string]$ScarImage,
         [parameter(Mandatory = $false)]
-        [ValidateSet('walking', 'standing', 'stairs')]
         [string[]]$Activities,
         [parameter()]
         # [ValidateScript({ $_.Count -eq $Activities.Count })]
@@ -199,6 +198,21 @@ function ConvertTo-EntriesFormat {
         "o2"          = if ($Entry.o2) { $Entry.o2 } else { "" }
         "bpr"         = if ($Entry.bpr) { $Entry.bpr } else { "" }
         "note"        = if ($Entry.notes) { $Entry.notes } else { "" }
+        
+        # DynamoDB GSI fields
+        "medication_taken" = if ($Medications.Keys.Count -gt 0) { ($Medications.Keys -join ",") } else { "" }
+        "max_pain_level"   = if ($Pain.Values.Count -gt 0) { 
+            # Extract highest number from pain level strings like "6-7-8"
+            $maxPain = 0
+            foreach ($level in $Pain.Values) {
+                $numbers = $level -split '[-,\s]' | Where-Object { $_ -match '^\d+$' } | ForEach-Object { [int]$_ }
+                if ($numbers) {
+                    $levelMax = ($numbers | Measure-Object -Maximum).Maximum
+                    if ($levelMax -gt $maxPain) { $maxPain = $levelMax }
+                }
+            }
+            $maxPain
+        } else { 0 }
     }
 
     # Create the full structure for entries.json
