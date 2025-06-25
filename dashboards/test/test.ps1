@@ -92,6 +92,7 @@
             New-UDElement -Id "pain_section" -Tag "div"
 
         } -OnSubmit {
+            Write-Information "Date: $MSTMMDD, Time: $MSTHHMM"
             # Handle form submission logic here
             $painLocations = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_location_*" }
             $painLevels = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_level_*" }
