@@ -124,7 +124,7 @@
                                     Add-UDElement -ParentId "activities_section" -Content {
                                         New-UDGrid -Container -Content {
                                             New-UDGrid -Item -ExtraSmallSize 5 -Content {
-                                                New-UDSelect -Id "activities_type_$entryCount" -Label "activities type"  -Type text -Placeholder "Walking, Running, etc."
+                                                New-UDTextBox -Id "activities_type_$entryCount" -Label "activities type"  -Type text -Placeholder "Walking, Running, etc."
                                             }
                                             New-UDGrid -Item -ExtraSmallSize 4 -Content {
                                                 New-UDTextbox -Id "activities_level_$entryCount"  -Label "activities length" -Type number -Placeholder "20"
