@@ -174,6 +174,13 @@
                     New-UDTextbox -Id "notes" -Label "Additional Notes" -Type text -Placeholder "Any additional information" -FullWidth
                 }
             }
+
+            # Upload an image 
+            New-UDGrid -Container -Content {
+                New-UDGrid -Item -ExtraSmallSize 12 -Content {
+                    New-UDFileUpload -Id "ImageFile" -Label "Upload Image (optional)" -Accept "image/*" -FullWidth
+                }
+            }
         } -OnSubmit {
             Import-Module -Name fusion -Force
             # Handle form submission logic here
@@ -201,6 +208,23 @@
                 Write-Error "Error saving entry: $($_.Exception.Message)"
                 Write-Error "Stack trace: $($_.ScriptStackTrace)"
                 Show-UDToast -Message "Error saving entry: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+            }
+            if ($EventData.ImageFile) {
+                $imageFile = $EventData.ImageFile
+                $imageFolderPath = "/home/data/fusion-data/img"
+                $imageExt = $imageFile.Name.Split('.')[-1]
+                $imageFileName = "$($EventData.date).$imageExt"
+                $imagePath = Join-Path $imageFolderPath $imageFileName
+                try {
+                    # Save the uploaded image to the specified path
+                    $imageFile | Save-UDFile -Path $imagePath
+                    Write-Information "Image saved to: $imagePath"
+                    Show-UDToast -Message "Image uploaded successfully!" -MessageColor Green -Duration 3000
+                }
+                catch {
+                    Write-Error "Error saving image: $($_.Exception.Message)"
+                    Show-UDToast -Message "Error uploading image: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+                }
             }
         }
     }
