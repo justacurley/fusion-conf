@@ -213,11 +213,11 @@
                 $imageFile = $EventData.ImageFile
                 $imageFolderPath = "/home/data/fusion-data/img"
                 $imageExt = $imageFile.Name.Split('.')[-1]
-                $imageFileName = "$($EventData.date).$imageExt"
+                $imageFileName = "0625.$imageExt"
                 $imagePath = Join-Path $imageFolderPath $imageFileName
                 try {
                     # Save the uploaded image to the specified path
-                    $imageFile | Save-UDFile -Path $imagePath
+                    Copy-Item $EventData.ImageFile.FileName $imagePath
                     Write-Information "Image saved to: $imagePath"
                     Show-UDToast -Message "Image uploaded successfully!" -MessageColor Green -Duration 3000
                 }
