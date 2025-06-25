@@ -159,10 +159,9 @@
             # Handle form submission logic here
             Write-Information ($EventData | ConvertTo-Json -Depth 99)
             Write-Information ($EventData.Gettype().FullName)
-            $entry = $EventData
-
+            $entry = $EventData | ConvertTo-Json -Depth 99 | ConvertFrom-Json
             # Convert to entries.json format
-            Write-Host "Converting PSCustomObject to entries.json format..."
+            Write-Host "Converting JSON to entries.json format..."
 
             # Extract basic info
             $Date = $entry.date
@@ -263,6 +262,7 @@
                     $Timestamp = $EntryStructure
                 }
             }
+
 
             # Output results
             Write-Information "`nFull Entry JSON (ready for entries.json):"
