@@ -60,8 +60,7 @@
                     # Checkbox is unchecked - hide pain section
                     Set-UDElement -Id "pain_section" -Content { }
                 }
-            }
-            
+            }           
             # Dynamic pain section container
             New-UDElement -Id "pain_section" -Tag "div"
         } -OnSubmit {
