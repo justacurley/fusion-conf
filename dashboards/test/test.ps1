@@ -90,6 +90,15 @@
             }           
             # Dynamic pain section container
             New-UDElement -Id "pain_section" -Tag "div"
+            # Making a new ud-grid for the o2 and bpr input sections
+            New-UDGrid -Container -Content {
+                New-UDGrid -Item -ExtraSmallSize 6 -Content {
+                    New-UDTextbox -Id "o2" -Label "Oxygen Saturation (%)" -Type number -Placeholder "95-100" -FullWidth
+                }
+                New-UDGrid -Item -ExtraSmallSize 6 -Content {
+                    New-UDTextbox -Id "bpr" -Label "Blood Pressure (Systolic/Diastolic)" -Type text -Placeholder "120/80" -FullWidth
+                }
+            }
 
         } -OnSubmit {
             Write-Information "Form submitted: Certainly is couldnt be as easy as $($eventData | ConvertTo-Json)"
