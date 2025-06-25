@@ -159,8 +159,45 @@
             }
         } -OnSubmit {
             # Handle form submission logic here
-            Write-Information "Form submitted: Certainly is couldnt be as easy as $($eventData | ConvertTo-Json)"
+            Write-Information "Form submitted: Certainly is couldnt be as easy as $($eventData | ConvertTo-Json -depth 99 -AsHashtable)"
             $EntryRaw = $EventData | ConvertTo-Json -Depth 99
+            <#{            
+                "bpr": "",
+                "pain_level_832": "1",
+                "date": "0624",
+                "notes": "pins and needles on right quad",
+                "activities_type_195": "Standing",
+                "pain_location_832": "rquads",
+                "activities_level_195": "5",
+                "add_pain": true,
+                "timestamp": "1900",
+                "meds": [
+                    "oxycodone - 5mg"
+                ],
+                "activities_length_1": "10",
+                "pain_level_1": "3-4",
+                "add_activitiy": true,
+                "pain_location_1": "back",
+                "o2": "",
+                "activities_type_1": "Walking"
+        }
+}             #>
+            # $painLocations = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_location_*" }
+            # $painLevels = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_level_*" }
+            # Write-Information $painEntries | ConvertTo-Json | Out-String
+            # Write-Information $painLevels | ConvertTo-Json | Out-String
+            # $painEntries = for ($i = 0; $i -lt $painLocations.Count; $i++) {
+            #     $location = $painLocations[$i].Value
+            #     $level = $painLevels[$i].Value
+            #     if ($location -and $level) {
+            #         $painEntries += @{
+            #             Location = $location
+            #             Level    = $level
+            #         }
+            #     }
+            # }            
+            # # Here you can save the painEntries to a database or file as needed
+            # Write-Information "Pain Entries: $($painEntries | ConvertTo-Json)"
         }
     }
 }
