@@ -1,0 +1,24 @@
+{
+    "MMDD": {
+        "HHMM": {
+            "Medications": {
+                "medication_name": "dosage (e.g., 500mg)"
+            },
+            "Pain": {
+                "location": {
+                    "pain_level": 0,
+                    "note": ""
+                }
+            },
+            "Activities": {
+                "activity_name": {
+                    "duration": 0,
+                    "note": ""
+                }
+            },
+            "o2": "",
+            "bpr": "",
+            "note": ""
+        }
+    }
+}

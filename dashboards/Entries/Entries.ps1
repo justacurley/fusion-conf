@@ -19,7 +19,7 @@
             New-UDTypography -Text "Medications" -Variant h6 -Style @{marginTop = "20px" }
             New-UDSelect -Id "meds" -Option {
                 try {
-                    $MedData = Get-Content -Path "/home/data/Repository/fusion-data/entries/schema.json" | ConvertFrom-Json -AsHashtable
+                    $MedData = Get-Content -Path "/home/alex/src/fusion-conf/Modules/fusion/medications_lookup.json" | ConvertFrom-Json -AsHashtable
                     $Dosages = $MedData['Medications']
                 }
                 catch {
@@ -31,7 +31,7 @@
                         })
                 }
             } -Multiple
-            # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)"
+            # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)", and another for "Note"
             New-UDCheckbox -Id "add_activitiy" -Label "Add activitiy Entry" -OnChange {
                 if ($EventData) {
                     # Checkbox is checked - show activities entry section
@@ -41,13 +41,16 @@
                                 New-UDTypography -Text "activities Entries" -Variant h6 -Style @{marginTop = "10px"; marginBottom = "10px" }
                             }                            
                             # Initial activities entry
-                            New-UDGrid -Item -ExtraSmallSize 5 -Content {
+                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
                                 New-UDTextBox -Id "activities_type_1" -Label "activities type" -Type text -Placeholder "Walking, Running, etc."
                             }
-                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
-                                New-UDTextbox -Id "activities_length_1" -Label "activities length" -Type number -Placeholder "20"
+                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
+                                New-UDTextbox -Id "activities_length_1" -Label "Duration (min)" -Type number -Placeholder "20"
                             }
-                            New-UDGrid -Item -ExtraSmallSize 3 -Content {
+                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                                New-UDTextbox -Id "activities_note_1" -Label "Note" -Type text -Placeholder "Optional note"
+                            }
+                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
                                 New-UDButton -Text "Add More" -OnClick {
                                     # Add another activities entry row
                                     $currentContent = Get-UDElement -Id "activities_section"
@@ -55,13 +58,16 @@
                                     
                                     Add-UDElement -ParentId "activities_section" -Content {
                                         New-UDGrid -Container -Content {
-                                            New-UDGrid -Item -ExtraSmallSize 5 -Content {
+                                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
                                                 New-UDTextBox -Id "activities_type_$entryCount" -Label "activities type"  -Type text -Placeholder "Walking, Running, etc."
                                             }
-                                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
-                                                New-UDTextbox -Id "activities_length_$entryCount"  -Label "activities length" -Type number -Placeholder "20"
+                                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
+                                                New-UDTextbox -Id "activities_length_$entryCount"  -Label "Duration (min)" -Type number -Placeholder "20"
                                             }
-                                            New-UDGrid -Item -ExtraSmallSize 3 -Content {
+                                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                                                New-UDTextbox -Id "activities_note_$entryCount" -Label "Note" -Type text -Placeholder "Optional note"
+                                            }
+                                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
                                                 New-UDButton -Text "Remove" -Color secondary -OnClick {
                                                     # Remove this entry
                                                     Remove-UDElement -Id "activities_entry_$entryCount"
@@ -99,13 +105,16 @@
                                 New-UDTypography -Text "Pain Entries" -Variant h6 -Style @{marginTop = "10px"; marginBottom = "10px" }
                             }                            
                             # Initial pain entry
-                            New-UDGrid -Item -ExtraSmallSize 5 -Content {
+                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
                                 New-UDSelect -Id "pain_location_1" -Label "Pain Location" -Option $SelectOptions
                             }
-                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
-                                New-UDTextbox -Id "pain_level_1" -Label "Pain Level (0-10)" -Type text -Placeholder "3-4"
+                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
+                                New-UDTextbox -Id "pain_level_1" -Label "Pain Level (0-10)" -Type number -Placeholder "5"
                             }
-                            New-UDGrid -Item -ExtraSmallSize 3 -Content {
+                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                                New-UDTextbox -Id "pain_note_1" -Label "Note" -Type text -Placeholder "Optional note"
+                            }
+                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
                                 New-UDButton -Text "Add More" -OnClick {
                                     # Add another pain entry row
                                     $currentContent = Get-UDElement -Id "pain_section"
@@ -113,13 +122,16 @@
                                     
                                     Add-UDElement -ParentId "pain_section" -Content {
                                         New-UDGrid -Container -Content {
-                                            New-UDGrid -Item -ExtraSmallSize 5 -Content {
+                                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
                                                 New-UDSelect -Id "pain_location_$entryCount" -Label "Pain Location" -Option $SelectOptions
                                             }
-                                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
-                                                New-UDTextbox -Id "pain_level_$entryCount" -Label "Pain Level (0-10)" -Type text -Placeholder "0-10"
+                                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
+                                                New-UDTextbox -Id "pain_level_$entryCount" -Label "Pain Level (0-10)" -Type number -Placeholder "5"
                                             }
-                                            New-UDGrid -Item -ExtraSmallSize 3 -Content {
+                                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                                                New-UDTextbox -Id "pain_note_$entryCount" -Label "Note" -Type text -Placeholder "Optional note"
+                                            }
+                                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
                                                 New-UDButton -Text "Remove" -Color secondary -OnClick {
                                                     # Remove this entry
                                                     Remove-UDElement -Id "pain_entry_$entryCount"

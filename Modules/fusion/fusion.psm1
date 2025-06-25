@@ -12,14 +12,14 @@ function ConvertTo-EntriesFormat {
     $CurrentInformationAction = $InformationPreference
     $InformationPreference = 'Continue'
     
-    # Convert to entries.json format
-    Write-Host "Converting entry to entries.json format..."
+    # Convert to entries.json format using new schema
+    Write-Host "Converting entry to entries.json format with new schema..."
 
     # Extract basic info
     $Date = $Entry.date
     $Timestamp = $Entry.timestamp
 
-    # Build Medications object
+    # Build Medications object - New Schema: { "medication_name": "dosage" }
     $Medications = @{}
     if ($Entry.meds -and $Entry.meds.Count -gt 0) {
         foreach ($med in $Entry.meds) {
@@ -28,21 +28,13 @@ function ConvertTo-EntriesFormat {
                 $medName = $matches[1].Trim()
                 $dosage = $matches[2].Trim()
                 
-                # Handle multiple doses of same medication
-                if ($Medications.ContainsKey($medName)) {
-                    # Convert to array if not already
-                    if ($Medications[$medName] -is [string]) {
-                        $Medications[$medName] = @($Medications[$medName])
-                    }
-                    $Medications[$medName] += $dosage
-                } else {
-                    $Medications[$medName] = $dosage
-                }
+                # New schema format: medication_name directly maps to dosage string
+                $Medications[$medName] = $dosage
             }
         }
     }
 
-    # Build Pain object
+    # Build Pain object - New Schema: { "location": { "pain_level": 0, "note": "" } }
     $Pain = @{}
     # Get all pain location/level pairs
     $painProperties = $Entry.PSObject.Properties | Where-Object { $_.Name -like "pain_location_*" }
@@ -50,15 +42,25 @@ function ConvertTo-EntriesFormat {
         $id = $painProp.Name -replace "pain_location_", ""
         $location = $painProp.Value
         $levelProp = "pain_level_$id"
+        $noteProp = "pain_note_$id"
+        
         if ($Entry.PSObject.Properties[$levelProp]) {
             $level = $Entry.PSObject.Properties[$levelProp].Value
+            $note = if ($Entry.PSObject.Properties[$noteProp]) { 
+                $Entry.PSObject.Properties[$noteProp].Value 
+            } else { "" }
+            
             if ($location -and $level) {
-                $Pain[$location] = $level
+                # New schema format: nested object with pain_level and note
+                $Pain[$location] = @{
+                    "pain_level" = [int]$level
+                    "note" = $note
+                }
             }
         }
     }
 
-    # Build Activities object
+    # Build Activities object - New Schema: { "activity_name": { "duration": 0, "note": "" } }
     $Activities = @{}
     Write-Information "Looking for activity properties..."
 
@@ -70,12 +72,14 @@ function ConvertTo-EntriesFormat {
         $id = $activityProp.Name -replace "activities_type_", ""
         $activityType = $activityProp.Value
         $lengthProp = "activities_length_$id"
+        $noteProp = "activities_note_$id"
         
         Write-Information "Processing activity ID $id, Type: $activityType"
         Write-Information "Looking for $lengthProp"
         
-        # Check for corresponding length property
+        # Check for corresponding length and note properties
         $duration = $null
+        $note = ""
         if ($Entry.PSObject.Properties[$lengthProp]) {
             $duration = [int]$Entry.PSObject.Properties[$lengthProp].Value
             Write-Information "Found length property with value: $duration"
@@ -86,11 +90,17 @@ function ConvertTo-EntriesFormat {
             Write-Information "Available properties with ID $id : $($availableProps -join ', ')"
         }
         
+        if ($Entry.PSObject.Properties[$noteProp]) {
+            $note = $Entry.PSObject.Properties[$noteProp].Value
+        }
+        
         if ($activityType -and $duration) {
-            # Convert activity type to lowercase key
-            $activityKey = $activityType.ToLower()
-            $Activities[$activityKey] = $duration
-            Write-Information "Added activity: $activityKey = $duration"
+            # New schema format: nested object with duration and note
+            $Activities[$activityType] = @{
+                "duration" = $duration
+                "note" = $note
+            }
+            Write-Information "Added activity: $activityType = {duration: $duration, note: '$note'}"
         } else {
             Write-Information "Skipping activity - Type: '$activityType', Duration: '$duration'"
         }
@@ -105,16 +115,16 @@ function ConvertTo-EntriesFormat {
         "bpr"         = if ($Entry.bpr) { $Entry.bpr } else { "" }
         "note"        = if ($Entry.notes) { $Entry.notes } else { "" }
         
-        # DynamoDB GSI fields
+        # DynamoDB GSI fields - Updated for new schema
         "medication_taken" = if ($Medications.Keys.Count -gt 0) { ($Medications.Keys -join ",") } else { "" }
-        "max_pain_level"   = if ($Pain.Values.Count -gt 0) { 
-            # Extract highest number from pain level strings like "6-7-8"
+        "max_pain_level"   = if ($Pain.Keys.Count -gt 0) { 
+            # Extract highest pain level from nested structure
             $maxPain = 0
-            foreach ($level in $Pain.Values) {
-                $numbers = $level -split '[-,\s]' | Where-Object { $_ -match '^\d+$' } | ForEach-Object { [int]$_ }
-                if ($numbers) {
-                    $levelMax = ($numbers | Measure-Object -Maximum).Maximum
-                    if ($levelMax -gt $maxPain) { $maxPain = $levelMax }
+            foreach ($location in $Pain.Keys) {
+                $painData = $Pain[$location]
+                if ($painData -and $painData.ContainsKey("pain_level")) {
+                    $level = [int]$painData["pain_level"]
+                    if ($level -gt $maxPain) { $maxPain = $level }
                 }
             }
             $maxPain
@@ -348,7 +358,7 @@ function Sync-EntriesToDynamoDB {
                     $entry = $entries[$date][$timestamp]
                     $processedItems++
                     
-                    # Calculate GSI fields if they don't exist
+                    # Calculate GSI fields if they don't exist - Updated for new schema
                     if (-not $entry.ContainsKey("medication_taken")) {
                         $entry["medication_taken"] = if ($entry.Medications -and $entry.Medications.Count -gt 0) { 
                             ($entry.Medications.Keys -join ",") 
@@ -358,11 +368,11 @@ function Sync-EntriesToDynamoDB {
                     if (-not $entry.ContainsKey("max_pain_level")) {
                         $maxPain = 0
                         if ($entry.Pain -and $entry.Pain.Count -gt 0) {
-                            foreach ($level in $entry.Pain.Values) {
-                                $numbers = $level -split '[-,\s]' | Where-Object { $_ -match '^\d+$' } | ForEach-Object { [int]$_ }
-                                if ($numbers) {
-                                    $levelMax = ($numbers | Measure-Object -Maximum).Maximum
-                                    if ($levelMax -gt $maxPain) { $maxPain = $levelMax }
+                            foreach ($location in $entry.Pain.Keys) {
+                                $painData = $entry.Pain[$location]
+                                if ($painData -and $painData.ContainsKey("pain_level")) {
+                                    $level = [int]$painData["pain_level"]
+                                    if ($level -gt $maxPain) { $maxPain = $level }
                                 }
                             }
                         }
@@ -468,18 +478,18 @@ function New-EntryObject {
     
     process {
         try {
-            # Calculate GSI fields
+            # Calculate GSI fields - Updated for new schema
             $medicationTaken = if ($Medications.Keys.Count -gt 0) { 
                 ($Medications.Keys -join ",") 
             } else { "" }
             
             $maxPainLevel = 0
-            if ($Pain.Values.Count -gt 0) {
-                foreach ($level in $Pain.Values) {
-                    $numbers = $level -split '[-,\s]' | Where-Object { $_ -match '^\d+$' } | ForEach-Object { [int]$_ }
-                    if ($numbers) {
-                        $levelMax = ($numbers | Measure-Object -Maximum).Maximum
-                        if ($levelMax -gt $maxPainLevel) { $maxPainLevel = $levelMax }
+            if ($Pain.Keys.Count -gt 0) {
+                foreach ($location in $Pain.Keys) {
+                    $painData = $Pain[$location]
+                    if ($painData -and $painData.ContainsKey("pain_level")) {
+                        $level = [int]$painData["pain_level"]
+                        if ($level -gt $maxPainLevel) { $maxPainLevel = $level }
                     }
                 }
             }
