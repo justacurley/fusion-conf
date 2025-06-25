@@ -99,6 +99,12 @@
                     New-UDTextbox -Id "bpr" -Label "Blood Pressure (Systolic/Diastolic)" -Type text -Placeholder "120/80" -FullWidth
                 }
             }
+            # Add a text field for additional notes
+            New-UDGrid -Container -Content {
+                New-UDGrid -Item -ExtraSmallSize 12 -Content {
+                    New-UDTextbox -Id "notes" -Label "Additional Notes" -Type text -Placeholder "Any additional information" -FullWidth
+                }
+            }
 
         } -OnSubmit {
             Write-Information "Form submitted: Certainly is couldnt be as easy as $($eventData | ConvertTo-Json)"
