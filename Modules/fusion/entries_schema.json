@@ -6,7 +6,7 @@
             },
             "Pain": {
                 "location": {
-                    "pain_level": 0,
+                    "pain_level": 0.0,
                     "note": ""
                 }
             },
@@ -18,7 +18,11 @@
             },
             "o2": "",
             "bpr": "",
-            "note": ""
-        }
+            "note": "",
+            "medication_taken": ""
+        },
+        "max_pain_level": 0.0,
+        "Sleep": "HH:MM",
+        "ScarImage": "./path/to/image.png"
     }
 }

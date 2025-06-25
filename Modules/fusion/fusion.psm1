@@ -1,6 +1,88 @@
 $global:EntriesPath =  "/home/data/fusion-data/entries/entries.json"
 
-
+function Add-Entry {
+    [CmdletBinding()]
+    param (
+        [string]$Date = (Get-Date -f "MMdd"),
+        [string]$Time = (Get-Date -f "HHmm"),
+        [parameter()]
+        [ValidateSet("tylenol1", "dilaudid4", "valium5", "vitaminD5", "lexapro2", "lexapro1", "journavx", "oxycodone")]
+        [string[]]$Medications,
+        [string]$ScarImage,
+        [parameter(Mandatory = $false)]
+        [ValidateSet('walking', 'standing', 'stairs')]
+        [string[]]$Activities,
+        [parameter()]
+        # [ValidateScript({ $_.Count -eq $Activities.Count })]
+        [int[]]$ActivitiesDuration,
+        [string[]]$PainLocation,
+        [string[]]$PainLevel,
+        [string]$o2,
+        [string]$bpr,
+        [string]$Note,
+        [string]$Sleep
+    )    
+    begin {
+        # Do some param validation we cant do in ValidateScript
+        if (($Activities -and $ActivitiesDuration) -and ($Activities.Count -ne $ActivitiesDuration.Count)) {
+            throw "Activities Count ne ActivitiesDuration $Activities : $($ActivitiesDuration -join ",")"
+        }
+        if (($PainLocation -and $PainLevel) -and ($PainLocation.Count -ne $PainLevel.Count)) {
+            write-host $PainLevel
+            throw "PainLocation Count ne PainLevel $PainLocation : $($PainLevel -join ",")"
+        }
+    }
+    end {
+        $Schema = Get-Content -Path $SchemaPath | ConvertFrom-Json -AsHashtable
+        $Entries = Get-Content -Path $Entriespath | ConvertFrom-Json -AsHashtable
+        # Add Date and Time keys
+        if ($Date -notin $Entries.keys) {
+            $Entries.add($Date,@{})
+        }
+        if ($Time -notin $Entries[$Date].keys) {
+            $Entries[$Date].add($Time,@{})           
+        }
+        $Entries[$Date][$Time]=$Schema["EmptyEntry"]
+        $CurrentEntry = $Entries[$Date][$Time]
+        # Add medications
+        $Medications.ForEach({
+                $MedName = ($_ -replace '\d', '')
+                $CurrentEntry["Medications"][$MedName] = $schema["Medications"][$_]
+            })
+        # Add activities
+        $AllActivities = @{}
+        for ($i = 0; $i -lt $Activities.Count; $i++) {
+            $AllActivities.Add($Activities[$i], $ActivitiesDuration[$i])
+        }
+        $CurrentEntry["Activities"] = $AllActivities
+        # Add pain
+        $AllPain = @{}
+        for ($i = 0; $i -lt $PainLocation.Count; $i++) {
+            $AllPain.Add($PainLocation[$i], $PainLevel[$i])
+        }
+        $CurrentEntry["Pain"] = $AllPain
+        # Add o2, bpr, notes
+        $CurrentEntry["o2"] = $o2
+        $CurrentEntry["bpr"] = $bpr
+        $CurrentEntry["note"] = $Note
+        if ($Sleep -and ('Sleep' -notin $Entries[$Date].keys)) {
+            $Entries[$Date]['Sleep'] = $Sleep
+        }
+        if ($ScarImage -and ('ScarImage' -notin $Entries[$Date].keys)) {
+            $Entries[$Date]['ScarImage'] = $ScarImage
+        }
+        
+        $Entries[$Date][$Time] = $CurrentEntry
+        
+        # Update the daily max pain level
+        Update-DailyMaxPainLevel -Entries $Entries -Date $Date
+        
+        Out-File $EntriesPath -InputObject ($Entries | convertto-json -depth 99)
+    }
+}
+Set-Alias -Name ae -Value Add-Entry
+Export-ModuleMember -Function Add-Entry -Alias ae
+# Add-Entry -Time 1300 -Medications dilaudid4 -PainLocation back -PainLevel 5-6 -o2 90 -bpr 120/80 -Note "short walk this morning, didn't increase pain"
 
 function ConvertTo-EntriesFormat {
     param(
@@ -8,18 +90,14 @@ function ConvertTo-EntriesFormat {
         [pscustomobject]$Entry
     )
     
-    # Save and set InformationAction
-    $CurrentInformationAction = $InformationPreference
-    $InformationPreference = 'Continue'
-    
-    # Convert to entries.json format using new schema
-    Write-Host "Converting entry to entries.json format with new schema..."
+    # Convert to entries.json format
+    Write-Host "Converting entry to entries.json format..."
 
     # Extract basic info
     $Date = $Entry.date
     $Timestamp = $Entry.timestamp
 
-    # Build Medications object - New Schema: { "medication_name": "dosage" }
+    # Build Medications object
     $Medications = @{}
     if ($Entry.meds -and $Entry.meds.Count -gt 0) {
         foreach ($med in $Entry.meds) {
@@ -28,13 +106,21 @@ function ConvertTo-EntriesFormat {
                 $medName = $matches[1].Trim()
                 $dosage = $matches[2].Trim()
                 
-                # New schema format: medication_name directly maps to dosage string
-                $Medications[$medName] = $dosage
+                # Handle multiple doses of same medication
+                if ($Medications.ContainsKey($medName)) {
+                    # Convert to array if not already
+                    if ($Medications[$medName] -is [string]) {
+                        $Medications[$medName] = @($Medications[$medName])
+                    }
+                    $Medications[$medName] += $dosage
+                } else {
+                    $Medications[$medName] = $dosage
+                }
             }
         }
     }
 
-    # Build Pain object - New Schema: { "location": { "pain_level": 0, "note": "" } }
+    # Build Pain object - New Schema: { "location": { "pain_level": 0.0, "note": "" } }
     $Pain = @{}
     # Get all pain location/level pairs
     $painProperties = $Entry.PSObject.Properties | Where-Object { $_.Name -like "pain_location_*" }
@@ -51,9 +137,9 @@ function ConvertTo-EntriesFormat {
             } else { "" }
             
             if ($location -and $level) {
-                # New schema format: nested object with pain_level and note
+                # New schema format: nested object with pain_level as decimal number and note
                 $Pain[$location] = @{
-                    "pain_level" = [int]$level
+                    "pain_level" = [double]$level  # Convert to double to handle decimals like 5.5
                     "note" = $note
                 }
             }
@@ -117,18 +203,6 @@ function ConvertTo-EntriesFormat {
         
         # DynamoDB GSI fields - Updated for new schema
         "medication_taken" = if ($Medications.Keys.Count -gt 0) { ($Medications.Keys -join ",") } else { "" }
-        "max_pain_level"   = if ($Pain.Keys.Count -gt 0) { 
-            # Extract highest pain level from nested structure
-            $maxPain = 0
-            foreach ($location in $Pain.Keys) {
-                $painData = $Pain[$location]
-                if ($painData -and $painData.ContainsKey("pain_level")) {
-                    $level = [int]$painData["pain_level"]
-                    if ($level -gt $maxPain) { $maxPain = $level }
-                }
-            }
-            $maxPain
-        } else { 0 }
     }
 
     # Create the full structure for entries.json
@@ -139,19 +213,56 @@ function ConvertTo-EntriesFormat {
     }
 
     # Return the result
-    $Result = @{
+    return @{
         FullEntry = $FullEntry
         EntryStructure = $EntryStructure
         Date = $Date
         Timestamp = $Timestamp
     }
-    
-    # Restore InformationAction
-    $InformationPreference = $CurrentInformationAction
-    
-    return $Result
 }
 Export-ModuleMember -Function ConvertTo-EntriesFormat
+
+function Update-DailyMaxPainLevel {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [hashtable]$Entries,
+        
+        [Parameter(Mandatory = $true)]
+        [string]$Date
+    )
+    
+    # Calculate the maximum pain level for all timestamps in the given date
+    $maxPainForDay = 0.0
+    
+    if ($Entries.ContainsKey($Date)) {
+        foreach ($timestamp in $Entries[$Date].Keys) {
+            # Skip non-timestamp entries like "Sleep", "ScarImage"
+            if ($timestamp -match '^\d{4}$') {
+                $entry = $Entries[$Date][$timestamp]
+                if ($entry.ContainsKey("Pain") -and $entry.Pain) {
+                    foreach ($location in $entry.Pain.Keys) {
+                        $painData = $entry.Pain[$location]
+                        if ($painData -and $painData.ContainsKey("pain_level")) {
+                            $level = [double]$painData["pain_level"]
+                            if ($level -gt $maxPainForDay) { 
+                                $maxPainForDay = $level 
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
+    # Set the daily max pain level at the date level
+    $Entries[$Date]["max_pain_level"] = $maxPainForDay
+    
+    Write-Information "Updated daily max pain level for $Date : $maxPainForDay"
+    return $maxPainForDay
+}
+
+Export-ModuleMember -Function Update-DailyMaxPainLevel
 
 function Save-ConvertedEntry {
     [CmdletBinding()]
@@ -160,382 +271,41 @@ function Save-ConvertedEntry {
         [hashtable]$ConvertedEntry,
         
         [Parameter(Mandatory = $false)]
-        [string]$EntriesFilePath = $global:EntriesPath
+        [string]$EntriesPath = $global:EntriesPath
     )
     
-    begin {
-        # Save and set InformationAction
-        $CurrentInformationAction = $InformationPreference
-        $InformationPreference = 'Continue'
-        
-        Write-Information "Starting Save-ConvertedEntry"
-        
-        # Validate the ConvertedEntry structure
-        if (-not $ConvertedEntry.ContainsKey("Date") -or 
-            -not $ConvertedEntry.ContainsKey("Timestamp") -or 
-            -not $ConvertedEntry.ContainsKey("EntryStructure")) {
-            throw "ConvertedEntry must contain Date, Timestamp, and EntryStructure keys"
-        }
-        
-        $Date = $ConvertedEntry.Date
-        $Timestamp = $ConvertedEntry.Timestamp
-        $EntryData = $ConvertedEntry.EntryStructure
-        
-        Write-Information "Processing entry for Date: $Date, Timestamp: $Timestamp"
+    Write-Information "Starting Save-ConvertedEntry"
+    
+    # Load existing entries
+    $Entries = @{}
+    if (Test-Path $EntriesPath) {
+        $Entries = Get-Content -Path $EntriesPath | ConvertFrom-Json -AsHashtable
     }
     
-    process {
-        try {
-            # Load existing entries or create new structure
-            $Entries = @{}
-            if (Test-Path $EntriesFilePath) {
-                $Entries = Get-Content $EntriesFilePath | ConvertFrom-Json -AsHashtable
-                Write-Information "Loaded existing entries file with $($Entries.Keys.Count) dates"
-            } else {
-                Write-Information "Creating new entries file"
-                # Ensure directory exists
-                $Directory = Split-Path $EntriesFilePath -Parent
-                if (-not (Test-Path $Directory)) {
-                    New-Item -ItemType Directory -Path $Directory -Force
-                    Write-Information "Created directory: $Directory"
-                }
-            }
-            
-            # Auto-determine action based on what exists
-            if (-not $Entries.ContainsKey($Date)) {
-                # Date doesn't exist - add entire date entry
-                $Entries[$Date] = @{
-                    $Timestamp = $EntryData
-                }
-                Write-Information "Added new date entry for: $Date with timestamp: $Timestamp"
-            } elseif (-not $Entries[$Date].ContainsKey($Timestamp)) {
-                # Date exists but timestamp doesn't - add timestamp entry
-                $Entries[$Date][$Timestamp] = $EntryData
-                Write-Information "Added new timestamp entry for existing date $Date at timestamp: $Timestamp"
-            } else {
-                # Both date and timestamp exist - overwrite
-                $Entries[$Date][$Timestamp] = $EntryData
-                Write-Information "Overwrote existing entry for $Date at timestamp: $Timestamp"
-            }
-            
-            # Create backup before saving
-            if (Test-Path $EntriesFilePath) {
-                $BackupTimestamp = Get-Date -Format "yyyyMMdd_HHmmss"
-                $BackupPath = $EntriesFilePath -replace '\.json$', "_backup_$BackupTimestamp.json"
-                Copy-Item -Path $EntriesFilePath -Destination $BackupPath -Force
-                Write-Information "Created backup: $BackupPath"
-            }
-            
-            # Save back to file
-            $JsonOutput = $Entries | ConvertTo-Json -Depth 10
-            $JsonOutput | Out-File $EntriesFilePath -Encoding UTF8
-            Write-Information "Successfully saved entries to: $EntriesFilePath"
-            
-            # Restore InformationAction
-            $InformationPreference = $CurrentInformationAction
-            
-            return $true
-            
-        } catch {
-            Write-Error "Error saving entry: $($_.Exception.Message)"
-            Write-Error "Stack trace: $($_.ScriptStackTrace)"
-            
-            # Restore InformationAction even on error
-            $InformationPreference = $CurrentInformationAction
-            
-            return $false
-        }
+    # Extract date and timestamp from the converted entry
+    $Date = $ConvertedEntry.Date
+    $Timestamp = $ConvertedEntry.Timestamp
+    $EntryStructure = $ConvertedEntry.EntryStructure
+    
+    Write-Information "Saving entry for Date: $Date, Timestamp: $Timestamp"
+    
+    # Add to entries structure
+    if (-not $Entries.ContainsKey($Date)) {
+        $Entries[$Date] = @{}
     }
+    
+    $Entries[$Date][$Timestamp] = $EntryStructure
+    
+    # Update the daily max pain level
+    Write-Information "Updating daily max pain level for $Date"
+    Update-DailyMaxPainLevel -Entries $Entries -Date $Date
+    
+    # Save the entries
+    Write-Information "Saving entries to $EntriesPath"
+    $Entries | ConvertTo-Json -Depth 99 | Out-File $EntriesPath -Encoding UTF8
+    
+    Write-Information "Entry saved successfully"
+    return $true
 }
+
 Export-ModuleMember -Function Save-ConvertedEntry
-
-function Sync-EntriesToDynamoDB {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory = $false)]
-        [string]$EntriesFilePath = $global:EntriesPath,
-        
-        [Parameter(Mandatory = $false)]
-        [string]$TableName = "fusion-health-entries",
-        
-        [Parameter(Mandatory = $false)]
-        [string]$Region = "us-west-2",
-        
-        [Parameter(Mandatory = $false)]
-        [switch]$WhatIf
-    )
-    
-    begin {
-        # Save and set InformationAction
-        $CurrentInformationAction = $InformationPreference
-        $InformationPreference = 'Continue'
-        
-        Write-Information "Starting Sync-EntriesToDynamoDB"
-        Write-Information "Table: $TableName, Region: $Region"
-        Write-Information "Source file: $EntriesFilePath"
-        
-        if ($WhatIf) {
-            Write-Information "WhatIf mode - no actual changes will be made"
-        }
-        
-        # Verify entries file exists
-        if (-not (Test-Path $EntriesFilePath)) {
-            throw "Entries file not found: $EntriesFilePath"
-        }
-        
-        # Check if AWS CLI is available
-        try {
-            $awsVersion = aws --version 2>$null
-            Write-Information "AWS CLI detected: $awsVersion"
-        } catch {
-            throw "AWS CLI not found. Please install AWS CLI and configure credentials."
-        }
-    }
-    
-    process {
-        try {
-            # Load entries from JSON file
-            $entries = Get-Content $EntriesFilePath | ConvertFrom-Json -AsHashtable
-            Write-Information "Loaded entries file with $($entries.Keys.Count) dates"
-            
-            $totalItems = 0
-            $processedItems = 0
-            
-            # Count total items for progress tracking
-            foreach ($date in $entries.Keys) {
-                $timestampKeys = $entries[$date].Keys | Where-Object { $_ -match '^\d{4}$' }
-                $totalItems += $timestampKeys.Count
-            }
-            Write-Information "Total items to process: $totalItems"
-            
-            if (-not $WhatIf) {
-                # Clear existing table data (scan and delete all items)
-                Write-Information "Clearing existing table data..."
-                $scanCommand = "aws dynamodb scan --table-name $TableName --region $Region --select ALL_ATTRIBUTES --output json"
-                $existingItems = Invoke-Expression $scanCommand | ConvertFrom-Json
-                
-                if ($existingItems.Items -and $existingItems.Items.Count -gt 0) {
-                    Write-Information "Found $($existingItems.Items.Count) existing items to delete"
-                    
-                    # Delete existing items in batches
-                    $batchSize = 25
-                    for ($i = 0; $i -lt $existingItems.Items.Count; $i += $batchSize) {
-                        $batch = $existingItems.Items[$i..([Math]::Min($i + $batchSize - 1, $existingItems.Items.Count - 1))]
-                        
-                        $deleteRequests = @()
-                        foreach ($item in $batch) {
-                            $deleteRequests += @{
-                                DeleteRequest = @{
-                                    Key = @{
-                                        date = $item.date
-                                        timestamp = $item.timestamp
-                                    }
-                                }
-                            }
-                        }
-                        
-                        $batchDeleteRequest = @{
-                            RequestItems = @{
-                                $TableName = $deleteRequests
-                            }
-                        } | ConvertTo-Json -Depth 10 -Compress
-                        
-                        $deleteCommand = "aws dynamodb batch-write-item --region $Region --request-items '$batchDeleteRequest'"
-                        Invoke-Expression $deleteCommand | Out-Null
-                        Write-Information "Deleted batch of $($batch.Count) items"
-                    }
-                }
-            }
-            
-            # Process each date and timestamp
-            foreach ($date in $entries.Keys) {
-                Write-Information "Processing date: $date"
-                
-                # Skip non-timestamp keys like "Sleep", "ScarImage"
-                $timestampKeys = $entries[$date].Keys | Where-Object { $_ -match '^\d{4}$' }
-                
-                foreach ($timestamp in $timestampKeys) {
-                    $entry = $entries[$date][$timestamp]
-                    $processedItems++
-                    
-                    # Calculate GSI fields if they don't exist - Updated for new schema
-                    if (-not $entry.ContainsKey("medication_taken")) {
-                        $entry["medication_taken"] = if ($entry.Medications -and $entry.Medications.Count -gt 0) { 
-                            ($entry.Medications.Keys -join ",") 
-                        } else { "" }
-                    }
-                    
-                    if (-not $entry.ContainsKey("max_pain_level")) {
-                        $maxPain = 0
-                        if ($entry.Pain -and $entry.Pain.Count -gt 0) {
-                            foreach ($location in $entry.Pain.Keys) {
-                                $painData = $entry.Pain[$location]
-                                if ($painData -and $painData.ContainsKey("pain_level")) {
-                                    $level = [int]$painData["pain_level"]
-                                    if ($level -gt $maxPain) { $maxPain = $level }
-                                }
-                            }
-                        }
-                        $entry["max_pain_level"] = $maxPain
-                    }
-                    
-                    # Build DynamoDB item
-                    $dynamoItem = @{
-                        date = @{ S = $date }
-                        timestamp = @{ S = $timestamp }
-                        medication_taken = @{ S = $entry.medication_taken }
-                        max_pain_level = @{ N = $entry.max_pain_level.ToString() }
-                        medications = @{ S = ($entry.Medications | ConvertTo-Json -Compress) }
-                        pain = @{ S = ($entry.Pain | ConvertTo-Json -Compress) }
-                        activities = @{ S = ($entry.Activities | ConvertTo-Json -Compress) }
-                        o2 = @{ S = $entry.o2 }
-                        bpr = @{ S = $entry.bpr }
-                        note = @{ S = $entry.note }
-                    }
-                    
-                    if ($WhatIf) {
-                        Write-Information "Would insert: $date[$timestamp] - Meds: '$($entry.medication_taken)', Max Pain: $($entry.max_pain_level)"
-                    } else {
-                        # Insert item into DynamoDB
-                        $itemJson = $dynamoItem | ConvertTo-Json -Depth 10 -Compress
-                        $putCommand = "aws dynamodb put-item --table-name $TableName --region $Region --item '$itemJson'"
-                        
-                        try {
-                            Invoke-Expression $putCommand | Out-Null
-                            Write-Information "[$processedItems/$totalItems] Inserted: $date[$timestamp]"
-                        } catch {
-                            Write-Error "Failed to insert $date[$timestamp]: $($_.Exception.Message)"
-                        }
-                    }
-                }
-            }
-            
-            Write-Information "Sync completed. Processed $processedItems items."
-            
-            # Restore InformationAction
-            $InformationPreference = $CurrentInformationAction
-            
-            return $true
-            
-        } catch {
-            Write-Error "Error syncing to DynamoDB: $($_.Exception.Message)"
-            Write-Error "Stack trace: $($_.ScriptStackTrace)"
-            
-            # Restore InformationAction even on error
-            $InformationPreference = $CurrentInformationAction
-            
-            return $false
-        }
-    }
-}
-Export-ModuleMember -Function Sync-EntriesToDynamoDB
-
-function New-EntryObject {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory = $true)]
-        [string]$Date,
-        
-        [Parameter(Mandatory = $true)]
-        [string]$Timestamp,
-        
-        [Parameter(Mandatory = $false)]
-        [hashtable]$Medications = @{},
-        
-        [Parameter(Mandatory = $false)]
-        [hashtable]$Pain = @{},
-        
-        [Parameter(Mandatory = $false)]
-        [hashtable]$Activities = @{},
-        
-        [Parameter(Mandatory = $false)]
-        [string]$O2 = "",
-        
-        [Parameter(Mandatory = $false)]
-        [string]$BPR = "",
-        
-        [Parameter(Mandatory = $false)]
-        [string]$Note = ""
-    )
-    
-    begin {
-        # Save and set InformationAction
-        $CurrentInformationAction = $InformationPreference
-        $InformationPreference = 'Continue'
-        
-        Write-Information "Creating new entry object for $Date at $Timestamp"
-        
-        # Validate date format (MMDD)
-        if ($Date -notmatch '^\d{4}$') {
-            throw "Date must be in MMDD format (e.g., '0624')"
-        }
-        
-        # Validate timestamp format (HHMM)
-        if ($Timestamp -notmatch '^\d{4}$') {
-            throw "Timestamp must be in HHMM format (e.g., '1430')"
-        }
-    }
-    
-    process {
-        try {
-            # Calculate GSI fields - Updated for new schema
-            $medicationTaken = if ($Medications.Keys.Count -gt 0) { 
-                ($Medications.Keys -join ",") 
-            } else { "" }
-            
-            $maxPainLevel = 0
-            if ($Pain.Keys.Count -gt 0) {
-                foreach ($location in $Pain.Keys) {
-                    $painData = $Pain[$location]
-                    if ($painData -and $painData.ContainsKey("pain_level")) {
-                        $level = [int]$painData["pain_level"]
-                        if ($level -gt $maxPainLevel) { $maxPainLevel = $level }
-                    }
-                }
-            }
-            
-            # Create the entry structure with DynamoDB GSI fields
-            $EntryStructure = @{
-                "Medications" = $Medications
-                "Pain" = $Pain
-                "Activities" = $Activities
-                "o2" = $O2
-                "bpr" = $BPR
-                "note" = $Note
-                "medication_taken" = $medicationTaken
-                "max_pain_level" = $maxPainLevel
-            }
-            
-            # Create the full structure for entries.json
-            $FullEntry = @{
-                $Date = @{
-                    $Timestamp = $EntryStructure
-                }
-            }
-            
-            # Create the result object compatible with Save-ConvertedEntry
-            $Result = @{
-                FullEntry = $FullEntry
-                EntryStructure = $EntryStructure
-                Date = $Date
-                Timestamp = $Timestamp
-            }
-            
-            Write-Information "Created entry object - Meds: '$medicationTaken', Max Pain: $maxPainLevel"
-            
-            # Restore InformationAction
-            $InformationPreference = $CurrentInformationAction
-            
-            return $Result
-            
-        } catch {
-            Write-Error "Error creating entry object: $($_.Exception.Message)"
-            
-            # Restore InformationAction even on error
-            $InformationPreference = $CurrentInformationAction
-            
-            throw
-        }
-    }
-}
-Export-ModuleMember -Function New-EntryObject
