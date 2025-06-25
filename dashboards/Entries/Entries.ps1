@@ -99,12 +99,6 @@
                     New-UDTextbox -Id "bpr" -Label "Blood Pressure (Systolic/Diastolic)" -Type text -Placeholder "120/80" -FullWidth
                 }
             }
-            # Add a text field for additional notes
-            New-UDGrid -Container -Content {
-                New-UDGrid -Item -ExtraSmallSize 12 -Content {
-                    New-UDTextbox -Id "notes" -Label "Additional Notes" -Type text -Placeholder "Any additional information" -FullWidth
-                }
-            }
             # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)"
             New-UDGrid -Container -Content {
                 New-UDGrid -Item -ExtraSmallSize 6 -Content {
@@ -114,7 +108,13 @@
                     New-UDTextbox -Id "duration" -Label "Duration (minutes)" -Type number -Placeholder "e.g., 30" -FullWidth
                 }
             }
-
+            # Add a text field for additional notes
+            New-UDGrid -Container -Content {
+                New-UDGrid -Item -ExtraSmallSize 12 -Content {
+                    New-UDTextbox -Id "notes" -Label "Additional Notes" -Type text -Placeholder "Any additional information" -FullWidth
+                }
+            }
+            
         } -OnSubmit {
             # Handle form submission logic here
             Write-Information "Form submitted: Certainly is couldnt be as easy as $($eventData | ConvertTo-Json)"
