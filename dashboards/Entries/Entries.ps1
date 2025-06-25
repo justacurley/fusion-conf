@@ -100,12 +100,18 @@
                 }
             }
             # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)"
-            New-UDGrid -Container -Content {
-                New-UDGrid -Item -ExtraSmallSize 6 -Content {
-                    New-UDTextbox -Id "activity" -Label "Activity" -Type text -Placeholder "e.g., Walking, Running" -FullWidth
-                }
-                New-UDGrid -Item -ExtraSmallSize 6 -Content {
-                    New-UDTextbox -Id "duration" -Label "Duration (minutes)" -Type number -Placeholder "e.g., 30" -FullWidth
+            # Add the ability to add multiple activities
+            New-UDTypography -Text "Activities" -Variant h6 -Style @{marginTop = "20px"; marginBottom = "10px" }
+            New-UDButton -Text "Add Activity" -OnClick {
+                $currentContent = Get-UDElement -Id "activity_section"
+                $entryCount = (Get-Random -Minimum 100 -Maximum 999)
+                New-UDGrid -Container -Content {
+                    New-UDGrid -Item -ExtraSmallSize 6 -Content {
+                        New-UDTextbox -Id "activity" -Label "Activity" -Type text -Placeholder "e.g., Walking, Running" -FullWidth
+                    }
+                    New-UDGrid -Item -ExtraSmallSize 6 -Content {
+                        New-UDTextbox -Id "duration" -Label "Duration (minutes)" -Type number -Placeholder "e.g., 30" -FullWidth
+                    }
                 }
             }
             # Add a text field for additional notes
@@ -118,6 +124,27 @@
         } -OnSubmit {
             # Handle form submission logic here
             Write-Information "Form submitted: Certainly is couldnt be as easy as $($eventData | ConvertTo-Json)"
+            $EntryRaw = $EventData | ConvertTo-Json -Depth 99
+
+            <#
+                {
+                "o2": "94",
+                "meds": [
+                    "oxycodone - 2.5mg",
+                    "oxycodone - 5mg",
+                    "tylenol - 500mg"
+                ],
+                "pain_location_668": "rquads",
+                "timestamp": "1923",
+                "pain_location_1": "back",
+                "date": "0624",
+                "pain_level_668": "1",
+                "add_pain": true,
+                "pain_level_1": "3-4",
+                "bpr": "120/80",
+                "notes": "pins and needles on right quad"
+                } 
+            #>
+            $EntryObject =
         }
     }
-}
