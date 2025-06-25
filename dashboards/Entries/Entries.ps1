@@ -157,45 +157,95 @@
             }
         } -OnSubmit {
             # Handle form submission logic here
+            $entry = $EventData
             Write-Information "Form submitted: Certainly is couldnt be as easy as $($eventData | ConvertTo-Json -depth 99)"
-            $EntryRaw = $EventData | ConvertTo-Json -Depth 99
-            <#{            
-                "bpr": "",
-                "pain_level_832": "1",
-                "date": "0624",
-                "notes": "pins and needles on right quad",
-                "activities_type_195": "Standing",
-                "pain_location_832": "rquads",
-                "activities_level_195": "5",
-                "add_pain": true,
-                "timestamp": "1900",
-                "meds": [
-                    "oxycodone - 5mg"
-                ],
-                "activities_length_1": "10",
-                "pain_level_1": "3-4",
-                "add_activitiy": true,
-                "pain_location_1": "back",
-                "o2": "",
-                "activities_type_1": "Walking"
-        }
-}             #>
-            # $painLocations = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_location_*" }
-            # $painLevels = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_level_*" }
-            # Write-Information $painEntries | ConvertTo-Json | Out-String
-            # Write-Information $painLevels | ConvertTo-Json | Out-String
-            # $painEntries = for ($i = 0; $i -lt $painLocations.Count; $i++) {
-            #     $location = $painLocations[$i].Value
-            #     $level = $painLevels[$i].Value
-            #     if ($location -and $level) {
-            #         $painEntries += @{
-            #             Location = $location
-            #             Level    = $level
-            #         }
-            #     }
-            # }            
-            # # Here you can save the painEntries to a database or file as needed
-            # Write-Information "Pain Entries: $($painEntries | ConvertTo-Json)"
+            # Convert to entries.json format
+            Write-Information "Converting PSCustomObject to entries.json format..."
+
+            # Extract basic info
+            $Date = $entry.date
+            $Timestamp = $entry.timestamp
+
+            # Build Medications object
+            $Medications = @{}
+            if ($entry.meds -and $entry.meds.Count -gt 0) {
+                foreach ($med in $entry.meds) {
+                    # Parse "oxycodone- 5mg" format
+                    if ($med -match "^(.+?)-\s*(.+)$") {
+                        $medName = $matches[1].Trim()
+                        $dosage = $matches[2].Trim()
+                        $Medications[$medName] = $dosage
+                    }
+                }
+            }
+
+            # Build Pain object
+            $Pain = @{}
+            # Get all pain location/level pairs
+            $painProperties = $entry.PSObject.Properties | Where-Object { $_.Name -like "pain_location_*" }
+            foreach ($painProp in $painProperties) {
+                $id = $painProp.Name -replace "pain_location_", ""
+                $location = $painProp.Value
+                $levelProp = "pain_level_$id"
+                if ($entry.PSObject.Properties[$levelProp]) {
+                    $level = $entry.PSObject.Properties[$levelProp].Value
+                    if ($location -and $level) {
+                        $Pain[$location] = $level
+                    }
+                }
+            }
+
+            # Build Activities object
+            $Activities = @{}
+            # Get all activity type/length pairs
+            $activityProperties = $entry.PSObject.Properties | Where-Object { $_.Name -like "activities_type_*" }
+            foreach ($activityProp in $activityProperties) {
+                $id = $activityProp.Name -replace "activities_type_", ""
+                $activityType = $activityProp.Value
+                $lengthProp = "activities_length_$id"
+                $levelProp = "activities_level_$id"
+    
+                # Check for length or level (different naming patterns)
+                $duration = $null
+                if ($entry.PSObject.Properties[$lengthProp]) {
+                    $duration = [int]$entry.PSObject.Properties[$lengthProp].Value
+                }
+                elseif ($entry.PSObject.Properties[$levelProp]) {
+                    $duration = [int]$entry.PSObject.Properties[$levelProp].Value
+                }
+    
+                if ($activityType -and $duration) {
+                    # Convert activity type to lowercase key
+                    $activityKey = $activityType.ToLower()
+                    $Activities[$activityKey] = $duration
+                }
+            }
+            # Create the entry structure
+            $EntryStructure = @{
+                "Medications" = $Medications
+                "Pain"        = $Pain
+                "Activities"  = $Activities
+                "o2"          = if ($entry.o2) { $entry.o2 } else { "" }
+                "bpr"         = if ($entry.bpr) { $entry.bpr } else { "" }
+                "note"        = if ($entry.notes) { $entry.notes } else { "" }
+            }
+
+            # Create the full structure for entries.json
+            $FullEntry = @{
+                $Date = @{
+                    $Timestamp = $EntryStructure
+                }
+            }
+
+            # Output results
+            Write-Information "`nFull Entry JSON (ready for entries.json):"
+            Write-Information "=========================================="
+            Write-Information ($FullEntry | ConvertTo-Json -Depth 5)
+
+            Write-Information "`nJust the entry data (for manual insertion under $Date -> $Timestamp):"
+            Write-Information "=================================================================="
+            Write-Information ($EntryStructure | ConvertTo-Json -Depth 4)
+
         }
     }
 }
