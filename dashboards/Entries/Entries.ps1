@@ -161,6 +161,13 @@
                 }
             }
 
+            # Add a text field for sleep duration
+            New-UDGrid -Container -Content {
+                New-UDGrid -Item -ExtraSmallSize 12 -Content {
+                    New-UDTextbox -Id "sleep" -Label "sleep" -Type text -Placeholder "7:56" -FullWidth
+                }
+            }
+
             # Add a text field for additional notes
             New-UDGrid -Container -Content {
                 New-UDGrid -Item -ExtraSmallSize 12 -Content {

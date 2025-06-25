@@ -211,6 +211,11 @@ function ConvertTo-EntriesFormat {
             $Timestamp = $EntryStructure
         }
     }
+    
+    # Add date-level fields like Sleep if present
+    if ($Entry.sleep) {
+        $FullEntry[$Date]["Sleep"] = $Entry.sleep
+    }
 
     # Return the result
     return @{
@@ -237,7 +242,7 @@ function Update-DailyMaxPainLevel {
     
     if ($Entries.ContainsKey($Date)) {
         foreach ($timestamp in $Entries[$Date].Keys) {
-            # Skip non-timestamp entries like "Sleep", "ScarImage"
+            # Skip non-timestamp entries like "Sleep", "ScarImage", "max_pain_level"
             if ($timestamp -match '^\d{4}$') {
                 $entry = $Entries[$Date][$timestamp]
                 if ($entry.ContainsKey("Pain") -and $entry.Pain) {
@@ -295,6 +300,11 @@ function Save-ConvertedEntry {
     }
     
     $Entries[$Date][$Timestamp] = $EntryStructure
+    
+    # Add date-level fields from FullEntry if present
+    if ($ConvertedEntry.FullEntry[$Date].ContainsKey("Sleep")) {
+        $Entries[$Date]["Sleep"] = $ConvertedEntry.FullEntry[$Date]["Sleep"]
+    }
     
     # Update the daily max pain level
     Write-Information "Updating daily max pain level for $Date"
