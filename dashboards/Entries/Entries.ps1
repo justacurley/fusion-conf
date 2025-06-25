@@ -120,10 +120,10 @@
                     New-UDTextbox -Id "notes" -Label "Additional Notes" -Type text -Placeholder "Any additional information" -FullWidth
                 }
             }
-            
         } -OnSubmit {
             # Handle form submission logic here
             Write-Information "Form submitted: Certainly is couldnt be as easy as $($eventData | ConvertTo-Json)"
             $EntryRaw = $EventData | ConvertTo-Json -Depth 99
         }
     }
+}
