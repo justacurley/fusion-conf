@@ -31,10 +31,61 @@
                         })
                 }
             } -Multiple
+            # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)"
+            New-UDCheckbox -Id "add_activitiy" -Label "Add activitiy Entry" -OnChange {
+                if ($EventData) {
+                    # Checkbox is checked - show activities entry section
+                    Set-UDElement -Id "activities_section" -Content {
+                        New-UDGrid -Container -Content {
+                            New-UDGrid -Item -ExtraSmallSize 12 -Content {
+                                New-UDTypography -Text "activities Entries" -Variant h6 -Style @{marginTop = "10px"; marginBottom = "10px" }
+                            }                            
+                            # Initial activities entry
+                            New-UDGrid -Item -ExtraSmallSize 5 -Content {
+                                New-UDTextBox -Id "activities_type_1" -Label "activities type" -Type text -Placeholder "Walking, Running, etc."
+                            }
+                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                                New-UDTextbox -Id "activities_length_1" -Label "activities length" -Type number -Placeholder "20"
+                            }
+                            New-UDGrid -Item -ExtraSmallSize 3 -Content {
+                                New-UDButton -Text "Add More" -OnClick {
+                                    # Add another activities entry row
+                                    $currentContent = Get-UDElement -Id "activities_section"
+                                    $entryCount = (Get-Random -Minimum 100 -Maximum 999)
+                                    
+                                    Add-UDElement -ParentId "activities_section" -Content {
+                                        New-UDGrid -Container -Content {
+                                            New-UDGrid -Item -ExtraSmallSize 5 -Content {
+                                                New-UDTextBox -Id "activities_type_$entryCount" -Label "activities type"  -Type text -Placeholder "Walking, Running, etc."
+                                            }
+                                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                                                New-UDTextbox -Id "activities_level_$entryCount"  -Label "activities length" -Type number -Placeholder "20"
+                                            }
+                                            New-UDGrid -Item -ExtraSmallSize 3 -Content {
+                                                New-UDButton -Text "Remove" -Color secondary -OnClick {
+                                                    # Remove this entry
+                                                    Remove-UDElement -Id "activities_entry_$entryCount"
+                                                } -Id "remove_$entryCount"
+                                            }
+                                        } -Id "activities_entry_$entryCount"
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    # Checkbox is unchecked - hide activities section
+                    Set-UDElement -Id "activities_section" -Content { }
+                }
+            }           
+            # Dynamic pain section container
+            New-UDElement -Id "pain_section" -Tag "div"
+            # Dynamic activities section container
+            New-UDElement -Id "activities_section" -Tag "div"
             #pain section
             New-UDCheckbox -Id "add_pain" -Label "Add Pain Entry" -OnChange {
                 if ($EventData) {
-                    Write-Debug "Pain Entry Checkbox is checked"
                     $SelectOptions = {
                         New-UDSelectOption -Name "Back" -Value "back"
                         New-UDSelectOption -Name "RQuad" -Value "rquads"
@@ -99,58 +150,7 @@
                     New-UDTextbox -Id "bpr" -Label "Blood Pressure (Systolic/Diastolic)" -Type text -Placeholder "120/80" -FullWidth
                 }
             }
-            # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)"
-            New-UDCheckbox -Id "add_activitiy" -Label "Add activitiy Entry" -OnChange {
-                if ($EventData) {
-                    # Checkbox is checked - show activities entry section
-                    Set-UDElement -Id "activities_section" -Content {
-                        New-UDGrid -Container -Content {
-                            New-UDGrid -Item -ExtraSmallSize 12 -Content {
-                                New-UDTypography -Text "activities Entries" -Variant h6 -Style @{marginTop = "10px"; marginBottom = "10px" }
-                            }                            
-                            # Initial activities entry
-                            New-UDGrid -Item -ExtraSmallSize 5 -Content {
-                                New-UDTextBox -Id "activities_type_1" -Label "activities type" -Type text -Placeholder "Walking, Running, etc."
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
-                                New-UDTextbox -Id "activities_length_1" -Label "activities length" -Type number -Placeholder "20"
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 3 -Content {
-                                New-UDButton -Text "Add More" -OnClick {
-                                    # Add another activities entry row
-                                    $currentContent = Get-UDElement -Id "activities_section"
-                                    $entryCount = (Get-Random -Minimum 100 -Maximum 999)
-                                    
-                                    Add-UDElement -ParentId "activities_section" -Content {
-                                        New-UDGrid -Container -Content {
-                                            New-UDGrid -Item -ExtraSmallSize 5 -Content {
-                                                New-UDTextBox -Id "activities_type_$entryCount" -Label "activities type"  -Type text -Placeholder "Walking, Running, etc."
-                                            }
-                                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
-                                                New-UDTextbox -Id "activities_level_$entryCount"  -Label "activities length" -Type number -Placeholder "20"
-                                            }
-                                            New-UDGrid -Item -ExtraSmallSize 3 -Content {
-                                                New-UDButton -Text "Remove" -Color secondary -OnClick {
-                                                    # Remove this entry
-                                                    Remove-UDElement -Id "activities_entry_$entryCount"
-                                                } -Id "remove_$entryCount"
-                                            }
-                                        } -Id "activities_entry_$entryCount"
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-                else {
-                    # Checkbox is unchecked - hide activities section
-                    Set-UDElement -Id "activities_section" -Content { }
-                }
-            }           
-            # Dynamic pain section container
-            New-UDElement -Id "pain_section" -Tag "div"
-            # Dynamic activities section container
-            New-UDElement -Id "activities_section" -Tag "div"
+
             # Add a text field for additional notes
             New-UDGrid -Container -Content {
                 New-UDGrid -Item -ExtraSmallSize 12 -Content {
