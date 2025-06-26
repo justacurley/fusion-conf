@@ -147,7 +147,7 @@
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
                         # Line chart for pain levels over time - using explicit dataset syntax
-                        New-UDChartJS -Type line -Data $combinedPainData -LabelProperty Date -Options @{   
+                        New-UDChartJS -Type Bar -Data $combinedPainData -LabelProperty Date -Options @{   
                             responsive          = $true
                             maintainAspectRatio = $false
                             plugins             = @{
