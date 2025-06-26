@@ -39,6 +39,9 @@
                 # Sort by actual date
                 $painData = $painData | Sort-Object SortDate
                 
+                # Remove SortDate property as it's only needed for sorting
+                $painData = $painData | Select-Object Date, MaxPainLevel
+                
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
                         # Line chart for pain levels over time
