@@ -1,125 +1,202 @@
-﻿New-UDApp -Content {
+﻿```powershell
+New-UDDashboard -Title "Pain Level Analysis" -Content {
     New-UDContainer -Content {
-        New-UDTypography -Text "Health Recovery Entry Form" -Variant h4 -Style @{marginBottom = "20px" }
-        New-UDTypography -Text "Entry Date and Time" -Variant h6 -Style  @{marginTop = "20px"; marginBottom = "10px" }
-        New-UDForm -Content {
-            # Date and Time fields
-            New-UDGrid -Container -Content {
-                $MSTDate = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId((Get-Date), 'Mountain Standard Time') | ForEach-Object { $_.ToString("MMdd HHmm") }
-                $MSTMMDD = $MSTDate.split(" ")[0]
-                $MSTHHMM = $MSTDate.split(" ")[1]
-                New-UDGrid -Item -ExtraSmallSize 6 -Content {
-                    New-UDTextbox -Id "date" -Label "Date (MMDD)" -Placeholder $MSTMMDD -FullWidth -Value $MSTMMDD
-                }
-                New-UDGrid -Item -ExtraSmallSize 6 -Content {
-                    New-UDTextbox -Id "timestamp" -Label "Time (HHMM)" -Placeholder $MMSTHHMM -FullWidth -Value $MSTHHMM
+        New-UDTypography -Text "Max Daily Pain Level Tracker" -Variant h4 -Align center
+        
+        New-UDDynamic -Content {
+            
+            $EntriesPath = "/home/data/fusion-data/entries/entries.json"
+            try {
+                $entries = Get-Content -Path $EntriesPath | ConvertFrom-Json
+                New-UDAlert -Severity success -Text "Loaded data from: $EntriesPath"
+            }
+            catch {
+                New-UDAlert -Severity error -Text "Error loading entries data: $($_.Exception.Message)"
+                return
+            }
+        }
+                
+        # Extract max_pain_level data for each date
+        $painData = @()
+        $dates = $entries.PSObject.Properties.Name | Sort-Object
+                
+        foreach ($date in $dates) {
+            $dateEntry = $entries.$date
+            if ($dateEntry.PSObject.Properties['max_pain_level']) {
+                $maxPain = [double]$dateEntry.max_pain_level
+                        
+                # Convert MMDD to readable date
+                $month = $date.Substring(0, 2)
+                $day = $date.Substring(2, 2)
+                $dateStr = "$month/$day"
+                        
+                $painData += [PSCustomObject]@{
+                    Date         = $dateStr
+                    MaxPainLevel = $maxPain
+                    SortDate     = $date
                 }
             }
-            # Medicatins Sectin
-            New-UDTypography -Text "Medications" -Variant h6 -Style @{marginTop = "20px" }
-            New-UDSelect -Id "meds" -Option {
-                try {
-                    $MedData = Get-Content -Path "/home/data/Repository/fusion-data/entries/schema.json" | ConvertFrom-Json -AsHashtable
-                    $Dosages = $MedData['Medications']
-                }
-                catch {
-                    Write-Error "Failed to get or parse data $_"
-                }
-                foreach ($key in $Dosages.keys) {
-                    $Dosages[$key].foreach({
-                            New-UDSelectOption -Name "$key - $_" -Value "$key - $_"
-                        })
-                }
-            } -Multiple
-            #pain section
-            New-UDCheckbox -Id "add_pain" -Label "Add Pain Entry" -OnChange {
-                if ($EventData) {
-                    Write-Debug "Pain Entry Checkbox is checked"
-                    $SelectOptions = {
-                        New-UDSelectOption -Name "Back" -Value "back"
-                        New-UDSelectOption -Name "RQuad" -Value "rquads"
-                        New-UDSelectOption -Name "LQuad" -Value "lquad"
-                        New-UDSelectOption -Name "Glutes" -Value "glutes"
-                        New-UDSelectOption -Name "Right Hip" -Value "righthip"
-                        New-UDSelectOption -Name "LHip" -Value "lhip"
+        }
+                
+        if ($painData.Count -eq 0) {
+            New-UDAlert -Severity warning -Text "No pain level data found in entries"
+            return
+        }
+                
+        # Sort by actual date
+        $painData = $painData | Sort-Object SortDate
+                
+        New-UDRow -Columns {
+            New-UDColumn -Size 12 -Content {
+                # Line chart for pain levels over time
+                New-UDChartJS -Type line -Data @{
+                    labels   = $painData.Date
+                    datasets = @(
+                        @{
+                            label           = "Max Daily Pain Level"
+                            data            = $painData.MaxPainLevel
+                            borderColor     = 'rgb(255, 99, 132)'
+                            backgroundColor = 'rgba(255, 99, 132, 0.2)'
+                            tension         = 0.1
+                            fill            = $true
+                        }
+                    )
+                } -Options @{
+                    responsive = $true
+                    plugins    = @{
+                        title  = @{
+                            display = $true
+                            text    = "Daily Maximum Pain Levels"
+                        }
+                        legend = @{
+                            display = $true
+                        }
                     }
-                    # Checkbox is checked - show pain entry section
-                    Set-UDElement -Id "pain_section" -Content {
-                        New-UDGrid -Container -Content {
-                            New-UDGrid -Item -ExtraSmallSize 12 -Content {
-                                New-UDTypography -Text "Pain Entries" -Variant h6 -Style @{marginTop = "10px"; marginBottom = "10px" }
-                            }                            
-                            # Initial pain entry
-                            New-UDGrid -Item -ExtraSmallSize 5 -Content {
-                                New-UDSelect -Id "pain_location_1" -Label "Pain Location" -Option $SelectOptions
+                    scales     = @{
+                        y = @{
+                            beginAtZero = $true
+                            max         = 10
+                            title       = @{
+                                display = $true
+                                text    = "Pain Level (0-10)"
                             }
-                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
-                                New-UDTextbox -Id "pain_level_1" -Label "Pain Level (0-10)" -Type text -Placeholder "3-4"
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 3 -Content {
-                                New-UDButton -Text "Add More" -OnClick {
-                                    # Add another pain entry row
-                                    $currentContent = Get-UDElement -Id "pain_section"
-                                    $entryCount = (Get-Random -Minimum 100 -Maximum 999)
-                                    
-                                    Add-UDElement -ParentId "pain_section" -Content {
-                                        New-UDGrid -Container -Content {
-                                            New-UDGrid -Item -ExtraSmallSize 5 -Content {
-                                                New-UDSelect -Id "pain_location_$entryCount" -Label "Pain Location" -Option $SelectOptions
-                                            }
-                                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
-                                                New-UDTextbox -Id "pain_level_$entryCount" -Label "Pain Level (0-10)" -Type text -Placeholder "0-10"
-                                            }
-                                            New-UDGrid -Item -ExtraSmallSize 3 -Content {
-                                                New-UDButton -Text "Remove" -Color secondary -OnClick {
-                                                    # Remove this entry
-                                                    Remove-UDElement -Id "pain_entry_$entryCount"
-                                                } -Id "remove_$entryCount"
-                                            }
-                                        } -Id "pain_entry_$entryCount"
-                                    }
-                                }
+                        }
+                        x = @{
+                            title = @{
+                                display = $true
+                                text    = "Date"
                             }
                         }
                     }
                 }
-                else {
-                    # Checkbox is unchecked - hide pain section
-                    Set-UDElement -Id "pain_section" -Content { }
-                }
-            }           
-            # Dynamic pain section container
-            New-UDElement -Id "pain_section" -Tag "div"
-            # Making a new ud-grid for the o2 and bpr input sections
-            New-UDGrid -Container -Content {
-                New-UDGrid -Item -ExtraSmallSize 6 -Content {
-                    New-UDTextbox -Id "o2" -Label "Oxygen Saturation (%)" -Type number -Placeholder "95-100" -FullWidth
-                }
-                New-UDGrid -Item -ExtraSmallSize 6 -Content {
-                    New-UDTextbox -Id "bpr" -Label "Blood Pressure (Systolic/Diastolic)" -Type text -Placeholder "120/80" -FullWidth
-                }
             }
-
-        } -OnSubmit {
-            Write-Information "Form submitted: Certainly is couldnt be as easy as $($eventData | ConvertTo-Json)"
-            Write-Information "Date: $MSTMMDD, Time: $MSTHHMM"
-            # Handle form submission logic here
-            $painLocations = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_location_*" }
-            $painLevels = Get-UDElement -Id "pain_section" | Select-Object -ExpandProperty Content | Where-Object { $_.Id -like "pain_level_*" }
-            Write-Information $painEntries | ConvertTo-Json | Out-String
-            Write-Information $painLevels | ConvertTo-Json | Out-String
-            $painEntries = for ($i = 0; $i -lt $painLocations.Count; $i++) {
-                $location = $painLocations[$i].Value
-                $level = $painLevels[$i].Value
-                if ($location -and $level) {
-                    $painEntries += @{
-                        Location = $location
-                        Level    = $level
+        }
+                
+        New-UDRow -Columns {
+            New-UDColumn -Size 6 -Content {
+                # Statistics card
+                $avgPain = [math]::Round(($painData.MaxPainLevel | Measure-Object -Average).Average, 1)
+                $maxPain = ($painData.MaxPainLevel | Measure-Object -Maximum).Maximum
+                $minPain = ($painData.MaxPainLevel | Measure-Object -Minimum).Minimum
+                $totalDays = $painData.Count
+                        
+                New-UDCard -Title "Pain Statistics" -Content {
+                    New-UDElement -Tag "div" -Content {
+                        New-UDTypography -Text "Average Pain Level: $avgPain" -Variant body1
+                        New-UDTypography -Text "Highest Pain Level: $maxPain" -Variant body1
+                        New-UDTypography -Text "Lowest Pain Level: $minPain" -Variant body1
+                        New-UDTypography -Text "Total Days Tracked: $totalDays" -Variant body1
                     }
                 }
-            }            
-            # Here you can save the painEntries to a database or file as needed
-            Write-Information "Pain Entries: $($painEntries | ConvertTo-Json)"
+            }
+                    
+            New-UDColumn -Size 6 -Content {
+                # Pain level distribution
+                $painDistribution = $painData | Group-Object MaxPainLevel | ForEach-Object {
+                    [PSCustomObject]@{
+                        PainLevel = [double]$_.Name
+                        Count     = $_.Count
+                    }
+                } | Sort-Object PainLevel
+                        
+                New-UDChartJS -Type bar -Data @{
+                    labels   = $painDistribution.PainLevel
+                    datasets = @(
+                        @{
+                            label           = "Days at Pain Level"
+                            data            = $painDistribution.Count
+                            backgroundColor = @(
+                                'rgba(54, 162, 235, 0.5)',
+                                'rgba(255, 206, 86, 0.5)',
+                                'rgba(255, 99, 132, 0.5)',
+                                'rgba(75, 192, 192, 0.5)',
+                                'rgba(153, 102, 255, 0.5)',
+                                'rgba(255, 159, 64, 0.5)'
+                            )
+                            borderColor     = @(
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            )
+                            borderWidth     = 1
+                        }
+                    )
+                } -Options @{
+                    responsive = $true
+                    plugins    = @{
+                        title  = @{
+                            display = $true
+                            text    = "Pain Level Distribution"
+                        }
+                        legend = @{
+                            display = $false
+                        }
+                    }
+                    scales     = @{
+                        y = @{
+                            beginAtZero = $true
+                            title       = @{
+                                display = $true
+                                text    = "Number of Days"
+                            }
+                        }
+                        x = @{
+                            title = @{
+                                display = $true
+                                text    = "Pain Level"
+                            }
+                        }
+                    }
+                }
+            }
         }
+                
+        New-UDRow -Columns {
+            New-UDColumn -Size 12 -Content {
+                # Data table
+                New-UDTable -Title "Daily Pain Data" -Data $painData -Columns @(
+                    New-UDTableColumn -Property "Date" -Title "Date"
+                    New-UDTableColumn -Property "MaxPainLevel" -Title "Max Pain Level"
+                ) -Sort -Filter -Search
+            }
+        }
+                
+    } catch {
+        New-UDAlert -Severity error -Text "Error loading entries data: $($_.Exception.Message)"
+    }
+} -Id "pain-data"
+        
+New-UDRow -Columns {
+    New-UDColumn -Size 12 -Content {
+        New-UDButton -Text "Refresh Data" -OnClick {
+            Sync-UDElement -Id "pain-data"
+        } -Color primary
     }
 }
+}
+}
+```
+
