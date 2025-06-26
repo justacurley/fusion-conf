@@ -175,6 +175,40 @@
                 
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
+                        # Line chart for average back pain levels
+                        New-UDChartJS -Type line -Data $backPainData -DataProperty AvgBackPain -LabelProperty Date -Options @{
+                            responsive = $true
+                            scales = @{
+                                y = @{
+                                    beginAtZero = $true
+                                    max = 10
+                                    title = @{
+                                        display = $true
+                                        text = "Average Back Pain Level (0-10)"
+                                    }
+                                }
+                                x = @{
+                                    title = @{
+                                        display = $true
+                                        text = "Date"
+                                    }
+                                }
+                            }
+                            plugins = @{
+                                title = @{
+                                    display = $true
+                                    text = "Daily Average Back Pain Levels"
+                                }
+                                legend = @{
+                                    display = $true
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                New-UDRow -Columns {
+                    New-UDColumn -Size 12 -Content {
                         # Line chart for daily dilaudid consumption
                         New-UDChartJS -Type line -Data $medicationData -DataProperty TotalDilaudid -LabelProperty Date -Options @{
                             responsive = $true
@@ -230,40 +264,6 @@
                                 title = @{
                                     display = $true
                                     text = "Daily Total Valium Consumption"
-                                }
-                                legend = @{
-                                    display = $true
-                                }
-                            }
-                        }
-                    }
-                }
-                
-                New-UDRow -Columns {
-                    New-UDColumn -Size 12 -Content {
-                        # Line chart for average back pain levels
-                        New-UDChartJS -Type line -Data $backPainData -DataProperty AvgBackPain -LabelProperty Date -Options @{
-                            responsive = $true
-                            scales = @{
-                                y = @{
-                                    beginAtZero = $true
-                                    max = 10
-                                    title = @{
-                                        display = $true
-                                        text = "Average Back Pain Level (0-10)"
-                                    }
-                                }
-                                x = @{
-                                    title = @{
-                                        display = $true
-                                        text = "Date"
-                                    }
-                                }
-                            }
-                            plugins = @{
-                                title = @{
-                                    display = $true
-                                    text = "Daily Average Back Pain Levels"
                                 }
                                 legend = @{
                                     display = $true
