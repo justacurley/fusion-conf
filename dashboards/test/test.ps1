@@ -29,6 +29,7 @@
                         $totalActivityDuration = 0
                         $activityTypes = @{}
                         $totalDilaudid = 0
+                        $totalValium = 0
                         
                         # Check all timestamps for this date
                         foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
@@ -53,7 +54,7 @@
                                     }
                                 }
                                 
-                                # Process Medications - specifically dilaudid
+                                # Process Medications - dilaudid and valium
                                 if ($entry.PSObject.Properties['Medications']) {
                                     foreach ($medication in $entry.Medications.PSObject.Properties.Name) {
                                         if ($medication -eq 'dilaudid') {
@@ -62,6 +63,14 @@
                                             if ($dose -match '(\d+(?:\.\d+)?)') {
                                                 $dilaudidAmount = [double]$matches[1]
                                                 $totalDilaudid += $dilaudidAmount
+                                            }
+                                        }
+                                        elseif ($medication -eq 'valium') {
+                                            $dose = $entry.Medications.$medication
+                                            # Extract numeric value from dose (e.g., "5mg" -> 5)
+                                            if ($dose -match '(\d+(?:\.\d+)?)') {
+                                                $valiumAmount = [double]$matches[1]
+                                                $totalValium += $valiumAmount
                                             }
                                         }
                                     }
@@ -87,6 +96,7 @@
                         $medicationData += [PSCustomObject]@{
                             Date = $dateStr
                             TotalDilaudid = $totalDilaudid
+                            TotalValium = $totalValium
                             SortDate = $date
                         }
                     }
@@ -105,7 +115,7 @@
                 # Remove SortDate property as it's only needed for sorting
                 $painData = $painData | Select-Object Date, MaxPainLevel
                 $activityData = $activityData | Select-Object Date, TotalDuration, Walking, Stairs, Standing
-                $medicationData = $medicationData | Select-Object Date, TotalDilaudid
+                $medicationData = $medicationData | Select-Object Date, TotalDilaudid, TotalValium
                 
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
@@ -174,9 +184,42 @@
                     }
                 }
                 
+                New-UDRow -Columns {
+                    New-UDColumn -Size 12 -Content {
+                        # Line chart for daily valium consumption
+                        New-UDChartJS -Type line -Data $medicationData -DataProperty TotalValium -LabelProperty Date -Options @{
+                            responsive = $true
+                            scales = @{
+                                y = @{
+                                    beginAtZero = $true
+                                    title = @{
+                                        display = $true
+                                        text = "Valium Amount (mg)"
+                                    }
+                                }
+                                x = @{
+                                    title = @{
+                                        display = $true
+                                        text = "Date"
+                                    }
+                                }
+                            }
+                            plugins = @{
+                                title = @{
+                                    display = $true
+                                    text = "Daily Total Valium Consumption"
+                                }
+                                legend = @{
+                                    display = $true
+                                }
+                            }
+                        }
+                    }
+                }
+                
                 
                 New-UDRow -Columns {
-                    New-UDColumn -Size 4 -Content {
+                    New-UDColumn -Size 3 -Content {
                         # Pain Statistics card
                         $avgPain = [math]::Round(($painData.MaxPainLevel | Measure-Object -Average).Average, 1)
                         $maxPain = ($painData.MaxPainLevel | Measure-Object -Maximum).Maximum
@@ -193,7 +236,7 @@
                         }
                     }
                     
-                    New-UDColumn -Size 4 -Content {
+                    New-UDColumn -Size 3 -Content {
                         # Activity Statistics card
                         $avgActivity = [math]::Round(($activityData.TotalDuration | Measure-Object -Average).Average, 1)
                         $maxActivity = ($activityData.TotalDuration | Measure-Object -Maximum).Maximum
@@ -210,8 +253,8 @@
                         }
                     }
                     
-                    New-UDColumn -Size 4 -Content {
-                        # Medication Statistics card
+                    New-UDColumn -Size 3 -Content {
+                        # Dilaudid Statistics card
                         $avgDilaudid = [math]::Round(($medicationData.TotalDilaudid | Measure-Object -Average).Average, 1)
                         $maxDilaudid = ($medicationData.TotalDilaudid | Measure-Object -Maximum).Maximum
                         $totalDilaudid = ($medicationData.TotalDilaudid | Measure-Object -Sum).Sum
@@ -223,6 +266,23 @@
                                 New-UDTypography -Text "Highest Daily Dose: $maxDilaudid mg" -Variant h6
                                 New-UDTypography -Text "Total Consumed: $totalDilaudid mg" -Variant h6
                                 New-UDTypography -Text "Days with Dilaudid: $dilaudidDays" -Variant h6
+                            }
+                        }
+                    }
+                    
+                    New-UDColumn -Size 3 -Content {
+                        # Valium Statistics card
+                        $avgValium = [math]::Round(($medicationData.TotalValium | Measure-Object -Average).Average, 1)
+                        $maxValium = ($medicationData.TotalValium | Measure-Object -Maximum).Maximum
+                        $totalValium = ($medicationData.TotalValium | Measure-Object -Sum).Sum
+                        $valiumDays = ($medicationData | Where-Object { $_.TotalValium -gt 0 }).Count
+                        
+                        New-UDCard -Title "Valium Statistics" -Content {
+                            New-UDElement -Tag "div" -Content {
+                                New-UDTypography -Text "Average Daily Dose: $avgValium mg" -Variant h6
+                                New-UDTypography -Text "Highest Daily Dose: $maxValium mg" -Variant h6
+                                New-UDTypography -Text "Total Consumed: $totalValium mg" -Variant h6
+                                New-UDTypography -Text "Days with Valium: $valiumDays" -Variant h6
                             }
                         }
                     }
