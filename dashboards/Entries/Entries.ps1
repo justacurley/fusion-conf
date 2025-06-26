@@ -206,7 +206,7 @@
                 $imageFile = $EventData.ImageFile
                 $imageFolderPath = "/home/data/fusion-data/img"
                 $imageExt = $imageFile.Name.Split('.')[-1]
-                $imageFileName = "0625.$imageExt"
+                $imageFileName = "$($EventData.date).$imageExt"
                 $imagePath = Join-Path $imageFolderPath $imageFileName
                 try {
                     # Save the uploaded image to the specified path
