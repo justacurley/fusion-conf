@@ -87,6 +87,22 @@
                         $painDataset = New-UDChartJSDataset -DataProperty MaxPainLevel -Label "Max Pain Level" -BorderColor 'rgb(255, 99, 132)' -BackgroundColor 'rgba(255, 99, 132, 0.2)'
                         New-UDChartJS -Type line -Data $painData -Dataset $painDataset -LabelProperty Date -Options @{
                             responsive = $true
+                            elements = @{
+                                line = @{
+                                    tension = 0.1
+                                    borderWidth = 2
+                                }
+                                point = @{
+                                    radius = 4
+                                    hoverRadius = 6
+                                }
+                            }
+                            datasets = @{
+                                line = @{
+                                    fill = $false
+                                    tension = 0.1
+                                }
+                            }
                             scales = @{
                                 y = @{
                                     beginAtZero = $true
@@ -134,6 +150,23 @@
                         
                         New-UDChartJS -Type line -Data $combinedData -Dataset @($painDataset, $activityDataset) -LabelProperty Date -Options @{
                             responsive = $true
+                            elements = @{
+                                line = @{
+                                    tension = 0.1
+                                    borderWidth = 2
+                                }
+                                point = @{
+                                    radius = 4
+                                    hoverRadius = 6
+                                }
+                            }
+                            datasets = @{
+                                line = @{
+                                    fill = $false
+                                    tension = 0.1
+                                    showLine = $true
+                                }
+                            }
                             interaction = @{
                                 mode = 'index'
                                 intersect = $false
