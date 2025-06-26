@@ -83,27 +83,23 @@
                 
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
-                        # Line chart for pain levels over time
-                        $painDataset = New-UDChartJSDataset -DataProperty MaxPainLevel -Label "Max Pain Level" -BorderColor 'rgb(255, 99, 132)' -BackgroundColor 'rgba(255, 99, 132, 0.2)'
-                        New-UDChartJS -Type line -Data $painData -Dataset $painDataset -LabelProperty Date -Options @{
-                            responsive = $true
-                            elements = @{
-                                line = @{
-                                    tension = 0.1
-                                    borderWidth = 2
-                                }
-                                point = @{
-                                    radius = 4
-                                    hoverRadius = 6
-                                }
-                            }
-                            datasets = @{
-                                line = @{
+                        # Line chart for pain levels over time - using explicit dataset syntax
+                        New-UDChartJS -Type line -Data @{
+                            labels = $painData.Date
+                            datasets = @(
+                                @{
+                                    label = "Max Daily Pain Level"
+                                    data = $painData.MaxPainLevel
+                                    borderColor = 'rgb(255, 99, 132)'
+                                    backgroundColor = 'rgba(255, 99, 132, 0.2)'
                                     fill = $false
                                     tension = 0.1
-                                    showLine = $true
+                                    pointRadius = 4
+                                    borderWidth = 2
                                 }
-                            }
+                            )
+                        } -Options @{
+                            responsive = $true
                             scales = @{
                                 y = @{
                                     beginAtZero = $true
