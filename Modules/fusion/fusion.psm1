@@ -1,5 +1,15 @@
-$global:EntriesPath =  "/home/data/fusion-data/entries/entries.json"
-
+$Remote = Get-ChildItem Env:HOSTNAME
+if ($Remote -and $Remote.Value -like "*us-west-2*") {
+    $global:EntriesPath =  "/home/data/fusion-data/entries/entries.json"
+    $global:SchemaPath = Join-Path $PSScriptRoot "entries_schema.json"
+    $global:MedicationsPath = Join-Path $PSScriptRoot "medications_lookup.json"
+    $global:ImagePath =  "/home/data/fusion-data/img"
+} else {
+    $global:EntriesPath =  "/home/alex/src/fusion-conf/fusion-data/entries/entries.json"
+    $global:SchemaPath = Join-Path $PSScriptRoot "entries_schema.json"
+    $global:MedicationsPath = Join-Path $PSScriptRoot "medications_lookup.json"
+    $global:ImagePath =  "/home/alex/src/fusion-conf/fusion-data/img"  
+} 
 function Add-Entry {
     [CmdletBinding()]
     param (
@@ -49,16 +59,32 @@ function Add-Entry {
                 $MedName = ($_ -replace '\d', '')
                 $CurrentEntry["Medications"][$MedName] = $schema["Medications"][$_]
             })
-        # Add activities
+        
+        # Set medication_taken field for DynamoDB GSI
+        if ($Medications) {
+            $MedNames = $Medications | ForEach-Object { $_ -replace '\d', '' }
+            $CurrentEntry["medication_taken"] = ($MedNames -join ',')
+        } else {
+            $CurrentEntry["medication_taken"] = ""
+        }
+        
+        # Add activities with nested structure per schema
         $AllActivities = @{}
         for ($i = 0; $i -lt $Activities.Count; $i++) {
-            $AllActivities.Add($Activities[$i], $ActivitiesDuration[$i])
+            $AllActivities[$Activities[$i]] = @{
+                "duration" = $ActivitiesDuration[$i]
+                "note" = ""
+            }
         }
         $CurrentEntry["Activities"] = $AllActivities
-        # Add pain
+        
+        # Add pain with nested structure per schema
         $AllPain = @{}
         for ($i = 0; $i -lt $PainLocation.Count; $i++) {
-            $AllPain.Add($PainLocation[$i], $PainLevel[$i])
+            $AllPain[$PainLocation[$i]] = @{
+                "pain_level" = [double]$PainLevel[$i]
+                "note" = ""
+            }
         }
         $CurrentEntry["Pain"] = $AllPain
         # Add o2, bpr, notes
