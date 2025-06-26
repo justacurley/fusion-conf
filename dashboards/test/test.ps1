@@ -101,6 +101,7 @@
                                 line = @{
                                     fill = $false
                                     tension = 0.1
+                                    showLine = $true
                                 }
                             }
                             scales = @{
