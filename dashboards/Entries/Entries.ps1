@@ -109,7 +109,7 @@
                                 New-UDSelect -Id "pain_location_1" -Label "Pain Location" -Option $SelectOptions
                             }
                             New-UDGrid -Item -ExtraSmallSize 2 -Content {
-                                New-UDTextbox -Id "pain_level_1" -Label "Pain Level (0-10)" -Type number -Placeholder "5.5"
+                                New-UDTextbox -Id "pain_level_1" -Label "Pain Level (0-10)" -Type text -Placeholder "5"
                             }
                             New-UDGrid -Item -ExtraSmallSize 4 -Content {
                                 New-UDTextbox -Id "pain_note_1" -Label "Note" -Type text -Placeholder "Optional note"
@@ -126,7 +126,7 @@
                                                 New-UDSelect -Id "pain_location_$entryCount" -Label "Pain Location" -Option $SelectOptions
                                             }
                                             New-UDGrid -Item -ExtraSmallSize 2 -Content {
-                                                New-UDTextbox -Id "pain_level_$entryCount" -Label "Pain Level (0-10)" -Type number -Placeholder "5.5"
+                                                New-UDTextbox -Id "pain_level_$entryCount" -Label "Pain Level (0-10)" -Type text -Placeholder "5"
                                             }
                                             New-UDGrid -Item -ExtraSmallSize 4 -Content {
                                                 New-UDTextbox -Id "pain_note_$entryCount" -Label "Note" -Type text -Placeholder "Optional note"
@@ -158,13 +158,6 @@
                 }
                 New-UDGrid -Item -ExtraSmallSize 6 -Content {
                     New-UDTextbox -Id "bpr" -Label "Blood Pressure (Systolic/Diastolic)" -Type text -Placeholder "120/80" -FullWidth
-                }
-            }
-
-            # Add a text field for sleep duration
-            New-UDGrid -Container -Content {
-                New-UDGrid -Item -ExtraSmallSize 12 -Content {
-                    New-UDTextbox -Id "sleep" -Label "sleep" -Type text -Placeholder "7:56" -FullWidth
                 }
             }
 
