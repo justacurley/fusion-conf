@@ -171,7 +171,7 @@
             # Upload an image 
             New-UDGrid -Container -Content {
                 New-UDGrid -Item -ExtraSmallSize 12 -Content {
-                    New-UDFileUpload -Id "ImageFile" -Label "Upload Image (optional)" -Accept "image/*" -FullWidth
+                    New-UDUpload -Id "ImageFile" -Label "Upload Image (optional)" -Accept "image/*" -FullWidth
                 }
             }
         } -OnSubmit {
