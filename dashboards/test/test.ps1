@@ -11,6 +11,7 @@
             
                 # Extract max_pain_level data for each date
                 $painData = @()
+                $activityData = @()
                 $dates = $entries.PSObject.Properties.Name | Sort-Object
                 
                 foreach ($date in $dates) {
@@ -23,10 +24,46 @@
                         $day = $date.Substring(2, 2)
                         $dateStr = "$month/$day"
                         
+                        # Calculate total daily activity duration
+                        $totalActivityDuration = 0
+                        $activityTypes = @{}
+                        
+                        # Check all timestamps for this date
+                        foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
+                            if ($timestamp -match '^\d{4}$') {  # This is a timestamp
+                                $entry = $dateEntry.$timestamp
+                                if ($entry.PSObject.Properties['Activities']) {
+                                    foreach ($activity in $entry.Activities.PSObject.Properties.Name) {
+                                        $activityInfo = $entry.Activities.$activity
+                                        if ($activityInfo.PSObject.Properties['duration']) {
+                                            $duration = [int]$activityInfo.duration
+                                            $totalActivityDuration += $duration
+                                            
+                                            # Track individual activity types
+                                            if ($activityTypes.ContainsKey($activity)) {
+                                                $activityTypes[$activity] += $duration
+                                            } else {
+                                                $activityTypes[$activity] = $duration
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        
                         $painData += [PSCustomObject]@{
                             Date         = $dateStr
                             MaxPainLevel = $maxPain
                             SortDate     = $date
+                        }
+                        
+                        $activityData += [PSCustomObject]@{
+                            Date = $dateStr
+                            TotalDuration = $totalActivityDuration
+                            Walking = if ($activityTypes['walking']) { $activityTypes['walking'] } else { 0 }
+                            Stairs = if ($activityTypes['stairs']) { $activityTypes['stairs'] } else { 0 }
+                            Standing = if ($activityTypes['standing']) { $activityTypes['standing'] } else { 0 }
+                            SortDate = $date
                         }
                     }
                 }
@@ -38,9 +75,11 @@
                 
                 # Sort by actual date
                 $painData = $painData | Sort-Object SortDate
+                $activityData = $activityData | Sort-Object SortDate
                 
                 # Remove SortDate property as it's only needed for sorting
                 $painData = $painData | Select-Object Date, MaxPainLevel
+                $activityData = $activityData | Select-Object Date, TotalDuration, Walking, Stairs, Standing
                 
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
@@ -67,13 +106,48 @@
                                     }
                                 }
                             }
+                            plugins = @{
+                                title = @{
+                                    display = $true
+                                    text = "Daily Maximum Pain Levels"
+                                }
+                            }
                         }
                     }
                 }
                 
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
-                        # Statistics card
+                        # Activity vs Pain correlation chart
+                        New-UDChartJS -Type bar -Data $activityData -DataProperty TotalDuration -LabelProperty Date -Options @{
+                            scales = @{
+                                y = @{
+                                    beginAtZero = $true
+                                    title = @{
+                                        display = $true
+                                        text = "Activity Duration (minutes)"
+                                    }
+                                }
+                                x = @{
+                                    title = @{
+                                        display = $true
+                                        text = "Date"
+                                    }
+                                }
+                            }
+                            plugins = @{
+                                title = @{
+                                    display = $true
+                                    text = "Daily Total Activity Duration vs Pain Correlation"
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                New-UDRow -Columns {
+                    New-UDColumn -Size 6 -Content {
+                        # Pain Statistics card
                         $avgPain = [math]::Round(($painData.MaxPainLevel | Measure-Object -Average).Average, 1)
                         $maxPain = ($painData.MaxPainLevel | Measure-Object -Maximum).Maximum
                         $minPain = ($painData.MaxPainLevel | Measure-Object -Minimum).Minimum
@@ -85,6 +159,23 @@
                                 New-UDTypography -Text "Highest Pain Level: $maxPain" -Variant h6
                                 New-UDTypography -Text "Lowest Pain Level: $minPain" -Variant h6
                                 New-UDTypography -Text "Total Days Tracked: $totalDays" -Variant h6
+                            }
+                        }
+                    }
+                    
+                    New-UDColumn -Size 6 -Content {
+                        # Activity Statistics card
+                        $avgActivity = [math]::Round(($activityData.TotalDuration | Measure-Object -Average).Average, 1)
+                        $maxActivity = ($activityData.TotalDuration | Measure-Object -Maximum).Maximum
+                        $totalActivity = ($activityData.TotalDuration | Measure-Object -Sum).Sum
+                        $activeDays = ($activityData | Where-Object { $_.TotalDuration -gt 0 }).Count
+                        
+                        New-UDCard -Title "Activity Statistics" -Content {
+                            New-UDElement -Tag "div" -Content {
+                                New-UDTypography -Text "Average Daily Activity: $avgActivity min" -Variant h6
+                                New-UDTypography -Text "Most Active Day: $maxActivity min" -Variant h6
+                                New-UDTypography -Text "Total Activity Time: $totalActivity min" -Variant h6
+                                New-UDTypography -Text "Days with Activity: $activeDays" -Variant h6
                             }
                         }
                     }
