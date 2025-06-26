@@ -12,6 +12,7 @@
                 # Extract max_pain_level data for each date
                 $painData = @()
                 $activityData = @()
+                $medicationData = @()
                 $dates = $entries.PSObject.Properties.Name | Sort-Object
                 
                 foreach ($date in $dates) {
@@ -24,14 +25,17 @@
                         $day = $date.Substring(2, 2)
                         $dateStr = "$month/$day"
                         
-                        # Calculate total daily activity duration
+                        # Calculate total daily activity duration and medication amounts
                         $totalActivityDuration = 0
                         $activityTypes = @{}
+                        $totalDilaudid = 0
                         
                         # Check all timestamps for this date
                         foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
                             if ($timestamp -match '^\d{4}$') {  # This is a timestamp
                                 $entry = $dateEntry.$timestamp
+                                
+                                # Process Activities
                                 if ($entry.PSObject.Properties['Activities']) {
                                     foreach ($activity in $entry.Activities.PSObject.Properties.Name) {
                                         $activityInfo = $entry.Activities.$activity
@@ -44,6 +48,20 @@
                                                 $activityTypes[$activity] += $duration
                                             } else {
                                                 $activityTypes[$activity] = $duration
+                                            }
+                                        }
+                                    }
+                                }
+                                
+                                # Process Medications - specifically dilaudid
+                                if ($entry.PSObject.Properties['Medications']) {
+                                    foreach ($medication in $entry.Medications.PSObject.Properties.Name) {
+                                        if ($medication -eq 'dilaudid') {
+                                            $dose = $entry.Medications.$medication
+                                            # Extract numeric value from dose (e.g., "4mg" -> 4)
+                                            if ($dose -match '(\d+(?:\.\d+)?)') {
+                                                $dilaudidAmount = [double]$matches[1]
+                                                $totalDilaudid += $dilaudidAmount
                                             }
                                         }
                                     }
@@ -65,6 +83,12 @@
                             Standing = if ($activityTypes['standing']) { $activityTypes['standing'] } else { 0 }
                             SortDate = $date
                         }
+                        
+                        $medicationData += [PSCustomObject]@{
+                            Date = $dateStr
+                            TotalDilaudid = $totalDilaudid
+                            SortDate = $date
+                        }
                     }
                 }
                 
@@ -76,10 +100,12 @@
                 # Sort by actual date
                 $painData = $painData | Sort-Object SortDate
                 $activityData = $activityData | Sort-Object SortDate
+                $medicationData = $medicationData | Sort-Object SortDate
                 
                 # Remove SortDate property as it's only needed for sorting
                 $painData = $painData | Select-Object Date, MaxPainLevel
                 $activityData = $activityData | Select-Object Date, TotalDuration, Walking, Stairs, Standing
+                $medicationData = $medicationData | Select-Object Date, TotalDilaudid
                 
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
@@ -117,70 +143,18 @@
                 
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
-                        # Activity vs Pain correlation chart with dual datasets
-                        $painDataset = New-UDChartJSDataset -DataProperty MaxPainLevel -Label "Max Pain Level" -BorderColor 'rgb(255, 99, 132)' -BackgroundColor 'rgba(255, 99, 132, 0.2)' -YAxisId 'yAxis'
-                        $activityDataset = New-UDChartJSDataset -DataProperty TotalDuration -Label "Total Activity Duration (min)" -BorderColor 'rgb(54, 162, 235)' -BackgroundColor 'rgba(54, 162, 235, 0.2)' -YAxisId 'yAxis2'
-                        
-                        # Combine both datasets - we need to merge the data since we have different properties
-                        $combinedData = @()
-                        for ($i = 0; $i -lt $painData.Count; $i++) {
-                            $combinedData += [PSCustomObject]@{
-                                Date = $painData[$i].Date
-                                MaxPainLevel = $painData[$i].MaxPainLevel
-                                TotalDuration = $activityData[$i].TotalDuration
-                            }
-                        }
-                        
-                        New-UDChartJS -Type line -Data $combinedData -Dataset @($painDataset, $activityDataset) -LabelProperty Date -Options @{
+                        # Line chart for daily dilaudid consumption
+                        New-UDChartJS -Type line -Data $medicationData -DataProperty TotalDilaudid -LabelProperty Date -Options @{
                             responsive = $true
-                            elements = @{
-                                line = @{
-                                    tension = 0.1
-                                    borderWidth = 2
-                                }
-                                point = @{
-                                    radius = 4
-                                    hoverRadius = 6
-                                }
-                            }
-                            datasets = @{
-                                line = @{
-                                    fill = $false
-                                    tension = 0.1
-                                    showLine = $true
-                                }
-                            }
-                            interaction = @{
-                                mode = 'index'
-                                intersect = $false
-                            }
                             scales = @{
-                                yAxis = @{
-                                    type = 'linear'
-                                    display = $true
-                                    position = 'left'
-                                    beginAtZero = $true
-                                    max = 10
-                                    title = @{
-                                        display = $true
-                                        text = "Pain Level (0-10)"
-                                    }
-                                }
-                                yAxis2 = @{
-                                    type = 'linear'
-                                    display = $true
-                                    position = 'right'
+                                y = @{
                                     beginAtZero = $true
                                     title = @{
                                         display = $true
-                                        text = "Activity Duration (minutes)"
-                                    }
-                                    grid = @{
-                                        drawOnChartArea = $false
+                                        text = "Dilaudid Amount (mg)"
                                     }
                                 }
-                                xAxis = @{
-                                    display = $true
+                                x = @{
                                     title = @{
                                         display = $true
                                         text = "Date"
@@ -190,7 +164,7 @@
                             plugins = @{
                                 title = @{
                                     display = $true
-                                    text = "Pain Level vs Activity Duration Correlation"
+                                    text = "Daily Total Dilaudid Consumption"
                                 }
                                 legend = @{
                                     display = $true
@@ -200,8 +174,9 @@
                     }
                 }
                 
+                
                 New-UDRow -Columns {
-                    New-UDColumn -Size 6 -Content {
+                    New-UDColumn -Size 4 -Content {
                         # Pain Statistics card
                         $avgPain = [math]::Round(($painData.MaxPainLevel | Measure-Object -Average).Average, 1)
                         $maxPain = ($painData.MaxPainLevel | Measure-Object -Maximum).Maximum
@@ -218,7 +193,7 @@
                         }
                     }
                     
-                    New-UDColumn -Size 6 -Content {
+                    New-UDColumn -Size 4 -Content {
                         # Activity Statistics card
                         $avgActivity = [math]::Round(($activityData.TotalDuration | Measure-Object -Average).Average, 1)
                         $maxActivity = ($activityData.TotalDuration | Measure-Object -Maximum).Maximum
@@ -231,6 +206,23 @@
                                 New-UDTypography -Text "Most Active Day: $maxActivity min" -Variant h6
                                 New-UDTypography -Text "Total Activity Time: $totalActivity min" -Variant h6
                                 New-UDTypography -Text "Days with Activity: $activeDays" -Variant h6
+                            }
+                        }
+                    }
+                    
+                    New-UDColumn -Size 4 -Content {
+                        # Medication Statistics card
+                        $avgDilaudid = [math]::Round(($medicationData.TotalDilaudid | Measure-Object -Average).Average, 1)
+                        $maxDilaudid = ($medicationData.TotalDilaudid | Measure-Object -Maximum).Maximum
+                        $totalDilaudid = ($medicationData.TotalDilaudid | Measure-Object -Sum).Sum
+                        $dilaudidDays = ($medicationData | Where-Object { $_.TotalDilaudid -gt 0 }).Count
+                        
+                        New-UDCard -Title "Dilaudid Statistics" -Content {
+                            New-UDElement -Tag "div" -Content {
+                                New-UDTypography -Text "Average Daily Dose: $avgDilaudid mg" -Variant h6
+                                New-UDTypography -Text "Highest Daily Dose: $maxDilaudid mg" -Variant h6
+                                New-UDTypography -Text "Total Consumed: $totalDilaudid mg" -Variant h6
+                                New-UDTypography -Text "Days with Dilaudid: $dilaudidDays" -Variant h6
                             }
                         }
                     }
