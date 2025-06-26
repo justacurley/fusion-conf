@@ -142,8 +142,8 @@
                 $backPainData = $backPainData | Select-Object Date, AvgBackPain
                 $combinedPainData = $painData + $backPainData
                 $painDataSets = @()
-                $painDataSets += New-UDChartJSDataset -Data $painData -DataProperty MaxPainLevel -LabelProperty Date -BackgroundColor '#729ECE' -BorderColor '#729ECE' -YAxisId 'y'
-                $painDataSets += New-UDChartJSDataset -Data $backPainData -DataProperty AvgBackPain -LabelProperty Date -BackgroundColor '#FF9E4A' -BorderColor '#FF7F0E' -YAxisId 'y1'
+                $painDataSets += New-UDChartJSDataset -Data $painData -DataProperty MaxPainLevel -Label Date -BackgroundColor '#729ECE' -BorderColor '#729ECE' -YAxisId 'y'
+                $painDataSets += New-UDChartJSDataset -Data $backPainData -DataProperty AvgBackPain -Label Date -BackgroundColor '#FF9E4A' -BorderColor '#FF7F0E' -YAxisId 'y1'
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
                         # Line chart for pain levels over time - using explicit dataset syntax
