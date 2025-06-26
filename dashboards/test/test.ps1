@@ -130,14 +130,62 @@
                 
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
-                        # Activity vs Pain correlation chart
-                        New-UDChartJS -Type bar -Data $activityData -DataProperty TotalDuration -LabelProperty Date -Options @{
+                        # Activity vs Pain correlation chart with dual datasets
+                        New-UDChartJS -Type line -Data @{
+                            labels = $painData.Date
+                            datasets = @(
+                                @{
+                                    label = "Max Pain Level"
+                                    data = $painData.MaxPainLevel
+                                    borderColor = 'rgb(255, 99, 132)'
+                                    backgroundColor = 'rgba(255, 99, 132, 0.2)'
+                                    fill = $false
+                                    tension = 0.1
+                                    pointRadius = 4
+                                    yAxisID = 'y'
+                                    type = 'line'
+                                },
+                                @{
+                                    label = "Total Activity Duration (min)"
+                                    data = $activityData.TotalDuration
+                                    borderColor = 'rgb(54, 162, 235)'
+                                    backgroundColor = 'rgba(54, 162, 235, 0.2)'
+                                    fill = $false
+                                    tension = 0.1
+                                    pointRadius = 4
+                                    yAxisID = 'y1'
+                                    type = 'line'
+                                }
+                            )
+                        } -Options @{
+                            responsive = $true
+                            interaction = @{
+                                mode = 'index'
+                                intersect = $false
+                            }
                             scales = @{
                                 y = @{
+                                    type = 'linear'
+                                    display = $true
+                                    position = 'left'
+                                    beginAtZero = $true
+                                    max = 10
+                                    title = @{
+                                        display = $true
+                                        text = "Pain Level (0-10)"
+                                    }
+                                }
+                                y1 = @{
+                                    type = 'linear'
+                                    display = $true
+                                    position = 'right'
                                     beginAtZero = $true
                                     title = @{
                                         display = $true
                                         text = "Activity Duration (minutes)"
+                                    }
+                                    grid = @{
+                                        drawOnChartArea = $false
                                     }
                                 }
                                 x = @{
@@ -150,7 +198,10 @@
                             plugins = @{
                                 title = @{
                                     display = $true
-                                    text = "Daily Total Activity Duration vs Pain Correlation"
+                                    text = "Pain Level vs Activity Duration Correlation"
+                                }
+                                legend = @{
+                                    display = $true
                                 }
                             }
                         }
