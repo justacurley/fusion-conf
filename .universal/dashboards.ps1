@@ -1,4 +1,5 @@
-﻿New-PSUApp -Name "charts" -FilePath "dashboards/charts/charts.ps1" -BaseUrl "/charts" -Environment "PowerShell 7" -AutoDeploy -Description "charts" 
+﻿New-PSUApp -Name "ActivityTimeline" -FilePath "dashboards/ActivityTimeline/ActivityTimeline.ps1" -BaseUrl "/activitytimeline" -Authenticated -AutoDeploy 
+New-PSUApp -Name "charts" -FilePath "dashboards/charts/charts.ps1" -BaseUrl "/charts" -Environment "PowerShell 7" -AutoDeploy -Description "charts" 
 New-PSUApp -Name "entries" -FilePath "dashboards/Entries/Entries.ps1" -BaseUrl "/entries" -Environment "PowerShell 7" -AutoDeploy -Description "Add or update entries" 
 New-PSUApp -Name "gallery" -FilePath "dashboards/gallery/gallery.ps1" -BaseUrl "/gallery" -AutoDeploy -Description "Gallery of incision healing" 
 New-PSUApp -Name "HealthTimeline" -FilePath "dashboards/timeline/timeline.ps1" -BaseUrl "/timeline" -Environment "PowerShell 7" -AutoDeploy
