@@ -45,55 +45,7 @@
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
                         # Line chart for pain levels over time
-                        New-UDChartJS -Type line -Data @{
-                            labels   = $painData.Date
-                            datasets = @(
-                                @{
-                                    label           = "Max Daily Pain Level"
-                                    data            = $painData.MaxPainLevel
-                                    borderColor     = 'rgb(255, 99, 132)'
-                                    backgroundColor = 'rgba(255, 99, 132, 0.2)'
-                                    tension         = 0.1
-                                    fill            = $false
-                                    pointRadius     = 4
-                                    pointHoverRadius = 6
-                                }
-                            )
-                        } -Options @{
-                            responsive = $true
-                            maintainAspectRatio = $false
-                            plugins    = @{
-                                title  = @{
-                                    display = $true
-                                    text    = "Daily Maximum Pain Levels Over Time"
-                                }
-                                legend = @{
-                                    display = $true
-                                }
-                            }
-                            scales     = @{
-                                y = @{
-                                    beginAtZero = $true
-                                    max         = 10
-                                    title       = @{
-                                        display = $true
-                                        text    = "Pain Level (0-10)"
-                                    }
-                                    grid = @{
-                                        display = $true
-                                    }
-                                }
-                                x = @{
-                                    title = @{
-                                        display = $true
-                                        text    = "Date"
-                                    }
-                                    grid = @{
-                                        display = $true
-                                    }
-                                }
-                            }
-                        }
+                        New-UDChartJS -Type line -Data $painData -DataProperty MaxPainLevel -LabelProperty Date
                     }
                 }
                 
