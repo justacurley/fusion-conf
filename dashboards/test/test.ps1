@@ -155,7 +155,7 @@
                                 intersect = $false
                             }
                             scales = @{
-                                y = @{
+                                yAxis = @{
                                     type = 'linear'
                                     display = $true
                                     position = 'left'
@@ -166,7 +166,7 @@
                                         text = "Pain Level (0-10)"
                                     }
                                 }
-                                y1 = @{
+                                yAxis2 = @{
                                     type = 'linear'
                                     display = $true
                                     position = 'right'
@@ -179,7 +179,8 @@
                                         drawOnChartArea = $false
                                     }
                                 }
-                                x = @{
+                                xAxis = @{
+                                    display = $true
                                     title = @{
                                         display = $true
                                         text = "Date"
