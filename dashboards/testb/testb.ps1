@@ -35,7 +35,8 @@
                         
                         # Check all timestamps for this date
                         foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
-                            if ($timestamp -match '^\d{4}$') {  # This is a timestamp
+                            if ($timestamp -match '^\d{4}$') {
+                                # This is a timestamp
                                 $entry = $dateEntry.$timestamp
                                 
                                 # Process Pain data - specifically back pain
@@ -57,7 +58,8 @@
                                             # Track individual activity types
                                             if ($activityTypes.ContainsKey($activity)) {
                                                 $activityTypes[$activity] += $duration
-                                            } else {
+                                            }
+                                            else {
                                                 $activityTypes[$activity] = $duration
                                             }
                                         }
@@ -95,28 +97,28 @@
                         }
                         
                         $activityData += [PSCustomObject]@{
-                            Date = $dateStr
+                            Date          = $dateStr
                             TotalDuration = $totalActivityDuration
-                            Walking = if ($activityTypes['walking']) { $activityTypes['walking'] } else { 0 }
-                            Stairs = if ($activityTypes['stairs']) { $activityTypes['stairs'] } else { 0 }
-                            Standing = if ($activityTypes['standing']) { $activityTypes['standing'] } else { 0 }
-                            SortDate = $date
+                            Walking       = if ($activityTypes['walking']) { $activityTypes['walking'] } else { 0 }
+                            Stairs        = if ($activityTypes['stairs']) { $activityTypes['stairs'] } else { 0 }
+                            Standing      = if ($activityTypes['standing']) { $activityTypes['standing'] } else { 0 }
+                            SortDate      = $date
                         }
                         
                         $medicationData += [PSCustomObject]@{
-                            Date = $dateStr
+                            Date          = $dateStr
                             TotalDilaudid = $totalDilaudid
-                            TotalValium = $totalValium
-                            SortDate = $date
+                            TotalValium   = $totalValium
+                            SortDate      = $date
                         }
                         
                         # Calculate average back pain for the day
                         if ($backPainLevels.Count -gt 0) {
                             $avgBackPain = [math]::Round(($backPainLevels | Measure-Object -Average).Average, 1)
                             $backPainData += [PSCustomObject]@{
-                                Date = $dateStr
+                                Date        = $dateStr
                                 AvgBackPain = $avgBackPain
-                                SortDate = $date
+                                SortDate    = $date
                             }
                         }
                     }
@@ -138,35 +140,38 @@
                 $activityData = $activityData | Select-Object Date, TotalDuration, Walking, Stairs, Standing
                 $medicationData = $medicationData | Select-Object Date, TotalDilaudid, TotalValium
                 $backPainData = $backPainData | Select-Object Date, AvgBackPain
-                
+                $combinedPainData = $painData + $backPainData
+                $painDataSets = @()
+                $painDataSets += New-UDChartJSDataset -Data $painData -DataProperty MaxPainLevel -LabelProperty Date -BackgroundColor '#729ECE' -BorderColor '#729ECE' -YAxisId 'y'
+                $painDataSets += New-UDChartJSDataset -Data $backPainData -DataProperty AvgBackPain -LabelProperty Date -BackgroundColor '#FF9E4A' -BorderColor '#FF7F0E' -YAxisId 'y1'
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
                         # Line chart for pain levels over time - using explicit dataset syntax
-                        New-UDChartJS -Type line -Data $painData -DataProperty MaxPainLevel -LabelProperty Date -Options @{
-                            responsive = $true
-                            scales = @{
-                                y = @{
-                                    beginAtZero = $true
-                                    max = 10
-                                    title = @{
-                                        display = $true
-                                        text = "Pain Level (0-10)"
-                                    }
-                                }
-                                x = @{
-                                    title = @{
-                                        display = $true
-                                        text = "Date"
-                                    }
+                        New-UDChartJS -Type line -Data $combinedPainData -LabelProperty Date -Options @{   
+                            responsive          = $true
+                            maintainAspectRatio = $false
+                            plugins             = @{
+                                legend = @{
+                                    display = $false
                                 }
                             }
-                            plugins = @{
-                                title = @{
+                            scales              = @{
+                                xAxis  = @{
                                     display = $true
-                                    text = "Daily Maximum Pain Levels"
+                                    ticks   = @{
+                                        display = $false
+                                    }
                                 }
-                                legend = @{
-                                    display = $true
+                                y  = @{
+                                    display  = $true
+                                    position = 'left'
+                                }
+                                y1 = @{
+                                    display  = $true
+                                    position = 'right'
+                                    grid     = @{
+                                        drawOnChartArea = $false # only want the grid lines for one axis to show up
+                                    }
                                 }
                             }
                         }
@@ -178,25 +183,25 @@
                         # Line chart for daily dilaudid consumption
                         New-UDChartJS -Type line -Data $medicationData -DataProperty TotalDilaudid -LabelProperty Date -Options @{
                             responsive = $true
-                            scales = @{
+                            scales     = @{
                                 y = @{
                                     beginAtZero = $true
-                                    title = @{
+                                    title       = @{
                                         display = $true
-                                        text = "Dilaudid Amount (mg)"
+                                        text    = "Dilaudid Amount (mg)"
                                     }
                                 }
                                 x = @{
                                     title = @{
                                         display = $true
-                                        text = "Date"
+                                        text    = "Date"
                                     }
                                 }
                             }
-                            plugins = @{
-                                title = @{
+                            plugins    = @{
+                                title  = @{
                                     display = $true
-                                    text = "Daily Total Dilaudid Consumption"
+                                    text    = "Daily Total Dilaudid Consumption"
                                 }
                                 legend = @{
                                     display = $true
@@ -211,25 +216,25 @@
                         # Line chart for daily valium consumption
                         New-UDChartJS -Type line -Data $medicationData -DataProperty TotalValium -LabelProperty Date -Options @{
                             responsive = $true
-                            scales = @{
+                            scales     = @{
                                 y = @{
                                     beginAtZero = $true
-                                    title = @{
+                                    title       = @{
                                         display = $true
-                                        text = "Valium Amount (mg)"
+                                        text    = "Valium Amount (mg)"
                                     }
                                 }
                                 x = @{
                                     title = @{
                                         display = $true
-                                        text = "Date"
+                                        text    = "Date"
                                     }
                                 }
                             }
-                            plugins = @{
-                                title = @{
+                            plugins    = @{
+                                title  = @{
                                     display = $true
-                                    text = "Daily Total Valium Consumption"
+                                    text    = "Daily Total Valium Consumption"
                                 }
                                 legend = @{
                                     display = $true
@@ -244,26 +249,26 @@
                         # Line chart for average back pain levels
                         New-UDChartJS -Type line -Data $backPainData -DataProperty AvgBackPain -LabelProperty Date -Options @{
                             responsive = $true
-                            scales = @{
+                            scales     = @{
                                 y = @{
                                     beginAtZero = $true
-                                    max = 10
-                                    title = @{
+                                    max         = 10
+                                    title       = @{
                                         display = $true
-                                        text = "Average Back Pain Level (0-10)"
+                                        text    = "Average Back Pain Level (0-10)"
                                     }
                                 }
                                 x = @{
                                     title = @{
                                         display = $true
-                                        text = "Date"
+                                        text    = "Date"
                                     }
                                 }
                             }
-                            plugins = @{
-                                title = @{
+                            plugins    = @{
+                                title  = @{
                                     display = $true
-                                    text = "Daily Average Back Pain Levels"
+                                    text    = "Daily Average Back Pain Levels"
                                 }
                                 legend = @{
                                     display = $true
@@ -359,7 +364,8 @@
                                     New-UDTypography -Text "Days with Back Pain: $backPainDays" -Variant h6
                                 }
                             }
-                        } else {
+                        }
+                        else {
                             New-UDCard -Title "Back Pain Statistics" -Content {
                                 New-UDElement -Tag "div" -Content {
                                     New-UDTypography -Text "No back pain data available" -Variant h6
@@ -379,7 +385,8 @@
                     }
                 }
                 
-            } catch {
+            }
+            catch {
                 New-UDAlert -Severity error -Text "Error loading entries data: $($_.Exception.Message)"
             }
         } -Id "pain-data"
