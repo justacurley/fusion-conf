@@ -84,7 +84,7 @@
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
                         # Line chart for pain levels over time
-                        $painDataset = New-UDChartJSDataset -DataProperty MaxPainLevel -Label "Max Pain Level" -BorderColor 'rgb(255, 99, 132)' -BackgroundColor 'rgba(255, 99, 132, 0.2)' -PointRadius 4
+                        $painDataset = New-UDChartJSDataset -DataProperty MaxPainLevel -Label "Max Pain Level" -BorderColor 'rgb(255, 99, 132)' -BackgroundColor 'rgba(255, 99, 132, 0.2)'
                         New-UDChartJS -Type line -Data $painData -Dataset $painDataset -LabelProperty Date -Options @{
                             responsive = $true
                             scales = @{
@@ -119,8 +119,8 @@
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
                         # Activity vs Pain correlation chart with dual datasets
-                        $painDataset = New-UDChartJSDataset -DataProperty MaxPainLevel -Label "Max Pain Level" -BorderColor 'rgb(255, 99, 132)' -BackgroundColor 'rgba(255, 99, 132, 0.2)' -PointRadius 4 -YAxisId 'y'
-                        $activityDataset = New-UDChartJSDataset -DataProperty TotalDuration -Label "Total Activity Duration (min)" -BorderColor 'rgb(54, 162, 235)' -BackgroundColor 'rgba(54, 162, 235, 0.2)' -PointRadius 4 -YAxisId 'y1'
+                        $painDataset = New-UDChartJSDataset -DataProperty MaxPainLevel -Label "Max Pain Level" -BorderColor 'rgb(255, 99, 132)' -BackgroundColor 'rgba(255, 99, 132, 0.2)' -YAxisId 'y'
+                        $activityDataset = New-UDChartJSDataset -DataProperty TotalDuration -Label "Total Activity Duration (min)" -BorderColor 'rgb(54, 162, 235)' -BackgroundColor 'rgba(54, 162, 235, 0.2)' -YAxisId 'y1'
                         
                         # Combine both datasets - we need to merge the data since we have different properties
                         $combinedData = @()
