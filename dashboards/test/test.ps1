@@ -1,4 +1,4 @@
-﻿New-UDDashboard -Title "Pain Level Analysis" -Content {
+﻿$Dashboard = New-UDDashboard -Title "Pain Level Analysis" -Content {
     New-UDContainer -Content {
         New-UDTypography -Text "Max Daily Pain Level Tracker" -Variant h4 -Align center
         
@@ -9,9 +9,6 @@
                 $entries = Get-Content -Path $EntriesPath | ConvertFrom-Json
                 New-UDAlert -Severity success -Text "Loaded data from: $EntriesPath"
             
-                # Extract max_pain_level data for each date
-                $painData = @()
-                $dates = $entries.PSObject.Properties.Name | Sort-Object
                 # Extract max_pain_level data for each date
                 $painData = @()
                 $dates = $entries.PSObject.Properties.Name | Sort-Object
@@ -194,5 +191,8 @@
         }
     }
 }
+
+# Return the dashboard
+$Dashboard
 ```
 
