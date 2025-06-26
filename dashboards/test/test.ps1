@@ -13,6 +13,7 @@
                 $painData = @()
                 $activityData = @()
                 $medicationData = @()
+                $backPainData = @()
                 $dates = $entries.PSObject.Properties.Name | Sort-Object
                 
                 foreach ($date in $dates) {
@@ -30,11 +31,20 @@
                         $activityTypes = @{}
                         $totalDilaudid = 0
                         $totalValium = 0
+                        $backPainLevels = @()
                         
                         # Check all timestamps for this date
                         foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
                             if ($timestamp -match '^\d{4}$') {  # This is a timestamp
                                 $entry = $dateEntry.$timestamp
+                                
+                                # Process Pain data - specifically back pain
+                                if ($entry.PSObject.Properties['Pain']) {
+                                    if ($entry.Pain.PSObject.Properties['back']) {
+                                        $backPainLevel = [double]$entry.Pain.back.pain_level
+                                        $backPainLevels += $backPainLevel
+                                    }
+                                }
                                 
                                 # Process Activities
                                 if ($entry.PSObject.Properties['Activities']) {
@@ -99,6 +109,16 @@
                             TotalValium = $totalValium
                             SortDate = $date
                         }
+                        
+                        # Calculate average back pain for the day
+                        if ($backPainLevels.Count -gt 0) {
+                            $avgBackPain = [math]::Round(($backPainLevels | Measure-Object -Average).Average, 1)
+                            $backPainData += [PSCustomObject]@{
+                                Date = $dateStr
+                                AvgBackPain = $avgBackPain
+                                SortDate = $date
+                            }
+                        }
                     }
                 }
                 
@@ -111,11 +131,13 @@
                 $painData = $painData | Sort-Object SortDate
                 $activityData = $activityData | Sort-Object SortDate
                 $medicationData = $medicationData | Sort-Object SortDate
+                $backPainData = $backPainData | Sort-Object SortDate
                 
                 # Remove SortDate property as it's only needed for sorting
                 $painData = $painData | Select-Object Date, MaxPainLevel
                 $activityData = $activityData | Select-Object Date, TotalDuration, Walking, Stairs, Standing
                 $medicationData = $medicationData | Select-Object Date, TotalDilaudid, TotalValium
+                $backPainData = $backPainData | Select-Object Date, AvgBackPain
                 
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
@@ -217,9 +239,43 @@
                     }
                 }
                 
+                New-UDRow -Columns {
+                    New-UDColumn -Size 12 -Content {
+                        # Line chart for average back pain levels
+                        New-UDChartJS -Type line -Data $backPainData -DataProperty AvgBackPain -LabelProperty Date -Options @{
+                            responsive = $true
+                            scales = @{
+                                y = @{
+                                    beginAtZero = $true
+                                    max = 10
+                                    title = @{
+                                        display = $true
+                                        text = "Average Back Pain Level (0-10)"
+                                    }
+                                }
+                                x = @{
+                                    title = @{
+                                        display = $true
+                                        text = "Date"
+                                    }
+                                }
+                            }
+                            plugins = @{
+                                title = @{
+                                    display = $true
+                                    text = "Daily Average Back Pain Levels"
+                                }
+                                legend = @{
+                                    display = $true
+                                }
+                            }
+                        }
+                    }
+                }
+                
                 
                 New-UDRow -Columns {
-                    New-UDColumn -Size 3 -Content {
+                    New-UDColumn -Size 2 -Content {
                         # Pain Statistics card
                         $avgPain = [math]::Round(($painData.MaxPainLevel | Measure-Object -Average).Average, 1)
                         $maxPain = ($painData.MaxPainLevel | Measure-Object -Maximum).Maximum
@@ -236,7 +292,7 @@
                         }
                     }
                     
-                    New-UDColumn -Size 3 -Content {
+                    New-UDColumn -Size 2 -Content {
                         # Activity Statistics card
                         $avgActivity = [math]::Round(($activityData.TotalDuration | Measure-Object -Average).Average, 1)
                         $maxActivity = ($activityData.TotalDuration | Measure-Object -Maximum).Maximum
@@ -283,6 +339,31 @@
                                 New-UDTypography -Text "Highest Daily Dose: $maxValium mg" -Variant h6
                                 New-UDTypography -Text "Total Consumed: $totalValium mg" -Variant h6
                                 New-UDTypography -Text "Days with Valium: $valiumDays" -Variant h6
+                            }
+                        }
+                    }
+                    
+                    New-UDColumn -Size 2 -Content {
+                        # Back Pain Statistics card
+                        if ($backPainData.Count -gt 0) {
+                            $avgBackPain = [math]::Round(($backPainData.AvgBackPain | Measure-Object -Average).Average, 1)
+                            $maxBackPain = ($backPainData.AvgBackPain | Measure-Object -Maximum).Maximum
+                            $minBackPain = ($backPainData.AvgBackPain | Measure-Object -Minimum).Minimum
+                            $backPainDays = $backPainData.Count
+                            
+                            New-UDCard -Title "Back Pain Statistics" -Content {
+                                New-UDElement -Tag "div" -Content {
+                                    New-UDTypography -Text "Average Back Pain: $avgBackPain" -Variant h6
+                                    New-UDTypography -Text "Highest Daily Avg: $maxBackPain" -Variant h6
+                                    New-UDTypography -Text "Lowest Daily Avg: $minBackPain" -Variant h6
+                                    New-UDTypography -Text "Days with Back Pain: $backPainDays" -Variant h6
+                                }
+                            }
+                        } else {
+                            New-UDCard -Title "Back Pain Statistics" -Content {
+                                New-UDElement -Tag "div" -Content {
+                                    New-UDTypography -Text "No back pain data available" -Variant h6
+                                }
                             }
                         }
                     }
