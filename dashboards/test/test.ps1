@@ -84,21 +84,7 @@
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
                         # Line chart for pain levels over time - using explicit dataset syntax
-                        New-UDChartJS -Type line -Data @{
-                            labels = $painData.Date
-                            datasets = @(
-                                @{
-                                    label = "Max Daily Pain Level"
-                                    data = $painData.MaxPainLevel
-                                    borderColor = 'rgb(255, 99, 132)'
-                                    backgroundColor = 'rgba(255, 99, 132, 0.2)'
-                                    fill = $false
-                                    tension = 0.1
-                                    pointRadius = 4
-                                    borderWidth = 2
-                                }
-                            )
-                        } -Options @{
+                        New-UDChartJS -Type line -Data $painData -DataProperty MaxPainLevel -LabelProperty Date -Options @{
                             responsive = $true
                             scales = @{
                                 y = @{
