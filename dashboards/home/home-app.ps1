@@ -2,7 +2,7 @@ $HomePage = New-UDApp -Content {
     # Homepage content for the Health Dashboard
     New-UDContainer -Content {
         # Header Section
-        New-UDRow -Content {
+        New-UDRow -Columns {
             New-UDColumn -Size 12 -Content {
                 New-UDTypography -Text "🏥 PowerShell Universal Health Dashboard" -Variant h3 -Align center -Style @{
                     marginBottom = "10px"
@@ -18,7 +18,7 @@ $HomePage = New-UDApp -Content {
         }
 
         # Statistics Overview Section
-        New-UDRow -Content {
+        New-UDRow -Columns {
             New-UDColumn -Size 3 -Content {
                 New-UDCard -Title "📊 Total Entries" -Content {
                     New-UDTypography -Text "2,847" -Variant h4 -Style @{ color = "#4caf50"; fontWeight = "bold"; textAlign = "center" }
@@ -46,7 +46,7 @@ $HomePage = New-UDApp -Content {
         }
 
         # Quick Actions Section
-        New-UDRow -Content {
+        New-UDRow -Columns {
             New-UDColumn -Size 12 -Content {
                 New-UDTypography -Text "🚀 Quick Actions" -Variant h5 -Style @{
                     marginTop = "30px"
