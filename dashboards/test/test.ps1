@@ -79,12 +79,24 @@
                         $chartData = $combinedPainData | Where-Object { $_.AvgBackPain -ne $null }
                         
                         if ($chartData.Count -gt 0) {
-                            # Create the dual-series line chart with explicit structure for connected lines
-                            $labels = $chartData | ForEach-Object { $_.Date }
-                            $maxPainValues = $chartData | ForEach-Object { $_.MaxPainLevel }
-                            $avgBackPainValues = $chartData | ForEach-Object { $_.AvgBackPain }
-
-                            New-UDChartJS -Type 'line' -Options @{
+                            # Create datasets for both series with additional options for line connections
+                            $maxPainDataset = New-UDChartJSDataset -DataProperty "MaxPainLevel" -Label "Max Pain Level" -BackgroundColor "#dc3545" -BorderColor "#dc3545" -AdditionalOptions @{
+                                fill = $false
+                                tension = 0.1
+                                pointRadius = 4
+                                borderWidth = 2
+                                showLine = $true
+                            }
+                            $avgBackPainDataset = New-UDChartJSDataset -DataProperty "AvgBackPain" -Label "Average Back Pain" -BackgroundColor "#007bff" -BorderColor "#007bff" -AdditionalOptions @{
+                                fill = $false
+                                tension = 0.1
+                                pointRadius = 4
+                                borderWidth = 2
+                                showLine = $true
+                            }
+                            
+                            # Create the dual-series line chart
+                            New-UDChartJS -Type 'line' -Data $chartData -Dataset @($maxPainDataset, $avgBackPainDataset) -LabelProperty "Date" -Options @{
                                 responsive = $true
                                 plugins = @{
                                     title = @{
@@ -112,34 +124,17 @@
                                         }
                                     }
                                 }
-                                data = @{
-                                    labels = $labels
-                                    datasets = @(
-                                        @{
-                                            label = "Max Pain Level"
-                                            data = $maxPainValues
-                                            borderColor = "#dc3545"
-                                            backgroundColor = "#dc3545"
-                                            fill = $false
-                                            tension = 0.1
-                                            pointRadius = 4
-                                            borderWidth = 2
-                                        },
-                                        @{
-                                            label = "Average Back Pain"
-                                            data = $avgBackPainValues
-                                            borderColor = "#007bff"
-                                            backgroundColor = "#007bff"
-                                            fill = $false
-                                            tension = 0.1
-                                            pointRadius = 4
-                                            borderWidth = 2
-                                        }
-                                    )
-                                }
                                 interaction = @{
                                     mode = "index"
                                     intersect = $false
+                                }
+                                elements = @{
+                                    line = @{
+                                        tension = 0.1
+                                    }
+                                    point = @{
+                                        radius = 4
+                                    }
                                 }
                             }
                         } else {
