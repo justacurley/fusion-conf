@@ -1,4 +1,4 @@
-New-UDApp -Content {
+$HomePage = New-UDApp -Content {
     # Homepage content for the Health Dashboard
     New-UDContainer -Content {
         # Header Section
@@ -235,3 +235,6 @@ New-UDApp -Content {
         }
     }
 }
+
+# Return the homepage app
+$HomePage
