@@ -1,4 +1,4 @@
-New-UDDashboard -Title "🏥 Health Dashboard" {
+New-UDApp -Content {
     # Homepage content for the Health Dashboard
     New-UDContainer -Content {
         # Header Section
