@@ -60,17 +60,17 @@ $HomePage = New-UDApp -Content {
         New-UDRow -Columns {
             New-UDColumn -Size 4 -Content {
                 New-UDButton -Text "➕ Add New Entry" -Color primary -Size large -FullWidth -OnClick {
-                    Invoke-UDRedirect -Url "/entries/Home"
+                    Invoke-UDRedirect -Url "/entries" -Native
                 } -Style @{ marginBottom = "10px"; padding = "15px" }
             }
             New-UDColumn -Size 4 -Content {
                 New-UDButton -Text "📊 View Analytics" -Color secondary -Size large -FullWidth -OnClick {
-                    Invoke-UDRedirect -Url "/charts/Home"
+                    Invoke-UDRedirect -Url "/charts" -Native
                 } -Style @{ marginBottom = "10px"; padding = "15px" }
             }
             New-UDColumn -Size 4 -Content {
                 New-UDButton -Text "📅 Timeline View" -Color success -Size large -FullWidth -OnClick {
-                    Invoke-UDRedirect -Url "/timeline/Home"
+                    Invoke-UDRedirect -Url "/timeline" -Native
                 } -Style @{ marginBottom = "10px"; padding = "15px" }
             }
         }
@@ -98,7 +98,7 @@ $HomePage = New-UDApp -Content {
                 New-UDCard -Title "📝 Health Entries" -Content {
                     New-UDTypography -Text "Manage and view your health data entries" -Variant body2 -Style @{ marginBottom = "15px" }
                     New-UDButton -Text "Open Entries Dashboard" -Color primary -OnClick {
-                        Invoke-UDRedirect -Url "/entries/Home"
+                        Invoke-UDRedirect -Url "/entries" -Native
                     } -FullWidth
                 } -Style @{ marginBottom = "20px"; minHeight = "150px" }
             }
@@ -108,7 +108,7 @@ $HomePage = New-UDApp -Content {
                 New-UDCard -Title "📊 Analytics & Charts" -Content {
                     New-UDTypography -Text "Visualize health trends and patterns" -Variant body2 -Style @{ marginBottom = "15px" }
                     New-UDButton -Text "Open Charts Dashboard" -Color secondary -OnClick {
-                        Invoke-UDRedirect -Url "/charts/Home"
+                        Invoke-UDRedirect -Url "/charts" -Native
                     } -FullWidth
                 } -Style @{ marginBottom = "20px"; minHeight = "150px" }
             }
@@ -120,7 +120,7 @@ $HomePage = New-UDApp -Content {
                 New-UDCard -Title "🕒 Activity Timeline" -Content {
                     New-UDTypography -Text "View chronological health activities" -Variant body2 -Style @{ marginBottom = "15px" }
                     New-UDButton -Text "Open Timeline Dashboard" -Color success -OnClick {
-                        Invoke-UDRedirect -Url "/activitytimeline/Home"
+                        Invoke-UDRedirect -Url "/activitytimeline" -Native
                     } -FullWidth
                 } -Style @{ marginBottom = "20px"; minHeight = "150px" }
             }
@@ -130,7 +130,7 @@ $HomePage = New-UDApp -Content {
                 New-UDCard -Title "🖼️ Health Gallery" -Content {
                     New-UDTypography -Text "Browse health-related images and media" -Variant body2 -Style @{ marginBottom = "15px" }
                     New-UDButton -Text "Open Gallery Dashboard" -Color warning -OnClick {
-                        Invoke-UDRedirect -Url "/gallery/Home"
+                        Invoke-UDRedirect -Url "/gallery" -Native
                     } -FullWidth
                 } -Style @{ marginBottom = "20px"; minHeight = "150px" }
             }
@@ -142,7 +142,7 @@ $HomePage = New-UDApp -Content {
                 New-UDCard -Title "📅 Timeline View" -Content {
                     New-UDTypography -Text "Interactive timeline of health events" -Variant body2 -Style @{ marginBottom = "15px" }
                     New-UDButton -Text "Open Timeline View" -Color info -OnClick {
-                        Invoke-UDRedirect -Url "/timeline/Home"
+                        Invoke-UDRedirect -Url "/timeline" -Native
                     } -FullWidth
                 } -Style @{ marginBottom = "20px"; minHeight = "150px" }
             }
@@ -152,7 +152,7 @@ $HomePage = New-UDApp -Content {
                 New-UDCard -Title "🧪 Test Dashboard" -Content {
                     New-UDTypography -Text "Development and testing environment" -Variant body2 -Style @{ marginBottom = "15px" }
                     New-UDButton -Text "Open Test Dashboard" -Color dark -OnClick {
-                        Invoke-UDRedirect -Url "/testme/Home"
+                        Invoke-UDRedirect -Url "/testme" -Native
                     } -FullWidth
                 } -Style @{ marginBottom = "20px"; minHeight = "150px" }
             }
