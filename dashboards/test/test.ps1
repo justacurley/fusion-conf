@@ -80,8 +80,8 @@
                         
                         if ($chartData.Count -gt 0) {
                             # Create datasets for both series
-                            $maxPainDataset = New-UDChartJSDataset -DataProperty "MaxPainLevel" -Label "Max Pain Level" -BackgroundColor "#dc3545" -BorderColor "#dc3545" -Fill $false
-                            $avgBackPainDataset = New-UDChartJSDataset -DataProperty "AvgBackPain" -Label "Average Back Pain" -BackgroundColor "#007bff" -BorderColor "#007bff" -Fill $false
+                            $maxPainDataset = New-UDChartJSDataset -DataProperty "MaxPainLevel" -Label "Max Pain Level" -BackgroundColor "#dc3545" -BorderColor "#dc3545"
+                            $avgBackPainDataset = New-UDChartJSDataset -DataProperty "AvgBackPain" -Label "Average Back Pain" -BackgroundColor "#007bff" -BorderColor "#007bff"
                             
                             # Create the dual-series line chart
                             New-UDChartJS -Type 'line' -Data $chartData -Dataset @($maxPainDataset, $avgBackPainDataset) -LabelProperty "Date" -Options @{
