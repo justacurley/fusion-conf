@@ -57,7 +57,7 @@ $HomePage = New-UDApp -Content {
             }
         }
 
-        New-UDRow -Content {
+        New-UDRow -Columns {
             New-UDColumn -Size 4 -Content {
                 New-UDButton -Text "➕ Add New Entry" -Color primary -Size large -FullWidth -OnClick {
                     Invoke-UDRedirect -Url "/entries"
@@ -76,7 +76,7 @@ $HomePage = New-UDApp -Content {
         }
 
         # Dashboard Navigation Section
-        New-UDRow -Content {
+        New-UDRow -Columns {
             New-UDColumn -Size 12 -Content {
                 New-UDTypography -Text "📋 Dashboard Applications" -Variant h5 -Style @{
                     marginTop = "40px"
@@ -92,7 +92,7 @@ $HomePage = New-UDApp -Content {
         }
 
         # Dashboard Cards Grid
-        New-UDRow -Content {
+        New-UDRow -Columns {
             # Entries Dashboard
             New-UDColumn -Size 6 -Content {
                 New-UDCard -Title "📝 Health Entries" -Content {
@@ -114,7 +114,7 @@ $HomePage = New-UDApp -Content {
             }
         }
 
-        New-UDRow -Content {
+        New-UDRow -Columns {
             # Activity Timeline Dashboard
             New-UDColumn -Size 6 -Content {
                 New-UDCard -Title "🕒 Activity Timeline" -Content {
@@ -136,7 +136,7 @@ $HomePage = New-UDApp -Content {
             }
         }
 
-        New-UDRow -Content {
+        New-UDRow -Columns {
             # Timeline Dashboard
             New-UDColumn -Size 6 -Content {
                 New-UDCard -Title "📅 Timeline View" -Content {
@@ -159,7 +159,7 @@ $HomePage = New-UDApp -Content {
         }
 
         # System Information Section
-        New-UDRow -Content {
+        New-UDRow -Columns {
             New-UDColumn -Size 12 -Content {
                 New-UDTypography -Text "🔧 System Information" -Variant h5 -Style @{
                     marginTop = "40px"
@@ -170,7 +170,7 @@ $HomePage = New-UDApp -Content {
             }
         }
 
-        New-UDRow -Content {
+        New-UDRow -Columns {
             New-UDColumn -Size 4 -Content {
                 New-UDCard -Title "🔧 System Status" -Content {
                     New-UDTypography -Text "✅ All systems operational" -Variant body1 -Style @{ color = "#4caf50"; fontWeight = "bold" }
@@ -194,7 +194,7 @@ $HomePage = New-UDApp -Content {
         }
 
         # Recent Activity Section
-        New-UDRow -Content {
+        New-UDRow -Columns {
             New-UDColumn -Size 12 -Content {
                 New-UDTypography -Text "📋 Recent Activity" -Variant h5 -Style @{
                     marginTop = "40px"
@@ -205,7 +205,7 @@ $HomePage = New-UDApp -Content {
             }
         }
 
-        New-UDRow -Content {
+        New-UDRow -Columns {
             New-UDColumn -Size 12 -Content {
                 New-UDCard -Content {
                     New-UDList -Content {
@@ -220,7 +220,7 @@ $HomePage = New-UDApp -Content {
         }
 
         # Footer Section
-        New-UDRow -Content {
+        New-UDRow -Columns {
             New-UDColumn -Size 12 -Content {
                 New-UDDivider -Style @{ margin = "30px 0" }
                 New-UDTypography -Text "PowerShell Universal Health Dashboard v2.0 | Built with ❤️ for better health tracking" -Variant body2 -Align center -Style @{
