@@ -206,29 +206,87 @@
             }
         } -OnSubmit {
             Import-Module -Name fusion -Force
-            # Handle form submission logic here
-            # Convert date/time to the required format
-                        # Debug: Show the EventData structure
+            # Debug: Show the EventData structure
             Write-Information "=== EVENTDATA DEBUG ==="
             Write-Information "EventData Type: $($EventData.GetType().FullName)"
             Write-Information "EventData Count: $($EventData.Count)"
             
-            # Convert Collection to hashtable for easier access
-            $formData = @{}
-            foreach ($item in $EventData) {
-                $formData[$item.Name] = $item.Value
+            # Let's see what's actually in the EventData
+            Write-Information "Raw EventData contents:"
+            for ($i = 0; $i -lt $EventData.Count; $i++) {
+                $item = $EventData[$i]
+                Write-Information "Item $i Type: $($item.GetType().FullName)"
+                Write-Information "Item $i: $($item | ConvertTo-Json -Depth 2)"
+                if ($item.PSObject.Properties) {
+                    Write-Information "Item $i Properties:"
+                    foreach ($prop in $item.PSObject.Properties) {
+                        Write-Information "  $($prop.Name) = '$($prop.Value)'"
+                    }
+                }
+            }
+            Write-Information "========================"
+            
+            # Try a different approach to access the data
+            if ($EventData.Count -eq 1 -and $EventData[0]) {
+                # If there's only one item, it might contain all the form data
+                $singleItem = $EventData[0]
+                Write-Information "Single item properties:"
+                if ($singleItem.PSObject.Properties) {
+                    foreach ($prop in $singleItem.PSObject.Properties) {
+                        Write-Information "  $($prop.Name) = '$($prop.Value)'"
+                    }
+                }
+                
+                # Try to use the single item as our form data
+                $formData = @{}
+                if ($singleItem.PSObject.Properties) {
+                    foreach ($prop in $singleItem.PSObject.Properties) {
+                        $formData[$prop.Name] = $prop.Value
+                    }
+                } else {
+                    # Fallback: try to access as hashtable
+                    Write-Information "Trying hashtable access..."
+                    $formData = $singleItem
+                }
+            } else {
+                # Original approach for multiple items
+                $formData = @{}
+                foreach ($item in $EventData) {
+                    if ($item.Name -and $item.Value) {
+                        $formData[$item.Name] = $item.Value
+                    }
+                }
             }
             
-            Write-Information "Form Data Keys:"
+            Write-Information "Final Form Data Keys:"
             foreach ($key in $formData.Keys) {
                 Write-Information "  $key = '$($formData[$key])'"
             }
-            Write-Information "========================"
             
             # Validate and convert date/time to the required format
             if ([string]::IsNullOrEmpty($formData["date"]) -or [string]::IsNullOrEmpty($formData["time"])) {
                 Write-Error "Date and time fields are required"
                 Show-UDToast -Message "❌ Please fill in both date and time fields" -MessageColor Red -Duration 5000
+                return
+            }
+            
+            Write-Information "Original date: '$($formData["date"])'"
+            Write-Information "Original time: '$($formData["time"])'"
+            
+            try {
+                # Parse the date and time
+                $dateObj = [DateTime]::Parse($formData["date"])
+                $timeObj = [DateTime]::Parse($formData["time"])
+                
+                # Convert to required format and update the formData
+                $formData["date"] = $dateObj.ToString("MMdd")
+                $formData["time"] = $timeObj.ToString("HHmm")
+                
+                Write-Information "Converted date to: $($formData["date"]), time to: $($formData["time"]) - Format: MMdd and HHmm"
+            }
+            catch {
+                Write-Error "Error converting date/time: $($_.Exception.Message)"
+                Show-UDToast -Message "❌ Error with date/time format. Please check your date and time entries." -MessageColor Red -Duration 5000
                 return
             }
             Write-Host "Converting JSON to entries.json format..."
