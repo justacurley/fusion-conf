@@ -208,6 +208,7 @@
             Import-Module -Name fusion -Force
             # Handle form submission logic here
             # Convert date/time to the required format
+            Write-Information $EventData.Gettype()
             Write-Information $EventData["date"]
             Write-Information $EventData["time"]
             try {
