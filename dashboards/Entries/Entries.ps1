@@ -206,71 +206,17 @@
             }
         } -OnSubmit {
             Import-Module -Name fusion -Force
-            # Debug: Show the EventData structure
-            # Debug: Show the EventData structure
-            Wait-Debugger
             Write-Information "=== EVENTDATA DEBUG === breakpoint"
             Write-Information "EventData Type: $($EventData.GetType().FullName)"
             Write-Information "EventData Count: $($EventData.Count)"
-            
-            # Extract form data from the single PSCustomObject
-            if ($EventData.Count -eq 1 -and $EventData[0]) {
-                $singleItem = $EventData[0]
-                
-                # Convert PSCustomObject properties to hashtable
-                $formData = @{}
-                if ($singleItem.PSObject.Properties) {
-                    foreach ($prop in $singleItem.PSObject.Properties) {
-                        Write-Information "  $($prop.Name) = '$($prop.Value)'"
-                        $formData[$prop.Name] = $prop.Value
-                    }
-                }
-            }
-            else {
-                Write-Error "Unexpected EventData structure"
-                Show-UDToast -Message "❌ Form data error" -MessageColor Red -Duration 5000
-                return
-            }
-            
-            Write-Information "Final Form Data Keys:"
-            foreach ($key in $formData.Keys) {
-                Write-Information "  $key = '$($formData[$key])'"
-            }
-            
-            # Validate and convert date/time to the required format
-            if ([string]::IsNullOrEmpty($formData["date"]) -or [string]::IsNullOrEmpty($formData["time"])) {
-                Write-Error "Date and time fields are required"
-                Show-UDToast -Message "❌ Please fill in both date and time fields" -MessageColor Red -Duration 5000
-                return
-            }
-            
-            Write-Information "Original date: '$($formData["date"])'"
-            Write-Information "Original time: '$($formData["time"])'"
-            
-            try {
-                # Parse the date and time
-                $dateObj = [DateTime]::Parse($formData["date"])
-                $timeObj = [DateTime]::Parse($formData["time"])
-                
-                # Convert to required format and update the formData
-                $formData["date"] = $dateObj.ToString("MMdd")
-                $formData["time"] = $timeObj.ToString("HHmm")
-                
-                Write-Information "Converted date to: $($formData["date"]), time to: $($formData["time"]) - Format: MMdd and HHmm"
-            }
-            catch {
-                Write-Error "Error converting date/time: $($_.Exception.Message)"
-                Show-UDToast -Message "❌ Error with date/time format. Please check your date and time entries." -MessageColor Red -Duration 5000
-                return
-            }
-            
+            Write-Information "EventData Content: $($EventData | ConvertTo-Json -Depth 99)"
+
+            $EnrtyData.time - [datetime]::Parse($EventData.time).ToString("HHmm")
+            $EntryData.date = [datetime]::Parse($EventData.date).ToString("MMdd")
             Write-Information "Converting JSON to entries.json format..."
-            
-            # Convert the hashtable back to an object for your existing function
-            $entryObject = [PSCustomObject]$formData
-            $entry = ConvertTo-EntriesFormat -Entry $entryObject
-            Write-Information "Converting JSON to entries.json format..."
+            Write-Information ( $EventData | ConvertTo-Json -Depth 99)
             $entry = ConvertTo-EntriesFormat -Entry ( $EventData | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
+            Write-Information
             # Output results
             Write-Information "`nFull Entry JSON (ready for entries.json):"
             Write-Information "=========================================="
