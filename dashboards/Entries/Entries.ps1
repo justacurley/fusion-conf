@@ -209,6 +209,8 @@
             # Handle form submission logic here
             # Convert date/time to the required format
             Write-Information ($EventData | ConvertTo-Json -Depth 99)
+            Write-Information $EventData.date
+            Write-Information $EventData.time
             try {
                 $dateObj = [DateTime]::Parse($EventData.date)
                 Write-Information $dateObj
