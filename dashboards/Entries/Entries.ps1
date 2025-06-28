@@ -40,7 +40,7 @@
                 }
                 New-UDTypography -Text "💡 Automatically set to current Mountain Time - adjust if needed" -Variant caption -Style @{
                     marginTop = "5px"
-                    color = "#666"
+                    color     = "#666"
                     fontStyle = "italic"
                     textAlign = "center"
                 }
@@ -207,8 +207,19 @@
         } -OnSubmit {
             Import-Module -Name fusion -Force
             # Handle form submission logic here
-            Write-Information ($EventData | ConvertTo-Json -Depth 99)
-            Write-Information ($EventData.Gettype().FullName)
+            # Convert date/time to the required format
+            try {
+                $dateObj = [DateTime]::Parse($EventData.date)
+                $EventData.date = $dateObj.ToString("MMdd")
+                $timeObj = [DateTime]::Parse($EventData.time)
+                $EventData.time = $timeObj.ToString("HHmm")                    
+                Write-Information "Converted date to: $($EventData.date), time to: $($EventData.time)"
+            }
+            catch {
+                Write-Error "Error converting date/time: $($_.Exception.Message)"
+                Show-UDToast -Message "Error with date/time format" -MessageColor Red -Duration 5000
+                return
+            }
             Write-Host "Converting JSON to entries.json format..."
             $entry = ConvertTo-EntriesFormat -Entry ( $EventData | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
             # Output results
