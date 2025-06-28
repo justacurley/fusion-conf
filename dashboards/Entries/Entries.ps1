@@ -208,16 +208,15 @@
             Import-Module -Name fusion -Force
             # Handle form submission logic here
             # Convert date/time to the required format
-            $EventData = ($EventData | ConvertTo-Json -Depth 99 | ConvertFrom-JSon)
-            Write-Information $EventData.date
-            Write-Information $EventData.time
+            Write-Information $EventData["date"]
+            Write-Information $EventData["time"]
             try {
-                $dateObj = [DateTime]::Parse($EventData.date)
+                $dateObj = [DateTime]::Parse($EventData["date"])
                 Write-Information $dateObj
-                $EventData.date = $dateObj.ToString("MMdd")
-                $timeObj = [DateTime]::Parse($EventData.time)
-                $EventData.time = $timeObj.ToString("HHmm")                    
-                Write-Information "Converted date to: $($EventData.date), time to: $($EventData.time)"
+                $EventData["date"] = $dateObj.ToString("MMdd")
+                $timeObj = [DateTime]::Parse($EventData["time"])
+                $EventData["time"] = $timeObj.ToString("HHmm")
+                Write-Information "Converted date to: $($EventData["date"]), time to: $($EventData["time"]) - Format: MMdd and HHmm"
             }
             catch {
                 Write-Error "Error converting date/time: $($_.Exception.Message)"
