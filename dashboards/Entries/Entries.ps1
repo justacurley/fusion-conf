@@ -56,7 +56,7 @@
                         # Create visual cards for each medication type
                         foreach ($medType in $Dosages.Keys | Sort-Object) {
                             New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -MediumSize 4 -Content {
-                                New-UDPaper -Content {
+                                New-UDPaper -Children {
                                     New-UDTypography -Text "💊 $($medType.ToUpper())" -Variant subtitle1 -Style @{
                                         fontWeight   = "bold"
                                         marginBottom = "10px"
@@ -117,7 +117,7 @@
                         New-UDCard -Title "🏃‍♂️ Physical Activities" -Content {
                             New-UDGrid -Container -Content {
                                 # Initial activity entry with better styling
-                                New-UDPaper -Content {
+                                New-UDPaper -Children {
                                     New-UDTypography -Text "Activity #1" -Variant subtitle2 -Style @{
                                         marginBottom = "15px"
                                         color        = "#1976d2"
@@ -156,7 +156,7 @@
                                         $entryCount = (Get-Random -Minimum 100 -Maximum 999)
                                         
                                         Add-UDElement -ParentId "activities_section" -Content {
-                                            New-UDPaper -Content {
+                                            New-UDPaper -Children {
                                                 New-UDGrid -Container -Content {
                                                     New-UDGrid -Item -ExtraSmallSize 10 -Content {
                                                         New-UDTypography -Text "Activity #$entryCount" -Variant subtitle2 -Style @{
