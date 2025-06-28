@@ -216,7 +216,7 @@
             for ($i = 0; $i -lt $EventData.Count; $i++) {
                 $item = $EventData[$i]
                 Write-Information "Item $i Type: $($item.GetType().FullName)"
-                Write-Information "Item $i: $($item | ConvertTo-Json -Depth 2)"
+                Write-Information "Item $i : $($item | ConvertTo-Json -Depth 2)"
                 if ($item.PSObject.Properties) {
                     Write-Information "Item $i Properties:"
                     foreach ($prop in $item.PSObject.Properties) {
