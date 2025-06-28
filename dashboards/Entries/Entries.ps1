@@ -1,6 +1,6 @@
 ﻿New-UDApp -Content {
     New-UDContainer -Content {
-        New-UDPaper -Content {
+        New-UDPaper -Children {
             New-UDGrid -Container -Content {
                 New-UDTypography -Text "🏥 Health Recovery Entry Form" -Variant h4 -Style @{
                     textAlign    = "center"
