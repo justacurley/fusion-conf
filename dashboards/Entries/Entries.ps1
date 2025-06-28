@@ -210,6 +210,7 @@
             # Convert date/time to the required format
             try {
                 $dateObj = [DateTime]::Parse($EventData.date)
+                Write-Information $dateObj
                 $EventData.date = $dateObj.ToString("MMdd")
                 $timeObj = [DateTime]::Parse($EventData.time)
                 $EventData.time = $timeObj.ToString("HHmm")                    
