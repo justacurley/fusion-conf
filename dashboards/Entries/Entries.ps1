@@ -33,7 +33,7 @@
                         }
                     }
                     New-UDGrid -Item -ExtraSmallSize 6 -Content {
-                        New-UDTextbox -Id "time" -Label "🕐 Time" -Type "time" -FullWidth -Value $currentTime -Style @{
+                        New-UDTextbox -Id "timestamp" -Label "🕐 Time" -Type "time" -FullWidth -Value $currentTime -Style @{
                             marginBottom = "10px"
                         }
                     }
@@ -211,12 +211,11 @@
             Write-Information "EventData Count: $($EventData.Count)"
             Write-Information "EventData Content: $($EventData | ConvertTo-Json -Depth 99)"
             $Event = $EventData[0]
-            $Event.time = [datetime]::Parse($Event.time).ToString("HHmm")
+            $Event.timestamp = [datetime]::Parse($Event.timestamp).ToString("HHmm")
             $Event.date = [datetime]::Parse($Event.date).ToString("MMdd")
             Write-Information "Converting JSON to entries.json format..."
             Write-Information ( $Event | ConvertTo-Json -Depth 99)
             $entry = ConvertTo-EntriesFormat -Entry ( $Event | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
-            Write-Information
             # Output results
             Write-Information "`nFull Entry JSON (ready for entries.json):"
             Write-Information "=========================================="
