@@ -1,215 +1,196 @@
-﻿$Dashboard = New-UDDashboard -Title "Combined Pain Analysis & Chart" -Content {
+New-UDApp -Content {
     New-UDContainer -Content {
-        New-UDTypography -Text "Max Pain vs Average Back Pain Analysis" -Variant h4 -Align center
-        
-        New-UDDynamic -Content {
-            
-            $EntriesPath = "/home/data/fusion-data/entries/entries.json"
-            try {
-                $entries = Get-Content -Path $EntriesPath | ConvertFrom-Json
-                New-UDAlert -Severity success -Text "Loaded data from: $EntriesPath"
-            
-                # Extract combined pain data for each date
-                $combinedPainData = @()
-                $dates = $entries.PSObject.Properties.Name | Sort-Object
-                
-                foreach ($date in $dates) {
-                    $dateEntry = $entries.$date
-                    if ($dateEntry.PSObject.Properties['max_pain_level']) {
-                        $maxPain = [double]$dateEntry.max_pain_level
-                        
-                        # Convert MMDD to readable date
-                        $month = $date.Substring(0, 2)
-                        $day = $date.Substring(2, 2)
-                        $dateStr = "$month/$day"
-                        
-                        # Calculate average back pain for the day
-                        $backPainLevels = @()
-                        
-                        # Check all timestamps for this date
-                        foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
-                            if ($timestamp -match '^\d{4}$') {  # This is a timestamp
-                                $entry = $dateEntry.$timestamp
-                                
-                                # Process Pain data - specifically back pain
-                                if ($entry.PSObject.Properties['Pain']) {
-                                    if ($entry.Pain.PSObject.Properties['back']) {
-                                        $backPainLevel = [double]$entry.Pain.back.pain_level
-                                        $backPainLevels += $backPainLevel
+        New-UDForm -Content {
+
+
+
+            # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)", and another for "Note"
+            # Activities Section - Enhanced UI
+            New-UDCheckbox -Id "add_activity" -Label "🏃‍♂️ Add Activity Entry" -Style @{
+                marginBottom = "15px"
+                fontSize     = "16px"
+                fontWeight   = "500"
+            } -OnChange {
+                if ($EventData) {
+                    # Checkbox is checked - show activities entry section
+                    Set-UDElement -Id "activities_section" -Content {
+                        New-UDCard -Title "🏃‍♂️ Physical Activities" -Content {
+                            New-UDGrid -Container -Content {
+                                # Initial activity entry with better styling
+                                New-UDPaper -Children {
+                                    New-UDTypography -Text "Activity #1" -Variant subtitle2 -Style @{
+                                        marginBottom = "15px"
+                                        color        = "#1976d2"
+                                        fontWeight   = "500"
                                     }
-                                }
-                            }
-                        }
-                        
-                        # Calculate average back pain for the day (null if no back pain data)
-                        $avgBackPain = $null
-                        if ($backPainLevels.Count -gt 0) {
-                            $avgBackPain = [math]::Round(($backPainLevels | Measure-Object -Average).Average, 1)
-                        }
-                        
-                        # Create combined data object
-                        $combinedPainData += [PSCustomObject]@{
-                            Date = $dateStr
-                            MaxPainLevel = $maxPain
-                            AvgBackPain = $avgBackPain
-                            SortDate = $date
-                            HasBackPainData = $backPainLevels.Count -gt 0
-                        }
-                    }
-                }
-                
-                if ($combinedPainData.Count -eq 0) {
-                    New-UDAlert -Severity warning -Text "No pain level data found in entries"
-                    return
-                }
-                
-                # Sort by actual date
-                $combinedPainData = $combinedPainData | Sort-Object SortDate
-                
-                # Remove SortDate property as it's only needed for sorting
-                $combinedPainData = $combinedPainData | Select-Object Date, MaxPainLevel, AvgBackPain, HasBackPainData
-                
-                # Display data summary for debugging
-                New-UDAlert -Severity info -Text "Data processed: $($combinedPainData.Count) days total"
-                
-                # Create dual-series line chart for Max Pain and Average Back Pain
-                New-UDRow -Columns {
-                    New-UDColumn -Size 12 -Content {
-                        # Prepare data for charting - only include dates with both max pain and back pain data
-                        $chartData = $combinedPainData | Where-Object { $_.AvgBackPain -ne $null }
-                        
-                        if ($chartData.Count -gt 0) {
-                            # Create datasets for both series with additional options for line connections
-                            $maxPainDataset = New-UDChartJSDataset -DataProperty "MaxPainLevel" -Label "Max Pain Level" -BackgroundColor "#dc3545" -BorderColor "#dc3545" -AdditionalOptions @{
-                                fill = $false
-                                tension = 0.1
-                                pointRadius = 4
-                                borderWidth = 2
-                                showLine = $true
-                            }
-                            $avgBackPainDataset = New-UDChartJSDataset -DataProperty "AvgBackPain" -Label "Average Back Pain" -BackgroundColor "#007bff" -BorderColor "#007bff" -AdditionalOptions @{
-                                fill = $false
-                                tension = 0.1
-                                pointRadius = 4
-                                borderWidth = 2
-                                showLine = $true
-                            }
-                            
-                            # Create the dual-series line chart
-                            New-UDChartJS -Type 'line' -Data $chartData -Dataset @($maxPainDataset, $avgBackPainDataset) -LabelProperty "Date" -Options @{
-                                responsive = $true
-                                plugins = @{
-                                    title = @{
-                                        display = $true
-                                        text = "Max Pain Level vs Average Back Pain Over Time"
-                                    }
-                                    legend = @{
-                                        display = $true
-                                        position = "top"
-                                    }
-                                }
-                                scales = @{
-                                    y = @{
-                                        beginAtZero = $true
-                                        title = @{
-                                            display = $true
-                                            text = "Pain Level (0-10)"
+                                    
+                                    New-UDGrid -Container -Content {
+                                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Content {
+                                            New-UDTextBox -Id "activities_type_1" -Label "🏃‍♂️ Activity Type" -Type text -Placeholder "Walking, Running, Swimming, etc." -FullWidth -Style @{
+                                                marginBottom = "10px"
+                                            }
                                         }
-                                        max = 10
-                                    }
-                                    x = @{
-                                        title = @{
-                                            display = $true
-                                            text = "Date"
+                                        New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Content {
+                                            New-UDTextbox -Id "activities_length_1" -Label "⏱️ Duration (min)" -Type number -Placeholder "20" -FullWidth -Style @{
+                                                marginBottom = "10px"
+                                            }
+                                        }
+                                        New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Content {
+                                            New-UDTextbox -Id "activities_note_1" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth -Style @{
+                                                marginBottom = "10px"
+                                            }
                                         }
                                     }
+                                } -Style @{
+                                    padding         = "15px"
+                                    margin          = "10px 0"
+                                    backgroundColor = "#f8f9fa"
+                                    borderLeft      = "4px solid #28a745"
+                                    borderRadius    = "8px"
                                 }
-                                interaction = @{
-                                    mode = "index"
-                                    intersect = $false
-                                }
-                                elements = @{
-                                    line = @{
-                                        tension = 0.1
-                                    }
-                                    point = @{
-                                        radius = 4
-                                    }
-                                }
-                            }
-                        } else {
-                            New-UDAlert -Severity warning -Text "No matching data available for dual-series chart (need dates with both max pain and back pain data)"
-                        }
-                    }
-                }
-                
-                # Show sample data in a table below the chart
-                New-UDRow -Columns {
-                    New-UDColumn -Size 12 -Content {
-                        New-UDTable -Title "Combined Pain Data (Sample)" -Data ($combinedPainData | Select-Object -First 10) -Columns @(
-                            New-UDTableColumn -Property "Date" -Title "Date"
-                            New-UDTableColumn -Property "MaxPainLevel" -Title "Max Pain Level"
-                            New-UDTableColumn -Property "AvgBackPain" -Title "Avg Back Pain"
-                            New-UDTableColumn -Property "HasBackPainData" -Title "Has Back Data"
-                        ) -Sort
-                    }
-                }
-                
-                # Show statistics
-                New-UDRow -Columns {
-                    New-UDColumn -Size 6 -Content {
-                        New-UDCard -Title "Max Pain Statistics" -Content {
-                            $avgMaxPain = [math]::Round(($combinedPainData.MaxPainLevel | Measure-Object -Average).Average, 1)
-                            $maxMaxPain = ($combinedPainData.MaxPainLevel | Measure-Object -Maximum).Maximum
-                            $minMaxPain = ($combinedPainData.MaxPainLevel | Measure-Object -Minimum).Minimum
-                            
-                            New-UDElement -Tag "div" -Content {
-                                New-UDTypography -Text "Average Max Pain: $avgMaxPain" -Variant h6
-                                New-UDTypography -Text "Highest Max Pain: $maxMaxPain" -Variant h6
-                                New-UDTypography -Text "Lowest Max Pain: $minMaxPain" -Variant h6
-                            }
-                        }
-                    }
-                    
-                    New-UDColumn -Size 6 -Content {
-                        New-UDCard -Title "Back Pain Statistics" -Content {
-                            $backPainDays = ($combinedPainData | Where-Object { $_.HasBackPainData }).Count
-                            $backPainValues = $combinedPainData | Where-Object { $_.AvgBackPain -ne $null } | Select-Object -ExpandProperty AvgBackPain
-                            
-                            if ($backPainValues.Count -gt 0) {
-                                $avgBackPain = [math]::Round(($backPainValues | Measure-Object -Average).Average, 1)
-                                $maxBackPain = ($backPainValues | Measure-Object -Maximum).Maximum
-                                $minBackPain = ($backPainValues | Measure-Object -Minimum).Minimum
                                 
-                                New-UDElement -Tag "div" -Content {
-                                    New-UDTypography -Text "Days with back pain data: $backPainDays" -Variant h6
-                                    New-UDTypography -Text "Average back pain: $avgBackPain" -Variant h6
-                                    New-UDTypography -Text "Highest back pain: $maxBackPain" -Variant h6
-                                    New-UDTypography -Text "Lowest back pain: $minBackPain" -Variant h6
+                                # Add More Button - Styled
+                                New-UDGrid -Item -ExtraSmallSize 12 -Content {
+                                    
+                                    New-UDButton -Text "➕ Add Another Activity" -Color primary -Variant outlined -OnClick {
+                                        # Add another activities entry row
+                                        $entryCount = (Get-Random -Minimum 100 -Maximum 999)
+                                        
+                                        Add-UDElement -ParentId "activities_section" -Content {
+                                            New-UDPaper -Children {
+                                                New-UDGrid -Container -Content {
+                                                    New-UDGrid -Item -ExtraSmallSize 10 -Content {
+                                                        New-UDTypography -Text "Activity #$entryCount" -Variant subtitle2 -Style @{
+                                                            marginBottom = "15px"
+                                                            color        = "#1976d2"
+                                                            fontWeight   = "500"
+                                                        }
+                                                    }
+                                                    New-UDGrid -Item -ExtraSmallSize 2 -Content {
+                                                        New-UDButton -Text "🗑️" -Color secondary -Size small -OnClick {
+                                                            # Remove this entry
+                                                            Show-UDToast -Message (Get-UDElement -Id "activities_entry_$entryCount" | ConvertTo-Json) -MessageColor Red -Duration 10000    
+                                                            # Remove-UDElement -Id "activities_entry_$entryCount"
+                                                        } -Style @{
+                                                            minWidth = "40px"
+                                                            padding  = "5px"
+                                                        }
+                                                    }
+                                                    
+                                                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Content {
+                                                        New-UDTextBox -Id "activities_type_$entryCount" -Label "🏃‍♂️ Activity Type" -Type text -Placeholder "Walking, Running, Swimming, etc." -FullWidth -Style @{
+                                                            marginBottom = "10px"
+                                                        }
+                                                    }
+                                                    New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Content {
+                                                        New-UDTextbox -Id "activities_length_$entryCount" -Label "⏱️ Duration (min)" -Type number -Placeholder "20" -FullWidth -Style @{
+                                                            marginBottom = "10px"
+                                                        }
+                                                    }
+                                                    New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Content {
+                                                        New-UDTextbox -Id "activities_note_$entryCount" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth -Style @{
+                                                            marginBottom = "10px"
+                                                        }
+                                                    }
+                                                }
+                                            } -Id "activities_entry_$entryCount" -Style @{
+                                                padding         = "15px"
+                                                margin          = "10px 0"
+                                                backgroundColor = "#f8f9fa"
+                                                borderLeft      = "4px solid #28a745"
+                                                borderRadius    = "8px"
+                                            }
+                                        }
+                                    } -Style @{
+                                        marginTop = "15px"
+                                        width     = "100%"
+                                    }
                                 }
-                            } else {
-                                New-UDElement -Tag "div" -Content {
-                                    New-UDTypography -Text "No back pain data available" -Variant h6
+                            }
+                            
+                            New-UDTypography -Text "💡 Track your physical activities and exercise duration" -Variant caption -Style @{
+                                marginTop = "15px"
+                                color     = "#666"
+                                fontStyle = "italic"
+                                textAlign = "center"
+                            }
+                        } -Style @{
+                            marginBottom = "20px"
+                        }
+                    }
+                }
+                else {
+                    # Checkbox is unchecked - hide activities section
+                    Set-UDElement -Id "activities_section" -Content { }
+                }
+            }           
+            New-UDElement -Id "activities_section" -Tag "div"
+
+            New-UDCheckbox -Id "working_add_activitiy" -Label "Add activitiy Entry" -OnChange {
+                if ($EventData) {
+                    # Checkbox is checked - show activities entry section
+                    Set-UDElement -Id "working_activities_section" -Content {
+                        New-UDGrid -Container -Content {
+                            New-UDGrid -Item -ExtraSmallSize 12 -Content {
+                                New-UDTypography -Text "activities Entries" -Variant h6 -Style @{marginTop = "10px"; marginBottom = "10px" }
+                            }                            
+                            # Initial activities entry
+                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                                New-UDTextBox -Id "working_activities_type_1" -Label "activities type" -Type text -Placeholder "Walking, Running, etc."
+                            }
+                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
+                                New-UDTextbox -Id "working_activities_length_1" -Label "Duration (min)" -Type number -Placeholder "20"
+                            }
+                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                                New-UDTextbox -Id "working_activities_note_1" -Label "Note" -Type text -Placeholder "Optional note"
+                            }
+                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
+                                New-UDButton -Text "Add More" -OnClick {
+                                    # Add another activities entry row
+                                    $currentContent = Get-UDElement -Id "working_activities_section"
+                                    $entryCount = (Get-Random -Minimum 100 -Maximum 999)
+                                    
+                                    Add-UDElement -ParentId "activities_section" -Content {
+                                        New-UDGrid -Container -Content {
+                                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                                                New-UDTextBox -Id "working_activities_type_$entryCount" -Label "activities type"  -Type text -Placeholder "Walking, Running, etc."
+                                            }
+                                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
+                                                New-UDTextbox -Id "working_activities_length_$entryCount"  -Label "Duration (min)" -Type number -Placeholder "20"
+                                            }
+                                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                                                New-UDTextbox -Id "working_activities_note_$entryCount" -Label "Note" -Type text -Placeholder "Optional note"
+                                            }
+                                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
+                                                New-UDButton -Text "Remove" -Color secondary -OnClick {
+                                                    # Remove this entry
+                                                    Remove-UDElement -Id "working_activities_entry_$entryCount"
+                                                } -Id "remove_$entryCount"
+                                            }
+                                        } -Id "working_activities_entry_$entryCount"
+                                    }
                                 }
                             }
                         }
                     }
                 }
-                
-            } catch {
-                New-UDAlert -Severity error -Text "Error loading entries data: $($_.Exception.Message)"
-            }
-        } -Id "combined-pain-data"
-        
-        New-UDRow -Columns {
-            New-UDColumn -Size 12 -Content {
-                New-UDButton -Text "Refresh Data" -OnClick {
-                    Sync-UDElement -Id "combined-pain-data"
-                } -Color primary
-            }
+                else {
+                    # Checkbox is unchecked - hide activities section
+                    Set-UDElement -Id "working_activities_section" -Content { }
+                }
+            }           
+            # Dynamic activities section container
+            New-UDElement -Id "working_activities_section" -Tag "div"
+  
+
+        } -OnSubmit {
+            Import-Module -Name fusion -Force
+            Write-Information "=== EVENTDATA DEBUG === breakpoint"
+            Write-Information "EventData Type: $($EventData.GetType().FullName)"
+            Write-Information "EventData Count: $($EventData.Count)"
+            Write-Information "EventData Content: $($EventData | ConvertTo-Json -Depth 99)"
+            
         }
     }
 }
 
-# Return the dashboard
-$Dashboard
