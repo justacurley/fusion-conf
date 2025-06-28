@@ -8,7 +8,7 @@
                 fontWeight   = "bold"
             }
             New-UDTypography -Text "Track your daily health metrics and recovery progress" -Variant subtitle1 -Style @{
-                textAlign    = "center"
+                textAlign    = "right"
                 marginBottom = "20px"
                 color        = "#666"
                 fontStyle    = "italic"
