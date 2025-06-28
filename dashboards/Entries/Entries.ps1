@@ -208,7 +208,7 @@
             Import-Module -Name fusion -Force
             # Handle form submission logic here
             # Convert date/time to the required format
-            Write-Information ($EventData | ConvertTo-Json -Depth 99)
+            $EventData = ($EventData | ConvertTo-Json -Depth 99 | ConvertFrom-JSon)
             Write-Information $EventData.date
             Write-Information $EventData.time
             try {
