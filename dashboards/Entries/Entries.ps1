@@ -21,17 +21,30 @@
         } -Style @{ padding = "20px"; marginBottom = "20px"; backgroundColor = "#f8f9fa" }
         New-UDForm -Content {
             # Date and Time fields
-            New-UDGrid -Container -Content {
-                $MSTDate = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId((Get-Date), 'Mountain Standard Time') | ForEach-Object { $_.ToString("MMdd HHmm") }
-                $MSTMMDD = $MSTDate.split(" ")[0]
-                $MSTHHMM = $MSTDate.split(" ")[1]
-                New-UDGrid -Item -ExtraSmallSize 6 -Content {
-                    New-UDTextbox -Id "date" -Label "Date (MMDD)" -Placeholder $MSTMMDD -FullWidth -Value $MSTMMDD
+            New-UDCard -Title "📅 Date & Time" -Content {
+                New-UDGrid -Container -Content {
+                    $MSTDate = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId((Get-Date), 'Mountain Standard Time')
+                    $currentDate = $MSTDate.ToString("MMdd")
+                    $currentTime = $MSTDate.ToString("HHmm")
+                    
+                    New-UDGrid -Item -ExtraSmallSize 6 -Content {
+                        New-UDTextbox -Id "date" -Label "📅 Date" -Type "date" -FullWidth -Value $currentDate -Style @{
+                            marginBottom = "10px"
+                        }
+                    }
+                    New-UDGrid -Item -ExtraSmallSize 6 -Content {
+                        New-UDTextbox -Id "time" -Label "🕐 Time" -Type "time" -FullWidth -Value $currentTime -Style @{
+                            marginBottom = "10px"
+                        }
+                    }
                 }
-                New-UDGrid -Item -ExtraSmallSize 6 -Content {
-                    New-UDTextbox -Id "timestamp" -Label "Time (HHMM)" -Placeholder $MMSTHHMM -FullWidth -Value $MSTHHMM
+                New-UDTypography -Text "💡 Automatically set to current Mountain Time - adjust if needed" -Variant caption -Style @{
+                    marginTop = "5px"
+                    color = "#666"
+                    fontStyle = "italic"
+                    textAlign = "center"
                 }
-            }
+            } -Style @{ marginBottom = "20px" }
             # Medicatins Sectin
             New-UDTypography -Text "Medications" -Variant h6 -Style @{marginTop = "20px" }
             New-UDSelect -Id "meds" -Option {
