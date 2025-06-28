@@ -46,21 +46,78 @@
                 }
             } -Style @{ marginBottom = "20px" }
             # Medicatins Sectin
-            New-UDTypography -Text "Medications" -Variant h6 -Style @{marginTop = "20px" }
-            New-UDSelect -Id "meds" -Option {
-                try {
-                    $MedData = Get-Content -Path "/home/data/Repository/fusion-data/entries/medications_lookup.json" | ConvertFrom-Json -AsHashtable
-                    $Dosages = $MedData['Medications']
+                        # Medications Section - Visual Cards
+            New-UDCard -Title "💊 Medications" -Content {
+                New-UDGrid -Container -Content {
+                    try {
+                        $MedData = Get-Content -Path "/home/data/Repository/fusion-data/entries/medications_lookup.json" | ConvertFrom-Json -AsHashtable
+                        $Dosages = $MedData['Medications']
+                        
+                        # Create visual cards for each medication type
+                        foreach ($medType in $Dosages.Keys | Sort-Object) {
+                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -MediumSize 4 -Content {
+                                New-UDPaper -Content {
+                                    New-UDTypography -Text "💊 $($medType.ToUpper())" -Variant subtitle1 -Style @{
+                                        fontWeight = "bold"
+                                        marginBottom = "10px"
+                                        color = "#1976d2"
+                                        textAlign = "center"
+                                    }
+                                    
+                                    # Create checkboxes for each dosage
+                                    foreach ($dosage in $Dosages[$medType]) {
+                                        New-UDCheckbox -Id "med_$($medType)_$($dosage -replace '\W', '_')" -Label $dosage -Style @{
+                                            display = "block"
+                                            marginBottom = "8px"
+                                            padding = "5px 10px"
+                                            backgroundColor = "#f8f9fa"
+                                            borderRadius = "15px"
+                                            border = "1px solid #dee2e6"
+                                            fontSize = "14px"
+                                        }
+                                    }
+                                } -Style @{
+                                    padding = "15px"
+                                    margin = "5px"
+                                    backgroundColor = "#fafafa"
+                                    borderLeft = "4px solid #1976d2"
+                                    borderRadius = "8px"
+                                    minHeight = "120px"
+                                }
+                            }
+                        }
+                    }
+                    catch {
+                        Write-Error "Failed to get or parse medication data: $_"
+                        New-UDGrid -Item -ExtraSmallSize 12 -Content {
+                            New-UDAlert -Severity error -Text "Unable to load medication options. Please check the medications lookup file."
+                        }
+                    }
                 }
-                catch {
-                    Write-Error "Failed to get or parse data $_"
+                
+                New-UDTypography -Text "💡 Select all medications taken today" -Variant caption -Style @{
+                    marginTop = "15px"
+                    color = "#666"
+                    fontStyle = "italic"
+                    textAlign = "center"
                 }
-                foreach ($key in $Dosages.keys) {
-                    $Dosages[$key].foreach({
-                            New-UDSelectOption -Name "$key - $_" -Value "$key - $_"
-                        })
-                }
-            } -Multiple
+            } -Style @{ marginBottom = "20px" }
+            # New-UDTypography -Text "Medications" -Variant h6 -Style @{marginTop = "20px" }
+            # New-UDSelect -Id "meds" -Option {
+            #     try {
+            #         $MedData = Get-Content -Path "/home/data/Repository/fusion-data/entries/medications_lookup.json" | ConvertFrom-Json -AsHashtable
+            #         $Dosages = $MedData['Medications']
+            #     }
+            #     catch {
+            #         Write-Error "Failed to get or parse data $_"
+            #     }
+            #     foreach ($key in $Dosages.keys) {
+            #         $Dosages[$key].foreach({
+            #                 New-UDSelectOption -Name "$key - $_" -Value "$key - $_"
+            #             })
+            #     }
+            # } -Multiple
+
             # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)", and another for "Note"
             New-UDCheckbox -Id "add_activitiy" -Label "Add activitiy Entry" -OnChange {
                 if ($EventData) {
