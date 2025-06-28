@@ -1,7 +1,19 @@
 ﻿New-UDApp -Content {
     New-UDContainer -Content {
-        New-UDTypography -Text "Health Recovery Entry Form" -Variant h4 -Style @{marginBottom = "20px" }
-        New-UDTypography -Text "Entry Date and Time" -Variant h6 -Style  @{marginTop = "20px"; marginBottom = "10px" }
+        New-UDPaper -Content {
+            New-UDTypography -Text "🏥 Health Recovery Entry Form" -Variant h4 -Style @{
+                textAlign    = "center"
+                marginBottom = "10px"
+                color        = "#1976d2"
+                fontWeight   = "bold"
+            }
+            New-UDTypography -Text "Track your daily health metrics and recovery progress" -Variant subtitle1 -Style @{
+                textAlign    = "center"
+                marginBottom = "20px"
+                color        = "#666"
+                fontStyle    = "italic"
+            }
+        } -Style @{ padding = "20px"; marginBottom = "20px"; backgroundColor = "#f8f9fa" }
         New-UDForm -Content {
             # Date and Time fields
             New-UDGrid -Container -Content {
@@ -87,7 +99,7 @@
             }           
             # Dynamic activities section container
             New-UDElement -Id "activities_section" -Tag "div"
-            #pain section
+            #pain sectionbb
             New-UDCheckbox -Id "add_pain" -Label "Add Pain Entry" -OnChange {
                 if ($EventData) {
                     $SelectOptions = {
