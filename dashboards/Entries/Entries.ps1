@@ -1,18 +1,22 @@
 ﻿New-UDApp -Content {
     New-UDContainer -Content {
         New-UDPaper -Content {
-            New-UDTypography -Text "🏥 Health Recovery Entry Form" -Variant h4 -Style @{
-                textAlign    = "center"
-                marginBottom = "5px"
-                color        = "#1976d2"
-                fontWeight   = "bold"
+            New-UDGrid -Container -Content {
+                New-UDTypography -Text "🏥 Health Recovery Entry Form" -Variant h4 -Style @{
+                    textAlign    = "center"
+                    marginBottom = "5px"
+                    color        = "#1976d2"
+                    fontWeight   = "bold"
+                }
             }
-            New-UDTypography -Text "Track your daily health metrics and recovery progress" -Variant subtitle1 -Style @{
-                textAlign    = "center"
-                marginBottom = "20px"
-                marginTop    = "8px"
-                color        = "#666"
-                fontStyle    = "italic"
+            New-UDGrid -Container -Content {
+                New-UDTypography -Text "Track your daily health metrics and recovery progress" -Variant subtitle1 -Style @{
+                    textAlign    = "center"
+                    marginBottom = "20px"
+                    marginTop    = "8px"
+                    color        = "#666"
+                    fontStyle    = "italic"
+                }
             }
         } -Style @{ padding = "20px"; marginBottom = "20px"; backgroundColor = "#f8f9fa" }
         New-UDForm -Content {
