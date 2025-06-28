@@ -207,55 +207,28 @@
         } -OnSubmit {
             Import-Module -Name fusion -Force
             # Debug: Show the EventData structure
+            # Debug: Show the EventData structure
             Write-Information "=== EVENTDATA DEBUG ==="
             Write-Information "EventData Type: $($EventData.GetType().FullName)"
             Write-Information "EventData Count: $($EventData.Count)"
             
-            # Let's see what's actually in the EventData
-            Write-Information "Raw EventData contents:"
-            for ($i = 0; $i -lt $EventData.Count; $i++) {
-                $item = $EventData[$i]
-                Write-Information "Item $i Type: $($item.GetType().FullName)"
-                Write-Information "Item $i : $($item | ConvertTo-Json -Depth 2)"
-                if ($item.PSObject.Properties) {
-                    Write-Information "Item $i Properties:"
-                    foreach ($prop in $item.PSObject.Properties) {
+            # Extract form data from the single PSCustomObject
+            if ($EventData.Count -eq 1 -and $EventData[0]) {
+                $singleItem = $EventData[0]
+                
+                # Convert PSCustomObject properties to hashtable
+                $formData = @{}
+                if ($singleItem.PSObject.Properties) {
+                    foreach ($prop in $singleItem.PSObject.Properties) {
                         Write-Information "  $($prop.Name) = '$($prop.Value)'"
+                        $formData[$prop.Name] = $prop.Value
                     }
                 }
             }
-            Write-Information "========================"
-            
-            # Try a different approach to access the data
-            if ($EventData.Count -eq 1 -and $EventData[0]) {
-                # If there's only one item, it might contain all the form data
-                $singleItem = $EventData[0]
-                Write-Information "Single item properties:"
-                if ($singleItem.PSObject.Properties) {
-                    foreach ($prop in $singleItem.PSObject.Properties) {
-                        Write-Information "  $($prop.Name) = '$($prop.Value)'"
-                    }
-                }
-                
-                # Try to use the single item as our form data
-                $formData = @{}
-                if ($singleItem.PSObject.Properties) {
-                    foreach ($prop in $singleItem.PSObject.Properties) {
-                        $formData[$prop.Name] = $prop.Value
-                    }
-                } else {
-                    # Fallback: try to access as hashtable
-                    Write-Information "Trying hashtable access..."
-                    $formData = $singleItem
-                }
-            } else {
-                # Original approach for multiple items
-                $formData = @{}
-                foreach ($item in $EventData) {
-                    if ($item.Name -and $item.Value) {
-                        $formData[$item.Name] = $item.Value
-                    }
-                }
+            else {
+                Write-Error "Unexpected EventData structure"
+                Show-UDToast -Message "❌ Form data error" -MessageColor Red -Duration 5000
+                return
             }
             
             Write-Information "Final Form Data Keys:"
@@ -289,7 +262,13 @@
                 Show-UDToast -Message "❌ Error with date/time format. Please check your date and time entries." -MessageColor Red -Duration 5000
                 return
             }
-            Write-Host "Converting JSON to entries.json format..."
+            
+            Write-Information "Converting JSON to entries.json format..."
+            
+            # Convert the hashtable back to an object for your existing function
+            $entryObject = [PSCustomObject]$formData
+            $entry = ConvertTo-EntriesFormat -Entry $entryObject
+            Write-Information "Converting JSON to entries.json format..."
             $entry = ConvertTo-EntriesFormat -Entry ( $EventData | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
             # Output results
             Write-Information "`nFull Entry JSON (ready for entries.json):"
