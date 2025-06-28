@@ -211,8 +211,8 @@
             Write-Information "EventData Count: $($EventData.Count)"
             Write-Information "EventData Content: $($EventData | ConvertTo-Json -Depth 99)"
 
-            $EnrtyData.time - [datetime]::Parse($EventData.time).ToString("HHmm")
-            $EntryData.date = [datetime]::Parse($EventData.date).ToString("MMdd")
+            $EventData.time - [datetime]::Parse($EventData.time).ToString("HHmm")
+            $EventData.date = [datetime]::Parse($EventData.date).ToString("MMdd")
             Write-Information "Converting JSON to entries.json format..."
             Write-Information ( $EventData | ConvertTo-Json -Depth 99)
             $entry = ConvertTo-EntriesFormat -Entry ( $EventData | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
