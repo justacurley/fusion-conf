@@ -208,31 +208,27 @@
             Import-Module -Name fusion -Force
             # Handle form submission logic here
             # Convert date/time to the required format
-            Write-Information "EventData Type(): $($EventData.Gettype())"
+                        # Debug: Show the EventData structure
+            Write-Information "=== EVENTDATA DEBUG ==="
+            Write-Information "EventData Type: $($EventData.GetType().FullName)"
+            Write-Information "EventData Count: $($EventData.Count)"
+            
+            # Convert Collection to hashtable for easier access
+            $formData = @{}
+            foreach ($item in $EventData) {
+                $formData[$item.Name] = $item.Value
+            }
+            
+            Write-Information "Form Data Keys:"
+            foreach ($key in $formData.Keys) {
+                Write-Information "  $key = '$($formData[$key])'"
+            }
+            Write-Information "========================"
+            
             # Validate and convert date/time to the required format
-            if ([string]::IsNullOrEmpty($EventData["date"]) -or [string]::IsNullOrEmpty($EventData["time"])) {
+            if ([string]::IsNullOrEmpty($formData["date"]) -or [string]::IsNullOrEmpty($formData["time"])) {
                 Write-Error "Date and time fields are required"
                 Show-UDToast -Message "❌ Please fill in both date and time fields" -MessageColor Red -Duration 5000
-                return
-            }
-            
-            Write-Information "Original date: '$($EventData["date"])'"
-            Write-Information "Original time: '$($EventData["time"])'"
-            
-            try {
-                # Parse the date and time
-                $dateObj = [DateTime]::Parse($EventData["date"])
-                $timeObj = [DateTime]::Parse($EventData["time"])
-                
-                # Convert to required format
-                $EventData["date"] = $dateObj.ToString("MMdd")
-                $EventData["time"] = $timeObj.ToString("HHmm")
-                
-                Write-Information "Converted date to: $($EventData["date"]), time to: $($EventData["time"]) - Format: MMdd and HHmm"
-            }
-            catch {
-                Write-Error "Error converting date/time: $($_.Exception.Message)"
-                Show-UDToast -Message "❌ Error with date/time format. Please check your date and time entries." -MessageColor Red -Duration 5000
                 return
             }
             Write-Host "Converting JSON to entries.json format..."
