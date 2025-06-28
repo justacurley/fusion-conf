@@ -24,8 +24,8 @@
             New-UDCard -Title "📅 Date & Time" -Content {
                 New-UDGrid -Container -Content {
                     $MSTDate = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId((Get-Date), 'Mountain Standard Time')
-                    $currentDate = $MSTDate.ToString("MMdd")
-                    $currentTime = $MSTDate.ToString("HHmm")
+                    $currentDate = $MSTDate.ToString("yyyy-MM-dd")
+                    $currentTime = $MSTDate.ToString("HH:mm")
                     
                     New-UDGrid -Item -ExtraSmallSize 6 -Content {
                         New-UDTextbox -Id "date" -Label "📅 Date" -Type "date" -FullWidth -Value $currentDate -Style @{
