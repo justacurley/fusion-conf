@@ -208,7 +208,8 @@
             Import-Module -Name fusion -Force
             # Debug: Show the EventData structure
             # Debug: Show the EventData structure
-            Write-Information "=== EVENTDATA DEBUG ==="
+            Wait-Debugger
+            Write-Information "=== EVENTDATA DEBUG === breakpoint"
             Write-Information "EventData Type: $($EventData.GetType().FullName)"
             Write-Information "EventData Count: $($EventData.Count)"
             
