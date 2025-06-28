@@ -1,5 +1,4 @@
 ﻿New-UDApp -Content {
-    Wait-Debugger
     New-UDContainer -Content {
         New-UDPaper -Children {
             New-UDGrid -Container -Content {
@@ -170,7 +169,8 @@
                                                     New-UDGrid -Item -ExtraSmallSize 2 -Content {
                                                         New-UDButton -Text "🗑️" -Color secondary -Size small -OnClick {
                                                             # Remove this entry
-                                                            Remove-UDElement -Id "activities_entry_$entryCount"
+                                                            Show-UDToast -Message (Get-UDElement -Id "activities_entry_$entryCount" | ConvertTo-Json) -MessageColor Red -Duration 10000    
+                                                            # Remove-UDElement -Id "activities_entry_$entryCount"
                                                         } -Style @{
                                                             minWidth = "40px"
                                                             padding  = "5px"
