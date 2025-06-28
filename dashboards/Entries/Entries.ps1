@@ -151,6 +151,7 @@
                                 
                                 # Add More Button - Styled
                                 New-UDGrid -Item -ExtraSmallSize 12 -Content {
+                                    Wait-Debugger
                                     New-UDButton -Text "➕ Add Another Activity" -Color primary -Variant outlined -OnClick {
                                         # Add another activities entry row
                                         $entryCount = (Get-Random -Minimum 100 -Maximum 999)
