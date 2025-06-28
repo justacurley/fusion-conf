@@ -3,13 +3,14 @@
         New-UDPaper -Content {
             New-UDTypography -Text "🏥 Health Recovery Entry Form" -Variant h4 -Style @{
                 textAlign    = "center"
-                marginBottom = "10px"
+                marginBottom = "5px"
                 color        = "#1976d2"
                 fontWeight   = "bold"
             }
             New-UDTypography -Text "Track your daily health metrics and recovery progress" -Variant subtitle1 -Style @{
-                textAlign    = "right"
+                textAlign    = "center"
                 marginBottom = "20px"
+                marginTop    = "8px"
                 color        = "#666"
                 fontStyle    = "italic"
             }
