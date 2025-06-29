@@ -17,11 +17,11 @@ $Dashboard = New-UDDashboard -Title "Simple Interactive Chart" -Content {
             )
             
             # Store chart data in cache for use by dynamic chart updates
-            Set-UDCache -Key "chartData" -Value $sampleData
+            Set-PSUCache -Key "chartData" -Value $sampleData
                 
             # Function to update chart based on checkbox states
             $UpdateChart = {
-                $chartData = Get-UDCache -Key "chartData"
+                $chartData = Get-PSUCache -Key "chartData"
                 
                 # Get checkbox states
                 $showMaxPain = (Get-UDElement -Id "show_max_pain").checked
