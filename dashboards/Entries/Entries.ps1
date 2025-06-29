@@ -444,6 +444,7 @@
             }
         } -OnSubmit {
             Import-Module -Name fusion -Force
+            $FormEvent = $EventData[0]
             $FormEvent.timestamp = [datetime]::Parse($FormEvent.timestamp).ToString("HHmm")
             $FormEvent.date = [datetime]::Parse($FormEvent.date).ToString("MMdd")
             $entry = ConvertTo-EntriesFormat -Entry ( $FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
