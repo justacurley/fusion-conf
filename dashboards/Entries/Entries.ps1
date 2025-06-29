@@ -46,53 +46,83 @@
                 }
             } -Style @{ marginBottom = "20px" }
             # Medicatins Sectin
-            # Medications Section - Visual Cards
+            # Medications Section - Collapsible with Enhanced UI
             New-UDCard -Title "💊 Medications" -Content {
-                New-UDGrid -Container -Children {
-                    try {
-                        $MedData = Get-Content -Path "/home/data/Repository/fusion-data/entries/medications_lookup.json" | ConvertFrom-Json -AsHashtable
-                        $Dosages = $MedData['Medications']
+                # Toggle button for collapsing/expanding medications
+                New-UDContainer -Children {
+                    New-UDButton -Text "🔽 Show Medications" -Id "medications_toggle" -Color primary -Variant outlined -OnClick {
+                        # Toggle the transition state
+                        $currentState = Get-UDElement -Id "medications_transition"
+                        $newState = -not $currentState.in
                         
-                        # Create visual cards for each medication type
-                        foreach ($medType in $Dosages.Keys | Sort-Object) {
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -MediumSize 4 -Children {
-                                New-UDPaper -Children {
-                                    New-UDTypography -Text "💊 $($medType.ToUpper())" -Variant subtitle1 -Style @{
-                                        fontWeight   = "bold"
-                                        marginBottom = "10px"
-                                        color        = "#1976d2"
-                                        textAlign    = "center"
-                                    }
-                                    
-                                    # Create checkboxes for each dosage
-                                    foreach ($dosage in $Dosages[$medType]) {
-                                        New-UDCheckbox -Id "med_$($medType)_$($dosage -replace '\W', '_')" -Label $dosage
-                                    }
-                                } -Style @{
-                                    padding         = "15px"
-                                    margin          = "5px"
-                                    backgroundColor = "#fafafa"
-                                    borderLeft      = "4px solid #1976d2"
-                                    borderRadius    = "8px"
-                                    minHeight       = "120px"
-                                }
+                        Set-UDElement -Id "medications_transition" -Properties @{
+                            in = $newState
+                        }
+                        
+                        # Update button text based on state
+                        if ($newState) {
+                            Set-UDElement -Id "medications_toggle" -Properties @{
+                                text = "� Hide Medications"
+                            }
+                        } else {
+                            Set-UDElement -Id "medications_toggle" -Properties @{
+                                text = "🔽 Show Medications"
                             }
                         }
-                    }
-                    catch {
-                        Write-Error "Failed to get or parse medication data: $_"
-                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                            New-UDAlert -Severity error -Text "Unable to load medication options. Please check the medications lookup file."
-                        }
+                    } -Style @{
+                        marginBottom = "15px"
+                        width = "100%"
                     }
                 }
                 
-                New-UDTypography -Text "💡 Select all, if any, medications taken at the time of entry" -Variant caption -Style @{
-                    marginTop = "15px"
-                    color     = "#666"
-                    fontStyle = "italic"
-                    textAlign = "center"
-                }
+                # Collapsible medications content
+                New-UDTransition -Id "medications_transition" -Content {
+                    New-UDGrid -Container -Children {
+                        try {
+                            $MedData = Get-Content -Path "/home/data/Repository/fusion-data/entries/medications_lookup.json" | ConvertFrom-Json -AsHashtable
+                            $Dosages = $MedData['Medications']
+                            
+                            # Create visual cards for each medication type
+                            foreach ($medType in $Dosages.Keys | Sort-Object) {
+                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -MediumSize 4 -Children {
+                                    New-UDPaper -Children {
+                                        New-UDTypography -Text "💊 $($medType.ToUpper())" -Variant subtitle1 -Style @{
+                                            fontWeight   = "bold"
+                                            marginBottom = "10px"
+                                            color        = "#1976d2"
+                                            textAlign    = "center"
+                                        }
+                                        
+                                        # Create checkboxes for each dosage
+                                        foreach ($dosage in $Dosages[$medType]) {
+                                            New-UDCheckbox -Id "med_$($medType)_$($dosage -replace '\W', '_')" -Label $dosage
+                                        }
+                                    } -Style @{
+                                        padding         = "15px"
+                                        margin          = "5px"
+                                        backgroundColor = "#fafafa"
+                                        borderLeft      = "4px solid #1976d2"
+                                        borderRadius    = "8px"
+                                        minHeight       = "120px"
+                                    }
+                                }
+                            }
+                        }
+                        catch {
+                            Write-Error "Failed to get or parse medication data: $_"
+                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                New-UDAlert -Severity error -Text "Unable to load medication options. Please check the medications lookup file."
+                            }
+                        }
+                    }
+                    
+                    New-UDTypography -Text "💡 Select all, if any, medications taken at the time of entry" -Variant caption -Style @{
+                        marginTop = "15px"
+                        color     = "#666"
+                        fontStyle = "italic"
+                        textAlign = "center"
+                    }
+                } -In $false -Collapse -Timeout 500
             } -Style @{ marginBottom = "20px" }
 
             # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)", and another for "Note"
