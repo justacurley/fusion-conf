@@ -122,7 +122,7 @@
                         fontStyle = "italic"
                         textAlign = "center"
                     }
-                } -In $false -Collapse -Timeout 500
+                } -In:$false -Collapse -Timeout 500
             } -Style @{ marginBottom = "20px" }
 
             # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)", and another for "Note"
