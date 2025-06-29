@@ -1,0 +1,8696 @@
+{
+  "0626": {
+    "max_pain_level": 4.5,
+    "0800": {
+      "note": "",
+      "bpr": "",
+      "Activities": {
+        "Walking": {
+          "duration": 20,
+          "note": ""
+        }
+      },
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 3.5,
+          "note": ""
+        }
+      }
+    },
+    "0900": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.0
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "note": "",
+      "bpr": "",
+      "Activities": {
+        "Walking": {
+          "duration": 20,
+          "note": ""
+        }
+      },
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 3.0,
+          "note": ""
+        }
+      }
+    },
+    "2100": {
+      "note": "",
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {}
+    },
+    "2200": {
+      "note": "",
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {}
+    },
+    "1300": {
+      "bpr": "126/81",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Sitting": {
+          "note": "",
+          "duration": 60
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "93"
+    },
+    "1800": {
+      "note": "",
+      "bpr": "",
+      "Activities": {
+        "driving": {
+          "duration": 50,
+          "note": "coming back from surgeon"
+        }
+      },
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 4.5,
+          "note": ""
+        }
+      }
+    },
+    "1600": {
+      "note": "",
+      "bpr": "",
+      "Activities": {
+        "driving": {
+          "duration": 30,
+          "note": "driving to surgeon"
+        }
+      },
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 3.5,
+          "note": ""
+        }
+      }
+    }
+  },
+  "0625": {
+    "0800": {
+      "bpr": "",
+      "medication_taken": "tylenol",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.0
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "0900": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "jerk": {
+          "note": "Had to jump out of bed to prevent cat from throwing up on it to",
+          "duration": 1
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 6.0
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 6.0
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "2mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "no longer feeling dizzy w/out valium",
+      "Medications": {
+        "dilaudid": "2mg"
+      },
+      "o2": ""
+    },
+    "1300": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "118/83",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": "92"
+    },
+    "1600": {
+      "bpr": "110/70",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "91"
+    },
+    "1900": {
+      "bpr": "106/70",
+      "medication_taken": "vitaminD,dilaudid",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "93"
+    },
+    "2100": {
+      "bpr": "124/70",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": "93"
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0624": {
+    "max_pain_level": 4.5,
+    "0800": {
+      "bpr": "",
+      "medication_taken": "tylenol",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "changed med schedule",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "0900": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "feel dizzy constantly while standing. trying to stop valium",
+      "Medications": {},
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "100/70",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": "94"
+    },
+    "1600": {
+      "bpr": "100/70",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": "91"
+    },
+    "1900": {
+      "bpr": "106/70",
+      "medication_taken": "vitaminD,dilaudid",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "93"
+    },
+    "2100": {
+      "bpr": "124/70",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "rquad": {
+          "note": "pins and needles",
+          "pain_level": 1.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": "93"
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0623": {
+    "max_pain_level": 3.5,
+    "0800": {
+      "bpr": "110/73",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": "94"
+    },
+    "1000": {
+      "bpr": "105/71",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": "93"
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "1300": {
+      "bpr": "110/73",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "93"
+    },
+    "1800": {
+      "bpr": "106/70",
+      "medication_taken": "vitaminD,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "93"
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0622": {
+    "max_pain_level": 4.5,
+    "1000": {
+      "bpr": "",
+      "medication_taken": "valium,dilaudid",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "woke up at 10",
+      "Medications": {
+        "valium": "5mg",
+        "dilaudid": "2mg"
+      },
+      "o2": ""
+    },
+    "1300": {
+      "bpr": "110/70",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "93"
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "tylenol",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "110/71",
+      "medication_taken": "valium,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "dilaudid": "4mg",
+        "vitaminD": "500mg"
+      },
+      "o2": "93"
+    },
+    "2200": {
+      "bpr": "129/78",
+      "medication_taken": "valium,lexapro,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "lexapro": "20mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "90"
+    },
+    "0800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    }
+  },
+  "0620": {
+    "max_pain_level": 3.5,
+    "0800": {
+      "bpr": "119/70",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "right quad briefly numb",
+          "duration": 20
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": "91"
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "valium",
+      "Activities": {
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "right quad briefly numb",
+          "duration": 20
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1219": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "bending": {
+          "note": "xray - bending back hurt more",
+          "duration": 2
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        },
+        "driving": {
+          "note": "xray",
+          "duration": 30
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "1300": {
+      "bpr": "102/67",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "92"
+    },
+    "1400": {
+      "bpr": "99/61",
+      "medication_taken": "tylenol",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": "92"
+    },
+    "1800": {
+      "bpr": "106/70",
+      "medication_taken": "vitaminD,dilaudid",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "93"
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "lexapro,valium,dilaudid",
+      "Activities": {},
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "valium": "5mg",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    }
+  },
+  "0619": {
+    "max_pain_level": 4.5,
+    "1000": {
+      "bpr": "107/72",
+      "medication_taken": "valium",
+      "Activities": {
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "right quad briefly numb",
+          "duration": 20
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": "91"
+    },
+    "1300": {
+      "bpr": "108/70",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "93"
+    },
+    "1400": {
+      "bpr": "126/81",
+      "medication_taken": "tylenol",
+      "Activities": {
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": "92"
+    },
+    "1800": {
+      "bpr": "124/79",
+      "medication_taken": "vitaminD,dilaudid",
+      "Activities": {
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "91"
+    },
+    "2200": {
+      "bpr": "129/78",
+      "medication_taken": "lexapro,valium,dilaudid",
+      "Activities": {
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "right quad briefly numb",
+          "duration": 20
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "valium": "5mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "90"
+    },
+    "0800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    }
+  },
+  "0618": {
+    "0900": {
+      "bpr": "",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "r quad briefly numb",
+          "duration": 20
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "max_pain_level": 5.5,
+    "1000": {
+      "bpr": "117/87",
+      "medication_taken": "valium",
+      "Activities": {
+        "Walking": {
+          "note": "r quad briefly numb",
+          "duration": 20
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": "91"
+    },
+    "1300": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "r quad briefly numb",
+          "duration": 20
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "tylenol",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 10
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "117/85",
+      "medication_taken": "vitaminD,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 10
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "92"
+    },
+    "2100": {
+      "bpr": "117/85",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "right quad briefly numb",
+          "duration": 20
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        }
+      },
+      "note": "took 1/2 dilaudid for breakthrough",
+      "Medications": {
+        "dilaudid": "2mg",
+        "tylenol": "1g"
+      },
+      "o2": "92"
+    },
+    "2200": {
+      "bpr": "129/78",
+      "medication_taken": "lexapro,valium,dilaudid",
+      "Activities": {
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "right quad briefly numb",
+          "duration": 20
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "valium": "5mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "90"
+    },
+    "0800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    }
+  },
+  "0617": {
+    "max_pain_level": 4.5,
+    "0800": {
+      "bpr": "",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "117/87",
+      "medication_taken": "valium",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": "91"
+    },
+    "1300": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "tylenol",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "117/85",
+      "medication_taken": "vitaminD,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "92"
+    },
+    "2100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "r quad briefly numb",
+          "duration": 20
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "129/78",
+      "medication_taken": "valium,lexapro,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "r quad briefly numb",
+          "duration": 20
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "lexapro": "20mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "90"
+    }
+  },
+  "0616": {
+    "0630": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 6.0
+        }
+      },
+      "note": "woke up way too early",
+      "Medications": {},
+      "o2": ""
+    },
+    "max_pain_level": 6.0,
+    "0800": {
+      "bpr": "126/80",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        }
+      },
+      "note": "woke up way too early",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": "91"
+    },
+    "1000": {
+      "bpr": "126/80",
+      "medication_taken": "valium",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": "91"
+    },
+    "1300": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "110/70",
+      "medication_taken": "tylenol",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": "92"
+    },
+    "1800": {
+      "bpr": "112/75",
+      "medication_taken": "vitaminD,dilaudid",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "93"
+    },
+    "2200": {
+      "bpr": "125/75",
+      "medication_taken": "lexapro,valium,dilaudid",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "valium": "5mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "92"
+    },
+    "2100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    }
+  },
+  "0615": {
+    "max_pain_level": 5.5,
+    "0800": {
+      "bpr": "",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "valium",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "110/70",
+      "medication_taken": "tylenol",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": "92"
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "vitaminD,dilaudid",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "lexapro,dilaudid",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1300": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    }
+  },
+  "0614": {
+    "max_pain_level": 5.5,
+    "0800": {
+      "bpr": "131/80",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {
+        "standing": {
+          "note": "pins and needles r quad",
+          "duration": 20
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "coughing hurts",
+          "pain_level": 5.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": "92"
+    },
+    "1000": {
+      "bpr": "124/79",
+      "medication_taken": "valium",
+      "Activities": {
+        "standing": {
+          "note": "pins and needles r quad",
+          "duration": 20
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "coughing hurts",
+          "pain_level": 5.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": "96"
+    },
+    "1300": {
+      "bpr": "108/72",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "standing": {
+          "note": "pins and needles r quad",
+          "duration": 20
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "coughing hurts",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "90"
+    },
+    "1400": {
+      "bpr": "137/89",
+      "medication_taken": "tylenol",
+      "Activities": {
+        "standing": {
+          "note": "pins and needles r quad",
+          "duration": 20
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "coughing hurts",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": "90"
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "vitaminD,dilaudid",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "121/89",
+      "medication_taken": "valium,lexapro,dilaudid",
+      "Activities": {
+        "Driving": {
+          "note": "",
+          "duration": 40
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "lexapro": "20mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "92"
+    },
+    "2100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    }
+  },
+  "0613": {
+    "max_pain_level": 5.5,
+    "0800": {
+      "bpr": "111/78",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "left side incision",
+          "pain_level": 5.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": "87"
+    },
+    "1000": {
+      "bpr": "124/79",
+      "medication_taken": "valium",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": "96"
+    },
+    "1300": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "116/71",
+      "medication_taken": "tylenol",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": "92"
+    },
+    "1800": {
+      "bpr": "131/81",
+      "medication_taken": "vitaminD,dilaudid",
+      "Activities": {
+        "standing": {
+          "note": "pins and needles r quad",
+          "duration": 20
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "90"
+    },
+    "2100": {
+      "bpr": "119/78",
+      "medication_taken": "tylenol",
+      "Activities": {
+        "standing": {
+          "note": "pins and needles r quad",
+          "duration": 20
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "glutes": {
+          "note": "from standing",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": "90"
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0612": {
+    "max_pain_level": 5.5,
+    "0800": {
+      "bpr": "124/78",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": "93"
+    },
+    "1000": {
+      "bpr": "124/79",
+      "medication_taken": "valium",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": "96"
+    },
+    "1300": {
+      "bpr": "119/79",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "93"
+    },
+    "1400": {
+      "bpr": "119/80",
+      "medication_taken": "tylenol",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": "91"
+    },
+    "1800": {
+      "bpr": "127/85",
+      "medication_taken": "vitaminD,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "89"
+    },
+    "2100": {
+      "bpr": "",
+      "medication_taken": "tylenol",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "118/84",
+      "medication_taken": "lexapro,valium,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "valium": "5mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "92"
+    }
+  },
+  "0611": {
+    "max_pain_level": 4.5,
+    "0800": {
+      "bpr": "102/67",
+      "medication_taken": "valium,tylenol,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "New medication schedule ",
+      "Medications": {
+        "valium": "2.5mg",
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": "93"
+    },
+    "1000": {
+      "bpr": "102/70",
+      "medication_taken": "valium",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "New medication schedule ",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": "92"
+    },
+    "1400": {
+      "bpr": "129/77",
+      "medication_taken": "tylenol",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": "91"
+    },
+    "1800": {
+      "bpr": "130/82",
+      "medication_taken": "vitaminD,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "88"
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "lexapro,valium,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "valium": "5mg",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1300": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    }
+  },
+  "0610": {
+    "1400": {
+      "bpr": "110/70",
+      "medication_taken": "tylenol",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": "92"
+    },
+    "max_pain_level": 5.5,
+    "1600": {
+      "bpr": "116/72",
+      "medication_taken": "valium,dilaudid",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "93"
+    },
+    "1910": {
+      "bpr": "117/77",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Sat Upright": {
+          "note": "big mistake",
+          "duration": 60
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "took 1/2 dilaudid for breakthrough",
+          "pain_level": 5.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "2mg"
+      },
+      "o2": "91"
+    },
+    "2000": {
+      "bpr": "117/77",
+      "medication_taken": "",
+      "Activities": {
+        "Sat Upright": {
+          "note": "big mistake",
+          "duration": 60
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": "93"
+    },
+    "2100": {
+      "bpr": "125/72",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Sat Upright": {
+          "note": "big mistake",
+          "duration": 60
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": "89"
+    },
+    "0800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1300": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "vitaminD": "500mg"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0609": {
+    "max_pain_level": 3.5,
+    "0800": {
+      "bpr": "130/80",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": "95"
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "valium",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "130/85",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "94"
+    },
+    "1600": {
+      "bpr": "116/75",
+      "medication_taken": "valium,dilaudid",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "dilaudid": "4mg",
+        "vitaminD": "500mg"
+      },
+      "o2": "95"
+    },
+    "2100": {
+      "bpr": "107/70",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": "90"
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0608": {
+    "max_pain_level": 4.5,
+    "0800": {
+      "bpr": "",
+      "medication_taken": "valium",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Tens Machine": {
+          "note": "did not help hip pain",
+          "duration": 20
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "Mistakenly took valium instead of dilaudid",
+      "Medications": {
+        "valium": "5mg",
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "110/80",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 3.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": "89"
+    },
+    "1200": {
+      "bpr": "110/80",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 3.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "89"
+    },
+    "1600": {
+      "bpr": "106/80",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg",
+        "valium": "5mg",
+        "vitaminD": "500mg"
+      },
+      "o2": "95"
+    },
+    "2100": {
+      "bpr": "106/71",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": "96"
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0607": {
+    "max_pain_level": 4.5,
+    "1000": {
+      "bpr": "",
+      "medication_taken": "valium",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Tens Machine": {
+          "note": "did not help hip pain",
+          "duration": 20
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "112/77",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Tens Machine": {
+          "note": "did not help hip pain",
+          "duration": 20
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "91"
+    },
+    "1730": {
+      "bpr": "109/72",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Tens Machine": {
+          "note": "did not help hip pain",
+          "duration": 20
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": "88"
+    },
+    "2100": {
+      "bpr": "112/75",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Tens Machine": {
+          "note": "did not help hip pain",
+          "duration": 20
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": "96"
+    },
+    "0800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1600": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg",
+        "vitaminD": "500mg"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0606": {
+    "0700": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "Standing shower without help",
+          "duration": 20
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "max_pain_level": 4.5,
+    "1000": {
+      "bpr": "110/79",
+      "medication_taken": "valium",
+      "Activities": {
+        "Standing": {
+          "note": "Standing shower without help",
+          "duration": 20
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": "89"
+    },
+    "1100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "1600": {
+      "bpr": "112/70",
+      "medication_taken": "valium,vitaminD,dilaudid",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "88"
+    },
+    "2100": {
+      "bpr": "110/78",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": "87"
+    },
+    "1700": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "0800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0605": {
+    "0700": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "hips loosened up a bit",
+          "duration": 5
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "max_pain_level": 5.5,
+    "0800": {
+      "bpr": "110/75",
+      "medication_taken": "dilaudid,tylenol",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "hips loosened up a bit",
+          "duration": 5
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": "95"
+    },
+    "1000": {
+      "bpr": "115/80",
+      "medication_taken": "valium",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "hips loosened up a bit",
+          "duration": 5
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": "94"
+    },
+    "1600": {
+      "bpr": "115/70",
+      "medication_taken": "valium,vitaminD,dilaudid",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "hips loosened up a bit",
+          "duration": 5
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "vitaminD": "500mg",
+        "dilaudid": "4mg"
+      },
+      "o2": "90"
+    },
+    "2000": {
+      "bpr": "112/70",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "Standing shower without help",
+          "duration": 20
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": "93"
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0604": {
+    "max_pain_level": 6.5,
+    "0800": {
+      "bpr": "102/63",
+      "medication_taken": "valium,dilaudid",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Driving": {
+          "note": "Drove home from surgeon's office",
+          "duration": 20
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.0
+        }
+      },
+      "note": "Stopped taking dilauded at midnight today",
+      "Medications": {
+        "valium": "5mg",
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": "93"
+    },
+    "0930": {
+      "bpr": "103/70",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "hips loosened up a bit",
+          "duration": 5
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": "93"
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1600": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg",
+        "vitaminD": "500mg"
+      },
+      "o2": ""
+    },
+    "2100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0602": {
+    "max_pain_level": 6.5,
+    "0800": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "",
+          "duration": 10
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1015": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Driving": {
+          "note": "Drove to surgeon's office",
+          "duration": 20
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "1100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Driving": {
+          "note": "Drove home from surgeon's office",
+          "duration": 20
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 6.5
+        }
+      },
+      "note": "Big surgeon takeaway: Slow down and recover slowly, you can't help this by pushing yourself",
+      "Medications": {},
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "110/70",
+      "medication_taken": "valium",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Driving": {
+          "note": "Drove home from surgeon's office",
+          "duration": 20
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "tylenol": "1g"
+      },
+      "o2": "91"
+    },
+    "1600": {
+      "bpr": "110/70",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Driving": {
+          "note": "Drove home from surgeon's office",
+          "duration": 20
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": "91"
+    },
+    "0000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0601100": {
+    "max_pain_level": 5.5,
+    "1100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "no walker",
+          "duration": 15
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 5.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    }
+  },
+  "0601": {
+    "max_pain_level": 6.0,
+    "0800": {
+      "bpr": "",
+      "medication_taken": "valium,dilaudid",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Sitting": {
+          "note": "Shower and shave",
+          "duration": 30
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "lhip": {
+          "note": "slept on side",
+          "pain_level": 6.0
+        }
+      },
+      "note": "stopped taking dilauded at 4am because I'd rather be in pain than missing sleep I guess",
+      "Medications": {
+        "valium": "5mg",
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Sitting": {
+          "note": "Shower and shave",
+          "duration": 30
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 5.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "110/70",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "no walker",
+          "duration": 15
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 4.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "89"
+    },
+    "1300": {
+      "bpr": "115/71",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "no walker",
+          "duration": 15
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": "91"
+    },
+    "1400": {
+      "bpr": "117/75",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "no walker",
+          "duration": 15
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": "92"
+    },
+    "2000": {
+      "bpr": "113/76",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "",
+          "duration": 10
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": "96"
+    },
+    "0000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1600": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0531": {
+    "max_pain_level": 4.5,
+    "1100": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 16
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        },
+        "Walking": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1430": {
+      "bpr": "98/64",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Sitting": {
+          "note": "Shower and shave",
+          "duration": 30
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": "99"
+    },
+    "1715": {
+      "bpr": "115/80",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Sitting": {
+          "note": "Shower and shave",
+          "duration": 30
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "98"
+    },
+    "0000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1600": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0530": {
+    "0800": {
+      "bpr": "110/76",
+      "medication_taken": "valium,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "righthip": {
+          "note": "Slept on right hip",
+          "pain_level": 5.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": "94"
+    },
+    "Sleep": "6:03",
+    "1200": {
+      "bpr": "106/74",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 4.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "91"
+    },
+    "1400": {
+      "bpr": "128/80",
+      "medication_taken": "valium",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "tylenol": "1g"
+      },
+      "o2": "92"
+    },
+    "1500": {
+      "bpr": "128/80",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 16
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": "92"
+    },
+    "1840": {
+      "bpr": "90/69",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 16
+        },
+        "Stairs": {
+          "note": "",
+          "duration": 2
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": "93"
+    },
+    "max_pain_level": 5.0,
+    "0000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1600": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0529": {
+    "1200": {
+      "bpr": "93/63",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.0
+        }
+      },
+      "note": "finally slept longer than 6 hours",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "90"
+    },
+    "Sleep": "9:43",
+    "1320": {
+      "Medications": {},
+      "Pain": {
+        "righthip": {
+          "pain_level": 5.0,
+          "note": ""
+        },
+        "back": {
+          "pain_level": 3.0,
+          "note": ""
+        }
+      },
+      "Activities": {},
+      "o2": "89",
+      "bpr": "105/70",
+      "note": "first poop",
+      "medication_taken": ""
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "valium",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Bowel": {
+          "note": "First since 5/18",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 5.0
+        },
+        "righthip": {
+          "note": "Slept on it",
+          "pain_level": 5.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1600": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "107/74",
+      "medication_taken": "tylenol",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": "91"
+    },
+    "2000": {
+      "bpr": "",
+      "medication_taken": "valium,dilaudid",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "92/61",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": "89"
+    },
+    "2300": {
+      "Medications": {},
+      "Pain": {},
+      "Activities": {},
+      "o2": "94",
+      "bpr": "128/74",
+      "note": "poop!",
+      "medication_taken": ""
+    },
+    "max_pain_level": 5.0,
+    "1330": {
+      "bpr": "105/70",
+      "medication_taken": "",
+      "Activities": {
+        "Standing": {
+          "note": "",
+          "duration": 10
+        },
+        "Bowel": {
+          "note": "First since 5/18",
+          "duration": 10
+        },
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 5.0
+        },
+        "righthip": {
+          "note": "Slept on it",
+          "pain_level": 5.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": "89"
+    },
+    "1440": {
+      "bpr": "106/69",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "hips loosening up",
+      "Medications": {},
+      "o2": "94"
+    },
+    "2330": {
+      "bpr": "128/74",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": "94"
+    },
+    "0000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0528": {
+    "0800": {
+      "bpr": "",
+      "medication_taken": "valium,tylenol,dilaudid",
+      "Activities": {
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        },
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": " I haven't felt pain in my glutes or legs since the last time I noted it. ",
+          "pain_level": 5.5
+        },
+        "glutes": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 4.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "126/79",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Stairs": {
+          "note": "",
+          "duration": 1
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        },
+        "Walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.0
+        },
+        "glutes": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 4.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": "95"
+    },
+    "1400": {
+      "bpr": "119/74",
+      "medication_taken": "valium",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "tylenol": "1g"
+      },
+      "o2": "90"
+    },
+    "1600": {
+      "bpr": "104/70",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": "94"
+    },
+    "1900": {
+      "bpr": "105/72",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 5.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": "96"
+    },
+    "2000": {
+      "bpr": "99/70",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 10
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 4.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": "91"
+    },
+    "Sleep": "4:56",
+    "max_pain_level": 7.0,
+    "0000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0527": {
+    "ScarImage": "./img/0527.png",
+    "Sleep": "9:10",
+    "0000": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 4.0
+        },
+        "glutes": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 4.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "took pill, back to bed",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "journavx",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.0
+        },
+        "glutes": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 4.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "journavx": "100mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1030": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "felt this went really well",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "glutes": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 4.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "111/70",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "felt this went really well",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.0
+        },
+        "glutes": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 4.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": "90"
+    },
+    "1500": {
+      "Medications": {},
+      "Pain": {
+        "back": {
+          "pain_level": 3.0,
+          "note": ""
+        }
+      },
+      "Activities": {
+        "walking": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "o2": "94",
+      "bpr": "111/70",
+      "note": "",
+      "medication_taken": ""
+    },
+    "1600": {
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "Pain": {
+        "back": {
+          "pain_level": 3.0,
+          "note": ""
+        }
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": "",
+      "medication_taken": "dilaudid"
+    },
+    "1700": {
+      "Medications": {},
+      "Pain": {
+        "back": {
+          "pain_level": 4.0,
+          "note": ""
+        }
+      },
+      "Activities": {
+        "standing": {
+          "note": "",
+          "duration": 15
+        }
+      },
+      "o2": "",
+      "bpr": "",
+      "note": "Shower!",
+      "medication_taken": ""
+    },
+    "1900": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        },
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.0
+        },
+        "glutes": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 4.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "max_pain_level": 7.0,
+    "0800": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 4.0
+        },
+        "glutes": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 4.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "took pill, back to bed",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2100": {
+      "bpr": "103/63",
+      "medication_taken": "",
+      "Activities": {
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        },
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.0
+        },
+        "glutes": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 4.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": "94"
+    },
+    "0400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0526": {
+    "0800": {
+      "bpr": "",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "back to sleep",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "journavx",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": " Does not hurt as much to lie on back anymore ",
+          "pain_level": 4.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "journavx": "100mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "2mg"
+      },
+      "o2": ""
+    },
+    "1230": {
+      "Medications": {},
+      "Pain": {
+        "back": {
+          "pain_level": 5.0,
+          "note": ""
+        }
+      },
+      "Activities": {
+        "walking": {
+          "note": "",
+          "duration": 3
+        }
+      },
+      "o2": "",
+      "bpr": "",
+      "note": "",
+      "medication_taken": ""
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "valium",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1600": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 5.5
+        },
+        "glutes": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 5.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "2000": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 4.0
+        },
+        "glutes": {
+          "note": "The pain is focused as a line from my upper glute to lower back, right side",
+          "pain_level": 4.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "Sleep": "8:35",
+    "max_pain_level": 7.0,
+    "0000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0525": {
+    "1100": {
+      "bpr": "",
+      "medication_taken": "journavx",
+      "Activities": {
+        "Walking": {
+          "note": "pain shot up to 7",
+          "duration": 2
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
+          "pain_level": 8.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "did not sleep well. feel effectiveness of pain meds is waning",
+      "Medications": {
+        "journavx": "100mg"
+      },
+      "o2": ""
+    },
+    "1300": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "standing": {
+          "note": "Legs shaking but did not feel weak",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        },
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "Right hip tightening considerably",
+          "pain_level": 4.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "1227": {
+      "bpr": "",
+      "medication_taken": "dilaudid,tylenol",
+      "Activities": {
+        "standing": {
+          "note": "Legs shaking but did not feel weak",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        },
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 6.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "valium,tylenol",
+      "Activities": {
+        "standing": {
+          "note": "Legs shaking but did not feel weak",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        },
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 6.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1430": {
+      "Medications": {},
+      "Pain": {
+        "back": {
+          "pain_level": 3.0,
+          "note": ""
+        }
+      },
+      "Activities": {},
+      "o2": "",
+      "bpr": "",
+      "note": "",
+      "medication_taken": ""
+    },
+    "1600": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "standing": {
+          "note": "Legs shaking but did not feel weak",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        },
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 2.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1750": {
+      "Medications": {},
+      "Pain": {
+        "back": {
+          "pain_level": 3.0,
+          "note": ""
+        }
+      },
+      "Activities": {
+        "standing": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "o2": "",
+      "bpr": "",
+      "note": "",
+      "medication_taken": ""
+    },
+    "2000": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "stretching": {
+          "note": "",
+          "duration": 4
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        },
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 4.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "valium,journavx,tylenol",
+      "Activities": {
+        "stretching": {
+          "note": "",
+          "duration": 4
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        },
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "journavx": "100mg",
+        "tylenol": "1g",
+        "lexapro": "20mg",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "max_pain_level": 8.0,
+    "1730": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "stretching": {
+          "note": "",
+          "duration": 4
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        },
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 1.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 3.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "0000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    }
+  },
+  "0524": {
+    "0700": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        },
+        "Standing": {
+          "note": "Sponge bath!",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "slept on right hip all night",
+          "pain_level": 8.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "max_pain_level": 8.0,
+    "0800": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        },
+        "Standing": {
+          "note": "Sponge bath!",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "0830": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 3
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
+          "pain_level": 8.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "valium",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 3
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
+          "pain_level": 8.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 4
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
+          "pain_level": 8.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1430": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "",
+          "duration": 5
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
+          "pain_level": 8.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "lots of sleeping attempts today",
+      "Medications": {},
+      "o2": ""
+    },
+    "1530": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        },
+        "Stairs": {
+          "note": "First time",
+          "duration": 1
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
+          "pain_level": 8.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "1600": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        },
+        "Stairs": {
+          "note": "First time",
+          "duration": 1
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
+          "pain_level": 8.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1830": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "pain shot up to 7",
+          "duration": 2
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
+          "pain_level": 8.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "difficult/painful sitting on bed (unstable surface)",
+      "Medications": {},
+      "o2": ""
+    },
+    "2000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "pain shot up to 7",
+          "duration": 2
+        },
+        "Sitting": {
+          "note": "",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
+          "pain_level": 8.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 7.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "0000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0523": {
+    "1300": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "Pain is focused on lower back with stabbing shooting pains down my hips and outside of my quads",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "Pain is focused on lower back with stabbing shooting pains down my hips and outside of my quads",
+      "Medications": {},
+      "o2": ""
+    },
+    "0800": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 7.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 8.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "Sleep": "7:39",
+    "1400": {
+      "bpr": "",
+      "medication_taken": "journavx",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "Pain is more focused on lower back than legs",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "journavx": "100mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1500": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "pain located same as 1400",
+          "pain_level": 6.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "1600": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": " pain located more towards lower back",
+          "pain_level": 6.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1700": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        },
+        "LogRoll": {
+          "note": "Success!",
+          "duration": 1
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": " pain located more towards lower back",
+          "pain_level": 5.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        },
+        "Standing": {
+          "note": "Sponge bath!",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "able to put vest on and stand up",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2000": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        },
+        "Standing": {
+          "note": "Sponge bath!",
+          "duration": 5
+        }
+      },
+      "Pain": {
+        "lhip": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "back": {
+          "note": "",
+          "pain_level": 5.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2030": {
+      "Medications": {},
+      "Pain": {},
+      "Activities": {},
+      "o2": "88",
+      "bpr": "129/59",
+      "note": "",
+      "medication_taken": ""
+    },
+    "max_pain_level": 8.5,
+    "1000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 7.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 8.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "tylenol,dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 7.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 7.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 7.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 7.5
+        }
+      },
+      "note": " Pain covers entire lower back, wrapping down to my hips and the outside of my legs down my quads. Cannot perform log roll to sit up straight.",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0522": {
+    "0700": {
+      "bpr": "",
+      "medication_taken": "valium,dilaudid",
+      "Activities": {
+        "LogRoll": {
+          "note": "SUCCESS! performed log roll, same as 1400",
+          "duration": 1
+        }
+      },
+      "Pain": {
+        "lquad": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "glutes": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "back": {
+          "note": " ",
+          "pain_level": 7.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 8.0
+        }
+      },
+      "note": "did not attempt log roll due to pain",
+      "Medications": {
+        "valium": "5mg",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "max_pain_level": 8.5,
+    "0800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {
+        "lquad": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "glutes": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "back": {
+          "note": " Increased pain after log roll attempt",
+          "pain_level": 7.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 8.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0900": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "lhip": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "back": {
+          "note": " ",
+          "pain_level": 8.5
+        },
+        "glutes": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "righthip": {
+          "note": "",
+          "pain_level": 8.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "LogRoll": {
+          "note": "Success!",
+          "duration": 1
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": " log rolling was very painful so I did not attempt to walk",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1500": {
+      "bpr": "",
+      "medication_taken": "valium",
+      "Activities": {
+        "LogRoll": {
+          "note": "Success!",
+          "duration": 1
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 7.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1600": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "LogRoll": {
+          "note": "Success!",
+          "duration": 1
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "back": {
+          "note": "pain moved mostly from hips to lower back",
+          "pain_level": 6.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 6.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "valium": "5mg",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1700": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "LogRoll": {
+          "note": "",
+          "duration": 1
+        },
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "back": {
+          "note": "pain moved mostly from hips to lower back",
+          "pain_level": 7.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 6.5
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        },
+        "LogRoll": {
+          "note": "",
+          "duration": 1
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 8.5
+        },
+        "back": {
+          "note": "",
+          "pain_level": 8.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 8.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 8.5
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "Walking": {
+          "note": "Pain increased to 7-8 ",
+          "duration": 3
+        },
+        "LogRoll": {
+          "note": "",
+          "duration": 1
+        }
+      },
+      "Pain": {
+        "righthip": {
+          "note": "",
+          "pain_level": 6.5
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 8.5
+        },
+        "back": {
+          "note": " 4mg dilaudid @ 6pm felt to have done nothing",
+          "pain_level": 8.5
+        },
+        "lquad": {
+          "note": "",
+          "pain_level": 8.5
+        },
+        "lhip": {
+          "note": "",
+          "pain_level": 8.5
+        }
+      },
+      "note": " 4mg dilaudid @ 6pm felt to have done nothing",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "0000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0520": {
+    "max_pain_level": 8.0,
+    "0800": {
+      "bpr": "",
+      "medication_taken": "oxycodone",
+      "Activities": {},
+      "Pain": {
+        "back": {
+          "note": "This goes on all day with doses of oxycodone. They raised it to 10mg at some point which did not help",
+          "pain_level": 8.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "oxycodone": "5mg",
+        "tylenol": "1g",
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1300": {
+      "bpr": "",
+      "medication_taken": "oxycodone",
+      "Activities": {},
+      "Pain": {
+        "lquad": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "glutes": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "back": {
+          "note": " Pain is focused on lower back with stabbing shooting pains down my hips and outside of my quads",
+          "pain_level": 8.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 8.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "oxycodone": "5mg"
+      },
+      "o2": ""
+    },
+    "1400": {
+      "bpr": "",
+      "medication_taken": "journavx",
+      "Activities": {},
+      "Pain": {
+        "lquad": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "glutes": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "back": {
+          "note": " ",
+          "pain_level": 8.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 8.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "journavx": "100mg",
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "1500": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {
+        "lquad": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "glutes": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "back": {
+          "note": " ",
+          "pain_level": 7.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 8.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "1600": {
+      "bpr": "",
+      "medication_taken": "dilaudid",
+      "Activities": {},
+      "Pain": {
+        "lquad": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "glutes": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "back": {
+          "note": " ",
+          "pain_level": 7.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 8.0
+        }
+      },
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1700": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {
+        "LogRoll": {
+          "note": "SUCCESS! performed log roll, same as 1400",
+          "duration": 1
+        }
+      },
+      "Pain": {
+        "lquad": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "glutes": {
+          "note": "",
+          "pain_level": 8.0
+        },
+        "back": {
+          "note": " ",
+          "pain_level": 6.0
+        },
+        "rquad": {
+          "note": "",
+          "pain_level": 8.0
+        }
+      },
+      "note": "",
+      "Medications": {},
+      "o2": ""
+    },
+    "0000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "0400": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "valium": "5mg"
+      },
+      "o2": ""
+    },
+    "1200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "1800": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "dilaudid": "4mg"
+      },
+      "o2": ""
+    },
+    "2000": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "tylenol": "1g"
+      },
+      "o2": ""
+    },
+    "2200": {
+      "bpr": "",
+      "medication_taken": "",
+      "Activities": {},
+      "Pain": {},
+      "note": "",
+      "Medications": {
+        "lexapro": "20mg",
+        "dilaudid": "4mg",
+        "valium": "5mg"
+      },
+      "o2": ""
+    }
+  },
+  "0627": {
+    "0800": {
+      "note": "",
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 3.5,
+          "note": ""
+        }
+      }
+    },
+    "max_pain_level": 3.5,
+    "0900": {
+      "note": "",
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 3.0,
+          "note": ""
+        }
+      }
+    },
+    "1400": {
+      "note": "",
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 2.0,
+          "note": ""
+        }
+      }
+    },
+    "1600": {
+      "Pain": {
+        "back": {
+          "pain_level": 3.0,
+          "note": ""
+        }
+      },
+      "bpr": "105/70",
+      "o2": "93",
+      "Activities": {
+        "Walking": {
+          "duration": 10,
+          "note": "No brace"
+        }
+      },
+      "note": "",
+      "medication_taken": "",
+      "Medications": {}
+    },
+    "2100": {
+      "note": "",
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 2.0,
+          "note": ""
+        }
+      }
+    },
+    "2200": {
+      "note": "",
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 2.0,
+          "note": ""
+        }
+      }
+    }
+  },
+  "0628": {
+    "max_pain_level": 3.5,
+    "1412": {
+      "bpr": "",
+      "medication_taken": "",
+      "o2": "",
+      "Activities": {},
+      "note": "",
+      "Pain": {},
+      "Medications": {}
+    },
+    "1400": {
+      "bpr": "113/71",
+      "medication_taken": "",
+      "o2": "91",
+      "Activities": {
+        "Walking": {
+          "duration": 10,
+          "note": "guided tennis ball around"
+        }
+      },
+      "note": "",
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "Medications": {}
+    },
+    "1651": {
+      "note": "",
+      "bpr": "",
+      "Activities": {
+        "Walking": {
+          "duration": 20,
+          "note": ""
+        }
+      },
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {}
+    },
+    "1000": {
+      "note": "",
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 3.0,
+          "note": ""
+        }
+      }
+    }
+  }
+}
