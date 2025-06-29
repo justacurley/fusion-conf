@@ -1,44 +1,29 @@
 {
   "0626": {
-    "max_pain_level": 3.5,
+    "max_pain_level": 4.5,
     "0800": {
+      "note": "",
       "bpr": "",
-      "medication_taken": "tylenol",
       "Activities": {
-      },
-      "Pain": {
-        "righthip": {
-          "note": "",
-          "pain_level": 2.0
-        },
-        "glutes": {
-          "note": "from standing",
-          "pain_level": 3.5
-        },
-        "back": {
-          "note": "",
-          "pain_level": 3.5
-        },
-        "rquads": {
-          "note": "pins and needles",
-          "pain_level": 1.5
-        },
-        "lhip": {
-          "note": "",
-          "pain_level": 1.0
+        "Walking": {
+          "duration": 20,
+          "note": ""
         }
       },
-      "note": "",
-      "Medications": {
-        "tylenol": "1g"
-      },
-      "o2": ""
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 3.5,
+          "note": ""
+        }
+      }
     },
     "0900": {
       "bpr": "",
       "medication_taken": "dilaudid",
-      "Activities": {
-      },
+      "Activities": {},
       "Pain": {
         "righthip": {
           "note": "",
@@ -52,7 +37,7 @@
           "note": "",
           "pain_level": 3.0
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -68,40 +53,100 @@
       "o2": ""
     },
     "1400": {
-      "bpr": "",
-      "medication_taken": "",
-      "Activities": {},
-      "Pain": {},
       "note": "",
-      "Medications": {
-        "dilaudid": "4mg",
-        "tylenol": "1g"
+      "bpr": "",
+      "Activities": {
+        "Walking": {
+          "duration": 20,
+          "note": ""
+        }
       },
-      "o2": ""
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 3.0,
+          "note": ""
+        }
+      }
     },
     "2100": {
-      "bpr": "",
-      "medication_taken": "",
-      "Activities": {},
-      "Pain": {},
       "note": "",
-      "Medications": {
-        "dilaudid": "4mg",
-        "tylenol": "1g"
-      },
-      "o2": ""
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {}
     },
     "2200": {
+      "note": "",
       "bpr": "",
-      "medication_taken": "",
       "Activities": {},
-      "Pain": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {}
+    },
+    "1300": {
+      "bpr": "126/81",
+      "medication_taken": "dilaudid",
+      "Activities": {
+        "Sitting": {
+          "note": "",
+          "duration": 60
+        }
+      },
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 2.5
+        }
+      },
       "note": "",
       "Medications": {
-        "lexapro": "20mg",
-        "valium": "5mg"
+        "dilaudid": "4mg"
       },
-      "o2": ""
+      "o2": "93"
+    },
+    "1800": {
+      "note": "",
+      "bpr": "",
+      "Activities": {
+        "driving": {
+          "duration": 50,
+          "note": "coming back from surgeon"
+        }
+      },
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 4.5,
+          "note": ""
+        }
+      }
+    },
+    "1600": {
+      "note": "",
+      "bpr": "",
+      "Activities": {
+        "driving": {
+          "duration": 30,
+          "note": "driving to surgeon"
+        }
+      },
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 3.5,
+          "note": ""
+        }
+      }
     }
   },
   "0625": {
@@ -122,7 +167,7 @@
           "note": "",
           "pain_level": 5.0
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -159,7 +204,7 @@
           "note": "",
           "pain_level": 6.0
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -177,8 +222,7 @@
     "1000": {
       "bpr": "",
       "medication_taken": "dilaudid",
-      "Activities": {
-      },
+      "Activities": {},
       "Pain": {
         "righthip": {
           "note": "",
@@ -192,7 +236,7 @@
           "note": "",
           "pain_level": 6.0
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -210,8 +254,7 @@
     "1200": {
       "bpr": "",
       "medication_taken": "dilaudid",
-      "Activities": {
-      },
+      "Activities": {},
       "Pain": {
         "righthip": {
           "note": "",
@@ -225,7 +268,7 @@
           "note": "",
           "pain_level": 4.5
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -243,8 +286,7 @@
     "1300": {
       "bpr": "",
       "medication_taken": "",
-      "Activities": {
-      },
+      "Activities": {},
       "Pain": {
         "righthip": {
           "note": "",
@@ -258,7 +300,7 @@
           "note": "",
           "pain_level": 4.5
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -274,8 +316,7 @@
     "1400": {
       "bpr": "118/83",
       "medication_taken": "dilaudid",
-      "Activities": {
-      },
+      "Activities": {},
       "Pain": {
         "righthip": {
           "note": "",
@@ -289,7 +330,7 @@
           "note": "",
           "pain_level": 4.5
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -308,8 +349,7 @@
     "1600": {
       "bpr": "110/70",
       "medication_taken": "dilaudid",
-      "Activities": {
-      },
+      "Activities": {},
       "Pain": {
         "righthip": {
           "note": "",
@@ -323,7 +363,7 @@
           "note": "",
           "pain_level": 4.5
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -341,8 +381,7 @@
     "1900": {
       "bpr": "106/70",
       "medication_taken": "vitaminD,dilaudid",
-      "Activities": {
-      },
+      "Activities": {},
       "Pain": {
         "righthip": {
           "note": "",
@@ -356,7 +395,7 @@
           "note": "",
           "pain_level": 3.5
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -375,8 +414,7 @@
     "2100": {
       "bpr": "124/70",
       "medication_taken": "",
-      "Activities": {
-      },
+      "Activities": {},
       "Pain": {
         "righthip": {
           "note": "",
@@ -390,7 +428,7 @@
           "note": "",
           "pain_level": 3.5
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -504,7 +542,7 @@
           "note": "",
           "pain_level": 4.5
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -534,7 +572,7 @@
           "note": "",
           "pain_level": 4.5
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -567,7 +605,7 @@
           "note": "",
           "pain_level": 4.5
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -597,7 +635,7 @@
           "note": "",
           "pain_level": 3.5
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -630,7 +668,7 @@
           "note": "",
           "pain_level": 3.5
         },
-        "rquads": {
+        "rquad": {
           "note": "pins and needles",
           "pain_level": 1.5
         },
@@ -732,8 +770,7 @@
     "1200": {
       "bpr": "",
       "medication_taken": "",
-      "Activities": {
-      },
+      "Activities": {},
       "Pain": {
         "righthip": {
           "note": "",
@@ -759,8 +796,7 @@
     "1300": {
       "bpr": "110/73",
       "medication_taken": "dilaudid",
-      "Activities": {
-      },
+      "Activities": {},
       "Pain": {
         "righthip": {
           "note": "",
@@ -5596,7 +5632,7 @@
           "note": "The pain is focused as a line from my upper glute to lower back, right side",
           "pain_level": 4.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -5647,7 +5683,7 @@
           "note": "The pain is focused as a line from my upper glute to lower back, right side",
           "pain_level": 4.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -5840,7 +5876,7 @@
           "note": "The pain is focused as a line from my upper glute to lower back, right side",
           "pain_level": 4.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -5885,7 +5921,7 @@
           "note": "The pain is focused as a line from my upper glute to lower back, right side",
           "pain_level": 4.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -5931,7 +5967,7 @@
           "note": "The pain is focused as a line from my upper glute to lower back, right side",
           "pain_level": 4.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -5974,7 +6010,7 @@
           "note": "The pain is focused as a line from my upper glute to lower back, right side",
           "pain_level": 4.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6074,7 +6110,7 @@
           "note": "The pain is focused as a line from my upper glute to lower back, right side",
           "pain_level": 4.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6118,7 +6154,7 @@
           "note": "The pain is focused as a line from my upper glute to lower back, right side",
           "pain_level": 4.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6164,7 +6200,7 @@
           "note": "The pain is focused as a line from my upper glute to lower back, right side",
           "pain_level": 4.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6254,7 +6290,7 @@
           "note": "",
           "pain_level": 1.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6296,7 +6332,7 @@
           "note": "",
           "pain_level": 1.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6338,7 +6374,7 @@
           "note": "",
           "pain_level": 1.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6399,7 +6435,7 @@
           "note": "",
           "pain_level": 1.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6453,7 +6489,7 @@
           "note": "The pain is focused as a line from my upper glute to lower back, right side",
           "pain_level": 5.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6499,7 +6535,7 @@
           "note": "The pain is focused as a line from my upper glute to lower back, right side",
           "pain_level": 4.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6583,7 +6619,7 @@
           "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
           "pain_level": 8.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6628,7 +6664,7 @@
           "note": "Right hip tightening considerably",
           "pain_level": 4.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6671,7 +6707,7 @@
           "note": "",
           "pain_level": 4.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6717,7 +6753,7 @@
           "note": "",
           "pain_level": 4.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6777,7 +6813,7 @@
           "note": "",
           "pain_level": 2.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6842,7 +6878,7 @@
           "note": "",
           "pain_level": 1.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6888,7 +6924,7 @@
           "note": "",
           "pain_level": 1.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -6938,7 +6974,7 @@
           "note": "",
           "pain_level": 1.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7046,7 +7082,7 @@
           "note": "slept on right hip all night",
           "pain_level": 8.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7086,7 +7122,7 @@
           "note": "",
           "pain_level": 8.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7128,7 +7164,7 @@
           "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
           "pain_level": 8.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7167,7 +7203,7 @@
           "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
           "pain_level": 8.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7208,7 +7244,7 @@
           "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
           "pain_level": 8.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7250,7 +7286,7 @@
           "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
           "pain_level": 8.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7293,7 +7329,7 @@
           "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
           "pain_level": 8.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7336,7 +7372,7 @@
           "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
           "pain_level": 8.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7378,7 +7414,7 @@
           "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
           "pain_level": 8.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7417,7 +7453,7 @@
           "note": " sat on chair for 5 minutes until pins and needles in right quad outer",
           "pain_level": 8.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7513,7 +7549,7 @@
           "note": "",
           "pain_level": 6.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7583,7 +7619,7 @@
           "note": "",
           "pain_level": 6.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7621,7 +7657,7 @@
           "note": "",
           "pain_level": 6.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7656,7 +7692,7 @@
           "note": "",
           "pain_level": 6.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7698,7 +7734,7 @@
           "note": "",
           "pain_level": 6.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7737,7 +7773,7 @@
           "note": "",
           "pain_level": 6.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7786,7 +7822,7 @@
           "note": "",
           "pain_level": 5.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.0
         },
@@ -7859,7 +7895,7 @@
           "note": "",
           "pain_level": 6.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 7.5
         },
@@ -7942,7 +7978,7 @@
           "note": " ",
           "pain_level": 7.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 8.0
         }
@@ -7972,7 +8008,7 @@
           "note": " Increased pain after log roll attempt",
           "pain_level": 7.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 8.0
         }
@@ -8005,7 +8041,7 @@
           "note": "",
           "pain_level": 8.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 8.0
         },
@@ -8141,7 +8177,7 @@
           "note": "",
           "pain_level": 6.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 8.5
         },
@@ -8182,7 +8218,7 @@
           "note": "",
           "pain_level": 6.5
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 8.5
         },
@@ -8300,7 +8336,7 @@
           "note": " Pain is focused on lower back with stabbing shooting pains down my hips and outside of my quads",
           "pain_level": 8.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 8.0
         }
@@ -8328,7 +8364,7 @@
           "note": " ",
           "pain_level": 8.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 8.0
         }
@@ -8357,7 +8393,7 @@
           "note": " ",
           "pain_level": 7.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 8.0
         }
@@ -8383,7 +8419,7 @@
           "note": " ",
           "pain_level": 7.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 8.0
         }
@@ -8417,7 +8453,7 @@
           "note": " ",
           "pain_level": 6.0
         },
-        "rquads": {
+        "rquad": {
           "note": "",
           "pain_level": 8.0
         }
@@ -8504,6 +8540,157 @@
         "valium": "5mg"
       },
       "o2": ""
+    }
+  },
+  "0627": {
+    "0800": {
+      "note": "",
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 3.5,
+          "note": ""
+        }
+      }
+    },
+    "max_pain_level": 3.5,
+    "0900": {
+      "note": "",
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 3.0,
+          "note": ""
+        }
+      }
+    },
+    "1400": {
+      "note": "",
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 2.0,
+          "note": ""
+        }
+      }
+    },
+    "1600": {
+      "Pain": {
+        "back": {
+          "pain_level": 3.0,
+          "note": ""
+        }
+      },
+      "bpr": "105/70",
+      "o2": "93",
+      "Activities": {
+        "Walking": {
+          "duration": 10,
+          "note": "No brace"
+        }
+      },
+      "note": "",
+      "medication_taken": "",
+      "Medications": {}
+    },
+    "2100": {
+      "note": "",
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 2.0,
+          "note": ""
+        }
+      }
+    },
+    "2200": {
+      "note": "",
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 2.0,
+          "note": ""
+        }
+      }
+    }
+  },
+  "0628": {
+    "max_pain_level": 3.5,
+    "1412": {
+      "bpr": "",
+      "medication_taken": "",
+      "o2": "",
+      "Activities": {},
+      "note": "",
+      "Pain": {},
+      "Medications": {}
+    },
+    "1400": {
+      "bpr": "113/71",
+      "medication_taken": "",
+      "o2": "91",
+      "Activities": {
+        "Walking": {
+          "duration": 10,
+          "note": "guided tennis ball around"
+        }
+      },
+      "note": "",
+      "Pain": {
+        "back": {
+          "note": "",
+          "pain_level": 3.5
+        }
+      },
+      "Medications": {}
+    },
+    "1651": {
+      "note": "",
+      "bpr": "",
+      "Activities": {
+        "Walking": {
+          "duration": 20,
+          "note": ""
+        }
+      },
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {}
+    },
+    "1000": {
+      "note": "",
+      "bpr": "",
+      "Activities": {},
+      "Medications": {},
+      "o2": "",
+      "medication_taken": "",
+      "Pain": {
+        "back": {
+          "pain_level": 3.0,
+          "note": ""
+        }
+      }
     }
   }
 }
