@@ -209,58 +209,127 @@
             New-UDElement -Id "activities_section" -Tag "div"
             
             #pain section
-            New-UDCheckbox -Id "add_pain" -Label "Add Pain Entry" -OnChange {
+            New-UDCheckbox -Id "add_pain" -Label "🩹 Add Pain Entry" -OnChange {
                 if ($EventData) {
-                    $SelectOptions = {
-                        New-UDSelectOption -Name "Back" -Value "back"
-                        New-UDSelectOption -Name "RQuad" -Value "rquads"
-                        New-UDSelectOption -Name "LQuad" -Value "lquad"
-                        New-UDSelectOption -Name "Glutes" -Value "glutes"
-                        New-UDSelectOption -Name "Right Hip" -Value "righthip"
-                        New-UDSelectOption -Name "LHip" -Value "lhip"
-                    }
                     # Checkbox is checked - show pain entry section
                     Set-UDElement -Id "pain_section" -Content {
-                        New-UDGrid -Container -Children {
-                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                New-UDTypography -Text "Pain Entries" -Variant h6 -Style @{marginTop = "10px"; marginBottom = "10px" }
-                            }                            
-                            # Initial pain entry
-                            New-UDGrid -Item -ExtraSmallSize 4 -Children {
-                                New-UDSelect -Id "pain_location_1" -Label "Pain Location" -Option $SelectOptions
+                        New-UDCard -Title "🩹 Pain Tracking" -Content {
+                            # Initial pain entry in its own Paper
+                            New-UDPaper -Children {
+                                New-UDGrid -Container -Children {
+                                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                        New-UDTypography -Text "Pain Entry #1" -Variant subtitle2 -Style @{
+                                            marginBottom = "15px"
+                                            color        = "#1976d2"
+                                            fontWeight   = "500"
+                                        }
+                                    }
+                                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
+                                        New-UDSelect -Id "pain_location_1" -Label "🎯 Pain Location" -FullWidth -Option {
+                                            New-UDSelectOption -Name "Back" -Value "back"
+                                            New-UDSelectOption -Name "Right Glute" -Value "right_glute"
+                                            New-UDSelectOption -Name "Left Glute" -Value "left_glute"
+                                            New-UDSelectOption -Name "Glutes" -Value "glutes"
+                                            New-UDSelectOption -Name "Right Hip" -Value "righthip"
+                                            New-UDSelectOption -Name "Left Hip" -Value "lhip"
+                                            New-UDSelectOption -Name "Hips" -Value "hips"
+                                            New-UDSelectOption -Name "Right Quad" -Value "rquad"
+                                            New-UDSelectOption -Name "Left Quad" -Value "lquad"
+                                            New-UDSelectOption -Name "Quads" -Value "quads"
+                                        }
+                                    }
+                                    New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
+                                        New-UDTextbox -Id "pain_level_1" -Label "📊 Level (0-10)" -Type number -Placeholder "5" -FullWidth
+                                    }
+                                    New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 6 -Children {
+                                        New-UDTextbox -Id "pain_note_1" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth
+                                    }
+                                }
+                            } -Style @{
+                                padding         = "15px"
+                                margin          = "10px 0"
+                                backgroundColor = "#fff5f5"
+                                borderLeft      = "4px solid #dc3545"
+                                borderRadius    = "8px"
                             }
-                            New-UDGrid -Item -ExtraSmallSize 2 -Children {
-                                New-UDTextbox -Id "pain_level_1" -Label "Pain Level (0-10)" -Type text -Placeholder "5"
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 4 -Children {
-                                New-UDTextbox -Id "pain_note_1" -Label "Note" -Type text -Placeholder "Optional note"
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 2 -Children {
-                                New-UDButton -Text "Add More" -OnClick {
-                                    # Add another pain entry row
+                            
+                            # Container for additional pain entries
+                            New-UDElement -Id "additional_pain_container" -Tag "div"
+                            
+                            # Add More Button - Separate container
+                            New-UDContainer -Children {
+                                New-UDButton -Text "➕ Add Another Pain Entry" -Color primary -Variant outlined -OnClick {
+                                    # Generate unique ID for new pain entry
                                     $entryCount = (Get-Random -Minimum 100 -Maximum 999)
                                     
-                                    Add-UDElement -ParentId "pain_section" -Content {
-                                        New-UDGrid -Container -Children {
-                                            New-UDGrid -Item -ExtraSmallSize 4 -Children {
-                                                New-UDSelect -Id "pain_location_$entryCount" -Label "Pain Location" -Option $SelectOptions
+                                    # Use Show-UDToast to debug
+                                    Show-UDToast -Message "Adding Pain Entry #$entryCount" -Duration 2000
+                                    
+                                    # Add the new pain entry using Add-UDElement with proper syntax
+                                    Add-UDElement -ParentId "additional_pain_container" -Content {
+                                        $currentEntryCount = $entryCount  # Capture the variable in local scope
+                                        New-UDPaper -Id "pain_entry_$currentEntryCount" -Children {
+                                            New-UDGrid -Container -Children {
+                                                New-UDGrid -Item -ExtraSmallSize 10 -Children {
+                                                    New-UDTypography -Text "Pain Entry #$currentEntryCount" -Variant subtitle2 -Style @{
+                                                        marginBottom = "15px"
+                                                        color        = "#1976d2"
+                                                        fontWeight   = "500"
+                                                    }
+                                                }
+                                                New-UDGrid -Item -ExtraSmallSize 2 -Children {
+                                                    New-UDButton -Text "🗑️" -Color secondary -Size small -OnClick {
+                                                        # Remove this specific pain Paper using Clear-UDElement
+                                                        try {
+                                                            Show-UDToast -Message "Removing Pain Entry #$currentEntryCount" -Duration 2000
+                                                            # Clear the content of this specific pain entry
+                                                            Clear-UDElement -Id "pain_entry_$currentEntryCount"
+                                                        }
+                                                        catch {
+                                                            Show-UDToast -Message "Error removing pain entry: $($_.Exception.Message)" -Duration 3000 -BackgroundColor red
+                                                        }
+                                                    } -Id "remove_pain_btn_$currentEntryCount"
+                                                }
+                                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
+                                                    New-UDSelect -Id "pain_location_$currentEntryCount" -Label "🎯 Pain Location" -FullWidth -Option {
+                                                        New-UDSelectOption -Name "Back" -Value "back"
+                                                        New-UDSelectOption -Name "Right Glute" -Value "right_glute"
+                                                        New-UDSelectOption -Name "Left Glute" -Value "left_glute"
+                                                        New-UDSelectOption -Name "Glutes" -Value "glutes"
+                                                        New-UDSelectOption -Name "Right Hip" -Value "righthip"
+                                                        New-UDSelectOption -Name "Left Hip" -Value "lhip"
+                                                        New-UDSelectOption -Name "Hips" -Value "hips"
+                                                        New-UDSelectOption -Name "Right Quad" -Value "rquad"
+                                                        New-UDSelectOption -Name "Left Quad" -Value "lquad"
+                                                        New-UDSelectOption -Name "Quads" -Value "quads"
+                                                    }
+                                                }
+                                                New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
+                                                    New-UDTextbox -Id "pain_level_$currentEntryCount" -Label "📊 Level (0-10)" -Type number -Placeholder "5" -FullWidth
+                                                }
+                                                New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 6 -Children {
+                                                    New-UDTextbox -Id "pain_note_$currentEntryCount" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth
+                                                }
                                             }
-                                            New-UDGrid -Item -ExtraSmallSize 2 -Children {
-                                                New-UDTextbox -Id "pain_level_$entryCount" -Label "Pain Level (0-10)" -Type text -Placeholder "5"
-                                            }
-                                            New-UDGrid -Item -ExtraSmallSize 4 -Children {
-                                                New-UDTextbox -Id "pain_note_$entryCount" -Label "Note" -Type text -Placeholder "Optional note"
-                                            }
-                                            New-UDGrid -Item -ExtraSmallSize 2 -Children {
-                                                New-UDButton -Text "Remove" -Color secondary -OnClick {
-                                                    # Remove this entry
-                                                    Remove-UDElement -Id "pain_entry_$entryCount"
-                                                } -Id "remove_$entryCount"
-                                            }
-                                        } -Id "pain_entry_$entryCount"
+                                        } -Style @{
+                                            padding         = "15px"
+                                            margin          = "10px 0"
+                                            backgroundColor = "#fff5f5"
+                                            borderLeft      = "4px solid #dc3545"
+                                            borderRadius    = "8px"
+                                        }
                                     }
                                 }
                             }
+                            
+                            New-UDTypography -Text "💡 Track pain levels and locations for better health monitoring" -Variant caption -Style @{
+                                marginTop = "15px"
+                                color     = "#666"
+                                fontStyle = "italic"
+                                textAlign = "center"
+                            }
+                        } -Style @{
+                            marginBottom = "20px"
                         }
                     }
                 }
@@ -269,7 +338,7 @@
                     Set-UDElement -Id "pain_section" -Content { }
                 }
             }           
-            # Dynamic pain section container
+            # Pain section container (appears below checkbox when enabled)
             New-UDElement -Id "pain_section" -Tag "div"
             # Making a new ud-grid for the o2 and bpr input sections
             New-UDGrid -Container -Children {
