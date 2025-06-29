@@ -423,7 +423,7 @@
             # Add a text field for additional notes
             New-UDGrid -Container -Children {
                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                    New-UDTextbox -Id "notes" -Label "Additional Notes" -Type text -Placeholder "Any additional information" -FullWidth
+                    New-UDTextbox -Id "notes" -Label "📝 Additional Notes" -Type text -Placeholder "Any additional information" -FullWidth
                 }
             }
 
