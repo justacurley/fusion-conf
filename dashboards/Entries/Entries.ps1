@@ -444,20 +444,9 @@
             }
         } -OnSubmit {
             Import-Module -Name fusion -Force
-            Write-Information "=== EVENTDATA DEBUG === breakpoint"
-            Write-Information "EventData Type: $($EventData.GetType().FullName)"
-            Write-Information "EventData Count: $($EventData.Count)"
-            Write-Information "EventData Content: $($EventData | ConvertTo-Json -Depth 99)"
-            $FormEvent = $EventData[0]
             $FormEvent.timestamp = [datetime]::Parse($FormEvent.timestamp).ToString("HHmm")
             $FormEvent.date = [datetime]::Parse($FormEvent.date).ToString("MMdd")
-            Write-Information "Converting JSON to entries.json format..."
-            Write-Information ( $FormEvent | ConvertTo-Json -Depth 99)
             $entry = ConvertTo-EntriesFormat -Entry ( $FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
-            # Output results
-            Write-Information "`nFull Entry JSON (ready for entries.json):"
-            Write-Information "=========================================="
-            Write-Information ($entry | ConvertTo-Json -Depth 99)
             # Save the entry to the entries.json file
             try {
                 $saveResult = Save-ConvertedEntry -ConvertedEntry $entry
@@ -491,6 +480,17 @@
                     Write-Error "Error saving image: $($_.Exception.Message)"
                     Show-UDToast -Message "Error uploading image: $($_.Exception.Message)" -MessageColor Red -Duration 5000
                 }
+            }
+            # Update the cache with the new entry
+            try {
+                $EntriesPath = "/home/data/fusion-data/entries/entries.json"
+                $Entries = Get-EntriesData -Path $EntriesPath
+                Set-PSUCache -Key "entriesData" -Value $Entries -Expiration (New-TimeSpan -Days 1)
+                Write-Information "Cache updated with new entries data"
+            }
+            catch {
+                Write-Error "Error updating cache: $($_.Exception.Message)"
+                Show-UDToast -Message "Error updating cache: $($_.Exception.Message)" -MessageColor Red -Duration 5000
             }
         }
     }
