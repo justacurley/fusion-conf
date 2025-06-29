@@ -427,6 +427,15 @@
                 }
             }
 
+            # Sleep tracking section
+            New-UDGrid -Container -Children {
+                New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                    New-UDTextbox -Id "sleep" -Label "😴 Sleep Duration" -Type text -Placeholder "e.g., 7.5 hours, 8:30, 6h 45m" -FullWidth -Style @{
+                        marginTop = "10px"
+                    }
+                }
+            }
+
             # Upload an image 
             New-UDGrid -Container -Children {
                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
