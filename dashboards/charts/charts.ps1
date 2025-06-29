@@ -14,6 +14,7 @@
                 $activityData = @()
                 $medicationData = @()
                 $backPainData = @()
+                $sleepData = @()
                 $dates = $entries.PSObject.Properties.Name | Sort-Object
                 
                 foreach ($date in $dates) {
@@ -25,6 +26,22 @@
                         $month = $date.Substring(0, 2)
                         $day = $date.Substring(2, 2)
                         $dateStr = "$month/$day"
+                        
+                        # Check for sleep data
+                        $sleepHours = $null
+                        if ($dateEntry.PSObject.Properties['Sleep']) {
+                            $sleepValue = $dateEntry.Sleep
+                            # Parse different sleep formats: "7:39", "9:10", "6:03", etc.
+                            if ($sleepValue -match '^(\d+):(\d+)$') {
+                                $hours = [int]$matches[1]
+                                $minutes = [int]$matches[2]
+                                $sleepHours = [math]::Round($hours + ($minutes / 60.0), 2)
+                            }
+                            # Handle decimal format like "7.5"
+                            elseif ($sleepValue -match '^(\d+(?:\.\d+)?)$') {
+                                $sleepHours = [double]$matches[1]
+                            }
+                        }
                         
                         # Calculate total daily activity duration and medication amounts
                         $totalActivityDuration = 0
@@ -119,6 +136,15 @@
                                 SortDate = $date
                             }
                         }
+                        
+                        # Add sleep data if available
+                        if ($sleepHours -ne $null) {
+                            $sleepData += [PSCustomObject]@{
+                                Date = $dateStr
+                                SleepHours = $sleepHours
+                                SortDate = $date
+                            }
+                        }
                     }
                 }
                 
@@ -132,12 +158,14 @@
                 $activityData = $activityData | Sort-Object SortDate
                 $medicationData = $medicationData | Sort-Object SortDate
                 $backPainData = $backPainData | Sort-Object SortDate
+                $sleepData = $sleepData | Sort-Object SortDate
                 
                 # Remove SortDate property as it's only needed for sorting
                 $painData = $painData | Select-Object Date, MaxPainLevel
                 $activityData = $activityData | Select-Object Date, TotalDuration, Walking, Stairs, Standing
                 $medicationData = $medicationData | Select-Object Date, TotalDilaudid, TotalValium
                 $backPainData = $backPainData | Select-Object Date, AvgBackPain
+                $sleepData = $sleepData | Select-Object Date, SleepHours
                 
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
@@ -198,6 +226,40 @@
                                 title = @{
                                     display = $true
                                     text = "Daily Average Back Pain Levels"
+                                }
+                                legend = @{
+                                    display = $true
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                New-UDRow -Columns {
+                    New-UDColumn -Size 12 -Content {
+                        # Line chart for sleep duration
+                        New-UDChartJS -Type line -Data $sleepData -DataProperty SleepHours -LabelProperty Date -Options @{
+                            responsive = $true
+                            scales = @{
+                                y = @{
+                                    beginAtZero = $true
+                                    max = 12
+                                    title = @{
+                                        display = $true
+                                        text = "Sleep Duration (Hours)"
+                                    }
+                                }
+                                x = @{
+                                    title = @{
+                                        display = $true
+                                        text = "Date"
+                                    }
+                                }
+                            }
+                            plugins = @{
+                                title = @{
+                                    display = $true
+                                    text = "Daily Sleep Duration"
                                 }
                                 legend = @{
                                     display = $true
@@ -293,6 +355,31 @@
                     }
                     
                     New-UDColumn -Size 2 -Content {
+                        # Sleep Statistics card
+                        if ($sleepData.Count -gt 0) {
+                            $avgSleep = [math]::Round(($sleepData.SleepHours | Measure-Object -Average).Average, 1)
+                            $maxSleep = ($sleepData.SleepHours | Measure-Object -Maximum).Maximum
+                            $minSleep = ($sleepData.SleepHours | Measure-Object -Minimum).Minimum
+                            $sleepDays = $sleepData.Count
+                            
+                            New-UDCard -Title "Sleep Statistics" -Content {
+                                New-UDElement -Tag "div" -Content {
+                                    New-UDTypography -Text "Average Sleep: $avgSleep hrs" -Variant h6
+                                    New-UDTypography -Text "Longest Sleep: $maxSleep hrs" -Variant h6
+                                    New-UDTypography -Text "Shortest Sleep: $minSleep hrs" -Variant h6
+                                    New-UDTypography -Text "Days with Sleep Data: $sleepDays" -Variant h6
+                                }
+                            }
+                        } else {
+                            New-UDCard -Title "Sleep Statistics" -Content {
+                                New-UDElement -Tag "div" -Content {
+                                    New-UDTypography -Text "No sleep data available" -Variant h6
+                                }
+                            }
+                        }
+                    }
+                    
+                    New-UDColumn -Size 2 -Content {
                         # Activity Statistics card
                         $avgActivity = [math]::Round(($activityData.TotalDuration | Measure-Object -Average).Average, 1)
                         $maxActivity = ($activityData.TotalDuration | Measure-Object -Maximum).Maximum
@@ -309,7 +396,7 @@
                         }
                     }
                     
-                    New-UDColumn -Size 3 -Content {
+                    New-UDColumn -Size 2 -Content {
                         # Dilaudid Statistics card
                         $avgDilaudid = [math]::Round(($medicationData.TotalDilaudid | Measure-Object -Average).Average, 1)
                         $maxDilaudid = ($medicationData.TotalDilaudid | Measure-Object -Maximum).Maximum
@@ -326,7 +413,7 @@
                         }
                     }
                     
-                    New-UDColumn -Size 3 -Content {
+                    New-UDColumn -Size 2 -Content {
                         # Valium Statistics card
                         $avgValium = [math]::Round(($medicationData.TotalValium | Measure-Object -Average).Average, 1)
                         $maxValium = ($medicationData.TotalValium | Measure-Object -Maximum).Maximum
