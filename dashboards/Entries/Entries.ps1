@@ -98,92 +98,95 @@
 
             # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)", and another for "Note"
             # Activities Section - Enhanced UI
-            New-UDCheckbox -Id "add_activitiy" -Label "🏃‍♂️ Add Activity Entry" -OnChange {
+            # Checkbox to enable/disable activities section
+            New-UDCheckBox -Id "add_activity" -Label "🏃‍♂️ Add Activity Entry" -OnChange {
                 if ($EventData) {
                     # Checkbox is checked - show activities entry section
                     Set-UDElement -Id "activities_section" -Content {
-                        New-UDCard -Title "🏃‍♂️ Physical Activities" -Children {
-                            New-UDGrid -Container -Children {
-                                # Activities container with single Paper
-                                New-UDPaper -Children {
-                                    # Initial activity entry
-                                    New-UDGrid -Container -Children {
-                                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                            New-UDTypography -Text "Activity #1" -Variant subtitle2 -Style @{
-                                                marginBottom = "15px"
-                                                color        = "#1976d2"
-                                                fontWeight   = "500"
-                                            }
-                                        }
-                                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
-                                            New-UDTextBox -Id "activities_type_1" -Label "🏃‍♂️ Activity Type" -Type text -Placeholder "Walking, Running, Swimming, etc." -FullWidth -Style @{
-                                                marginBottom = "10px"
-                                            }
-                                        }
-                                        New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Children {
-                                            New-UDTextbox -Id "activities_length_1" -Label "⏱️ Duration (min)" -Type number -Placeholder "20" -FullWidth -Style @{
-                                                marginBottom = "10px"
-                                            }
-                                        }
-                                        New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Children {
-                                            New-UDTextbox -Id "activities_note_1" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth -Style @{
-                                                marginBottom = "10px"
-                                            }
+                        New-UDCard -Title "🏃‍♂️ Physical Activities" -Content {
+                            # Initial activity entry in its own Paper
+                            New-UDPaper -Children {
+                                New-UDGrid -Container -Children {
+                                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                        New-UDTypography -Text "Activity #1" -Variant subtitle2 -Style @{
+                                            marginBottom = "15px"
+                                            color        = "#1976d2"
+                                            fontWeight   = "500"
                                         }
                                     }
+                                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
+                                        New-UDTextBox -Id "activities_type_1" -Label "🏃‍♂️ Activity Type" -Type text -Placeholder "Walking, Running, Swimming, etc." -FullWidth
+                                    }
+                                    New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Children {
+                                        New-UDTextbox -Id "activities_length_1" -Label "⏱️ Duration (min)" -Type number -Placeholder "20" -FullWidth
+                                    }
+                                    New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Children {
+                                        New-UDTextbox -Id "activities_note_1" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth
+                                    }
+                                }
+                            } -Style @{
+                                padding         = "15px"
+                                margin          = "10px 0"
+                                backgroundColor = "#f8f9fa"
+                                borderLeft      = "4px solid #28a745"
+                                borderRadius    = "8px"
+                            }
+                            
+                            # Container for additional activities
+                            New-UDElement -Id "additional_activities_container" -Tag "div"
+                            
+                            # Add More Button - Separate container
+                            New-UDContainer -Children {
+                                New-UDButton -Text "➕ Add Another Activity" -Color primary -Variant outlined -OnClick {
+                                    # Generate unique ID for new activity
+                                    $entryCount = (Get-Random -Minimum 100 -Maximum 999)
                                     
-                                    # Container for additional activities (inside the same Paper)
-                                    New-UDElement -Id "additional_activities_container" -Tag "div"
+                                    # Use Show-UDToast to debug
+                                    Show-UDToast -Message "Adding Activity #$entryCount" -Duration 2000
                                     
-                                    # Add More Button - Separate row at bottom
-                                    New-UDGrid -Container -Children {
-                                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                            New-UDButton -Text "➕ Add Another Activity" -Color primary -Variant outlined -OnClick {
-                                                # Add another activities entry row inside the same Paper
-                                                $entryCount = (Get-Random -Minimum 100 -Maximum 999)
-                                                
-                                                Add-UDElement -ParentId "additional_activities_container" -Content {
-                                                    New-UDGrid -Container -Children {
-                                                        New-UDGrid -Item -ExtraSmallSize 10 -Children {
-                                                            New-UDTypography -Text "Activity #$entryCount" -Variant subtitle2 -Style @{
-                                                                marginBottom = "15px"
-                                                                marginTop    = "20px"
-                                                                color        = "#1976d2"
-                                                                fontWeight   = "500"
-                                                            }
+                                    # Add the new activity using Add-UDElement with proper syntax
+                                    Add-UDElement -ParentId "additional_activities_container" -Content {
+                                        $currentEntryCount = $entryCount  # Capture the variable in local scope
+                                        New-UDPaper -Id "activities_entry_$currentEntryCount" -Children {
+                                            New-UDGrid -Container -Children {
+                                                New-UDGrid -Item -ExtraSmallSize 10 -Children {
+                                                    New-UDTypography -Text "Activity #$currentEntryCount" -Variant subtitle2 -Style @{
+                                                        marginBottom = "15px"
+                                                        color        = "#1976d2"
+                                                        fontWeight   = "500"
+                                                    }
+                                                }
+                                                New-UDGrid -Item -ExtraSmallSize 2 -Children {
+                                                    New-UDButton -Text "🗑️" -Color secondary -Size small -OnClick {
+                                                        # Remove this specific activity Paper using Clear-UDElement
+                                                        try {
+                                                            Show-UDToast -Message "Removing Activity #$currentEntryCount" -Duration 2000
+                                                            # Clear the content of this specific activity entry
+                                                            Clear-UDElement -Id "activities_entry_$currentEntryCount"
                                                         }
-                                                        New-UDGrid -Item -ExtraSmallSize 2 -Children {
-                                                            New-UDButton -Text "🗑️" -Color secondary -Size small -OnClick {
-                                                                # Remove only this grid section, not the Paper
-                                                                Remove-UDElement -Id "activities_entry_$entryCount"
-                                                            }
+                                                        catch {
+                                                            Show-UDToast -Message "Error removing activity: $($_.Exception.Message)" -Duration 3000 -BackgroundColor red
                                                         }
-                                                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
-                                                            New-UDTextBox -Id "activities_type_$entryCount" -Label "🏃‍♂️ Activity Type" -Type text -Placeholder "Walking, Running, Swimming, etc." -FullWidth -Style @{
-                                                                marginBottom = "10px"
-                                                            }
-                                                        }
-                                                        New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Children {
-                                                            New-UDTextbox -Id "activities_length_$entryCount" -Label "⏱️ Duration (min)" -Type number -Placeholder "20" -FullWidth -Style @{
-                                                                marginBottom = "10px"
-                                                            }
-                                                        }
-                                                        New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Children {
-                                                            New-UDTextbox -Id "activities_note_$entryCount" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth -Style @{
-                                                                marginBottom = "10px"
-                                                            }
-                                                        }
-                                                    } -Id "activities_entry_$entryCount"
+                                                    } -Id "remove_btn_$currentEntryCount"
+                                                }
+                                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
+                                                    New-UDTextBox -Id "activities_type_$currentEntryCount" -Label "🏃‍♂️ Activity Type" -Type text -Placeholder "Walking, Running, Swimming, etc." -FullWidth
+                                                }
+                                                New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Children {
+                                                    New-UDTextbox -Id "activities_length_$currentEntryCount" -Label "⏱️ Duration (min)" -Type number -Placeholder "20" -FullWidth
+                                                }
+                                                New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Children {
+                                                    New-UDTextbox -Id "activities_note_$currentEntryCount" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth
                                                 }
                                             }
+                                        } -Style @{
+                                            padding         = "15px"
+                                            margin          = "10px 0"
+                                            backgroundColor = "#f8f9fa"
+                                            borderLeft      = "4px solid #28a745"
+                                            borderRadius    = "8px"
                                         }
                                     }
-                                } -Style @{
-                                    padding         = "15px"
-                                    margin          = "10px 0"
-                                    backgroundColor = "#f8f9fa"
-                                    borderLeft      = "4px solid #28a745"
-                                    borderRadius    = "8px"
                                 }
                             }
                             
@@ -202,8 +205,8 @@
                     # Checkbox is unchecked - hide activities section
                     Set-UDElement -Id "activities_section" -Content { }
                 }
-            }           
-            # Dynamic activities section container
+            }            
+            # Activities section container (appears below checkbox when enabled)
             New-UDElement -Id "activities_section" -Tag "div"
             # New-UDCheckbox -Id "add_activitiy" -Label "Add activitiy Entry" -OnChange {
             #     if ($EventData) {
