@@ -16,7 +16,7 @@ $Dashboard = New-UDDashboard -Title "Simple Interactive Chart" -Content {
                 $entries = Get-EntriesData -entriesPath $EntriesPath
                 
                 # Use the new Get-HealthMetrics orchestrator function to get all data
-                $healthData = Get-HealthMetrics -Entries $entries -DataPoints @('MaxPain', 'BackPain', 'Sleep', 'Medications', 'Activities', 'Vitals')
+                $healthData = Get-HealthMetrics -Entries $entries -DataPoints @('MaxPain', 'BackPain', 'Sleep', 'ActivityDuration', 'Medications', 'Activities', 'Vitals')
                 
                 # Extract the different data types from the results
                 $combinedPainData = $healthData['CombinedHealthData']
@@ -39,6 +39,7 @@ $Dashboard = New-UDDashboard -Title "Simple Interactive Chart" -Content {
                 $showMaxPain = (Get-UDElement -Id "show_max_pain").checked
                 $showBackPain = (Get-UDElement -Id "show_back_pain").checked
                 $showSleep = (Get-UDElement -Id "show_sleep").checked
+                $showActivityDuration = (Get-UDElement -Id "show_activity_duration").checked
                 
                 # Create datasets array based on selected checkboxes
                 $datasets = @()
@@ -73,6 +74,17 @@ $Dashboard = New-UDDashboard -Title "Simple Interactive Chart" -Content {
                         borderWidth = 2
                         showLine = $true
                         yAxisID = 'y1'
+                    }
+                }
+                
+                if ($showActivityDuration) {
+                    $datasets += New-UDChartJSDataset -DataProperty "ActivityDuration" -Label "Activity Duration (min)" -BackgroundColor "#ffc107" -BorderColor "#ffc107" -AdditionalOptions @{
+                        fill = $false
+                        tension = 0.1
+                        pointRadius = 4
+                        borderWidth = 2
+                        showLine = $true
+                        yAxisID = 'y2'
                     }
                 }
                 
@@ -114,6 +126,19 @@ $Dashboard = New-UDDashboard -Title "Simple Interactive Chart" -Content {
                                         text = "Sleep Hours"
                                     }
                                     max = 12
+                                    grid = @{
+                                        drawOnChartArea = $false
+                                    }
+                                }
+                                y2 = @{
+                                    type = 'linear'
+                                    display = $false
+                                    position = 'right'
+                                    beginAtZero = $true
+                                    title = @{
+                                        display = $true
+                                        text = "Activity Duration (min)"
+                                    }
                                     grid = @{
                                         drawOnChartArea = $false
                                     }
@@ -200,6 +225,19 @@ $Dashboard = New-UDDashboard -Title "Simple Interactive Chart" -Content {
                                         drawOnChartArea = $false
                                     }
                                 }
+                                y2 = @{
+                                    type = 'linear'
+                                    display = $false
+                                    position = 'right'
+                                    beginAtZero = $true
+                                    title = @{
+                                        display = $true
+                                        text = "Activity Duration (min)"
+                                    }
+                                    grid = @{
+                                        drawOnChartArea = $false
+                                    }
+                                }
                                 x = @{
                                     title = @{
                                         display = $true
@@ -229,14 +267,17 @@ $Dashboard = New-UDDashboard -Title "Simple Interactive Chart" -Content {
                 New-UDColumn -Size 12 -Content {
                     New-UDCard -Title "📊 Chart Display Options" -Content {
                         New-UDGrid -Container -Children {
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
+                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 3 -Children {
                                 New-UDCheckbox -Id "show_max_pain" -Label "🔴 Max Pain Level" -Checked:$true -OnChange $UpdateChart
                             }
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
+                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 3 -Children {
                                 New-UDCheckbox -Id "show_back_pain" -Label "🔵 Average Back Pain" -Checked:$false -OnChange $UpdateChart
                             }
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
+                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 3 -Children {
                                 New-UDCheckbox -Id "show_sleep" -Label "🟢 Sleep Hours" -Checked:$false -OnChange $UpdateChart
+                            }
+                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 3 -Children {
+                                New-UDCheckbox -Id "show_activity_duration" -Label "🟡 Activity Duration" -Checked:$false -OnChange $UpdateChart
                             }
                         }
                         New-UDTypography -Text "💡 Select the data series you want to display on the chart above" -Variant caption -Style @{

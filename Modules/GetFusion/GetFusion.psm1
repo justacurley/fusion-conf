@@ -118,7 +118,7 @@ function Get-HealthMetrics {
         [Parameter(Mandatory)]
         [PSCustomObject]$Entries,        
         [Parameter(Mandatory)]
-        [ValidateSet('MaxPain', 'BackPain', 'Sleep', 'Medications', 'Activities', 'Vitals')]
+        [ValidateSet('MaxPain', 'BackPain', 'Sleep', 'Medications', 'Activities', 'Vitals', 'ActivityDuration')]
         [string[]]$DataPoints
     )
     
@@ -132,15 +132,15 @@ function Get-HealthMetrics {
     if ($DataPoints -contains 'Medications') { $results['Medications'] = @() }
     if ($DataPoints -contains 'Activities') { $results['Activities'] = @() }
     if ($DataPoints -contains 'Vitals') { $results['Vitals'] = @() }
-    if ($DataPoints -contains 'MaxPain' -or $DataPoints -contains 'BackPain' -or $DataPoints -contains 'Sleep') { 
+    if ($DataPoints -contains 'MaxPain' -or $DataPoints -contains 'BackPain' -or $DataPoints -contains 'Sleep' -or $DataPoints -contains 'ActivityDuration') { 
         $results['CombinedHealthData'] = @() 
     }
     
     foreach ($date in $dates) {
         $dateEntry = $Entries.$date
         
-        # Handle combined health data (MaxPain, BackPain, Sleep)
-        if ($DataPoints -contains 'MaxPain' -or $DataPoints -contains 'BackPain' -or $DataPoints -contains 'Sleep') {
+        # Handle combined health data (MaxPain, BackPain, Sleep, ActivityDuration)
+        if ($DataPoints -contains 'MaxPain' -or $DataPoints -contains 'BackPain' -or $DataPoints -contains 'Sleep' -or $DataPoints -contains 'ActivityDuration') {
             $baseObject = [PSCustomObject]@{
                 Date = Convert-DateToDisplay -date $date
             }
@@ -160,6 +160,13 @@ function Get-HealthMetrics {
                 $sleepHours = Get-SleepHours -sleepValue $dateEntry.Sleep
                 if ($null -ne $sleepHours) {
                     $baseObject = Set-CombinedData -combinedData $baseObject -name "Sleep" -data $sleepHours
+                }
+            }
+            
+            if ($DataPoints -contains 'ActivityDuration') {
+                $totalDuration = Get-TotalActivityDuration -dateEntry $dateEntry
+                if ($null -ne $totalDuration) {
+                    $baseObject = Set-CombinedData -combinedData $baseObject -name "ActivityDuration" -data $totalDuration
                 }
             }
             
@@ -185,6 +192,40 @@ function Get-HealthMetrics {
     
     return $results
 }
+
+# Function to calculate total activity duration for a given date entry
+function Get-TotalActivityDuration {
+    param($dateEntry)
+    
+    $totalDuration = 0
+    
+    # Check all timestamps for this date
+    foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
+        if ($timestamp -match '^\d{4}$') {  # This is a timestamp
+            $entry = $dateEntry.$timestamp
+            
+            # Process Activities data
+            if ($entry.PSObject.Properties['Activities'] -and $entry.Activities.PSObject.Properties.Count -gt 0) {
+                foreach ($activityName in $entry.Activities.PSObject.Properties.Name) {
+                    $activityData = $entry.Activities.$activityName
+                    
+                    # Try to parse duration as a number (assuming it's in minutes)
+                    if ($activityData.duration -and $activityData.duration -match '^(\d+(?:\.\d+)?)') {
+                        $totalDuration += [double]$matches[1]
+                    }
+                }
+            }
+        }
+    }
+    
+    # Return total duration in minutes, or null if no activities found
+    if ($totalDuration -gt 0) {
+        return $totalDuration
+    }
+    
+    return $null
+}
+
 # Function to extract medication data from a single date entry
 function Get-DateMedicationData {
     param([string]$date, $dateEntry)
@@ -309,4 +350,4 @@ function Clear-CachedData {
 }
 
 # Export the functions so they can be used when the module is imported
-Export-ModuleMember -Function Get-HealthMetrics, Get-SleepHours, Get-AverageBackPain, Convert-DateToDisplay, Get-EntriesData, Get-DatesList, Sort-HealthDataByDate, Set-CombinedData, Get-DateMedicationData, Get-DateActivityData, Get-DateVitalsData, Clear-CachedData
+Export-ModuleMember -Function Get-HealthMetrics, Get-SleepHours, Get-AverageBackPain, Get-TotalActivityDuration, Convert-DateToDisplay, Get-EntriesData, Get-DatesList, Sort-HealthDataByDate, Set-CombinedData, Get-DateMedicationData, Get-DateActivityData, Get-DateVitalsData, Clear-CachedData

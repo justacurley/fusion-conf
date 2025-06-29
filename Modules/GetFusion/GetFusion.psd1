@@ -30,6 +30,7 @@
     FunctionsToExport = @(
         'Get-SleepHours', 
         'Get-AverageBackPain',
+        'Get-TotalActivityDuration',
         'Convert-DateToDisplay',
         'Get-EntriesData',
         'Get-DatesList',
