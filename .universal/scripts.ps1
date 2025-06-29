@@ -1,3 +1,4 @@
-﻿New-PSUScript -Name "Copy entries json.ps1" -Description "copies the live `"Database`" to the repository" -Path "fusion-data/Copy entries json.ps1" -Environment "PowerShell 7" -ConcurrentJobs 1 
+﻿New-PSUScript -Name "backup_entries.ps1" -Description "copies entries.json from server local storage to repo " -Path "fusion-data/scripts/copy_entries.ps1" -Environment "PowerShell 7" -ConcurrentJobs 1 
+New-PSUScript -Name "Copy entries json.ps1" -Description "copies the live `"Database`" to the repository" -Path "fusion-data/Copy entries json.ps1" -Environment "PowerShell 7" -ConcurrentJobs 1 
 New-PSUScript -Name "Copy Entries.ps1" -Description "Copies the local json file from EFS into the repo folder" -Path "fusion-data/Copy Entries.ps1" -Environment "PowerShell 7" -ConcurrentJobs 1 
-New-PSUScript -Name "copy_entries.ps1" -Description "copies entries.json from server local storage to repo " -Path "fusion-data/scripts/copy_entries.ps1" -Environment "PowerShell 7" -ConcurrentJobs 1
+New-PSUScript -Name "overwrite_entries.ps1" -Description "Copies a file from the repo to overwrite the live database" -Path "fusion-data/scripts/overwrite_entries.ps1" -Environment "PowerShell 7" -ConcurrentJobs 1
