@@ -338,7 +338,7 @@ function Save-ConvertedEntry {
     
     # Save the entries
     Write-Information "Saving entries to $EntriesPath"
-    $Entries | ConvertTo-Json -Depth 99 | Out-File $EntriesPath -Encoding UTF8
+    $Entries | ConvertTo-Json -Depth 99 -Compress | Out-File $EntriesPath -Encoding UTF8
     
     Write-Information "Entry saved successfully"
     return $true
