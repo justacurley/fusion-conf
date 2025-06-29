@@ -4,7 +4,7 @@ $Dashboard = New-UDDashboard -Title "Simple Interactive Chart" -Content {
         
         New-UDDynamic -Content {
             # Import the GetFusion module for health data processing functions
-            Import-Module -Name "/home/alex/src/fusion-conf/Modules/GetFusion/GetFusion.psm1" -Force
+            Import-Module -Name GetFusion.psm1 -Force
             
             # Clear any cached data to ensure fresh data load
             Clear-CachedData
