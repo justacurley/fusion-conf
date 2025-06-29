@@ -21,7 +21,7 @@
         } -Style @{ padding = "20px"; marginBottom = "20px"; backgroundColor = "#f8f9fa" }
         New-UDForm -Children {
             # Date and Time fields
-            New-UDCard -Title "📅 Date & Time" -Children {
+            New-UDCard -Title "📅 Date & Time" -Content {
                 New-UDGrid -Container -Children {
                     $MSTDate = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId((Get-Date), 'Mountain Standard Time')
                     $currentDate = $MSTDate.ToString("yyyy-MM-dd")
@@ -47,7 +47,7 @@
             } -Style @{ marginBottom = "20px" }
             # Medicatins Sectin
             # Medications Section - Visual Cards
-            New-UDCard -Title "💊 Medications" -Children {
+            New-UDCard -Title "💊 Medications" -Content {
                 New-UDGrid -Container -Children {
                     try {
                         $MedData = Get-Content -Path "/home/data/Repository/fusion-data/entries/medications_lookup.json" | ConvertFrom-Json -AsHashtable
@@ -94,7 +94,6 @@
                     textAlign = "center"
                 }
             } -Style @{ marginBottom = "20px" }
-
 
             # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)", and another for "Note"
             # Activities Section - Enhanced UI
@@ -208,62 +207,8 @@
             }            
             # Activities section container (appears below checkbox when enabled)
             New-UDElement -Id "activities_section" -Tag "div"
-            # New-UDCheckbox -Id "add_activitiy" -Label "Add activitiy Entry" -OnChange {
-            #     if ($EventData) {
-            #         # Checkbox is checked - show activities entry section
-            #         Set-UDElement -Id "activities_section" -Content {
-            #             New-UDGrid -Container -Content {
-            #                 New-UDGrid -Item -ExtraSmallSize 12 -Content {
-            #                     New-UDTypography -Text "activities Entries" -Variant h6 -Style @{marginTop = "10px"; marginBottom = "10px" }
-            #                 }                            
-            #                 # Initial activities entry
-            #                 New-UDGrid -Item -ExtraSmallSize 4 -Content {
-            #                     New-UDTextBox -Id "activities_type_1" -Label "activities type" -Type text -Placeholder "Walking, Running, etc."
-            #                 }
-            #                 New-UDGrid -Item -ExtraSmallSize 2 -Content {
-            #                     New-UDTextbox -Id "activities_length_1" -Label "Duration (min)" -Type number -Placeholder "20"
-            #                 }
-            #                 New-UDGrid -Item -ExtraSmallSize 4 -Content {
-            #                     New-UDTextbox -Id "activities_note_1" -Label "Note" -Type text -Placeholder "Optional note"
-            #                 }
-            #                 New-UDGrid -Item -ExtraSmallSize 2 -Content {
-            #                     New-UDButton -Text "Add More" -OnClick {
-            #                         # Add another activities entry row
-            #                         $currentContent = Get-UDElement -Id "activities_section"
-            #                         $entryCount = (Get-Random -Minimum 100 -Maximum 999)
-                                    
-            #                         Add-UDElement -ParentId "activities_section" -Content {
-            #                             New-UDGrid -Container -Content {
-            #                                 New-UDGrid -Item -ExtraSmallSize 4 -Content {
-            #                                     New-UDTextBox -Id "activities_type_$entryCount" -Label "activities type"  -Type text -Placeholder "Walking, Running, etc."
-            #                                 }
-            #                                 New-UDGrid -Item -ExtraSmallSize 2 -Content {
-            #                                     New-UDTextbox -Id "activities_length_$entryCount"  -Label "Duration (min)" -Type number -Placeholder "20"
-            #                                 }
-            #                                 New-UDGrid -Item -ExtraSmallSize 4 -Content {
-            #                                     New-UDTextbox -Id "activities_note_$entryCount" -Label "Note" -Type text -Placeholder "Optional note"
-            #                                 }
-            #                                 New-UDGrid -Item -ExtraSmallSize 2 -Content {
-            #                                     New-UDButton -Text "Remove" -Color secondary -OnClick {
-            #                                         # Remove this entry
-            #                                         Remove-UDElement -Id "activities_entry_$entryCount"
-            #                                     } -Id "remove_$entryCount"
-            #                                 }
-            #                             } -Id "activities_entry_$entryCount"
-            #                         }
-            #                     }
-            #                 }
-            #             }
-            #         }
-            #     }
-            #     else {
-            #         # Checkbox is unchecked - hide activities section
-            #         Set-UDElement -Id "activities_section" -Content { }
-            #     }
-            # }           
-            # # Dynamic activities section container
-            # New-UDElement -Id "activities_section" -Tag "div"
-            #pain sectionbb
+            
+            #pain section
             New-UDCheckbox -Id "add_pain" -Label "Add Pain Entry" -OnChange {
                 if ($EventData) {
                     $SelectOptions = {
@@ -276,37 +221,37 @@
                     }
                     # Checkbox is checked - show pain entry section
                     Set-UDElement -Id "pain_section" -Content {
-                        New-UDGrid -Container -Content {
-                            New-UDGrid -Item -ExtraSmallSize 12 -Content {
+                        New-UDGrid -Container -Children {
+                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
                                 New-UDTypography -Text "Pain Entries" -Variant h6 -Style @{marginTop = "10px"; marginBottom = "10px" }
                             }                            
                             # Initial pain entry
-                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                            New-UDGrid -Item -ExtraSmallSize 4 -Children {
                                 New-UDSelect -Id "pain_location_1" -Label "Pain Location" -Option $SelectOptions
                             }
-                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
+                            New-UDGrid -Item -ExtraSmallSize 2 -Children {
                                 New-UDTextbox -Id "pain_level_1" -Label "Pain Level (0-10)" -Type text -Placeholder "5"
                             }
-                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                            New-UDGrid -Item -ExtraSmallSize 4 -Children {
                                 New-UDTextbox -Id "pain_note_1" -Label "Note" -Type text -Placeholder "Optional note"
                             }
-                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
+                            New-UDGrid -Item -ExtraSmallSize 2 -Children {
                                 New-UDButton -Text "Add More" -OnClick {
                                     # Add another pain entry row
                                     $entryCount = (Get-Random -Minimum 100 -Maximum 999)
                                     
                                     Add-UDElement -ParentId "pain_section" -Content {
-                                        New-UDGrid -Container -Content {
-                                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                                        New-UDGrid -Container -Children {
+                                            New-UDGrid -Item -ExtraSmallSize 4 -Children {
                                                 New-UDSelect -Id "pain_location_$entryCount" -Label "Pain Location" -Option $SelectOptions
                                             }
-                                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
+                                            New-UDGrid -Item -ExtraSmallSize 2 -Children {
                                                 New-UDTextbox -Id "pain_level_$entryCount" -Label "Pain Level (0-10)" -Type text -Placeholder "5"
                                             }
-                                            New-UDGrid -Item -ExtraSmallSize 4 -Content {
+                                            New-UDGrid -Item -ExtraSmallSize 4 -Children {
                                                 New-UDTextbox -Id "pain_note_$entryCount" -Label "Note" -Type text -Placeholder "Optional note"
                                             }
-                                            New-UDGrid -Item -ExtraSmallSize 2 -Content {
+                                            New-UDGrid -Item -ExtraSmallSize 2 -Children {
                                                 New-UDButton -Text "Remove" -Color secondary -OnClick {
                                                     # Remove this entry
                                                     Remove-UDElement -Id "pain_entry_$entryCount"
@@ -327,25 +272,25 @@
             # Dynamic pain section container
             New-UDElement -Id "pain_section" -Tag "div"
             # Making a new ud-grid for the o2 and bpr input sections
-            New-UDGrid -Container -Content {
-                New-UDGrid -Item -ExtraSmallSize 6 -Content {
+            New-UDGrid -Container -Children {
+                New-UDGrid -Item -ExtraSmallSize 6 -Children {
                     New-UDTextbox -Id "o2" -Label "Oxygen Saturation (%)" -Type number -Placeholder "95-100" -FullWidth
                 }
-                New-UDGrid -Item -ExtraSmallSize 6 -Content {
+                New-UDGrid -Item -ExtraSmallSize 6 -Children {
                     New-UDTextbox -Id "bpr" -Label "Blood Pressure (Systolic/Diastolic)" -Type text -Placeholder "120/80" -FullWidth
                 }
             }
 
             # Add a text field for additional notes
-            New-UDGrid -Container -Content {
-                New-UDGrid -Item -ExtraSmallSize 12 -Content {
+            New-UDGrid -Container -Children {
+                New-UDGrid -Item -ExtraSmallSize 12 -Children {
                     New-UDTextbox -Id "notes" -Label "Additional Notes" -Type text -Placeholder "Any additional information" -FullWidth
                 }
             }
 
             # Upload an image 
-            New-UDGrid -Container -Content {
-                New-UDGrid -Item -ExtraSmallSize 12 -Content {
+            New-UDGrid -Container -Children {
+                New-UDGrid -Item -ExtraSmallSize 12 -Children {
                     New-UDUpload -Id 'ImageFile' -Text 'Select Image to Upload' -Accept 'image/*'
                 }
             }
