@@ -111,139 +111,108 @@ function Set-CombinedData {
     return $combinedData
 }
 
-# Function to extract medication data from all entries
-function Get-MedicationData {
-    param($entries)
+# Function to extract health metrics for one or more datapoints and return a combined data object
+function Get-HealthMetrics {
+    param(
+        # Output of Get-EntriesData
+        [Parameter(Mandatory)]
+        [PSCustomObject]$Entries,        
+        [Parameter(Mandatory)]
+        [ValidateSet('MaxPain', 'BackPain', 'Sleep', 'Medications', 'Activities', 'Vitals')]
+        [string[]]$DataPoints
+    )
     
-    $allMedications = @()
+    # Get cached dates if available, otherwise call Get-DatesList
+    $dates = if ($null -ne $global:DatesList) { $global:DatesList } else { Get-DatesList -entries $Entries }
     
-    # Use cached dates if available, otherwise call Get-DatesList
-    $dates = if ($null -ne $global:DatesList) { $global:DatesList } else { Get-DatesList -entries $entries }
+    # Initialize result hashtable
+    $results = @{}
+    
+    # Initialize arrays for each requested data point
+    if ($DataPoints -contains 'Medications') { $results['Medications'] = @() }
+    if ($DataPoints -contains 'Activities') { $results['Activities'] = @() }
+    if ($DataPoints -contains 'Vitals') { $results['Vitals'] = @() }
+    if ($DataPoints -contains 'MaxPain' -or $DataPoints -contains 'BackPain' -or $DataPoints -contains 'Sleep') { 
+        $results['CombinedHealthData'] = @() 
+    }
+    
+    foreach ($date in $dates) {
+        $dateEntry = $Entries.$date
+        
+        # Handle combined health data (MaxPain, BackPain, Sleep)
+        if ($DataPoints -contains 'MaxPain' -or $DataPoints -contains 'BackPain' -or $DataPoints -contains 'Sleep') {
+            $baseObject = [PSCustomObject]@{
+                Date = Convert-DateToDisplay -date $date
+            }
+            
+            if ($DataPoints -contains 'MaxPain' -and $dateEntry.PSObject.Properties['max_pain_level']) {
+                $baseObject = Set-CombinedData -combinedData $baseObject -name "MaxPain" -data ([double]$dateEntry.max_pain_level)
+            }
+            
+            if ($DataPoints -contains 'BackPain') {
+                $avgBackPain = Get-AverageBackPain -dateEntry $dateEntry
+                if ($null -ne $avgBackPain) {
+                    $baseObject = Set-CombinedData -combinedData $baseObject -name "BackPain" -data $avgBackPain
+                }
+            }
+            
+            if ($DataPoints -contains 'Sleep' -and $dateEntry.PSObject.Properties['Sleep']) {
+                $sleepHours = Get-SleepHours -sleepValue $dateEntry.Sleep
+                if ($null -ne $sleepHours) {
+                    $baseObject = Set-CombinedData -combinedData $baseObject -name "Sleep" -data $sleepHours
+                }
+            }
+            
+            $results['CombinedHealthData'] += $baseObject
+        }
+        
+        # Handle individual data types
+        if ($DataPoints -contains 'Medications') {
+            $medications = Get-DateMedicationData -date $date -dateEntry $dateEntry
+            $results['Medications'] += $medications
+        }
+        
+        if ($DataPoints -contains 'Activities') {
+            $activities = Get-DateActivityData -date $date -dateEntry $dateEntry
+            $results['Activities'] += $activities
+        }
+        
+        if ($DataPoints -contains 'Vitals') {
+            $vitals = Get-DateVitalsData -date $date -dateEntry $dateEntry
+            $results['Vitals'] += $vitals
+        }
+    }
+    
+    return $results
+}
+# Function to extract medication data from a single date entry
+function Get-DateMedicationData {
+    param([string]$date, $dateEntry)
     
     # Initialize Medications array in global variable if it doesn't exist
     if (-not $global:DistinctDataValues.ContainsKey('Medications')) {
         $global:DistinctDataValues['Medications'] = @()
     }
     
-    foreach ($date in $dates) {
-        $dateEntry = $entries.$date
-        foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
-            if ($timestamp -match '^\d{4}$') {
-                $entry = $dateEntry.$timestamp
-                if ($entry.PSObject.Properties['Medications']) {
-                    $medications = $entry.Medications
-                    # Add date and timestamp context to each medication entry
-                    foreach ($medication in $medications) {
-                        # Track unique medications in global variable
-                        if ($global:DistinctDataValues['Medications'] -notcontains $medication) {
-                            $global:DistinctDataValues['Medications'] += $medication
-                        }
-                        
-                        $medicationWithContext = [PSCustomObject]@{
-                            Date = Convert-DateToDisplay -date $date
-                            Timestamp = $timestamp
-                            Medication = $medication
-                        }
-                        $allMedications += $medicationWithContext
-                    }
-                }
-            }
-        }
-    }
-    
-    return $allMedications
-}
-
-# Function to extract activity data from all entries
-function Get-ActivityData {
-    param($entries)
-    
-    $allActivities = @()
-    
-    # Use cached dates if available, otherwise call Get-DatesList
-    $dates = if ($null -ne $global:DatesList) { $global:DatesList } else { Get-DatesList -entries $entries }
-    
-    # Initialize Activities array in global variable if it doesn't exist
-    if (-not $global:DistinctDataValues.ContainsKey('Activities')) {
-        $global:DistinctDataValues['Activities'] = @()
-    }
-    
-    foreach ($date in $dates) {
-        $dateEntry = $entries.$date
-        foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
-            if ($timestamp -match '^\d{4}$') {
-                $entry = $dateEntry.$timestamp
-                if ($entry.PSObject.Properties['Activities']) {
-                    $activities = $entry.Activities
-                    # Add date and timestamp context to each activity entry
-                    foreach ($activity in $activities) {
-                        # Track unique activities in global variable
-                        if ($global:DistinctDataValues['Activities'] -notcontains $activity) {
-                            $global:DistinctDataValues['Activities'] += $activity
-                        }
-                        
-                        $activityWithContext = [PSCustomObject]@{
-                            Date = Convert-DateToDisplay -date $date
-                            Timestamp = $timestamp
-                            Activity = $activity
-                        }
-                        $allActivities += $activityWithContext
-                    }
-                }
-            }
-        }
-    }
-    
-    return $allActivities
-}
-
-# Function to extract vitals data from all entries
-function Get-VitalsData {
-    param($entries)
-    
-    $allVitals = @()
-    
-    # Use cached dates if available, otherwise call Get-DatesList
-    $dates = if ($null -ne $global:DatesList) { $global:DatesList } else { Get-DatesList -entries $entries }
-    
-    foreach ($date in $dates) {
-        $dateEntry = $entries.$date
-        foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
-            if ($timestamp -match '^\d{4}$') {
-                $entry = $dateEntry.$timestamp
-                if ($entry.PSObject.Properties['Vitals']) {
-                    $vitals = $entry.Vitals
-                    # Add date and timestamp context to each vitals entry
-                    foreach ($vital in $vitals) {
-                        $vitalWithContext = [PSCustomObject]@{
-                            Date = Convert-DateToDisplay -date $date
-                            Timestamp = $timestamp
-                            Vital = $vital
-                        }
-                        $allVitals += $vitalWithContext
-                    }
-                }
-            }
-        }
-    }
-    
-    return $allVitals
-}
-
-# Function to extract medication data from a single date entry
-function Get-DateMedicationData {
-    param([string]$date, $dateEntry)
-    
     $medications = @()
     foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
         if ($timestamp -match '^\d{4}$') {
             $entry = $dateEntry.$timestamp
-            if ($entry.PSObject.Properties['Medications']) {
-                foreach ($medication in $entry.Medications) {
+            if ($entry.PSObject.Properties['Medications'] -and $entry.Medications.PSObject.Properties.Count -gt 0) {
+                # Medications are stored as key-value pairs within the Medications object
+                foreach ($medicationName in $entry.Medications.PSObject.Properties.Name) {
+                    $medicationDose = $entry.Medications.$medicationName
+                    
+                    # Track unique medications in global variable
+                    if ($global:DistinctDataValues['Medications'] -notcontains $medicationName) {
+                        $global:DistinctDataValues['Medications'] += $medicationName
+                    }
+                    
                     $medicationWithContext = [PSCustomObject]@{
                         Date = Convert-DateToDisplay -date $date
                         Timestamp = $timestamp
-                        Medication = $medication
+                        Medication = $medicationName
+                        Dose = $medicationDose
                     }
                     $medications += $medicationWithContext
                 }
@@ -257,16 +226,31 @@ function Get-DateMedicationData {
 function Get-DateActivityData {
     param([string]$date, $dateEntry)
     
+    # Initialize Activities array in global variable if it doesn't exist
+    if (-not $global:DistinctDataValues.ContainsKey('Activities')) {
+        $global:DistinctDataValues['Activities'] = @()
+    }
+
     $activities = @()
     foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
         if ($timestamp -match '^\d{4}$') {
             $entry = $dateEntry.$timestamp
-            if ($entry.PSObject.Properties['Activities']) {
-                foreach ($activity in $entry.Activities) {
+            if ($entry.PSObject.Properties['Activities'] -and $entry.Activities.PSObject.Properties.Count -gt 0) {
+                # Activities are stored as properties of the Activities object
+                foreach ($activityName in $entry.Activities.PSObject.Properties.Name) {
+                    $activityData = $entry.Activities.$activityName
+                    
+                    # Track unique activities in global variable
+                    if ($global:DistinctDataValues['Activities'] -notcontains $activityName) {
+                        $global:DistinctDataValues['Activities'] += $activityName
+                    }
+                    
                     $activityWithContext = [PSCustomObject]@{
                         Date = Convert-DateToDisplay -date $date
                         Timestamp = $timestamp
-                        Activity = $activity
+                        Activity = $activityName
+                        Note = $activityData.note
+                        Duration = $activityData.duration
                     }
                     $activities += $activityWithContext
                 }
@@ -284,15 +268,27 @@ function Get-DateVitalsData {
     foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
         if ($timestamp -match '^\d{4}$') {
             $entry = $dateEntry.$timestamp
-            if ($entry.PSObject.Properties['Vitals']) {
-                foreach ($vital in $entry.Vitals) {
-                    $vitalWithContext = [PSCustomObject]@{
-                        Date = Convert-DateToDisplay -date $date
-                        Timestamp = $timestamp
-                        Vital = $vital
-                    }
-                    $vitals += $vitalWithContext
+            
+            # Check for blood pressure (bpr) data
+            if ($entry.PSObject.Properties['bpr'] -and -not [string]::IsNullOrEmpty($entry.bpr)) {
+                $bprWithContext = [PSCustomObject]@{
+                    Date = Convert-DateToDisplay -date $date
+                    Timestamp = $timestamp
+                    VitalType = 'Blood Pressure'
+                    Vital = $entry.bpr
                 }
+                $vitals += $bprWithContext
+            }
+            
+            # Check for oxygen (o2) data
+            if ($entry.PSObject.Properties['o2'] -and -not [string]::IsNullOrEmpty($entry.o2)) {
+                $o2WithContext = [PSCustomObject]@{
+                    Date = Convert-DateToDisplay -date $date
+                    Timestamp = $timestamp
+                    VitalType = 'Oxygen Level'
+                    Vital = $entry.o2
+                }
+                $vitals += $o2WithContext
             }
         }
     }
@@ -313,4 +309,4 @@ function Clear-CachedData {
 }
 
 # Export the functions so they can be used when the module is imported
-Export-ModuleMember -Function Get-SleepHours, Get-AverageBackPain, Convert-DateToDisplay, Get-EntriesData, Get-DatesList, Sort-HealthDataByDate, Set-CombinedData, Get-MedicationData, Get-ActivityData, Get-VitalsData, Get-DateMedicationData, Get-DateActivityData, Get-DateVitalsData, Clear-CachedData, Clear-CachedData
+Export-ModuleMember -Function Get-HealthMetrics, Get-SleepHours, Get-AverageBackPain, Convert-DateToDisplay, Get-EntriesData, Get-DatesList, Sort-HealthDataByDate, Set-CombinedData, Get-DateMedicationData, Get-DateActivityData, Get-DateVitalsData, Clear-CachedData

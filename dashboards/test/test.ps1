@@ -15,43 +15,14 @@ $Dashboard = New-UDDashboard -Title "Simple Interactive Chart" -Content {
                 # Load entries data once
                 $entries = Get-EntriesData -entriesPath $EntriesPath
                 
-                # Get dates list (this will populate the cache for performance)
-                $dates = Get-DatesList -entries $entries
+                # Use the new Get-HealthMetrics orchestrator function to get all data
+                $healthData = Get-HealthMetrics -Entries $entries -DataPoints @('MaxPain', 'BackPain', 'Sleep', 'Medications', 'Activities', 'Vitals')
                 
-                # Build combined health data using the new module functions
-                $combinedPainData = @()
-                foreach ($date in $dates) {
-                    $dateEntry = $entries.$date
-                    $baseObject = [PSCustomObject]@{
-                        Date = Convert-DateToDisplay -date $date
-                    }
-                    
-                    # Add max pain level if available
-                    if ($dateEntry.PSObject.Properties['max_pain_level']) {
-                        $baseObject = Set-CombinedData -combinedData $baseObject -name "MaxPain" -data ([double]$dateEntry.max_pain_level)
-                    }
-                    
-                    # Add average back pain
-                    $avgBackPain = Get-AverageBackPain -dateEntry $dateEntry
-                    if ($null -ne $avgBackPain) {
-                        $baseObject = Set-CombinedData -combinedData $baseObject -name "BackPain" -data $avgBackPain
-                    }
-                    
-                    # Add sleep hours if available
-                    if ($dateEntry.PSObject.Properties['sleep_hours']) {
-                        $sleepHours = Get-SleepHours -sleepValue $dateEntry.sleep_hours
-                        if ($null -ne $sleepHours) {
-                            $baseObject = Set-CombinedData -combinedData $baseObject -name "Sleep" -data $sleepHours
-                        }
-                    }
-                    
-                    $combinedPainData += $baseObject
-                }
-                
-                # Get additional data using the new optimized functions (will use cached dates)
-                $allMedications = Get-MedicationData -entries $entries
-                $allActivities = Get-ActivityData -entries $entries
-                $allVitals = Get-VitalsData -entries $entries
+                # Extract the different data types from the results
+                $combinedPainData = $healthData['CombinedHealthData']
+                $allMedications = $healthData['Medications']
+                $allActivities = $healthData['Activities']
+                $allVitals = $healthData['Vitals']
                 
                 # Store chart data in cache for use by dynamic chart updates
                 Set-PSUCache -Key "chartData" -Value $combinedPainData
@@ -339,7 +310,7 @@ $Dashboard = New-UDDashboard -Title "Simple Interactive Chart" -Content {
                             fontStyle = "italic"
                             textAlign = "center"
                         }
-                        New-UDTypography -Text "✨ Enhanced with GetFusion Module v2: Cached performance + distinct value tracking" -Variant caption -Style @{
+                        New-UDTypography -Text "✨ Enhanced with GetFusion Module v2: Get-HealthMetrics orchestrator + optimized data extraction" -Variant caption -Style @{
                             marginTop = "5px"
                             color = "#28a745"
                             fontStyle = "italic"
@@ -364,6 +335,7 @@ $Dashboard = New-UDDashboard -Title "Simple Interactive Chart" -Content {
                                         New-UDTableColumn -Property "Date" -Title "Date"
                                         New-UDTableColumn -Property "Timestamp" -Title "Time"
                                         New-UDTableColumn -Property "Medication" -Title "Medication"
+                                        New-UDTableColumn -Property "Dose" -Title "Dose"
                                     ) -Sort -Search
                                 } else {
                                     New-UDTypography -Text "No medication data available" -Variant body1
@@ -375,6 +347,8 @@ $Dashboard = New-UDDashboard -Title "Simple Interactive Chart" -Content {
                                         New-UDTableColumn -Property "Date" -Title "Date"
                                         New-UDTableColumn -Property "Timestamp" -Title "Time"
                                         New-UDTableColumn -Property "Activity" -Title "Activity"
+                                        New-UDTableColumn -Property "Note" -Title "Note"
+                                        New-UDTableColumn -Property "Duration" -Title "Duration"
                                     ) -Sort -Search
                                 } else {
                                     New-UDTypography -Text "No activity data available" -Variant body1
@@ -385,7 +359,8 @@ $Dashboard = New-UDDashboard -Title "Simple Interactive Chart" -Content {
                                     New-UDTable -Data ($allVitals | Select-Object -Last 10) -Columns @(
                                         New-UDTableColumn -Property "Date" -Title "Date"
                                         New-UDTableColumn -Property "Timestamp" -Title "Time"
-                                        New-UDTableColumn -Property "Vital" -Title "Vital Signs"
+                                        New-UDTableColumn -Property "VitalType" -Title "Vital Type"
+                                        New-UDTableColumn -Property "Vital" -Title "Value"
                                     ) -Sort -Search
                                 } else {
                                     New-UDTypography -Text "No vitals data available" -Variant body1

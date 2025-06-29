@@ -35,12 +35,11 @@
         'Get-DatesList',
         'Sort-HealthDataByDate',
         'Set-CombinedData',
-        'Get-MedicationData',
-        'Get-ActivityData',
-        'Get-VitalsData',
         'Get-DateMedicationData',
         'Get-DateActivityData',
-        'Get-DateVitalsData'
+        'Get-DateVitalsData',
+        'Get-HealthMetrics',
+        'Clear-CachedData'
     )
     
     # Cmdlets to export from this module
