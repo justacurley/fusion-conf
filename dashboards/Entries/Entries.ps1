@@ -340,15 +340,55 @@
             }           
             # Pain section container (appears below checkbox when enabled)
             New-UDElement -Id "pain_section" -Tag "div"
-            # Making a new ud-grid for the o2 and bpr input sections
-            New-UDGrid -Container -Children {
-                New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                    New-UDTextbox -Id "o2" -Label "Oxygen Saturation (%)" -Type number -Placeholder "95-100" -FullWidth
+            
+            # Vitals Section - Enhanced UI
+            New-UDCheckBox -Id "add_vitals" -Label "🩺 Add Vital Signs" -OnChange {
+                if ($EventData) {
+                    # Checkbox is checked - show vitals entry section
+                    Set-UDElement -Id "vitals_section" -Content {
+                        New-UDCard -Title "🩺 Vital Signs" -Content {
+                            New-UDPaper -Children {
+                                New-UDGrid -Container -Children {
+                                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                        New-UDTypography -Text "Vital Measurements" -Variant subtitle2 -Style @{
+                                            marginBottom = "15px"
+                                            color        = "#1976d2"
+                                            fontWeight   = "500"
+                                        }
+                                    }
+                                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
+                                        New-UDTextbox -Id "o2" -Label "🫁 Oxygen Saturation (%)" -Type number -Placeholder "95-100" -FullWidth
+                                    }
+                                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
+                                        New-UDTextbox -Id "bpr" -Label "❤️ Blood Pressure" -Type text -Placeholder "120/80" -FullWidth
+                                    }
+                                }
+                            } -Style @{
+                                padding         = "15px"
+                                margin          = "10px 0"
+                                backgroundColor = "#f0f8ff"
+                                borderLeft      = "4px solid #007bff"
+                                borderRadius    = "8px"
+                            }
+                            
+                            New-UDTypography -Text "💡 Record oxygen saturation and blood pressure readings" -Variant caption -Style @{
+                                marginTop = "15px"
+                                color     = "#666"
+                                fontStyle = "italic"
+                                textAlign = "center"
+                            }
+                        } -Style @{
+                            marginBottom = "20px"
+                        }
+                    }
                 }
-                New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                    New-UDTextbox -Id "bpr" -Label "Blood Pressure (Systolic/Diastolic)" -Type text -Placeholder "120/80" -FullWidth
+                else {
+                    # Checkbox is unchecked - hide vitals section
+                    Set-UDElement -Id "vitals_section" -Content { }
                 }
             }
+            # Vitals section container (appears below checkbox when enabled)
+            New-UDElement -Id "vitals_section" -Tag "div"
 
             # Add a text field for additional notes
             New-UDGrid -Container -Children {
