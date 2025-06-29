@@ -1,7 +1,7 @@
 ﻿New-UDApp -Content {
-    New-UDContainer -Content {
+    New-UDContainer -Children {
         New-UDPaper -Children {
-            New-UDGrid -Container -Content {
+            New-UDGrid -Container -Children {
                 New-UDTypography -Text "🏥 Health Recovery Entry Form" -Variant h4 -Style @{
                     textAlign    = "center"
                     marginBottom = "5px"
@@ -9,7 +9,7 @@
                     fontWeight   = "bold"
                 }
             }
-            New-UDGrid -Container -Content {
+            New-UDGrid -Container -Children {
                 New-UDTypography -Text "Track your daily health metrics and recovery progress" -Variant subtitle1 -Style @{
                     textAlign    = "center"
                     marginBottom = "20px"
@@ -19,20 +19,20 @@
                 }
             }
         } -Style @{ padding = "20px"; marginBottom = "20px"; backgroundColor = "#f8f9fa" }
-        New-UDForm -Content {
+        New-UDForm -Children {
             # Date and Time fields
-            New-UDCard -Title "📅 Date & Time" -Content {
-                New-UDGrid -Container -Content {
+            New-UDCard -Title "📅 Date & Time" -Children {
+                New-UDGrid -Container -Children {
                     $MSTDate = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId((Get-Date), 'Mountain Standard Time')
                     $currentDate = $MSTDate.ToString("yyyy-MM-dd")
                     $currentTime = $MSTDate.ToString("HH:mm")
                     
-                    New-UDGrid -Item -ExtraSmallSize 6 -Content {
+                    New-UDGrid -Item -ExtraSmallSize 6 -Children {
                         New-UDTextbox -Id "date" -Label "📅 Date" -Type "date" -FullWidth -Value $currentDate -Style @{
                             marginBottom = "10px"
                         }
                     }
-                    New-UDGrid -Item -ExtraSmallSize 6 -Content {
+                    New-UDGrid -Item -ExtraSmallSize 6 -Children {
                         New-UDTextbox -Id "timestamp" -Label "🕐 Time" -Type "time" -FullWidth -Value $currentTime -Style @{
                             marginBottom = "10px"
                         }
@@ -47,15 +47,15 @@
             } -Style @{ marginBottom = "20px" }
             # Medicatins Sectin
             # Medications Section - Visual Cards
-            New-UDCard -Title "💊 Medications" -Content {
-                New-UDGrid -Container -Content {
+            New-UDCard -Title "💊 Medications" -Children {
+                New-UDGrid -Container -Children {
                     try {
                         $MedData = Get-Content -Path "/home/data/Repository/fusion-data/entries/medications_lookup.json" | ConvertFrom-Json -AsHashtable
                         $Dosages = $MedData['Medications']
                         
                         # Create visual cards for each medication type
                         foreach ($medType in $Dosages.Keys | Sort-Object) {
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -MediumSize 4 -Content {
+                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -MediumSize 4 -Children {
                                 New-UDPaper -Children {
                                     New-UDTypography -Text "💊 $($medType.ToUpper())" -Variant subtitle1 -Style @{
                                         fontWeight   = "bold"
@@ -66,15 +66,7 @@
                                     
                                     # Create checkboxes for each dosage
                                     foreach ($dosage in $Dosages[$medType]) {
-                                        New-UDCheckbox -Id "med_$($medType)_$($dosage -replace '\W', '_')" -Label $dosage -Style @{
-                                            display         = "block"
-                                            marginBottom    = "8px"
-                                            padding         = "5px 10px"
-                                            backgroundColor = "#f8f9fa"
-                                            borderRadius    = "15px"
-                                            border          = "1px solid #dee2e6"
-                                            fontSize        = "14px"
-                                        }
+                                        New-UDCheckbox -Id "med_$($medType)_$($dosage -replace '\W', '_')" -Label $dosage
                                     }
                                 } -Style @{
                                     padding         = "15px"
@@ -89,7 +81,7 @@
                     }
                     catch {
                         Write-Error "Failed to get or parse medication data: $_"
-                        New-UDGrid -Item -ExtraSmallSize 12 -Content {
+                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
                             New-UDAlert -Severity error -Text "Unable to load medication options. Please check the medications lookup file."
                         }
                     }
@@ -106,38 +98,83 @@
 
             # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)", and another for "Note"
             # Activities Section - Enhanced UI
-            New-UDCheckbox -Id "add_activitiy" -Label "🏃‍♂️ Add Activity Entry" -Style @{
-                marginBottom = "15px"
-                fontSize     = "16px"
-                fontWeight   = "500"
-            } -OnChange {
+            New-UDCheckbox -Id "add_activitiy" -Label "🏃‍♂️ Add Activity Entry" -OnChange {
                 if ($EventData) {
                     # Checkbox is checked - show activities entry section
                     Set-UDElement -Id "activities_section" -Content {
-                        New-UDCard -Title "🏃‍♂️ Physical Activities" -Content {
-                            New-UDGrid -Container -Content {
-                                # Initial activity entry with better styling
+                        New-UDCard -Title "🏃‍♂️ Physical Activities" -Children {
+                            New-UDGrid -Container -Children {
+                                # Activities container with single Paper
                                 New-UDPaper -Children {
-                                    New-UDTypography -Text "Activity #1" -Variant subtitle2 -Style @{
-                                        marginBottom = "15px"
-                                        color        = "#1976d2"
-                                        fontWeight   = "500"
-                                    }
-                                    
-                                    New-UDGrid -Container -Content {
-                                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Content {
+                                    # Initial activity entry
+                                    New-UDGrid -Container -Children {
+                                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                            New-UDTypography -Text "Activity #1" -Variant subtitle2 -Style @{
+                                                marginBottom = "15px"
+                                                color        = "#1976d2"
+                                                fontWeight   = "500"
+                                            }
+                                        }
+                                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
                                             New-UDTextBox -Id "activities_type_1" -Label "🏃‍♂️ Activity Type" -Type text -Placeholder "Walking, Running, Swimming, etc." -FullWidth -Style @{
                                                 marginBottom = "10px"
                                             }
                                         }
-                                        New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Content {
+                                        New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Children {
                                             New-UDTextbox -Id "activities_length_1" -Label "⏱️ Duration (min)" -Type number -Placeholder "20" -FullWidth -Style @{
                                                 marginBottom = "10px"
                                             }
                                         }
-                                        New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Content {
+                                        New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Children {
                                             New-UDTextbox -Id "activities_note_1" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth -Style @{
                                                 marginBottom = "10px"
+                                            }
+                                        }
+                                    }
+                                    
+                                    # Container for additional activities (inside the same Paper)
+                                    New-UDElement -Id "additional_activities_container" -Tag "div"
+                                    
+                                    # Add More Button - Separate row at bottom
+                                    New-UDGrid -Container -Children {
+                                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                            New-UDButton -Text "➕ Add Another Activity" -Color primary -Variant outlined -OnClick {
+                                                # Add another activities entry row inside the same Paper
+                                                $entryCount = (Get-Random -Minimum 100 -Maximum 999)
+                                                
+                                                Add-UDElement -ParentId "additional_activities_container" -Content {
+                                                    New-UDGrid -Container -Children {
+                                                        New-UDGrid -Item -ExtraSmallSize 10 -Children {
+                                                            New-UDTypography -Text "Activity #$entryCount" -Variant subtitle2 -Style @{
+                                                                marginBottom = "15px"
+                                                                marginTop    = "20px"
+                                                                color        = "#1976d2"
+                                                                fontWeight   = "500"
+                                                            }
+                                                        }
+                                                        New-UDGrid -Item -ExtraSmallSize 2 -Children {
+                                                            New-UDButton -Text "🗑️" -Color secondary -Size small -OnClick {
+                                                                # Remove only this grid section, not the Paper
+                                                                Remove-UDElement -Id "activities_entry_$entryCount"
+                                                            }
+                                                        }
+                                                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
+                                                            New-UDTextBox -Id "activities_type_$entryCount" -Label "🏃‍♂️ Activity Type" -Type text -Placeholder "Walking, Running, Swimming, etc." -FullWidth -Style @{
+                                                                marginBottom = "10px"
+                                                            }
+                                                        }
+                                                        New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Children {
+                                                            New-UDTextbox -Id "activities_length_$entryCount" -Label "⏱️ Duration (min)" -Type number -Placeholder "20" -FullWidth -Style @{
+                                                                marginBottom = "10px"
+                                                            }
+                                                        }
+                                                        New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Children {
+                                                            New-UDTextbox -Id "activities_note_$entryCount" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth -Style @{
+                                                                marginBottom = "10px"
+                                                            }
+                                                        }
+                                                    } -Id "activities_entry_$entryCount"
+                                                }
                                             }
                                         }
                                     }
@@ -147,64 +184,6 @@
                                     backgroundColor = "#f8f9fa"
                                     borderLeft      = "4px solid #28a745"
                                     borderRadius    = "8px"
-                                }
-                                
-                                # Add More Button - Styled
-                                New-UDGrid -Item -ExtraSmallSize 12 -Content {
-                                    
-                                    New-UDButton -Text "➕ Add Another Activity" -Color primary -Variant outlined -OnClick {
-                                        # Add another activities entry row
-                                        $entryCount = (Get-Random -Minimum 100 -Maximum 999)
-                                        
-                                        Add-UDElement -ParentId "activities_section" -Content {
-                                            New-UDPaper -Children {
-                                                New-UDGrid -Container -Content {
-                                                    New-UDGrid -Item -ExtraSmallSize 10 -Content {
-                                                        New-UDTypography -Text "Activity #$entryCount" -Variant subtitle2 -Style @{
-                                                            marginBottom = "15px"
-                                                            color        = "#1976d2"
-                                                            fontWeight   = "500"
-                                                        }
-                                                    }
-                                                    New-UDGrid -Item -ExtraSmallSize 2 -Content {
-                                                        New-UDButton -Text "🗑️" -Color secondary -Size small -OnClick {
-                                                            # Remove this entry
-                                                            Show-UDToast -Message (Get-UDElement -Id "activities_entry_$entryCount" | ConvertTo-Json) -MessageColor Red -Duration 10000    
-                                                            # Remove-UDElement -Id "activities_entry_$entryCount"
-                                                        } -Style @{
-                                                            minWidth = "40px"
-                                                            padding  = "5px"
-                                                        }
-                                                    }
-                                                    
-                                                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Content {
-                                                        New-UDTextBox -Id "activities_type_$entryCount" -Label "🏃‍♂️ Activity Type" -Type text -Placeholder "Walking, Running, Swimming, etc." -FullWidth -Style @{
-                                                            marginBottom = "10px"
-                                                        }
-                                                    }
-                                                    New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Content {
-                                                        New-UDTextbox -Id "activities_length_$entryCount" -Label "⏱️ Duration (min)" -Type number -Placeholder "20" -FullWidth -Style @{
-                                                            marginBottom = "10px"
-                                                        }
-                                                    }
-                                                    New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Content {
-                                                        New-UDTextbox -Id "activities_note_$entryCount" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth -Style @{
-                                                            marginBottom = "10px"
-                                                        }
-                                                    }
-                                                }
-                                            } -Id "activities_entry_$entryCount" -Style @{
-                                                padding         = "15px"
-                                                margin          = "10px 0"
-                                                backgroundColor = "#f8f9fa"
-                                                borderLeft      = "4px solid #28a745"
-                                                borderRadius    = "8px"
-                                            }
-                                        }
-                                    } -Style @{
-                                        marginTop = "15px"
-                                        width     = "100%"
-                                    }
                                 }
                             }
                             
@@ -311,7 +290,6 @@
                             New-UDGrid -Item -ExtraSmallSize 2 -Content {
                                 New-UDButton -Text "Add More" -OnClick {
                                     # Add another pain entry row
-                                    $currentContent = Get-UDElement -Id "pain_section"
                                     $entryCount = (Get-Random -Minimum 100 -Maximum 999)
                                     
                                     Add-UDElement -ParentId "pain_section" -Content {
@@ -374,12 +352,12 @@
             Write-Information "EventData Type: $($EventData.GetType().FullName)"
             Write-Information "EventData Count: $($EventData.Count)"
             Write-Information "EventData Content: $($EventData | ConvertTo-Json -Depth 99)"
-            $Event = $EventData[0]
-            $Event.timestamp = [datetime]::Parse($Event.timestamp).ToString("HHmm")
-            $Event.date = [datetime]::Parse($Event.date).ToString("MMdd")
+            $FormEvent = $EventData[0]
+            $FormEvent.timestamp = [datetime]::Parse($FormEvent.timestamp).ToString("HHmm")
+            $FormEvent.date = [datetime]::Parse($FormEvent.date).ToString("MMdd")
             Write-Information "Converting JSON to entries.json format..."
-            Write-Information ( $Event | ConvertTo-Json -Depth 99)
-            $entry = ConvertTo-EntriesFormat -Entry ( $Event | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
+            Write-Information ( $FormEvent | ConvertTo-Json -Depth 99)
+            $entry = ConvertTo-EntriesFormat -Entry ( $FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
             # Output results
             Write-Information "`nFull Entry JSON (ready for entries.json):"
             Write-Information "=========================================="
