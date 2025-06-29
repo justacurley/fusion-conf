@@ -486,7 +486,7 @@
             try {
                 Import-Module -Name GetFusion -Force
                 $EntriesPath = "/home/data/fusion-data/entries/entries.json"
-                $Entries = Get-EntriesData -Path $EntriesPath
+                $Entries = Get-EntriesData -entriesPath $EntriesPath
                 Set-PSUCache -Key "entriesData" -Value $Entries -Expiration (New-TimeSpan -Days 1)
                 Write-Information "Cache updated with new entries data"
             }
