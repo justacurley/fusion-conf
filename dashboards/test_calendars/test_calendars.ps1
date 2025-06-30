@@ -26,10 +26,11 @@
                     $formattedDate = $parsedDate.ToString("yyyy-MM-dd")
                     
                     $CalendarData += @{
-                        day = $formattedDate
+                        day   = $formattedDate
                         value = $uniqueMeds
                     }
-                } catch {
+                }
+                catch {
                     Write-Warning "Could not parse date: $date"
                 }
             }
@@ -57,7 +58,8 @@
             Write-Information "Date range: $From to $To"
             Write-Information "Total calendar data points: $($CalendarData.Count)"
             Write-Information "First date: $firstDate, Last date: $lastDate"
-        } else {
+        }
+        else {
             # Fallback if no data
             $From = (Get-Date).AddDays(-365)
             $To = Get-Date
@@ -73,7 +75,7 @@
                 $date = [DateTime]::Parse($_.day)
                 $date.ToString("yyyy-MM")
             }
-            Write-Information "MonthGroups: $($MonthGroups|Convertto-Json -Depth 3)"
+            Write-Information "MonthGroups: $($MonthGroups|ConvertTo-Json -Depth 3)"
             foreach ($monthGroup in $MonthGroups) {
                 $monthData = @{ 
                     month = $monthGroup.Name
@@ -120,8 +122,32 @@
             Write-Information "Heatmap structure created with $($HeatmapData.Count) months"
             Write-Information "Day keys: $($dayKeys -join ', ')"
         }
-        
-        New-UDNivoChart -Heatmap -Data $HeatmapData -IndexBy 'month' -Keys $dayKeys -Height 300 -Width 1200 -MarginTop 60 -MarginRight 50 -MarginBottom 60 -MarginLeft 100
+        $ChartParams = @{
+            Heatmap      =$true
+            Data         =$HeatmapData
+            IndexBy      ='month'
+            Keys         =$dayKeys
+            Height       =500
+            Width        =1200
+            MarginTop    =60
+            MarginRight  =50
+            MarginBottom =60
+            MarginLeft   =100
+            colors = @{
+                type="sequential"
+                scheme="blues"
+                divergeAt=0.5
+                steps=10
+                minValue = 1
+                maxValue = 10
+            }
+            theme = @{
+                emptyColor = '#ff5c5c' # appears to do nothing
+            }
+            enableGridX = $true
+        }
+
+        New-UDNivoChart @ChartParams
         
         # # Add a legend/summary
         # New-UDTypography -Text "Heatmap Legend:" -Variant h6 -Style @{ marginTop = '20px'; marginBottom = '10px' }
