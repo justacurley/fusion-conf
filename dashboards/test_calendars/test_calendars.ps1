@@ -72,7 +72,7 @@
                 $date = [DateTime]::Parse($_.day)
                 $date.ToString("yyyy-MM")
             }
-            
+            Write-Information "MonthGroups: $($$MonthGroups|Convertto-Json -Depth 3)"
             foreach ($monthGroup in $MonthGroups) {
                 $monthData = @{ 
                     month = $monthGroup.Name
@@ -91,7 +91,7 @@
                     $dayKey = "day$dayOfMonth"
                     $monthData[$dayKey] = $entry.value
                 }
-                
+                Write-Information "monthData: $($monthData | ConvertTo-Json -Depth 3)"
                 $HeatmapData += $monthData
             }
             
@@ -106,7 +106,7 @@
             Write-Information "Day keys: $($dayKeys -join ', ')"
         }
         
-        New-UDNivoChart -Heatmap -Data $HeatmapData -IndexBy 'month' -Keys $dayKeys -Height 400 -Width 1000 -MarginTop 50 -MarginRight 130 -MarginBottom 50 -MarginLeft 100 -Colors @('nivo')
+        New-UDNivoChart -Heatmap -Data $HeatmapData -IndexBy 'month' -Keys $dayKeys -Height 400 -Width 1000 -MarginTop 50 -MarginRight 130 -MarginBottom 50 -MarginLeft 100
         
         # Add a legend/summary
         New-UDTypography -Text "Heatmap Legend:" -Variant h6 -Style @{ marginTop = '20px'; marginBottom = '10px' }
