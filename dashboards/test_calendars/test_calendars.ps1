@@ -120,7 +120,7 @@
             Write-Information "Day keys: $($dayKeys -join ', ')"
         }
         
-        New-UDNivoChart -Heatmap -Data $HeatmapData -IndexBy 'month' -Keys $dayKeys -Height 300 -Width 1200 -MarginTop 60 -MarginRight 50 -MarginBottom 60 -MarginLeft 100 -ForceSquare -Colors @('#f5f5f5', '#ffcccc', '#ffeb99', '#ffffcc', '#ccffcc', '#66ff66', '#00cc00')
+        New-UDNivoChart -Heatmap -Data $HeatmapData -IndexBy 'month' -Keys $dayKeys -Height 300 -Width 1200 -MarginTop 60 -MarginRight 50 -MarginBottom 60 -MarginLeft 100 -ForceSquare -MinValue 1 -EmptyColor '#f5f5f5' -Colors @('#ffcccc', '#ffeb99', '#ffffcc', '#ccffcc', '#66ff66', '#00cc00')
         
         # Add a legend/summary
         New-UDTypography -Text "Heatmap Legend:" -Variant h6 -Style @{ marginTop = '20px'; marginBottom = '10px' }
