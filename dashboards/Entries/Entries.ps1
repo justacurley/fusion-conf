@@ -447,6 +447,7 @@
             $FormEvent = $EventData[0]
             $FormEvent.timestamp = [datetime]::Parse($FormEvent.timestamp).ToString("HHmm")
             $FormEvent.date = [datetime]::Parse($FormEvent.date).ToString("MMdd")
+            Write-Information ($FormEvent | ConvertTo-Json -Depth 99)
             $entry = ConvertTo-EntriesFormat -Entry ( $FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
             # Save the entry to the entries.json file
             try {
