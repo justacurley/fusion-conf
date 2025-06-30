@@ -123,50 +123,53 @@ function ConvertTo-EntriesFormat {
     $Date = $Entry.date
     $Timestamp = $Entry.timestamp
 
-    # Build Medications object
+    # Build Medications object - New format uses boolean flags like med_dilaudid_4mg: true
     $Medications = @{}
-    if ($Entry.meds -and $Entry.meds.Count -gt 0) {
-        foreach ($med in $Entry.meds) {
-            # Parse "oxycodone - 2.5mg" format (note the spaces)
-            if ($med -match "^(.+?)\s*-\s*(.+)$") {
-                $medName = $matches[1].Trim()
-                $dosage = $matches[2].Trim()
-                
-                # Handle multiple doses of same medication
-                if ($Medications.ContainsKey($medName)) {
-                    # Convert to array if not already
-                    if ($Medications[$medName] -is [string]) {
-                        $Medications[$medName] = @($Medications[$medName])
-                    }
-                    $Medications[$medName] += $dosage
-                } else {
-                    $Medications[$medName] = $dosage
+    $medProperties = $Entry.PSObject.Properties | Where-Object { $_.Name -like "med_*" -and $_.Value -eq $true }
+    
+    foreach ($medProp in $medProperties) {
+        # Parse "med_dilaudid_4mg" format
+        if ($medProp.Name -match "^med_(.+?)_(.+)$") {
+            $medName = $matches[1]
+            $dosage = $matches[2]
+            
+            # Handle multiple doses of same medication
+            if ($Medications.ContainsKey($medName)) {
+                # Convert to array if not already
+                if ($Medications[$medName] -is [string]) {
+                    $Medications[$medName] = @($Medications[$medName])
                 }
+                $Medications[$medName] += $dosage
+            } else {
+                $Medications[$medName] = $dosage
             }
         }
     }
 
     # Build Pain object - New Schema: { "location": { "pain_level": 0.0, "note": "" } }
     $Pain = @{}
-    # Get all pain location/level pairs
-    $painProperties = $Entry.PSObject.Properties | Where-Object { $_.Name -like "pain_location_*" }
-    foreach ($painProp in $painProperties) {
-        $id = $painProp.Name -replace "pain_location_", ""
-        $location = $painProp.Value
-        $levelProp = "pain_level_$id"
-        $noteProp = "pain_note_$id"
-        
-        if ($Entry.PSObject.Properties[$levelProp]) {
-            $level = $Entry.PSObject.Properties[$levelProp].Value
-            $note = if ($Entry.PSObject.Properties[$noteProp]) { 
-                $Entry.PSObject.Properties[$noteProp].Value 
-            } else { "" }
+    # Only process pain data if add_pain flag is true or pain properties exist
+    if ($Entry.add_pain -eq $true -or ($Entry.PSObject.Properties | Where-Object { $_.Name -like "pain_location_*" })) {
+        # Get all pain location/level pairs
+        $painProperties = $Entry.PSObject.Properties | Where-Object { $_.Name -like "pain_location_*" }
+        foreach ($painProp in $painProperties) {
+            $id = $painProp.Name -replace "pain_location_", ""
+            $location = $painProp.Value
+            $levelProp = "pain_level_$id"
+            $noteProp = "pain_note_$id"
             
-            if ($location -and $level) {
-                # New schema format: nested object with pain_level as decimal number and note
-                $Pain[$location] = @{
-                    "pain_level" = [double]$level  # Convert to double to handle decimals like 5.5
-                    "note" = $note
+            if ($Entry.PSObject.Properties[$levelProp]) {
+                $level = $Entry.PSObject.Properties[$levelProp].Value
+                $note = if ($Entry.PSObject.Properties[$noteProp]) { 
+                    $Entry.PSObject.Properties[$noteProp].Value 
+                } else { "" }
+                
+                if ($location -and $level) {
+                    # New schema format: nested object with pain_level as decimal number and note
+                    $Pain[$location] = @{
+                        "pain_level" = [double]$level  # Convert to double to handle decimals like 5.5
+                        "note" = $note
+                    }
                 }
             }
         }
@@ -176,45 +179,48 @@ function ConvertTo-EntriesFormat {
     $Activities = @{}
     Write-Information "Looking for activity properties..."
 
-    # Get all activity type/length pairs
-    $activityProperties = $Entry.PSObject.Properties | Where-Object { $_.Name -like "activities_type_*" }
-    Write-Information "Found $($activityProperties.Count) activity type properties"
+    # Only process activity data if add_activity flag is true or activity properties exist
+    if ($Entry.add_activity -eq $true -or ($Entry.PSObject.Properties | Where-Object { $_.Name -like "activities_type_*" })) {
+        # Get all activity type/length pairs
+        $activityProperties = $Entry.PSObject.Properties | Where-Object { $_.Name -like "activities_type_*" }
+        Write-Information "Found $($activityProperties.Count) activity type properties"
 
-    foreach ($activityProp in $activityProperties) {
-        $id = $activityProp.Name -replace "activities_type_", ""
-        $activityType = $activityProp.Value
-        $lengthProp = "activities_length_$id"
-        $noteProp = "activities_note_$id"
-        
-        Write-Information "Processing activity ID $id, Type: $activityType"
-        Write-Information "Looking for $lengthProp"
-        
-        # Check for corresponding length and note properties
-        $duration = $null
-        $note = ""
-        if ($Entry.PSObject.Properties[$lengthProp]) {
-            $duration = [int]$Entry.PSObject.Properties[$lengthProp].Value
-            Write-Information "Found length property with value: $duration"
-        } else {
-            Write-Information "No matching duration property found for ID $id"
-            # List all available properties for debugging
-            $availableProps = $Entry.PSObject.Properties | Where-Object { $_.Name -like "*$id*" } | Select-Object -ExpandProperty Name
-            Write-Information "Available properties with ID $id : $($availableProps -join ', ')"
-        }
-        
-        if ($Entry.PSObject.Properties[$noteProp]) {
-            $note = $Entry.PSObject.Properties[$noteProp].Value
-        }
-        
-        if ($activityType -and $duration) {
-            # New schema format: nested object with duration and note
-            $Activities[$activityType] = @{
-                "duration" = $duration
-                "note" = $note
+        foreach ($activityProp in $activityProperties) {
+            $id = $activityProp.Name -replace "activities_type_", ""
+            $activityType = $activityProp.Value
+            $lengthProp = "activities_length_$id"
+            $noteProp = "activities_note_$id"
+            
+            Write-Information "Processing activity ID $id, Type: $activityType"
+            Write-Information "Looking for $lengthProp"
+            
+            # Check for corresponding length and note properties
+            $duration = $null
+            $note = ""
+            if ($Entry.PSObject.Properties[$lengthProp]) {
+                $duration = [int]$Entry.PSObject.Properties[$lengthProp].Value
+                Write-Information "Found length property with value: $duration"
+            } else {
+                Write-Information "No matching duration property found for ID $id"
+                # List all available properties for debugging
+                $availableProps = $Entry.PSObject.Properties | Where-Object { $_.Name -like "*$id*" } | Select-Object -ExpandProperty Name
+                Write-Information "Available properties with ID $id : $($availableProps -join ', ')"
             }
-            Write-Information "Added activity: $activityType = {duration: $duration, note: '$note'}"
-        } else {
-            Write-Information "Skipping activity - Type: '$activityType', Duration: '$duration'"
+            
+            if ($Entry.PSObject.Properties[$noteProp]) {
+                $note = $Entry.PSObject.Properties[$noteProp].Value
+            }
+            
+            if ($activityType -and $duration) {
+                # New schema format: nested object with duration and note
+                $Activities[$activityType] = @{
+                    "duration" = $duration
+                    "note" = $note
+                }
+                Write-Information "Added activity: $activityType = {duration: $duration, note: '$note'}"
+            } else {
+                Write-Information "Skipping activity - Type: '$activityType', Duration: '$duration'"
+            }
         }
     }
     
