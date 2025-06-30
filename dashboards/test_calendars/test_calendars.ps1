@@ -120,14 +120,15 @@
             Write-Information "Day keys: $($dayKeys -join ', ')"
         }
         
-        New-UDNivoChart -Heatmap -Data $HeatmapData -IndexBy 'month' -Keys $dayKeys -Height 300 -Width 1200 -MarginTop 60 -MarginRight 50 -MarginBottom 60 -MarginLeft 100 -ForceSquare
+        New-UDNivoChart -Heatmap -Data $HeatmapData -IndexBy 'month' -Keys $dayKeys -Height 300 -Width 1200 -MarginTop 60 -MarginRight 50 -MarginBottom 60 -MarginLeft 100 -ForceSquare -MinValue 1 -EmptyColor '#f5f5f5' -Colors @('#ffcccc', '#ffeb99', '#ffffcc', '#ccffcc', '#66ff66', '#00cc00')
         
         # Add a legend/summary
         New-UDTypography -Text "Heatmap Legend:" -Variant h6 -Style @{ marginTop = '20px'; marginBottom = '10px' }
         New-UDTypography -Text "• Each row represents a month, columns represent days of the month" -Variant body2
-        New-UDTypography -Text "• Light colors = Fewer unique medications taken" -Variant body2
-        New-UDTypography -Text "• Dark colors = More unique medications taken" -Variant body2
-        New-UDTypography -Text "• Empty/zero = No medications recorded that day" -Variant body2
+        New-UDTypography -Text "• 🔴 Red = Few medications (1-2)" -Variant body2
+        New-UDTypography -Text "• 🟡 Yellow = Moderate medications (3-4)" -Variant body2
+        New-UDTypography -Text "• 🟢 Green = Good adherence (5+ medications)" -Variant body2
+        New-UDTypography -Text "• ⚪ Light gray = No medications recorded" -Variant body2
         
         # Display summary statistics
         if ($CalendarData.Count -gt 0) {
