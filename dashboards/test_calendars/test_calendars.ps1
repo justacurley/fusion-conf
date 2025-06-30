@@ -64,36 +64,26 @@
         }
         
         # Create the heatmap chart
-        # Convert calendar data to heatmap format (date vs medication count)
+        # Convert calendar data to heatmap format (simpler approach)
         $HeatmapData = @()
         if ($CalendarData.Count -gt 0) {
-            # Group by week and day of week
-            $WeekGroups = $CalendarData | Group-Object { 
-                $date = [DateTime]::Parse($_.day)
-                "Week " + (Get-Culture).Calendar.GetWeekOfYear($date, [System.Globalization.CalendarWeekRule]::FirstDay, [DayOfWeek]::Sunday)
+            # Create a simple date-based heatmap
+            foreach ($entry in $CalendarData) {
+                $date = [DateTime]::Parse($entry.day)
+                $HeatmapData += @{
+                    date = $date.ToString("MM/dd")
+                    medications = $entry.value
+                }
             }
             
-            foreach ($week in $WeekGroups) {
-                $weekData = @{ id = $week.Name }
-                
-                # Initialize all days of week to 0
-                $daysOfWeek = @('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday')
-                foreach ($day in $daysOfWeek) {
-                    $weekData[$day] = 0
-                }
-                
-                # Fill in actual medication data
-                foreach ($entry in $week.Group) {
-                    $date = [DateTime]::Parse($entry.day)
-                    $dayName = $date.DayOfWeek.ToString()
-                    $weekData[$dayName] = $entry.value
-                }
-                
-                $HeatmapData += $weekData
+            # Debug heatmap data
+            Write-Information "Sample heatmap data:"
+            $HeatmapData | Select-Object -First 3 | ForEach-Object { 
+                Write-Information "  Date: $($_.date), Medications: $($_.medications)" 
             }
         }
         
-        New-UDNivoChart -Heatmap -Data $HeatmapData -IndexBy 'id' -Keys @('Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday') -Height 400 -Width 1000 -MarginTop 50 -MarginRight 130 -MarginBottom 50 -MarginLeft 100 -Colors @('nivo')
+        New-UDNivoChart -Heatmap -Data $HeatmapData -IndexBy 'date' -Keys @('medications') -Height 400 -Width 1000 -MarginTop 50 -MarginRight 130 -MarginBottom 50 -MarginLeft 100 -Colors @('nivo')
         
         # Add a legend/summary
         New-UDTypography -Text "Heatmap Legend:" -Variant h6 -Style @{ marginTop = '20px'; marginBottom = '10px' }
