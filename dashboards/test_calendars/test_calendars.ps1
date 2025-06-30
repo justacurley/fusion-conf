@@ -2,7 +2,7 @@
     New-UDContainer -Content {
         New-UDTypography -Text "Medication Adherence Heatmap" -Variant h4 -Align center
         New-UDTypography -Text "Shows weekly medication patterns - darker colors indicate more medications taken" -Variant body2 -Align center
-        New-UDTypography -Text "Heatmap displays weeks vs days of week with your medication data" -Variant caption -Align center -Style @{ fontStyle = 'italic'; marginBottom = '20px' }
+        New-UDTypography -Text "Heatmap displays months vs weeks with total medication counts per week" -Variant caption -Align center -Style @{ fontStyle = 'italic'; marginBottom = '20px' }
         
         # Import-Module -Name GetFusion -Force
         # Clear-CachedData
@@ -68,62 +68,58 @@
         }
         
         # Create the heatmap chart
-        # Convert calendar data to heatmap format matching documentation example
+        # Convert calendar data to heatmap format with limited columns for better rendering
         $HeatmapData = @()
         $dayKeys = @()
         
         if ($CalendarData.Count -gt 0) {
-            # Create a simpler, more reliable data structure
             # Group by month to create a proper heatmap structure
             $MonthGroups = $CalendarData | Group-Object { 
                 $date = [DateTime]::Parse($_.day)
                 $date.ToString("yyyy-MM")
             }
             
-            # First pass: determine all day keys needed
-            $allDaysUsed = @()
-            foreach ($monthGroup in $MonthGroups) {
-                foreach ($entry in $monthGroup.Group) {
-                    $date = [DateTime]::Parse($entry.day)
-                    $dayOfMonth = $date.Day
-                    $allDaysUsed += $dayOfMonth
-                }
-            }
-            $dayKeys = ($allDaysUsed | Sort-Object -Unique) | ForEach-Object { "day$_" }
-            
-            # Second pass: create the data structure
+            # Limit to a reasonable number of day columns (weeks of month)
+            # Group days into weeks instead of individual days
             foreach ($monthGroup in $MonthGroups) {
                 $monthData = @{ 
                     month = $monthGroup.Name
+                    week1 = 0
+                    week2 = 0
+                    week3 = 0
+                    week4 = 0
+                    week5 = 0
                 }
                 
-                # Initialize all day keys with 0
-                foreach ($dayKey in $dayKeys) {
-                    $monthData[$dayKey] = 0
-                }
-                
-                # Fill in actual data
+                # Assign days to weeks and sum medication counts
                 foreach ($entry in $monthGroup.Group) {
                     $date = [DateTime]::Parse($entry.day)
                     $dayOfMonth = $date.Day
-                    $dayKey = "day$dayOfMonth"
-                    if ($dayKeys -contains $dayKey) {
-                        $monthData[$dayKey] = [int]$entry.value
+                    $weekNum = [math]::Ceiling($dayOfMonth / 7)
+                    
+                    switch ($weekNum) {
+                        1 { $monthData.week1 += [int]$entry.value }
+                        2 { $monthData.week2 += [int]$entry.value }
+                        3 { $monthData.week3 += [int]$entry.value }
+                        4 { $monthData.week4 += [int]$entry.value }
+                        default { $monthData.week5 += [int]$entry.value }
                     }
                 }
                 
                 $HeatmapData += $monthData
             }
             
+            $dayKeys = @('week1', 'week2', 'week3', 'week4', 'week5')
+            
             # Debug output
-            Write-Information "Heatmap data created with $($HeatmapData.Count) months"
-            Write-Information "Day keys: $($dayKeys -join ', ')"
+            Write-Information "Heatmap data created with $($HeatmapData.Count) months using week-based grouping"
+            Write-Information "Week keys: $($dayKeys -join ', ')"
             Write-Information "Sample month data: $($HeatmapData[0] | ConvertTo-Json -Compress)"
         } else {
             # Fallback empty data structure
-            $dayKeys = @("day1", "day2", "day3", "day4", "day5")
+            $dayKeys = @('week1', 'week2', 'week3', 'week4', 'week5')
             $HeatmapData = @(
-                @{ month = "2025-01"; day1 = 0; day2 = 0; day3 = 0; day4 = 0; day5 = 0 }
+                @{ month = "2025-01"; week1 = 0; week2 = 0; week3 = 0; week4 = 0; week5 = 0 }
             )
         }
         
@@ -155,10 +151,10 @@
         
         # Add a legend/summary
         New-UDTypography -Text "Heatmap Legend:" -Variant h6 -Style @{ marginTop = '20px'; marginBottom = '10px' }
-        New-UDTypography -Text "• Each row represents a month, columns represent days of the month" -Variant body2
-        New-UDTypography -Text "• 🔴 Red = Few medications (1-2)" -Variant body2
-        New-UDTypography -Text "• 🟡 Yellow = Moderate medications (3-4)" -Variant body2
-        New-UDTypography -Text "• 🟢 Green = Good adherence (5+ medications)" -Variant body2
+        New-UDTypography -Text "• Each row represents a month, columns represent weeks of the month" -Variant body2
+        New-UDTypography -Text "• 🔴 Red = Low medication adherence (1-10 total medications)" -Variant body2
+        New-UDTypography -Text "• 🟡 Yellow = Moderate adherence (11-20 total medications)" -Variant body2
+        New-UDTypography -Text "• 🟢 Green = Good adherence (21+ total medications)" -Variant body2
         New-UDTypography -Text "• ⚪ Light gray = No medications recorded" -Variant body2
         
         # Display summary statistics
