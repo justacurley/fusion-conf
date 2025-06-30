@@ -32,16 +32,33 @@
                 }
             }
         }
+        
+        # Debug: Show first few calendar data entries
+        if ($CalendarData.Count -gt 0) {
+            Write-Information "Sample calendar data:"
+            $CalendarData | Select-Object -First 5 | ForEach-Object { 
+                Write-Information "  Day: $($_.day), Value: $($_.value)" 
+            }
+        }
     
         # Set date range based on actual medication data
         if ($CalendarData.Count -gt 0) {
             $sortedDates = $CalendarData | Sort-Object { [DateTime]$_.day }
-            $From = [DateTime]($sortedDates | Select-Object -First 1).day
-            $To = [DateTime]($sortedDates | Select-Object -Last 1).day
+            $firstDate = ($sortedDates | Select-Object -First 1).day
+            $lastDate = ($sortedDates | Select-Object -Last 1).day
+            
+            # Convert to DateTime objects properly and add some padding
+            $From = [DateTime]::Parse($firstDate).AddDays(-7)  # Start a week before first data
+            $To = [DateTime]::Parse($lastDate).AddDays(7)      # End a week after last data
+            
+            # Debug output (will show in browser console/logs)
+            Write-Information "Date range: $From to $To"
+            Write-Information "Total calendar data points: $($CalendarData.Count)"
         } else {
             # Fallback if no data
             $From = (Get-Date).AddDays(-365)
             $To = Get-Date
+            Write-Information "No calendar data found, using fallback dates"
         }
         
         # Create the calendar chart
