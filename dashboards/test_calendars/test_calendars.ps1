@@ -72,7 +72,7 @@
                 $date = [DateTime]::Parse($_.day)
                 $date.ToString("yyyy-MM")
             }
-            Write-Information "MonthGroups: $($$MonthGroups|Convertto-Json -Depth 3)"
+            Write-Information "MonthGroups: $($MonthGroups|Convertto-Json -Depth 3)"
             foreach ($monthGroup in $MonthGroups) {
                 $monthData = @{ 
                     month = $monthGroup.Name
