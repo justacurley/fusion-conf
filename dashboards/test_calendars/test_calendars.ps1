@@ -3,14 +3,8 @@
         New-UDTypography -Text "Test Calendar Charts" -Variant h4 -Align center
         Import-Module -Name GetFusion -Force
         Clear-CachedData
-        $Entries = (Get-PSUCache -Key 'entriesData' -OutVariable TempEntry) ? $TempEntry : (& {
-                Write-Information "Could not find entriesData cache"
-                $EntriesPath = "/home/data/fusion-data/entries/entries.json"
-                Get-EntriesData -Path $EntriesPath
-                Set-PSUCache -Key "Entries" -Value $Entries -Expiration (New-TimeSpan -Days 1) | Out-Null
-            })
-        $TempEntry ? (Remove-Variable TempEntry) : (Out-Null)
-
+        $Entries = Get-PSUCachedEntries
+        
 
         $Data = @()
         for ($i = 365; $i -gt 0; $i--) {
