@@ -64,33 +64,56 @@
         }
         
         # Create the heatmap chart
-        # Convert calendar data to heatmap format (simpler approach)
+        # Convert calendar data to heatmap format matching documentation example
         $HeatmapData = @()
         if ($CalendarData.Count -gt 0) {
-            # Create a simple date-based heatmap
-            foreach ($entry in $CalendarData) {
-                $date = [DateTime]::Parse($entry.day)
-                $HeatmapData += @{
-                    date = $date.ToString("MM/dd")
-                    medications = $entry.value
+            # Group by month to create a proper heatmap structure
+            $MonthGroups = $CalendarData | Group-Object { 
+                $date = [DateTime]::Parse($_.day)
+                $date.ToString("yyyy-MM")
+            }
+            
+            foreach ($monthGroup in $MonthGroups) {
+                $monthData = @{ 
+                    month = $monthGroup.Name
                 }
+                
+                # Initialize all days to 0
+                for ($i = 1; $i -le 31; $i++) {
+                    $dayKey = "day$i"
+                    $monthData[$dayKey] = 0
+                }
+                
+                # Fill in actual medication data
+                foreach ($entry in $monthGroup.Group) {
+                    $date = [DateTime]::Parse($entry.day)
+                    $dayOfMonth = $date.Day
+                    $dayKey = "day$dayOfMonth"
+                    $monthData[$dayKey] = $entry.value
+                }
+                
+                $HeatmapData += $monthData
+            }
+            
+            # Create keys array for all possible days
+            $dayKeys = @()
+            for ($i = 1; $i -le 31; $i++) {
+                $dayKeys += "day$i"
             }
             
             # Debug heatmap data
-            Write-Information "Sample heatmap data:"
-            $HeatmapData | Select-Object -First 3 | ForEach-Object { 
-                Write-Information "  Date: $($_.date), Medications: $($_.medications)" 
-            }
+            Write-Information "Heatmap structure created with $($HeatmapData.Count) months"
+            Write-Information "Day keys: $($dayKeys -join ', ')"
         }
         
-        New-UDNivoChart -Heatmap -Data $HeatmapData -IndexBy 'date' -Keys @('medications') -Height 400 -Width 1000 -MarginTop 50 -MarginRight 130 -MarginBottom 50 -MarginLeft 100 -Colors @('nivo')
+        New-UDNivoChart -Heatmap -Data $HeatmapData -IndexBy 'month' -Keys $dayKeys -Height 400 -Width 1000 -MarginTop 50 -MarginRight 130 -MarginBottom 50 -MarginLeft 100 -Colors @('nivo')
         
         # Add a legend/summary
         New-UDTypography -Text "Heatmap Legend:" -Variant h6 -Style @{ marginTop = '20px'; marginBottom = '10px' }
-        New-UDTypography -Text "• Each row represents a week, columns represent days of the week" -Variant body2
+        New-UDTypography -Text "• Each row represents a month, columns represent days of the month" -Variant body2
         New-UDTypography -Text "• Light colors = Fewer unique medications taken" -Variant body2
         New-UDTypography -Text "• Dark colors = More unique medications taken" -Variant body2
-        New-UDTypography -Text "• Empty/zero = No medications recorded" -Variant body2
+        New-UDTypography -Text "• Empty/zero = No medications recorded that day" -Variant body2
         
         # Display summary statistics
         if ($CalendarData.Count -gt 0) {
