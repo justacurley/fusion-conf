@@ -2,6 +2,7 @@
     New-UDContainer -Content {
         New-UDTypography -Text "Medication Adherence Calendar" -Variant h4 -Align center
         New-UDTypography -Text "Shows daily medication compliance - darker colors indicate more medications taken" -Variant body2 -Align center
+        New-UDTypography -Text "Calendar displays full year for context, with your data highlighted where available" -Variant caption -Align center -Style @{ fontStyle = 'italic'; marginBottom = '20px' }
         
         # Import-Module -Name GetFusion -Force
         # Clear-CachedData
@@ -47,13 +48,14 @@
             $firstDate = ($sortedDates | Select-Object -First 1).day
             $lastDate = ($sortedDates | Select-Object -Last 1).day
             
-            # Convert to DateTime objects properly and add some padding
-            $From = [DateTime]::Parse($firstDate).AddDays(-7)  # Start a week before first data
-            $To = [DateTime]::Parse($lastDate).AddDays(7)      # End a week after last data
+            # Convert to DateTime objects - let's try without padding first
+            $From = [DateTime]::Parse($firstDate)
+            $To = [DateTime]::Parse($lastDate)
             
             # Debug output (will show in browser console/logs)
             Write-Information "Date range: $From to $To"
             Write-Information "Total calendar data points: $($CalendarData.Count)"
+            Write-Information "First date: $firstDate, Last date: $lastDate"
         } else {
             # Fallback if no data
             $From = (Get-Date).AddDays(-365)
@@ -62,7 +64,7 @@
         }
         
         # Create the calendar chart
-        New-UDNivoChart -Calendar -Data $CalendarData -From $From -To $To -Height 500 -Width 1000 -MarginTop 50 -MarginRight 130 -MarginBottom 50 -MarginLeft 60 -Colors @('nivo') -EmptyColor '#eeeeee'
+        New-UDNivoChart -Calendar -Data $CalendarData -From $From -To $To -Height 500 -Width 1000 -MarginTop 50 -MarginRight 130 -MarginBottom 50 -MarginLeft 60 -Colors @('nivo') -EmptyColor '#eeeeee' -YearSpacing 40 -MonthSpacing 20
         
         # Add a legend/summary
         New-UDTypography -Text "Calendar Legend:" -Variant h6 -Style @{ marginTop = '20px'; marginBottom = '10px' }
