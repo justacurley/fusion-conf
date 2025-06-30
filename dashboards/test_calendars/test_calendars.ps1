@@ -78,35 +78,49 @@
                     month = $monthGroup.Name
                 }
                 
-                # Initialize all days to 0
-                for ($i = 1; $i -le 31; $i++) {
-                    $dayKey = "day$i"
-                    $monthData[$dayKey] = 0
-                }
-                
-                # Fill in actual medication data
+                # Only include days that have actual data (instead of all 31 days)
+                $daysWithData = @()
                 foreach ($entry in $monthGroup.Group) {
                     $date = [DateTime]::Parse($entry.day)
                     $dayOfMonth = $date.Day
                     $dayKey = "day$dayOfMonth"
                     $monthData[$dayKey] = $entry.value
+                    $daysWithData += $dayOfMonth
                 }
+                
+                # Fill in missing days between min and max with 0 for context
+                if ($daysWithData.Count -gt 0) {
+                    $minDay = ($daysWithData | Measure-Object -Minimum).Minimum
+                    $maxDay = ($daysWithData | Measure-Object -Maximum).Maximum
+                    
+                    for ($i = $minDay; $i -le $maxDay; $i++) {
+                        $dayKey = "day$i"
+                        if (-not $monthData.ContainsKey($dayKey)) {
+                            $monthData[$dayKey] = 0
+                        }
+                    }
+                }
+                
                 Write-Information "monthData: $($monthData | ConvertTo-Json -Depth 3)"
                 $HeatmapData += $monthData
             }
             
-            # Create keys array for all possible days
-            $dayKeys = @()
-            for ($i = 1; $i -le 31; $i++) {
-                $dayKeys += "day$i"
+            # Create keys array only for days that exist in the data
+            $allDaysUsed = @()
+            foreach ($monthData in $HeatmapData) {
+                $monthData.Keys | Where-Object { $_ -ne 'month' } | ForEach-Object {
+                    $dayNum = $_ -replace 'day', ''
+                    $allDaysUsed += [int]$dayNum
+                }
             }
+            $dayKeys = ($allDaysUsed | Sort-Object -Unique) | ForEach-Object { "day$_" }
             
             # Debug heatmap data
             Write-Information "Heatmap structure created with $($HeatmapData.Count) months"
             Write-Information "Day keys: $($dayKeys -join ', ')"
         }
         
-        New-UDNivoChart -Heatmap -Data $HeatmapData -IndexBy 'month' -Keys $dayKeys -Height 400 -Width 1000 -MarginTop 50 -MarginRight 130 -MarginBottom 50 -MarginLeft 100
+        New-UDNivoChart -Heatmap -Data $HeatmapData -IndexBy 'month' -Keys $dayKeys -Height 300 -Width 1200 -MarginTop 60 -MarginRight 50 -MarginBottom 60 -MarginLeft 100 -ForceSquare
         
         # Add a legend/summary
         New-UDTypography -Text "Heatmap Legend:" -Variant h6 -Style @{ marginTop = '20px'; marginBottom = '10px' }
