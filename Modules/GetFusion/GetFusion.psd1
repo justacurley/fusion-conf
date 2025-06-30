@@ -40,7 +40,8 @@
         'Get-DateActivityData',
         'Get-DateVitalsData',
         'Get-HealthMetrics',
-        'Clear-CachedData'
+        'Clear-CachedData',
+        'Get-PSUCachedEntries'
     )
     
     # Cmdlets to export from this module
