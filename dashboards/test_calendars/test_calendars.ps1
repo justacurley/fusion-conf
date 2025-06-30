@@ -1,12 +1,13 @@
 ﻿$Dashboard = New-UDDashboard -Title "Medication Heatmap Dashboard" -Content { 
     New-UDContainer -Content {
-        New-UDTypography -Text "Medication Adherence Heatmap" -Variant h4 -Align center
-        New-UDTypography -Text "Shows weekly medication patterns - darker colors indicate more medications taken" -Variant body2 -Align center
-        New-UDTypography -Text "Heatmap displays weeks vs days of week with your medication data" -Variant caption -Align center -Style @{ fontStyle = 'italic'; marginBottom = '20px' }
+        # New-UDTypography -Text "Medication Adherence Heatmap" -Variant h4 -Align center
+        # New-UDTypography -Text "Shows weekly medication patterns - darker colors indicate more medications taken" -Variant body2 -Align center
+        # New-UDTypography -Text "Heatmap displays weeks vs days of week with your medication data" -Variant caption -Align center -Style @{ fontStyle = 'italic'; marginBottom = '20px' }
         
         # Import-Module -Name GetFusion -Force
         # Clear-CachedData
         # $Entries = Get-PSUCachedEntries
+        Write-Information "Getting medication data from cache..."
         $Meds = Get-PSUCache -Key 'medicationData' | Select-Object Date, Timestamp, Medication
 
         # Process medication data for calendar format
@@ -122,24 +123,24 @@
         
         New-UDNivoChart -Heatmap -Data $HeatmapData -IndexBy 'month' -Keys $dayKeys -Height 300 -Width 1200 -MarginTop 60 -MarginRight 50 -MarginBottom 60 -MarginLeft 100 -ForceSquare
         
-        # Add a legend/summary
-        New-UDTypography -Text "Heatmap Legend:" -Variant h6 -Style @{ marginTop = '20px'; marginBottom = '10px' }
-        New-UDTypography -Text "• Each row represents a month, columns represent days of the month" -Variant body2
-        New-UDTypography -Text "• Light colors = Fewer unique medications taken" -Variant body2
-        New-UDTypography -Text "• Dark colors = More unique medications taken" -Variant body2
-        New-UDTypography -Text "• Empty/zero = No medications recorded that day" -Variant body2
+        # # Add a legend/summary
+        # New-UDTypography -Text "Heatmap Legend:" -Variant h6 -Style @{ marginTop = '20px'; marginBottom = '10px' }
+        # New-UDTypography -Text "• Each row represents a month, columns represent days of the month" -Variant body2
+        # New-UDTypography -Text "• Light colors = Fewer unique medications taken" -Variant body2
+        # New-UDTypography -Text "• Dark colors = More unique medications taken" -Variant body2
+        # New-UDTypography -Text "• Empty/zero = No medications recorded that day" -Variant body2
         
-        # Display summary statistics
-        if ($CalendarData.Count -gt 0) {
-            $totalDaysWithMeds = $CalendarData.Count
-            $avgMedsPerDay = [math]::Round(($CalendarData | Measure-Object -Property value -Average).Average, 1)
-            $maxMedsInDay = ($CalendarData | Measure-Object -Property value -Maximum).Maximum
+        # # Display summary statistics
+        # if ($CalendarData.Count -gt 0) {
+        #     $totalDaysWithMeds = $CalendarData.Count
+        #     $avgMedsPerDay = [math]::Round(($CalendarData | Measure-Object -Property value -Average).Average, 1)
+        #     $maxMedsInDay = ($CalendarData | Measure-Object -Property value -Maximum).Maximum
             
-            New-UDTypography -Text "Summary Statistics:" -Variant h6 -Style @{ marginTop = '20px'; marginBottom = '10px' }
-            New-UDTypography -Text "• Days with medication records: $totalDaysWithMeds" -Variant body2
-            New-UDTypography -Text "• Average unique medications per day: $avgMedsPerDay" -Variant body2
-            New-UDTypography -Text "• Maximum unique medications in a single day: $maxMedsInDay" -Variant body2
-        }
+        #     New-UDTypography -Text "Summary Statistics:" -Variant h6 -Style @{ marginTop = '20px'; marginBottom = '10px' }
+        #     New-UDTypography -Text "• Days with medication records: $totalDaysWithMeds" -Variant body2
+        #     New-UDTypography -Text "• Average unique medications per day: $avgMedsPerDay" -Variant body2
+        #     New-UDTypography -Text "• Maximum unique medications in a single day: $maxMedsInDay" -Variant body2
+        # }
     }
 }
 $Dashboard
