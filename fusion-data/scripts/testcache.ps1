@@ -1,9 +1,11 @@
 ﻿# Script contents
-param($key)
-$DNE = Get-PSUCache -Key $Key
-if ( -not $DNE) {
-    Write-Information "no $Key cache"
-} else {
-    Write-Information "Found $Key cache"
-    $DNE | Get-Member
- }
+
+$Entries = (Get-PSUCache -Key 'entriesData' -OutVariable TempEntry) ? $TempEntry : (& {
+        Write-Information "Could not find entriesData cache"
+        $EntriesPath = "/home/data/fusion-data/entries/entries.json"
+        Get-EntriesData -Path $EntriesPath
+        # Set-PSUCache -Key "Entries" -Value $Entries -Expiration (New-TimeSpan -Days 1) | Out-Null
+    })
+$Entries
+
+Get-Variable TempEntry
