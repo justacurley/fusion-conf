@@ -37,7 +37,8 @@ function Get-AverageBackPain {
     
     # Check all timestamps for this date
     foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
-        if ($timestamp -match '^\d{4}$') {  # This is a timestamp
+        if ($timestamp -match '^\d{4}$') {
+            # This is a timestamp
             $entry = $dateEntry.$timestamp
             
             # Process Pain data - specifically back pain
@@ -146,27 +147,27 @@ function Get-HealthMetrics {
             }
             
             if ($DataPoints -contains 'MaxPain' -and $dateEntry.PSObject.Properties['max_pain_level']) {
-                $baseObject = Set-CombinedData -combinedData $baseObject -name "MaxPain" -data ([double]$dateEntry.max_pain_level)
+                $baseObject = Set-CombinedData -combinedData $baseObject -name 'MaxPain' -data ([double]$dateEntry.max_pain_level)
             }
             
             if ($DataPoints -contains 'BackPain') {
                 $avgBackPain = Get-AverageBackPain -dateEntry $dateEntry
                 if ($null -ne $avgBackPain) {
-                    $baseObject = Set-CombinedData -combinedData $baseObject -name "BackPain" -data $avgBackPain
+                    $baseObject = Set-CombinedData -combinedData $baseObject -name 'BackPain' -data $avgBackPain
                 }
             }
             
             if ($DataPoints -contains 'Sleep' -and $dateEntry.PSObject.Properties['Sleep']) {
                 $sleepHours = Get-SleepHours -sleepValue $dateEntry.Sleep
                 if ($null -ne $sleepHours) {
-                    $baseObject = Set-CombinedData -combinedData $baseObject -name "Sleep" -data $sleepHours
+                    $baseObject = Set-CombinedData -combinedData $baseObject -name 'Sleep' -data $sleepHours
                 }
             }
             
             if ($DataPoints -contains 'ActivityDuration') {
                 $totalDuration = Get-TotalActivityDuration -dateEntry $dateEntry
                 if ($null -ne $totalDuration) {
-                    $baseObject = Set-CombinedData -combinedData $baseObject -name "ActivityDuration" -data $totalDuration
+                    $baseObject = Set-CombinedData -combinedData $baseObject -name 'ActivityDuration' -data $totalDuration
                 }
             }
             
@@ -201,7 +202,8 @@ function Get-TotalActivityDuration {
     
     # Check all timestamps for this date
     foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
-        if ($timestamp -match '^\d{4}$') {  # This is a timestamp
+        if ($timestamp -match '^\d{4}$') {
+            # This is a timestamp
             $entry = $dateEntry.$timestamp
             
             # Process Activities data
@@ -250,10 +252,10 @@ function Get-DateMedicationData {
                     }
                     
                     $medicationWithContext = [PSCustomObject]@{
-                        Date = Convert-DateToDisplay -date $date
-                        Timestamp = $timestamp
+                        Date       = Convert-DateToDisplay -date $date
+                        Timestamp  = $timestamp
                         Medication = $medicationName
-                        Dose = $medicationDose
+                        Dose       = $medicationDose
                     }
                     $medications += $medicationWithContext
                 }
@@ -287,11 +289,11 @@ function Get-DateActivityData {
                     }
                     
                     $activityWithContext = [PSCustomObject]@{
-                        Date = Convert-DateToDisplay -date $date
+                        Date      = Convert-DateToDisplay -date $date
                         Timestamp = $timestamp
-                        Activity = $activityName
-                        Note = $activityData.note
-                        Duration = $activityData.duration
+                        Activity  = $activityName
+                        Note      = $activityData.note
+                        Duration  = $activityData.duration
                     }
                     $activities += $activityWithContext
                 }
@@ -313,10 +315,10 @@ function Get-DateVitalsData {
             # Check for blood pressure (bpr) data
             if ($entry.PSObject.Properties['bpr'] -and -not [string]::IsNullOrEmpty($entry.bpr)) {
                 $bprWithContext = [PSCustomObject]@{
-                    Date = Convert-DateToDisplay -date $date
+                    Date      = Convert-DateToDisplay -date $date
                     Timestamp = $timestamp
                     VitalType = 'Blood Pressure'
-                    Vital = $entry.bpr
+                    Vital     = $entry.bpr
                 }
                 $vitals += $bprWithContext
             }
@@ -324,10 +326,10 @@ function Get-DateVitalsData {
             # Check for oxygen (o2) data
             if ($entry.PSObject.Properties['o2'] -and -not [string]::IsNullOrEmpty($entry.o2)) {
                 $o2WithContext = [PSCustomObject]@{
-                    Date = Convert-DateToDisplay -date $date
+                    Date      = Convert-DateToDisplay -date $date
                     Timestamp = $timestamp
                     VitalType = 'Oxygen Level'
-                    Vital = $entry.o2
+                    Vital     = $entry.o2
                 }
                 $vitals += $o2WithContext
             }
@@ -340,7 +342,7 @@ function Get-DateVitalsData {
 function Sort-HealthDataByDate {
     param($healthData)
     
-    return $healthData | Sort-Object { [datetime]::ParseExact($_.Date, "MM/dd", $null) }
+    return $healthData | Sort-Object { [datetime]::ParseExact($_.Date, 'MM/dd', $null) }
 }
 
 # Function to clear cached data (useful when entries data changes)
@@ -349,5 +351,15 @@ function Clear-CachedData {
     $global:DistinctDataValues = @{}
 }
 
+Function Get-PSUCachedEntries {
+    $Entries = (Get-PSUCache -Key 'entriesData' -OutVariable TempEntry) ? $TempEntry : (& {
+            Write-Information 'Could not find entriesData cache'
+            $EntriesPath = '/home/data/fusion-data/entries/entries.json'
+            Get-EntriesData -Path $EntriesPath
+            Set-PSUCache -Key 'Entries' -Value $Entries -Expiration (New-TimeSpan -Days 1) | Out-Null
+        })
+    $TempEntry ? (Remove-Variable -Name TempEntry -ErrorAction Ignore) : $null
+    $Entries
+}
 # Export the functions so they can be used when the module is imported
 Export-ModuleMember -Function Get-HealthMetrics, Get-SleepHours, Get-AverageBackPain, Get-TotalActivityDuration, Convert-DateToDisplay, Get-EntriesData, Get-DatesList, Sort-HealthDataByDate, Set-CombinedData, Get-DateMedicationData, Get-DateActivityData, Get-DateVitalsData, Clear-CachedData
