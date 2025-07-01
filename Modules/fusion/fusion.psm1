@@ -1,4 +1,4 @@
-$Remote = Get-ChildItem Env:HOSTNAME
+$Remote = Get-ChildItem Env:HOSTNAME -ErrorAction Ignore
 if ($Remote -and $Remote.Value -like "*us-west-2*") {
     $global:EntriesPath =  "/home/data/fusion-data/entries/entries.json"
     $global:SchemaPath = Join-Path $PSScriptRoot "entries_schema.json"
@@ -137,9 +137,11 @@ function ConvertTo-EntriesFormat {
             if ($Medications.ContainsKey($medName)) {
                 # Convert to array if not already
                 if ($Medications[$medName] -is [string]) {
-                    $Medications[$medName] = @($Medications[$medName])
+                    $Medications[$medName] = @($Medications[$medName], $dosage)
+                } else {
+                    # Already an array, add new element
+                    $Medications[$medName] = $Medications[$medName] + @($dosage)
                 }
-                $Medications[$medName] += $dosage
             } else {
                 $Medications[$medName] = $dosage
             }
@@ -290,10 +292,10 @@ function Update-DailyMaxPainLevel {
                 }
             }
         }
+        
+        # Set the daily max pain level at the date level
+        $Entries[$Date]["max_pain_level"] = $maxPainForDay
     }
-    
-    # Set the daily max pain level at the date level
-    $Entries[$Date]["max_pain_level"] = $maxPainForDay
     
     Write-Information "Updated daily max pain level for $Date : $maxPainForDay"
     return $maxPainForDay
@@ -340,7 +342,7 @@ function Save-ConvertedEntry {
     
     # Update the daily max pain level
     Write-Information "Updating daily max pain level for $Date"
-    Update-DailyMaxPainLevel -Entries $Entries -Date $Date
+    $null = Update-DailyMaxPainLevel -Entries $Entries -Date $Date
     
     # Save the entries
     Write-Information "Saving entries to $EntriesPath"
