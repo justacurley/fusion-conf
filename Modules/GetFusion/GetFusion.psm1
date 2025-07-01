@@ -103,7 +103,17 @@ function Set-CombinedData {
     
     # Validate that the property name doesn't already exist
     if ($combinedData.PSObject.Properties[$name]) {
-        Show-UDToast "Property '$name' already exists in the combined data object. This is overwriting the existing values." -MessageType Warning
+        # Check if Show-UDToast is available and functional (PowerShell Universal environment)
+        try {
+            if (Get-Command Show-UDToast -ErrorAction SilentlyContinue) {
+                Show-UDToast "Property '$name' already exists in the combined data object. This is overwriting the existing values." -MessageType Warning
+            } else {
+                Write-Warning "Property '$name' already exists in the combined data object. This is overwriting the existing values."
+            }
+        } catch {
+            # Fallback to Write-Warning if Show-UDToast fails
+            Write-Warning "Property '$name' already exists in the combined data object. This is overwriting the existing values."
+        }
     }
     
     # Add the new property to the existing object
