@@ -336,7 +336,7 @@ function Save-ConvertedEntry {
     $Entries[$Date][$Timestamp] = $EntryStructure
     
     # Add date-level fields from FullEntry if present
-    if ($ConvertedEntry.FullEntry[$Date].ContainsKey("Sleep")) {
+    if ($ConvertedEntry.FullEntry[$Date] -and $ConvertedEntry.FullEntry[$Date].ContainsKey("Sleep")) {
         $Entries[$Date]["Sleep"] = $ConvertedEntry.FullEntry[$Date]["Sleep"]
     }
     

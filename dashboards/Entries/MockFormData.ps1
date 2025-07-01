@@ -269,8 +269,9 @@ function ConvertTo-ProcessedFormData {
 }
 
 # Export the mock data for use in tests
-Export-ModuleMember -Variable MockFormData_Complete, MockFormData_Minimal, MockFormData_MedicationsOnly, MockFormData_MultipleEntries, MockFormData_EdgeCases, MockFormData_EmptyValues, MockFormData_SleepFormats
-Export-ModuleMember -Function ConvertTo-ProcessedFormData
+# Note: These variables will be available in the script scope when dot-sourced
+# Export-ModuleMember -Variable MockFormData_Complete, MockFormData_Minimal, MockFormData_MedicationsOnly, MockFormData_MultipleEntries, MockFormData_EdgeCases, MockFormData_EmptyValues, MockFormData_SleepFormats
+# Export-ModuleMember -Function ConvertTo-ProcessedFormData
 
 # Example usage comments:
 <#
