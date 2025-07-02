@@ -19,197 +19,7 @@
                 }
             }
         } -Style @{ padding = "20px"; marginBottom = "20px"; backgroundColor = "#f8f9fa" }
-        New-UDForm -OnValidate {
-            # Import the fusion module to access validation functions
-            Import-Module -Name fusion -Force
-            
-            # Initialize validation results array
-            $validationResults = @()
-            
-            # Validate required fields: Date and Time
-            if ([string]::IsNullOrWhiteSpace($EventData.date)) {
-                $validationResults += New-UDValidationResult -ValidationError "Date is required" -Context "date"
-            } else {
-                try {
-                    $parsedDate = [datetime]::Parse($EventData.date)
-                    # Check if date is not in the future (allowing today)
-                    if ($parsedDate.Date -gt (Get-Date).Date) {
-                        $validationResults += New-UDValidationResult -ValidationError "Date cannot be in the future" -Context "date"
-                    }
-                } catch {
-                    $validationResults += New-UDValidationResult -ValidationError "Invalid date format" -Context "date"
-                }
-            }
-            
-            if ([string]::IsNullOrWhiteSpace($EventData.timestamp)) {
-                $validationResults += New-UDValidationResult -ValidationError "Time is required" -Context "timestamp"
-            } else {
-                try {
-                    $parsedTime = [datetime]::Parse($EventData.timestamp)
-                } catch {
-                    $validationResults += New-UDValidationResult -ValidationError "Invalid time format" -Context "timestamp"
-                }
-            }
-            
-            # Check that at least one data category is provided (medications, activities, pain, or vitals)
-            $hasData = $false
-            
-            # Check for medications
-            $medicationFields = $EventData.Keys | Where-Object { $_ -like "med_*" }
-            $hasCheckedMedications = $false
-            foreach ($field in $medicationFields) {
-                if ($EventData[$field] -eq $true) {
-                    $hasCheckedMedications = $true
-                    break
-                }
-            }
-            if ($hasCheckedMedications) { $hasData = $true }
-            
-            # Check for activities
-            if (-not [string]::IsNullOrWhiteSpace($EventData.activities_type_1)) {
-                $hasData = $true
-                
-                # Validate activity duration if provided
-                if (-not [string]::IsNullOrWhiteSpace($EventData.activities_length_1)) {
-                    try {
-                        $duration = [int]$EventData.activities_length_1
-                        if ($duration -le 0 -or $duration -gt 1440) { # Max 24 hours in minutes
-                            $validationResults += New-UDValidationResult -ValidationError "Activity duration must be between 1 and 1440 minutes (24 hours)" -Context "activities_length_1"
-                        }
-                    } catch {
-                        $validationResults += New-UDValidationResult -ValidationError "Activity duration must be a valid number" -Context "activities_length_1"
-                    }
-                }
-                
-                # Validate additional activities if they exist
-                $activityFields = $EventData.Keys | Where-Object { $_ -like "activities_type_*" -and $_ -ne "activities_type_1" }
-                foreach ($actField in $activityFields) {
-                    if (-not [string]::IsNullOrWhiteSpace($EventData[$actField])) {
-                        $entryNum = ($actField -split "_")[-1]
-                        $lengthField = "activities_length_$entryNum"
-                        if ($EventData.ContainsKey($lengthField) -and -not [string]::IsNullOrWhiteSpace($EventData[$lengthField])) {
-                            try {
-                                $duration = [int]$EventData[$lengthField]
-                                if ($duration -le 0 -or $duration -gt 1440) {
-                                    $validationResults += New-UDValidationResult -ValidationError "Activity duration must be between 1 and 1440 minutes" -Context $lengthField
-                                }
-                            } catch {
-                                $validationResults += New-UDValidationResult -ValidationError "Activity duration must be a valid number" -Context $lengthField
-                            }
-                        }
-                    }
-                }
-            }
-            
-            # Check for pain entries
-            if (-not [string]::IsNullOrWhiteSpace($EventData.pain_location_1) -or -not [string]::IsNullOrWhiteSpace($EventData.pain_level_1)) {
-                $hasData = $true
-                
-                # Validate pain level
-                if (-not [string]::IsNullOrWhiteSpace($EventData.pain_level_1)) {
-                    try {
-                        $painLevel = [int]$EventData.pain_level_1
-                        if ($painLevel -lt 0 -or $painLevel -gt 10) {
-                            $validationResults += New-UDValidationResult -ValidationError "Pain level must be between 0 and 10" -Context "pain_level_1"
-                        }
-                    } catch {
-                        $validationResults += New-UDValidationResult -ValidationError "Pain level must be a valid number" -Context "pain_level_1"
-                    }
-                }
-                
-                # If pain level is provided, location should also be provided
-                if (-not [string]::IsNullOrWhiteSpace($EventData.pain_level_1) -and [string]::IsNullOrWhiteSpace($EventData.pain_location_1)) {
-                    $validationResults += New-UDValidationResult -ValidationError "Pain location is required when pain level is specified" -Context "pain_location_1"
-                }
-                
-                # Validate additional pain entries
-                $painLevelFields = $EventData.Keys | Where-Object { $_ -like "pain_level_*" -and $_ -ne "pain_level_1" }
-                foreach ($painField in $painLevelFields) {
-                    if (-not [string]::IsNullOrWhiteSpace($EventData[$painField])) {
-                        try {
-                            $painLevel = [int]$EventData[$painField]
-                            if ($painLevel -lt 0 -or $painLevel -gt 10) {
-                                $validationResults += New-UDValidationResult -ValidationError "Pain level must be between 0 and 10" -Context $painField
-                            }
-                        } catch {
-                            $validationResults += New-UDValidationResult -ValidationError "Pain level must be a valid number" -Context $painField
-                        }
-                        
-                        # Check corresponding location
-                        $entryNum = ($painField -split "_")[-1]
-                        $locationField = "pain_location_$entryNum"
-                        if ([string]::IsNullOrWhiteSpace($EventData[$locationField])) {
-                            $validationResults += New-UDValidationResult -ValidationError "Pain location is required when pain level is specified" -Context $locationField
-                        }
-                    }
-                }
-            }
-            
-            # Check for vital signs
-            if (-not [string]::IsNullOrWhiteSpace($EventData.o2) -or -not [string]::IsNullOrWhiteSpace($EventData.bpr)) {
-                $hasData = $true
-                
-                # Validate oxygen saturation
-                if (-not [string]::IsNullOrWhiteSpace($EventData.o2)) {
-                    try {
-                        $o2Level = [int]$EventData.o2
-                        if ($o2Level -lt 70 -or $o2Level -gt 100) {
-                            $validationResults += New-UDValidationResult -ValidationError "Oxygen saturation must be between 70 and 100%" -Context "o2"
-                        }
-                    } catch {
-                        $validationResults += New-UDValidationResult -ValidationError "Oxygen saturation must be a valid number" -Context "o2"
-                    }
-                }
-                
-                # Validate blood pressure format (basic validation for XXX/XX or XX/XX format)
-                if (-not [string]::IsNullOrWhiteSpace($EventData.bpr)) {
-                    if ($EventData.bpr -notmatch '^\d{2,3}\/\d{2,3}$') {
-                        $validationResults += New-UDValidationResult -ValidationError "Blood pressure must be in format XXX/XX (e.g., 120/80)" -Context "bpr"
-                    } else {
-                        # Extract systolic and diastolic values for additional validation
-                        $bpParts = $EventData.bpr -split '/'
-                        $systolic = [int]$bpParts[0]
-                        $diastolic = [int]$bpParts[1]
-                        
-                        if ($systolic -lt 60 -or $systolic -gt 250) {
-                            $validationResults += New-UDValidationResult -ValidationError "Systolic pressure must be between 60 and 250 mmHg" -Context "bpr"
-                        }
-                        if ($diastolic -lt 30 -or $diastolic -gt 150) {
-                            $validationResults += New-UDValidationResult -ValidationError "Diastolic pressure must be between 30 and 150 mmHg" -Context "bpr"
-                        }
-                        if ($systolic -le $diastolic) {
-                            $validationResults += New-UDValidationResult -ValidationError "Systolic pressure must be higher than diastolic pressure" -Context "bpr"
-                        }
-                    }
-                }
-            }
-            
-            # Check if notes or sleep data is provided (these also count as valid data)
-            if (-not [string]::IsNullOrWhiteSpace($EventData.notes) -or -not [string]::IsNullOrWhiteSpace($EventData.sleep)) {
-                $hasData = $true
-            }
-            
-            # Require at least one type of health data
-            if (-not $hasData) {
-                $validationResults += New-UDValidationResult -ValidationError "Please provide at least one type of health data: medications, activities, pain levels, vital signs, notes, or sleep information"
-            }
-            
-            # Validate sleep duration format if provided
-            if (-not [string]::IsNullOrWhiteSpace($EventData.sleep)) {
-                # Accept various formats: "7.5 hours", "8:30", "6h 45m", "7", "7.5"
-                $sleepPattern = '^(\d+(\.\d+)?\s*(hours?|hrs?|h)?|\d{1,2}:\d{2}|\d+h\s*\d*m?)$'
-                if ($EventData.sleep -notmatch $sleepPattern) {
-                    $validationResults += New-UDValidationResult -ValidationError "Sleep duration format not recognized. Use formats like: '7.5 hours', '8:30', '6h 45m', or '7.5'" -Context "sleep"
-                }
-            }
-            
-            # Return validation results
-            if ($validationResults.Count -gt 0) {
-                return $validationResults
-            } else {
-                return $null  # No validation errors
-            }
-        } -Children {
+        New-UDForm -Children {
             # Date and Time fields
             New-UDCard -Title "📅 Date & Time" -Content {
                 New-UDGrid -Container -Children {
@@ -637,9 +447,192 @@
                 Import-Module -Name fusion -Force
                 $FormEvent = $EventData[0]
                 
-                # Validate required fields again as a safety check
-                if ([string]::IsNullOrWhiteSpace($FormEvent.date) -or [string]::IsNullOrWhiteSpace($FormEvent.timestamp)) {
-                    Show-UDToast -Message "Date and time are required fields" -MessageColor Red -Duration 5000
+                # Comprehensive form validation before processing
+                $validationErrors = @()
+                
+                # Validate required fields: Date and Time
+                if ([string]::IsNullOrWhiteSpace($FormEvent.date)) {
+                    $validationErrors += "❌ Date is required"
+                } else {
+                    try {
+                        $parsedDate = [datetime]::Parse($FormEvent.date)
+                        # Check if date is not in the future (allowing today)
+                        if ($parsedDate.Date -gt (Get-Date).Date) {
+                            $validationErrors += "❌ Date cannot be in the future"
+                        }
+                    } catch {
+                        $validationErrors += "❌ Invalid date format"
+                    }
+                }
+                
+                if ([string]::IsNullOrWhiteSpace($FormEvent.timestamp)) {
+                    $validationErrors += "❌ Time is required"
+                } else {
+                    try {
+                        $parsedTime = [datetime]::Parse($FormEvent.timestamp)
+                    } catch {
+                        $validationErrors += "❌ Invalid time format"
+                    }
+                }
+                
+                # Check that at least one data category is provided
+                $hasData = $false
+                
+                # Check for medications
+                $medicationFields = $FormEvent.PSObject.Properties.Name | Where-Object { $_ -like "med_*" }
+                $hasCheckedMedications = $false
+                foreach ($field in $medicationFields) {
+                    if ($FormEvent.$field -eq $true) {
+                        $hasCheckedMedications = $true
+                        break
+                    }
+                }
+                if ($hasCheckedMedications) { $hasData = $true }
+                
+                # Check for activities
+                if (-not [string]::IsNullOrWhiteSpace($FormEvent.activities_type_1)) {
+                    $hasData = $true
+                    
+                    # Validate activity duration if provided
+                    if (-not [string]::IsNullOrWhiteSpace($FormEvent.activities_length_1)) {
+                        try {
+                            $duration = [int]$FormEvent.activities_length_1
+                            if ($duration -le 0 -or $duration -gt 1440) { # Max 24 hours in minutes
+                                $validationErrors += "❌ Activity duration must be between 1 and 1440 minutes (24 hours)"
+                            }
+                        } catch {
+                            $validationErrors += "❌ Activity duration must be a valid number"
+                        }
+                    }
+                    
+                    # Validate additional activities if they exist
+                    $activityFields = $FormEvent.PSObject.Properties.Name | Where-Object { $_ -like "activities_type_*" -and $_ -ne "activities_type_1" }
+                    foreach ($actField in $activityFields) {
+                        if (-not [string]::IsNullOrWhiteSpace($FormEvent.$actField)) {
+                            $entryNum = ($actField -split "_")[-1]
+                            $lengthField = "activities_length_$entryNum"
+                            if ($FormEvent.PSObject.Properties.Name -contains $lengthField -and -not [string]::IsNullOrWhiteSpace($FormEvent.$lengthField)) {
+                                try {
+                                    $duration = [int]$FormEvent.$lengthField
+                                    if ($duration -le 0 -or $duration -gt 1440) {
+                                        $validationErrors += "❌ Activity #$entryNum duration must be between 1 and 1440 minutes"
+                                    }
+                                } catch {
+                                    $validationErrors += "❌ Activity #$entryNum duration must be a valid number"
+                                }
+                            }
+                        }
+                    }
+                }
+                
+                # Check for pain entries
+                if (-not [string]::IsNullOrWhiteSpace($FormEvent.pain_location_1) -or -not [string]::IsNullOrWhiteSpace($FormEvent.pain_level_1)) {
+                    $hasData = $true
+                    
+                    # Validate pain level
+                    if (-not [string]::IsNullOrWhiteSpace($FormEvent.pain_level_1)) {
+                        try {
+                            $painLevel = [int]$FormEvent.pain_level_1
+                            if ($painLevel -lt 0 -or $painLevel -gt 10) {
+                                $validationErrors += "❌ Pain level must be between 0 and 10"
+                            }
+                        } catch {
+                            $validationErrors += "❌ Pain level must be a valid number"
+                        }
+                    }
+                    
+                    # If pain level is provided, location should also be provided
+                    if (-not [string]::IsNullOrWhiteSpace($FormEvent.pain_level_1) -and [string]::IsNullOrWhiteSpace($FormEvent.pain_location_1)) {
+                        $validationErrors += "❌ Pain location is required when pain level is specified"
+                    }
+                    
+                    # Validate additional pain entries
+                    $painLevelFields = $FormEvent.PSObject.Properties.Name | Where-Object { $_ -like "pain_level_*" -and $_ -ne "pain_level_1" }
+                    foreach ($painField in $painLevelFields) {
+                        if (-not [string]::IsNullOrWhiteSpace($FormEvent.$painField)) {
+                            try {
+                                $painLevel = [int]$FormEvent.$painField
+                                if ($painLevel -lt 0 -or $painLevel -gt 10) {
+                                    $entryNum = ($painField -split "_")[-1]
+                                    $validationErrors += "❌ Pain level for entry #$entryNum must be between 0 and 10"
+                                }
+                            } catch {
+                                $entryNum = ($painField -split "_")[-1]
+                                $validationErrors += "❌ Pain level for entry #$entryNum must be a valid number"
+                            }
+                            
+                            # Check corresponding location
+                            $entryNum = ($painField -split "_")[-1]
+                            $locationField = "pain_location_$entryNum"
+                            if ($FormEvent.PSObject.Properties.Name -contains $locationField -and [string]::IsNullOrWhiteSpace($FormEvent.$locationField)) {
+                                $validationErrors += "❌ Pain location is required for entry #$entryNum when pain level is specified"
+                            }
+                        }
+                    }
+                }
+                
+                # Check for vital signs
+                if (-not [string]::IsNullOrWhiteSpace($FormEvent.o2) -or -not [string]::IsNullOrWhiteSpace($FormEvent.bpr)) {
+                    $hasData = $true
+                    
+                    # Validate oxygen saturation
+                    if (-not [string]::IsNullOrWhiteSpace($FormEvent.o2)) {
+                        try {
+                            $o2Level = [int]$FormEvent.o2
+                            if ($o2Level -lt 70 -or $o2Level -gt 100) {
+                                $validationErrors += "❌ Oxygen saturation must be between 70 and 100%"
+                            }
+                        } catch {
+                            $validationErrors += "❌ Oxygen saturation must be a valid number"
+                        }
+                    }
+                    
+                    # Validate blood pressure format
+                    if (-not [string]::IsNullOrWhiteSpace($FormEvent.bpr)) {
+                        if ($FormEvent.bpr -notmatch '^\d{2,3}\/\d{2,3}$') {
+                            $validationErrors += "❌ Blood pressure must be in format XXX/XX (e.g., 120/80)"
+                        } else {
+                            # Extract systolic and diastolic values for additional validation
+                            $bpParts = $FormEvent.bpr -split '/'
+                            $systolic = [int]$bpParts[0]
+                            $diastolic = [int]$bpParts[1]
+                            
+                            if ($systolic -lt 60 -or $systolic -gt 250) {
+                                $validationErrors += "❌ Systolic pressure must be between 60 and 250 mmHg"
+                            }
+                            if ($diastolic -lt 30 -or $diastolic -gt 150) {
+                                $validationErrors += "❌ Diastolic pressure must be between 30 and 150 mmHg"
+                            }
+                            if ($systolic -le $diastolic) {
+                                $validationErrors += "❌ Systolic pressure must be higher than diastolic pressure"
+                            }
+                        }
+                    }
+                }
+                
+                # Check if notes or sleep data is provided (these also count as valid data)
+                if (-not [string]::IsNullOrWhiteSpace($FormEvent.notes) -or -not [string]::IsNullOrWhiteSpace($FormEvent.sleep)) {
+                    $hasData = $true
+                }
+                
+                # Require at least one type of health data
+                if (-not $hasData) {
+                    $validationErrors += "❌ Please provide at least one type of health data: medications, activities, pain levels, vital signs, notes, or sleep information"
+                }
+                
+                # Validate sleep duration format if provided
+                if (-not [string]::IsNullOrWhiteSpace($FormEvent.sleep)) {
+                    # Accept various formats: "7.5 hours", "8:30", "6h 45m", "7", "7.5"
+                    $sleepPattern = '^(\d+(\.\d+)?\s*(hours?|hrs?|h)?|\d{1,2}:\d{2}|\d+h\s*\d*m?)$'
+                    if ($FormEvent.sleep -notmatch $sleepPattern) {
+                        $validationErrors += "❌ Sleep duration format not recognized. Use formats like: '7.5 hours', '8:30', '6h 45m', or '7.5'"
+                    }
+                }
+                
+                # If there are validation errors, show them and stop processing
+                if ($validationErrors.Count -gt 0) {
+                    $errorMessage = "Please fix the following validation errors:`n`n" + ($validationErrors -join "`n")
+                    Show-UDToast -Message $errorMessage -MessageColor Red -Duration 8000
                     return
                 }
                 
@@ -648,7 +641,7 @@
                     $FormEvent.timestamp = [datetime]::Parse($FormEvent.timestamp).ToString("HHmm")
                     $FormEvent.date = [datetime]::Parse($FormEvent.date).ToString("MMdd")
                 } catch {
-                    Show-UDToast -Message "Invalid date or time format: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+                    Show-UDToast -Message "❌ Invalid date or time format: $($_.Exception.Message)" -MessageColor Red -Duration 5000
                     return
                 }
                 
@@ -658,7 +651,7 @@
                 $entry = ConvertTo-EntriesFormat -Entry ( $FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
                 
                 if (-not $entry) {
-                    Show-UDToast -Message "Failed to convert form data to entry format" -MessageColor Red -Duration 5000
+                    Show-UDToast -Message "❌ Failed to convert form data to entry format" -MessageColor Red -Duration 5000
                     return
                 }
                 
