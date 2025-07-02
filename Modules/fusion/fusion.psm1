@@ -116,12 +116,17 @@ function ConvertTo-EntriesFormat {
         [pscustomobject]$Entry
     )
     
+    # Validate input type
+    if ($Entry -isnot [PSCustomObject]) {
+        throw "Entry parameter must be a PSCustomObject"
+    }
+    
     # Convert to entries.json format
     Write-Host "Converting entry to entries.json format..."
 
     # Extract basic info
-    $Date = $Entry.date
-    $Timestamp = $Entry.timestamp
+    $Date = if ($Entry.date) { $Entry.date } else { "" }
+    $Timestamp = if ($Entry.timestamp) { $Entry.timestamp } else { "" }
 
     # Build Medications object - New format uses boolean flags like med_dilaudid_4mg: true
     $Medications = @{}
@@ -133,17 +138,21 @@ function ConvertTo-EntriesFormat {
             $medName = $matches[1]
             $dosage = $matches[2]
             
-            # Handle multiple doses of same medication
-            if ($Medications.ContainsKey($medName)) {
-                # Convert to array if not already
-                if ($Medications[$medName] -is [string]) {
-                    $Medications[$medName] = @($Medications[$medName], $dosage)
+            # Validate that this looks like a valid medication name (known medication names)
+            $validMedicationNames = @("tylenol", "dilaudid", "valium", "vitaminD", "lexapro", "journavx", "oxycodone")
+            if ($medName -in $validMedicationNames) {
+                # Handle multiple doses of same medication
+                if ($Medications.ContainsKey($medName)) {
+                    # Convert to array if not already
+                    if ($Medications[$medName] -is [string]) {
+                        $Medications[$medName] = @($Medications[$medName], $dosage)
+                    } else {
+                        # Already an array, add new element
+                        $Medications[$medName] = $Medications[$medName] + @($dosage)
+                    }
                 } else {
-                    # Already an array, add new element
-                    $Medications[$medName] = $Medications[$medName] + @($dosage)
+                    $Medications[$medName] = $dosage
                 }
-            } else {
-                $Medications[$medName] = $dosage
             }
         }
     }
@@ -167,10 +176,16 @@ function ConvertTo-EntriesFormat {
                 } else { "" }
                 
                 if ($location -and $level) {
-                    # New schema format: nested object with pain_level as decimal number and note
-                    $Pain[$location] = @{
-                        "pain_level" = [double]$level  # Convert to double to handle decimals like 5.5
-                        "note" = $note
+                    # Try to convert level to double with error handling
+                    try {
+                        $levelDouble = [double]$level
+                        # New schema format: nested object with pain_level as decimal number and note
+                        $Pain[$location] = @{
+                            "pain_level" = $levelDouble
+                            "note" = $note
+                        }
+                    } catch {
+                        Write-Warning "Invalid pain level '$level' for location '$location' - skipping entry"
                     }
                 }
             }
@@ -200,8 +215,13 @@ function ConvertTo-EntriesFormat {
             $duration = $null
             $note = ""
             if ($Entry.PSObject.Properties[$lengthProp]) {
-                $duration = [int]$Entry.PSObject.Properties[$lengthProp].Value
-                Write-Information "Found length property with value: $duration"
+                try {
+                    $duration = [int]$Entry.PSObject.Properties[$lengthProp].Value
+                    Write-Information "Found length property with value: $duration"
+                } catch {
+                    Write-Warning "Invalid activity duration '$($Entry.PSObject.Properties[$lengthProp].Value)' for activity '$activityType' - skipping"
+                    continue
+                }
             } else {
                 Write-Information "No matching duration property found for ID $id"
                 # List all available properties for debugging
@@ -213,7 +233,7 @@ function ConvertTo-EntriesFormat {
                 $note = $Entry.PSObject.Properties[$noteProp].Value
             }
             
-            if ($activityType -and $duration) {
+            if ($activityType -and $null -ne $duration) {
                 # New schema format: nested object with duration and note
                 $Activities[$activityType] = @{
                     "duration" = $duration
@@ -279,13 +299,19 @@ function Update-DailyMaxPainLevel {
             # Skip non-timestamp entries like "Sleep", "ScarImage", "max_pain_level"
             if ($timestamp -match '^\d{4}$') {
                 $entry = $Entries[$Date][$timestamp]
-                if ($entry.ContainsKey("Pain") -and $entry.Pain) {
-                    foreach ($location in $entry.Pain.Keys) {
-                        $painData = $entry.Pain[$location]
-                        if ($painData -and $painData.ContainsKey("pain_level")) {
-                            $level = [double]$painData["pain_level"]
-                            if ($level -gt $maxPainForDay) { 
-                                $maxPainForDay = $level 
+                if ($entry -is [hashtable] -and $entry.ContainsKey("Pain") -and $entry.Pain) {
+                    if ($entry.Pain -is [hashtable]) {
+                        foreach ($location in $entry.Pain.Keys) {
+                            $painData = $entry.Pain[$location]
+                            if ($painData -is [hashtable] -and $painData.ContainsKey("pain_level")) {
+                                try {
+                                    $level = [double]$painData["pain_level"]
+                                    if ($level -gt $maxPainForDay) { 
+                                        $maxPainForDay = $level 
+                                    }
+                                } catch {
+                                    Write-Warning "Invalid pain level data for $Date/$timestamp/$location - skipping"
+                                }
                             }
                         }
                     }

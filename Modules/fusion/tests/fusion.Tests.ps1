@@ -463,3 +463,423 @@ Describe "Integration Tests" {
         }
     }
 }
+
+Describe "Input Validation Tests" {
+    
+    Context "ConvertTo-EntriesFormat Parameter Validation" {
+        It "Should throw when Entry parameter is null" {
+            { ConvertTo-EntriesFormat -Entry $null } | Should -Throw
+        }
+        
+        It "Should handle non-PSCustomObject input gracefully" {
+            # PowerShell automatically converts strings to PSCustomObject, so this should not throw
+            # but will result in empty/default values
+            $result = ConvertTo-EntriesFormat -Entry "not an object"
+            $result | Should -Not -BeNullOrEmpty
+            $result.Date | Should -Be ""
+            $result.Timestamp | Should -Be ""
+        }
+        
+        It "Should handle Entry with missing required fields gracefully" {
+            $incompleteEntry = [PSCustomObject]@{
+                # Missing date and timestamp
+                notes = "Test note"
+            }
+            
+            # Should not throw, but should handle gracefully
+            { ConvertTo-EntriesFormat -Entry $incompleteEntry } | Should -Not -Throw
+        }
+        
+        It "Should handle Entry with null/empty date and timestamp" {
+            $entryWithNulls = [PSCustomObject]@{
+                date = $null
+                timestamp = ""
+                notes = "Test"
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $entryWithNulls
+            $result.Date | Should -Be ""
+            $result.Timestamp | Should -Be ""
+        }
+        
+        It "Should validate medication property format" {
+            $invalidMedEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                med_invalid_format = $true  # Should not match pattern
+                med_tylenol_1g = $true      # Should match pattern
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $invalidMedEntry
+            # Should only process valid medication format
+            $result.EntryStructure.Medications.Keys | Should -Contain "tylenol"
+            $result.EntryStructure.Medications.Keys | Should -Not -Contain "invalid"
+        }
+        
+        It "Should handle non-boolean medication values" {
+            $invalidMedValues = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                med_tylenol_1g = "not a boolean"  # Should be ignored
+                med_dilaudid_4mg = $true          # Should be processed
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $invalidMedValues
+            $result.EntryStructure.Medications.Keys | Should -Not -Contain "tylenol"
+            $result.EntryStructure.Medications.Keys | Should -Contain "dilaudid"
+        }
+        
+        It "Should validate pain level as numeric" {
+            $invalidPainEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_pain = $true
+                pain_location_1 = "back"
+                pain_level_1 = "not a number"  # Invalid
+                pain_location_2 = "hip"
+                pain_level_2 = "5"             # Valid
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $invalidPainEntry
+            # Should skip invalid pain entries but process valid ones
+            $result.EntryStructure.Pain.Keys | Should -Not -Contain "back"
+            $result.EntryStructure.Pain.Keys | Should -Contain "hip"
+        }
+        
+        It "Should validate activity duration as integer" {
+            $invalidActivityEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_activity = $true
+                activities_type_1 = "Walking"
+                activities_length_1 = "not a number"  # Invalid
+                activities_type_2 = "Swimming"
+                activities_length_2 = "30"            # Valid
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $invalidActivityEntry
+            # Should skip invalid activity entries but process valid ones
+            $result.EntryStructure.Activities.Keys | Should -Not -Contain "Walking"
+            $result.EntryStructure.Activities.Keys | Should -Contain "Swimming"
+        }
+        
+        It "Should handle extremely large numeric values" {
+            $extremeEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_pain = $true
+                pain_location_1 = "back"
+                pain_level_1 = "999999999"  # Very large number
+                add_activity = $true
+                activities_type_1 = "Walking"
+                activities_length_1 = "999999999"  # Very large duration
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $extremeEntry
+            # Should handle large numbers without throwing
+            $result.EntryStructure.Pain["back"].pain_level | Should -Be 999999999.0
+            $result.EntryStructure.Activities["Walking"].duration | Should -Be 999999999
+        }
+        
+        It "Should handle negative numeric values" {
+            $negativeEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_pain = $true
+                pain_location_1 = "back"
+                pain_level_1 = "-5"  # Negative pain level
+                add_activity = $true
+                activities_type_1 = "Walking"
+                activities_length_1 = "-30"  # Negative duration
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $negativeEntry
+            # Should handle negative numbers (might be valid for some use cases)
+            $result.EntryStructure.Pain["back"].pain_level | Should -Be -5
+            $result.EntryStructure.Activities["Walking"].duration | Should -Be -30
+        }
+        
+        It "Should handle decimal pain levels" {
+            $decimalEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_pain = $true
+                pain_location_1 = "back"
+                pain_level_1 = "5.5"  # Decimal pain level
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $decimalEntry
+            $result.EntryStructure.Pain["back"].pain_level | Should -Be 5.5
+            $result.EntryStructure.Pain["back"].pain_level | Should -BeOfType [double]
+        }
+        
+        It "Should handle special characters in text fields" {
+            $specialCharsText = "Test with special chars: !@#$%^&*()_+-=[]{}|;':`",./<>?~"
+            $unicodeText = "Pain with émojis 😵‍💫 and unicode ñoté"
+            
+            $specialCharsEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                notes = $specialCharsText
+                add_pain = $true
+                pain_location_1 = "back"
+                pain_level_1 = "5"
+                pain_note_1 = $unicodeText
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $specialCharsEntry
+            $result.EntryStructure.note | Should -Be $specialCharsText
+            $result.EntryStructure.Pain["back"].note | Should -Be $unicodeText
+        }
+        
+        It "Should handle very long text fields" {
+            $longText = "a" * 10000  # 10KB of text
+            $longTextEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                notes = $longText
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $longTextEntry
+            $result.EntryStructure.note | Should -Be $longText
+            $result.EntryStructure.note.Length | Should -Be 10000
+        }
+    }
+    
+    Context "Update-DailyMaxPainLevel Parameter Validation" {
+        It "Should throw when Entries parameter is null" {
+            { Update-DailyMaxPainLevel -Entries $null -Date "0630" } | Should -Throw
+        }
+        
+        It "Should throw when Date parameter is null or empty" {
+            $testEntries = @{}
+            { Update-DailyMaxPainLevel -Entries $testEntries -Date $null } | Should -Throw
+            { Update-DailyMaxPainLevel -Entries $testEntries -Date "" } | Should -Throw
+        }
+        
+        It "Should handle non-hashtable Entries parameter" {
+            { Update-DailyMaxPainLevel -Entries "not a hashtable" -Date "0630" } | Should -Throw
+        }
+        
+        It "Should handle malformed date strings" {
+            $testEntries = @{}
+            # Should not throw, but should handle gracefully
+            $result = Update-DailyMaxPainLevel -Entries $testEntries -Date "invalid-date"
+            $result | Should -Be 0.0
+        }
+        
+        It "Should handle entries with corrupted pain data" {
+            $corruptedEntries = @{
+                "0630" = @{
+                    "1200" = @{
+                        "Pain" = "not a hashtable"  # Corrupted pain data
+                    }
+                    "1400" = @{
+                        "Pain" = @{
+                            "back" = "not an object"  # Corrupted pain entry
+                        }
+                    }
+                    "1600" = @{
+                        "Pain" = @{
+                            "hip" = @{
+                                "pain_level" = "not a number"  # Invalid pain level
+                            }
+                        }
+                    }
+                }
+            }
+            
+            # Should handle gracefully without throwing
+            $result = Update-DailyMaxPainLevel -Entries $corruptedEntries -Date "0630"
+            $result | Should -Be 0.0
+        }
+    }
+    
+    Context "Save-ConvertedEntry Parameter Validation" {
+        It "Should throw when ConvertedEntry parameter is null" {
+            { Save-ConvertedEntry -ConvertedEntry $null } | Should -Throw
+        }
+        
+        It "Should throw when ConvertedEntry is not a hashtable" {
+            { Save-ConvertedEntry -ConvertedEntry "not a hashtable" } | Should -Throw
+        }
+        
+        It "Should handle ConvertedEntry missing required properties" {
+            $incompleteEntry = @{
+                # Missing Date, Timestamp, EntryStructure
+            }
+            
+            # Should handle gracefully or throw appropriate error
+            { Save-ConvertedEntry -ConvertedEntry $incompleteEntry -EntriesPath $global:TestEntriesPath } | Should -Throw
+        }
+        
+        It "Should handle invalid file path" {
+            $validEntry = @{
+                Date = "0630"
+                Timestamp = "1200"
+                EntryStructure = @{
+                    Medications = @{}
+                    Pain = @{}
+                    Activities = @{}
+                }
+                FullEntry = @{}
+            }
+            
+            # Test with invalid/inaccessible path
+            { Save-ConvertedEntry -ConvertedEntry $validEntry -EntriesPath "/invalid/path/entries.json" } | Should -Throw
+        }
+        
+        It "Should handle entries path with special characters" {
+            $validEntry = @{
+                Date = "0630"
+                Timestamp = "1200"
+                EntryStructure = @{
+                    Medications = @{}
+                    Pain = @{}
+                    Activities = @{}
+                }
+                FullEntry = @{}
+            }
+            
+            $specialPath = Join-Path $TestDrive "test entries with spaces & symbols!@#.json"
+            $result = Save-ConvertedEntry -ConvertedEntry $validEntry -EntriesPath $specialPath
+            $result | Should -Be $true
+            Test-Path $specialPath | Should -Be $true
+        }
+        
+        It "Should handle corrupted existing entries file" {
+            # Create corrupted JSON file
+            $corruptedPath = Join-Path $TestDrive "corrupted.json"
+            "{ invalid json content" | Out-File $corruptedPath -Encoding UTF8
+            
+            $validEntry = @{
+                Date = "0630"
+                Timestamp = "1200"
+                EntryStructure = @{
+                    Medications = @{}
+                    Pain = @{}
+                    Activities = @{}
+                }
+                FullEntry = @{}
+            }
+            
+            # Should handle corrupted file gracefully
+            { Save-ConvertedEntry -ConvertedEntry $validEntry -EntriesPath $corruptedPath } | Should -Throw
+        }
+    }
+    
+    Context "Edge Cases and Boundary Conditions" {
+        It "Should handle timestamp at midnight boundary" {
+            $midnightEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "0000"
+                notes = "Midnight entry"
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $midnightEntry
+            $result.Timestamp | Should -Be "0000"
+        }
+        
+        It "Should handle timestamp at end of day boundary" {
+            $endOfDayEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "2359"
+                notes = "End of day entry"
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $endOfDayEntry
+            $result.Timestamp | Should -Be "2359"
+        }
+        
+        It "Should handle leap year date formats" {
+            $leapYearEntry = [PSCustomObject]@{
+                date = "0229"  # Feb 29 (leap year)
+                timestamp = "1200"
+                notes = "Leap year test"
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $leapYearEntry
+            $result.Date | Should -Be "0229"
+        }
+        
+        It "Should handle maximum number of activities" {
+            # Create entry with many activities (stress test)
+            $manyActivitiesEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_activity = $true
+            }
+            
+            # Add 50 activities with different IDs
+            for ($i = 1; $i -le 50; $i++) {
+                $manyActivitiesEntry | Add-Member -NotePropertyName "activities_type_$i" -NotePropertyValue "Activity$i"
+                $manyActivitiesEntry | Add-Member -NotePropertyName "activities_length_$i" -NotePropertyValue "$i"
+                $manyActivitiesEntry | Add-Member -NotePropertyName "activities_note_$i" -NotePropertyValue "Note $i"
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $manyActivitiesEntry
+            $result.EntryStructure.Activities.Keys.Count | Should -Be 50
+        }
+        
+        It "Should handle maximum number of pain locations" {
+            # Create entry with many pain locations (stress test)
+            $manyPainEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_pain = $true
+            }
+            
+            # Add 20 pain locations
+            for ($i = 1; $i -le 20; $i++) {
+                $manyPainEntry | Add-Member -NotePropertyName "pain_location_$i" -NotePropertyValue "location$i"
+                $manyPainEntry | Add-Member -NotePropertyName "pain_level_$i" -NotePropertyValue "$i"
+                $manyPainEntry | Add-Member -NotePropertyName "pain_note_$i" -NotePropertyValue "Pain note $i"
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $manyPainEntry
+            $result.EntryStructure.Pain.Keys.Count | Should -Be 20
+        }
+    }
+    
+    Context "Data Type Conversion and Coercion" {
+        It "Should handle string numbers that should be integers" {
+            $stringNumberEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_activity = $true
+                activities_type_1 = "Walking"
+                activities_length_1 = "30"  # String that should become int
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $stringNumberEntry
+            $result.EntryStructure.Activities["Walking"].duration | Should -BeOfType [int]
+            $result.EntryStructure.Activities["Walking"].duration | Should -Be 30
+        }
+        
+        It "Should handle string numbers that should be doubles" {
+            $stringDoubleEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_pain = $true
+                pain_location_1 = "back"
+                pain_level_1 = "5.5"  # String that should become double
+            }
+            
+            $result = ConvertTo-EntriesFormat -Entry $stringDoubleEntry
+            $result.EntryStructure.Pain["back"].pain_level | Should -BeOfType [double]
+            $result.EntryStructure.Pain["back"].pain_level | Should -Be 5.5
+        }
+        
+        It "Should handle boolean-like strings" {
+            $booleanStringEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_activity = "true"  # String instead of boolean
+                add_pain = "false"     # String instead of boolean
+            }
+            
+            # Should handle gracefully
+            { ConvertTo-EntriesFormat -Entry $booleanStringEntry } | Should -Not -Throw
+        }
+    }
+}
