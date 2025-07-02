@@ -7,6 +7,7 @@
 - `Update-DailyMaxPainLevel` - Automatic daily pain level calculations
 - `Save-ConvertedEntry` - Data persistence with error handling
 - `Get-CachedEntriesData` - PSU cache integration with fallback support
+- `Remove-TimeEntry` - Safe deletion of timestamped entries with validation and backup
 - Comprehensive Pester test coverage
 - Input validation for activities, medications, and pain data
 - Support for medications, pain tracking, activities, and vitals
@@ -14,7 +15,7 @@
 ## Pending Features
 
 ### 🗑️ Data Management
-- [ ] **Add function to delete a timestamp entry** - Create `Remove-TimeEntry` function to safely delete specific time entries with validation
+- [x] **Add function to delete a timestamp entry** - ✅ Completed: `Remove-TimeEntry` function with validation, backup, and cache integration
 
 ### 🔍 Query & Retrieval
 - [ ] Add function to search entries by date range
