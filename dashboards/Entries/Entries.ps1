@@ -20,7 +20,6 @@
             }
         } -Style @{ padding = "20px"; marginBottom = "20px"; backgroundColor = "#f8f9fa" }
         New-UDForm -Children {
-            # Date and Time fields
             New-UDCard -Title "📅 Date & Time" -Content {
                 New-UDGrid -Container -Children {
                     $MSTDate = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId((Get-Date), 'Mountain Standard Time')
@@ -45,8 +44,6 @@
                     textAlign = "center"
                 }
             } -Style @{ marginBottom = "20px" }
-            # Medicatins Sectin
-            # Medications Section - Collapsible with Enhanced UI
             New-UDCard -Title "💊 Medications" -Content {
                 # Toggle button for collapsing/expanding medications
                 New-UDContainer -Children {
@@ -124,10 +121,6 @@
                     }
                 } -In:$false -Collapse -Timeout 500
             } -Style @{ marginBottom = "20px" }
-
-            # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)", and another for "Note"
-            # Activities Section - Enhanced UI
-            # Checkbox to enable/disable activities section
             New-UDCheckBox -Id "add_activity" -Label "🏃‍♂️ Add Activity Entry" -OnChange {
                 if ($EventData) {
                     # Checkbox is checked - show activities entry section
@@ -234,11 +227,8 @@
                     # Checkbox is unchecked - hide activities section
                     Set-UDElement -Id "activities_section" -Content { }
                 }
-            }            
-            # Activities section container (appears below checkbox when enabled)
+            }
             New-UDElement -Id "activities_section" -Tag "div"
-            
-            #pain section
             New-UDCheckbox -Id "add_pain" -Label "🩹 Add Pain Entry" -OnChange {
                 if ($EventData) {
                     # Checkbox is checked - show pain entry section
@@ -367,11 +357,8 @@
                     # Checkbox is unchecked - hide pain section
                     Set-UDElement -Id "pain_section" -Content { }
                 }
-            }           
-            # Pain section container (appears below checkbox when enabled)
+            }
             New-UDElement -Id "pain_section" -Tag "div"
-            
-            # Vitals Section - Enhanced UI
             New-UDCheckBox -Id "add_vitals" -Label "🩺 Add Vital Signs" -OnChange {
                 if ($EventData) {
                     # Checkbox is checked - show vitals entry section
@@ -417,17 +404,12 @@
                     Set-UDElement -Id "vitals_section" -Content { }
                 }
             }
-            # Vitals section container (appears below checkbox when enabled)
             New-UDElement -Id "vitals_section" -Tag "div"
-
-            # Add a text field for additional notes
             New-UDGrid -Container -Children {
                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
                     New-UDTextbox -Id "notes" -Label "📝 Additional Notes" -Type text -Placeholder "Any additional information" -FullWidth
                 }
             }
-
-            # Sleep tracking section
             New-UDGrid -Container -Children {
                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
                     New-UDTextbox -Id "sleep" -Label "😴 Sleep Duration" -Type text -Placeholder "e.g., 7.5 hours, 8:30, 6h 45m" -FullWidth -Style @{
@@ -435,8 +417,6 @@
                     }
                 }
             }
-
-            # Upload an image 
             New-UDGrid -Container -Children {
                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
                     New-UDUpload -Id 'ImageFile' -Text 'Select Image to Upload' -Accept 'image/*'
