@@ -155,7 +155,9 @@
                                         }
                                         
                                         # Update the time entries container
-                                        Set-UDElement -Id "timeEntriesContainer" -Content $timeEntriesContent
+                                        Set-UDElement -Id "timeEntriesContainer" -Content {
+                                            $timeEntriesContent
+                                        }
                                         
                                         # Show summary info
                                         $summaryInfo = @()
