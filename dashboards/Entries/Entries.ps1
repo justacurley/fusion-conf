@@ -473,8 +473,11 @@
                 if (-not [string]::IsNullOrWhiteSpace($FormEvent.activities_type_1)) {
                     $hasData = $true
                     
-                    # Validate activity duration if provided
-                    if (-not [string]::IsNullOrWhiteSpace($FormEvent.activities_length_1)) {
+                    # Validate that duration is provided when activity type is specified
+                    if ([string]::IsNullOrWhiteSpace($FormEvent.activities_length_1)) {
+                        $validationErrors += "❌ Activity duration is required when activity type is specified"
+                    } else {
+                        # Validate activity duration if provided
                         try {
                             $duration = [int]$FormEvent.activities_length_1
                             if ($duration -le 0 -or $duration -gt 1440) { # Max 24 hours in minutes
@@ -491,7 +494,12 @@
                         if (-not [string]::IsNullOrWhiteSpace($FormEvent.$actField)) {
                             $entryNum = ($actField -split "_")[-1]
                             $lengthField = "activities_length_$entryNum"
-                            if ($FormEvent.PSObject.Properties.Name -contains $lengthField -and -not [string]::IsNullOrWhiteSpace($FormEvent.$lengthField)) {
+                            
+                            # Check if duration is provided for this activity
+                            if (-not ($FormEvent.PSObject.Properties.Name -contains $lengthField) -or [string]::IsNullOrWhiteSpace($FormEvent.$lengthField)) {
+                                $validationErrors += "❌ Activity #$entryNum duration is required when activity type is specified"
+                            } else {
+                                # Validate the duration value
                                 try {
                                     $duration = [int]$FormEvent.$lengthField
                                     if ($duration -le 0 -or $duration -gt 1440) {
@@ -559,7 +567,7 @@
                     if (-not [string]::IsNullOrWhiteSpace($FormEvent.o2)) {
                         try {
                             $o2Level = [int]$FormEvent.o2
-                            if ($o2Level -lt 70 -or $o2Level -gt 100) {
+                            if ($o2Level -lt 60 -or $o2Level -gt 110) {
                                 $validationErrors += "❌ Oxygen saturation must be between 70 and 100%"
                             }
                         } catch {
