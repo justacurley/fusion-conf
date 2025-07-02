@@ -46,7 +46,7 @@
                                 if (-not $AllEntries) {
                                     # Fallback to loading from file if cache is empty
                                     Import-Module -Name GetFusion -Force
-                                    $EntriesPath = "/home/data/fusion-data/entries/entries.json"
+                                    $EntriesPath = Get-PSUVariable -Name "EntriesPath" -ValueOnly
                                     $AllEntries = Get-EntriesData -entriesPath $EntriesPath
                                     
                                     # Update cache for next time
@@ -102,7 +102,7 @@
                                                                 if (-not $AllEntries) {
                                                                     # Fallback to loading from file if cache is empty
                                                                     Import-Module -Name GetFusion -Force
-                                                                    $EntriesPath = "/home/data/fusion-data/entries/entries.json"
+                                                                    $EntriesPath = Get-PSUVariable -Name "EntriesPath" -ValueOnly
                                                                     $AllEntries = Get-EntriesData -entriesPath $EntriesPath
                                                                 }
                                                                 
@@ -113,6 +113,7 @@
                                                                 $AllEntries[$dateKey][$timeKey] = $updatedData
                                                                 
                                                                 # Save back to file
+                                                                $EntriesPath = Get-PSUVariable -Name "EntriesPath" -ValueOnly
                                                                 $AllEntries | ConvertTo-Json -Depth 10 | Set-Content -Path $EntriesPath -Encoding UTF8
                                                                 
                                                                 Show-UDToast -Message "✅ Successfully updated $formattedTime entry for $($parsedDate.ToString('MM/dd'))" -MessageColor Green -Duration 4000
