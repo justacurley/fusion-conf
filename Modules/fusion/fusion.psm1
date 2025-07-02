@@ -379,3 +379,99 @@ function Save-ConvertedEntry {
 }
 
 Export-ModuleMember -Function Save-ConvertedEntry
+
+function Get-CachedEntriesData {
+    <#
+    .SYNOPSIS
+    Gets entries data from PSU cache or file with automatic cache management
+    
+    .DESCRIPTION
+    This function attempts to load entries data from PSU cache first, falling back to file if cache is empty.
+    It handles PSCustomObject to hashtable conversion and updates the cache when loading from file.
+    
+    .PARAMETER CacheKey
+    The PSU cache key to use. Defaults to 'entriesData'
+    
+    .PARAMETER EntriesPathVariableName
+    The PSU variable name that contains the entries file path. Defaults to 'EntriesPath'
+    
+    .PARAMETER ForceReload
+    If true, bypasses cache and loads directly from file, then updates cache
+    
+    .EXAMPLE
+    $entries = Get-CachedEntriesData
+    
+    .EXAMPLE
+    $entries = Get-CachedEntriesData -ForceReload
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $false)]
+        [string]$CacheKey = 'entriesData',
+        
+        [Parameter(Mandatory = $false)]
+        [string]$EntriesPathVariableName = 'EntriesPath',
+        
+        [Parameter(Mandatory = $false)]
+        [switch]$ForceReload
+    )
+    
+    try {
+        $AllEntries = $null
+        
+        # Try to get from cache unless force reload is requested
+        if (-not $ForceReload) {
+            try {
+                $AllEntries = Get-PSUCache -Key $CacheKey
+                Write-Information "Attempted to load from PSU cache with key: $CacheKey"
+            } catch {
+                Write-Information "PSU cache not available or failed: $($_.Exception.Message)"
+            }
+        }
+        
+        if (-not $AllEntries -or $ForceReload) {
+            # Fallback to loading from file if cache is empty or force reload requested
+            Write-Information "Loading entries from file (cache empty or force reload)"
+            
+            try {
+                Import-Module -Name GetFusion -Force
+                $EntriesPath = Get-PSUVariable -Name $EntriesPathVariableName -ValueOnly
+                Write-Information "Got entries path from PSU variable: $EntriesPath"
+            } catch {
+                # Fallback to global variable if PSU variable not available
+                Write-Information "PSU variable not available, using global variable"
+                $EntriesPath = $global:EntriesPath
+            }
+            
+            if (-not $EntriesPath) {
+                throw "Could not determine entries file path from PSU variable or global variable"
+            }
+            
+            $AllEntries = Get-EntriesData -entriesPath $EntriesPath
+            
+            # Update cache for next time (only if PSU cache is available)
+            try {
+                Set-PSUCache -Key $CacheKey -Value $AllEntries -AbsoluteExpiration (Get-Date).AddDays(1)
+                Write-Information "Updated PSU cache with key: $CacheKey"
+            } catch {
+                Write-Information "Could not update PSU cache: $($_.Exception.Message)"
+            }
+        } else {
+            Write-Information "Loaded entries from PSU cache"
+            
+            # Convert PSCustomObject to hashtable if needed
+            if ($AllEntries -is [System.Management.Automation.PSCustomObject]) {
+                Write-Information "Converting cached PSCustomObject to hashtable"
+                $AllEntries = $AllEntries | ConvertTo-Json -Depth 20 | ConvertFrom-Json -AsHashtable
+            }
+        }
+        
+        return $AllEntries
+        
+    } catch {
+        Write-Error "Error in Get-CachedEntriesData: $($_.Exception.Message)"
+        throw
+    }
+}
+
+Export-ModuleMember -Function Get-CachedEntriesData

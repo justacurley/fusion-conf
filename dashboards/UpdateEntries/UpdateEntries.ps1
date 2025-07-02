@@ -40,24 +40,8 @@
                                 # Import modules and load data
                                 Import-Module -Name fusion -Force
                                 
-                                # Use cached entries data
-                                $AllEntries = Get-PSUCache -Key 'entriesData'
-                                
-                                if (-not $AllEntries) {
-                                    # Fallback to loading from file if cache is empty
-                                    Import-Module -Name GetFusion -Force
-                                    $EntriesPath = Get-PSUVariable -Name "EntriesPath" -ValueOnly
-                                    $AllEntries = Get-EntriesData -entriesPath $EntriesPath
-                                    
-                                    # Update cache for next time
-                                    Set-PSUCache -Key "entriesData" -Value $AllEntries -AbsoluteExpiration (Get-Date).AddDays(1)
-                                } else {
-                                    # Convert PSCustomObject to hashtable if needed
-                                    if ($AllEntries -is [System.Management.Automation.PSCustomObject]) {
-                                        Write-Information "Converting cached PSCustomObject to hashtable"
-                                        $AllEntries = $AllEntries | ConvertTo-Json -Depth 20 | ConvertFrom-Json -AsHashtable
-                                    }
-                                }
+                                # Use the new cached entries function
+                                $AllEntries = Get-CachedEntriesData
                                 
                                 if ($AllEntries.ContainsKey($dateKey)) {
                                     $dayEntries = $AllEntries[$dateKey]
@@ -102,21 +86,8 @@
                                                                 # Import modules
                                                                 Import-Module -Name fusion -Force
                                                                 
-                                                                # Use cached entries data
-                                                                $AllEntries = Get-PSUCache -Key 'entriesData'
-                                                                
-                                                                if (-not $AllEntries) {
-                                                                    # Fallback to loading from file if cache is empty
-                                                                    Import-Module -Name GetFusion -Force
-                                                                    $EntriesPath = Get-PSUVariable -Name "EntriesPath" -ValueOnly
-                                                                    $AllEntries = Get-EntriesData -entriesPath $EntriesPath
-                                                                } else {
-                                                                    # Convert PSCustomObject to hashtable if needed
-                                                                    if ($AllEntries -is [System.Management.Automation.PSCustomObject]) {
-                                                                        Write-Information "Converting cached PSCustomObject to hashtable for update operation"
-                                                                        $AllEntries = $AllEntries | ConvertTo-Json -Depth 20 | ConvertFrom-Json -AsHashtable
-                                                                    }
-                                                                }
+                                                                # Use the new cached entries function
+                                                                $AllEntries = Get-CachedEntriesData
                                                                 
                                                                 # Update the specific time entry
                                                                 if (-not $AllEntries.ContainsKey($dateKey)) {
@@ -130,10 +101,9 @@
                                                                 
                                                                 Show-UDToast -Message "✅ Successfully updated $formattedTime entry for $($parsedDate.ToString('MM/dd'))" -MessageColor Green -Duration 4000
                                                                 
-                                                                # Update cache
+                                                                # Update cache using the new function
                                                                 try {
-                                                                    $Entries = Get-EntriesData -entriesPath $EntriesPath
-                                                                    Set-PSUCache -Key "entriesData" -Value $Entries -AbsoluteExpiration (Get-Date).AddDays(1)
+                                                                    $null = Get-CachedEntriesData -ForceReload
                                                                 } catch {
                                                                     Write-Warning "Failed to update cache: $($_.Exception.Message)"
                                                                 }
