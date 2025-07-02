@@ -26,6 +26,7 @@
 - [ ] Add function to calculate weekly/monthly pain averages
 - [ ] Add function to generate medication compliance reports
 - [ ] Add function to analyze activity patterns and trends
+- [ ] Add function to analyze timestamp entries for possible duplicates
 - [ ] Add function to detect pain level correlations with activities
 
 ### 🔧 Data Maintenance
