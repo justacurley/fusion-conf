@@ -77,40 +77,102 @@
                                                         }
                                                     }
                                                     New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                                        New-UDButton -Text "💾 Update $formattedTime Entry" -Color primary -FullWidth -OnClick {
-                                                            try {
-                                                                # Get the updated JSON data
-                                                                $updatedJson = (Get-UDElement -Id "timeEntry_$timeKey").value
-                                                                $updatedData = $updatedJson | ConvertFrom-Json
-                                                                
-                                                                # Import modules
-                                                                Import-Module -Name fusion -Force
-                                                                
-                                                                # Use the new cached entries function
-                                                                $AllEntries = Get-CachedEntriesData
-                                                                
-                                                                # Update the specific time entry
-                                                                if (-not $AllEntries.ContainsKey($dateKey)) {
-                                                                    $AllEntries[$dateKey] = @{}
-                                                                }
-                                                                $AllEntries[$dateKey][$timeKey] = $updatedData
-                                                                
-                                                                # Save back to file
-                                                                $EntriesPath = Get-PSUVariable -Name "EntriesPath" -ValueOnly
-                                                                $AllEntries | ConvertTo-Json -Depth 10 | Set-Content -Path $EntriesPath -Encoding UTF8
-                                                                
-                                                                Show-UDToast -Message "✅ Successfully updated $formattedTime entry for $($parsedDate.ToString('MM/dd'))" -MessageColor Green -Duration 4000
-                                                                
-                                                                # Update cache using the new function
-                                                                try {
-                                                                    $null = Get-CachedEntriesData -ForceReload
-                                                                } catch {
-                                                                    Write-Warning "Failed to update cache: $($_.Exception.Message)"
+                                                        New-UDGrid -Container -Children {
+                                                            New-UDGrid -Item -ExtraSmallSize 8 -Children {
+                                                                New-UDButton -Text "💾 Update $formattedTime Entry" -Color primary -FullWidth -OnClick {
+                                                                    try {
+                                                                        # Get the updated JSON data
+                                                                        $updatedJson = (Get-UDElement -Id "timeEntry_$timeKey").value
+                                                                        $updatedData = $updatedJson | ConvertFrom-Json
+                                                                        
+                                                                        # Import modules
+                                                                        Import-Module -Name fusion -Force
+                                                                        
+                                                                        # Use the new cached entries function
+                                                                        $AllEntries = Get-CachedEntriesData
+                                                                        
+                                                                        # Update the specific time entry
+                                                                        if (-not $AllEntries.ContainsKey($dateKey)) {
+                                                                            $AllEntries[$dateKey] = @{}
+                                                                        }
+                                                                        $AllEntries[$dateKey][$timeKey] = $updatedData
+                                                                        
+                                                                        # Save back to file
+                                                                        $EntriesPath = Get-PSUVariable -Name "EntriesPath" -ValueOnly
+                                                                        $AllEntries | ConvertTo-Json -Depth 10 | Set-Content -Path $EntriesPath -Encoding UTF8
+                                                                        
+                                                                        Show-UDToast -Message "✅ Successfully updated $formattedTime entry for $($parsedDate.ToString('MM/dd'))" -MessageColor Green -Duration 4000
+                                                                        
+                                                                        # Update cache using the new function
+                                                                        try {
+                                                                            $null = Get-CachedEntriesData -ForceReload
+                                                                        } catch {
+                                                                            Write-Warning "Failed to update cache: $($_.Exception.Message)"
+                                                                        }
+                                                                    }
+                                                                    catch {
+                                                                        Show-UDToast -Message "❌ Error updating entry: $($_.Exception.Message)" -MessageColor Red -Duration 6000
+                                                                        Write-Error "Error updating time entry: $($_.Exception.Message)"
+                                                                    }
                                                                 }
                                                             }
-                                                            catch {
-                                                                Show-UDToast -Message "❌ Error updating entry: $($_.Exception.Message)" -MessageColor Red -Duration 6000
-                                                                Write-Error "Error updating time entry: $($_.Exception.Message)"
+                                                            New-UDGrid -Item -ExtraSmallSize 4 -Children {
+                                                                New-UDButton -Text "🗑️ Delete" -Color secondary -FullWidth -OnClick {
+                                                                    # Show confirmation dialog
+                                                                    Show-UDModal -Content {
+                                                                        New-UDCard -Title "⚠️ Confirm Deletion" -Content {
+                                                                            New-UDTypography -Text "Are you sure you want to delete the $formattedTime entry for $($parsedDate.ToString('MM/dd/yyyy'))?" -Variant body1 -Style @{
+                                                                                marginBottom = "20px"
+                                                                                textAlign = "center"
+                                                                            }
+                                                                            New-UDTypography -Text "This action cannot be undone. A backup will be created automatically." -Variant caption -Style @{
+                                                                                marginBottom = "20px"
+                                                                                textAlign = "center"
+                                                                                color = "#666"
+                                                                                fontStyle = "italic"
+                                                                            }
+                                                                            
+                                                                            New-UDGrid -Container -Children {
+                                                                                New-UDGrid -Item -ExtraSmallSize 6 -Children {
+                                                                                    New-UDButton -Text "❌ Cancel" -Color default -FullWidth -OnClick {
+                                                                                        Hide-UDModal
+                                                                                    }
+                                                                                }
+                                                                                New-UDGrid -Item -ExtraSmallSize 6 -Children {
+                                                                                    New-UDButton -Text "🗑️ Delete Entry" -Color secondary -FullWidth -OnClick {
+                                                                                        try {
+                                                                                            # Import modules
+                                                                                            Import-Module -Name fusion -Force
+                                                                                            
+                                                                                            # Use Remove-TimeEntry function
+                                                                                            $removeResult = Remove-TimeEntry -Date $dateKey -Time $timeKey -CreateBackup $true -UpdateCache $true
+                                                                                            
+                                                                                            if ($removeResult) {
+                                                                                                Show-UDToast -Message "✅ Successfully deleted $formattedTime entry for $($parsedDate.ToString('MM/dd'))" -MessageColor Green -Duration 4000
+                                                                                                
+                                                                                                # Hide the modal
+                                                                                                Hide-UDModal
+                                                                                                
+                                                                                                # Refresh the data by triggering date change
+                                                                                                Invoke-UDJavaScript -JavaScript @"
+                                                                                                    document.getElementById('selectedDate').dispatchEvent(new Event('change'));
+"@
+                                                                                            } else {
+                                                                                                Show-UDToast -Message "⚠️ Entry not found or could not be deleted" -MessageColor Orange -Duration 4000
+                                                                                                Hide-UDModal
+                                                                                            }
+                                                                                        }
+                                                                                        catch {
+                                                                                            Show-UDToast -Message "❌ Error deleting entry: $($_.Exception.Message)" -MessageColor Red -Duration 6000
+                                                                                            Write-Error "Error deleting time entry: $($_.Exception.Message)"
+                                                                                            Hide-UDModal
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        }
+                                                                    } -FullWidth -MaxWidth 'sm'
+                                                                }
                                                             }
                                                         }
                                                     }
@@ -212,9 +274,11 @@
             New-UDList -Children {
                 New-UDListItem -Label "📝 Each time entry shows its JSON data which you can edit directly"
                 New-UDListItem -Label "⚠️ Be careful with JSON syntax - invalid JSON will cause save errors"
+                New-UDListItem -Label "� Click 'Update Entry' button to save changes to a time slot"
+                New-UDListItem -Label "�️ Click 'Delete' button to permanently remove a time entry (creates backup)"
                 New-UDListItem -Label "🔄 Use the Refresh button if data seems outdated"
-                New-UDListItem -Label "💾 Click 'Update Entry' button for each time slot you modify"
                 New-UDListItem -Label "📊 Summary information (Sleep, Max Pain, Images) is shown at the top"
+                New-UDListItem -Label "🛡️ All delete operations create automatic backups for safety"
             }
         } -Style @{ marginTop = "30px"; backgroundColor = "#f0f8ff" }
     }
