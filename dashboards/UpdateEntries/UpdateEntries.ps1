@@ -51,6 +51,12 @@
                                     
                                     # Update cache for next time
                                     Set-PSUCache -Key "entriesData" -Value $AllEntries -AbsoluteExpiration (Get-Date).AddDays(1)
+                                } else {
+                                    # Convert PSCustomObject to hashtable if needed
+                                    if ($AllEntries -is [System.Management.Automation.PSCustomObject]) {
+                                        Write-Information "Converting cached PSCustomObject to hashtable"
+                                        $AllEntries = $AllEntries | ConvertTo-Json -Depth 20 | ConvertFrom-Json -AsHashtable
+                                    }
                                 }
                                 
                                 if ($AllEntries.ContainsKey($dateKey)) {
@@ -104,6 +110,12 @@
                                                                     Import-Module -Name GetFusion -Force
                                                                     $EntriesPath = Get-PSUVariable -Name "EntriesPath" -ValueOnly
                                                                     $AllEntries = Get-EntriesData -entriesPath $EntriesPath
+                                                                } else {
+                                                                    # Convert PSCustomObject to hashtable if needed
+                                                                    if ($AllEntries -is [System.Management.Automation.PSCustomObject]) {
+                                                                        Write-Information "Converting cached PSCustomObject to hashtable for update operation"
+                                                                        $AllEntries = $AllEntries | ConvertTo-Json -Depth 20 | ConvertFrom-Json -AsHashtable
+                                                                    }
                                                                 }
                                                                 
                                                                 # Update the specific time entry
