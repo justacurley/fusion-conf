@@ -146,7 +146,7 @@ BeforeAll {
     }
 }
 
-Describe "ConvertTo-EntriesFormat Function" {
+Describe "ConvertTo-EntriesFormat Function" -Tag ConvertTo-EntriesFormat,Function {
     
     Context "When processing comprehensive form data" {
         BeforeEach {
@@ -300,7 +300,7 @@ Describe "ConvertTo-EntriesFormat Function" {
     }
 }
 
-Describe "Update-DailyMaxPainLevel Function" {
+Describe "Update-DailyMaxPainLevel Function" -Tag Update-DailyMaxPainLevel,Function {
     
     Context "When updating pain levels" {
         BeforeEach {
@@ -348,7 +348,7 @@ Describe "Update-DailyMaxPainLevel Function" {
     }
 }
 
-Describe "Save-ConvertedEntry Function" {
+Describe "Save-ConvertedEntry Function" -Tag Save-ConvertedEntry,Function {
     
     Context "When saving entries" {
         BeforeEach {
@@ -436,7 +436,7 @@ Describe "Save-ConvertedEntry Function" {
     }
 }
 
-Describe "Integration Tests" {
+Describe "Integration Tests" -Tag Integration {
     
     Context "When processing full form submission workflow" {
         It "Should handle complete form-to-save workflow" {
@@ -464,7 +464,7 @@ Describe "Integration Tests" {
     }
 }
 
-Describe "Input Validation Tests" {
+Describe "Input Validation Tests" -Tag Validation {
     
     Context "ConvertTo-EntriesFormat Parameter Validation" {
         It "Should throw when Entry parameter is null" {
@@ -563,39 +563,41 @@ Describe "Input Validation Tests" {
             $result.EntryStructure.Activities.Keys | Should -Contain "Swimming"
         }
         
-        It "Should handle extremely large numeric values" {
+        It "Should reject extremely large numeric values for pain levels" {
             $extremeEntry = [PSCustomObject]@{
                 date = "0630"
                 timestamp = "1200"
                 add_pain = $true
                 pain_location_1 = "back"
-                pain_level_1 = "999999999"  # Very large number
+                pain_level_1 = "999999999"  # Very large number - should be rejected
                 add_activity = $true
                 activities_type_1 = "Walking"
-                activities_length_1 = "999999999"  # Very large duration
+                activities_length_1 = "999999999"  # Very large duration - should be accepted
             }
             
             $result = ConvertTo-EntriesFormat -Entry $extremeEntry
-            # Should handle large numbers without throwing
-            $result.EntryStructure.Pain["back"].pain_level | Should -Be 999999999.0
+            # Should reject pain levels outside medical range (0-10)
+            $result.EntryStructure.Pain.Keys | Should -Not -Contain "back"
+            # But should accept large activity durations
             $result.EntryStructure.Activities["Walking"].duration | Should -Be 999999999
         }
         
-        It "Should handle negative numeric values" {
+        It "Should reject negative pain levels" {
             $negativeEntry = [PSCustomObject]@{
                 date = "0630"
                 timestamp = "1200"
                 add_pain = $true
                 pain_location_1 = "back"
-                pain_level_1 = "-5"  # Negative pain level
+                pain_level_1 = "-5"  # Negative pain level - should be rejected
                 add_activity = $true
                 activities_type_1 = "Walking"
-                activities_length_1 = "-30"  # Negative duration
+                activities_length_1 = "-30"  # Negative duration - should be accepted
             }
             
             $result = ConvertTo-EntriesFormat -Entry $negativeEntry
-            # Should handle negative numbers (might be valid for some use cases)
-            $result.EntryStructure.Pain["back"].pain_level | Should -Be -5
+            # Should reject negative pain levels (medical standard is 0-10)
+            $result.EntryStructure.Pain.Keys | Should -Not -Contain "back"
+            # But should accept negative activity durations (might represent adjustments)
             $result.EntryStructure.Activities["Walking"].duration | Should -Be -30
         }
         
@@ -821,15 +823,15 @@ Describe "Input Validation Tests" {
             $result.EntryStructure.Activities.Keys.Count | Should -Be 50
         }
         
-        It "Should handle maximum number of pain locations" {
-            # Create entry with many pain locations (stress test)
+        It "Should reject pain levels outside medical range (0-10)" {
+            # Create entry with pain levels outside medical range
             $manyPainEntry = [PSCustomObject]@{
                 date = "0630"
                 timestamp = "1200"
                 add_pain = $true
             }
             
-            # Add 20 pain locations
+            # Add 20 pain locations, but only 10 should be valid (levels 1-10)
             for ($i = 1; $i -le 20; $i++) {
                 $manyPainEntry | Add-Member -NotePropertyName "pain_location_$i" -NotePropertyValue "location$i"
                 $manyPainEntry | Add-Member -NotePropertyName "pain_level_$i" -NotePropertyValue "$i"
@@ -837,7 +839,14 @@ Describe "Input Validation Tests" {
             }
             
             $result = ConvertTo-EntriesFormat -Entry $manyPainEntry
-            $result.EntryStructure.Pain.Keys.Count | Should -Be 20
+            # Should only accept pain levels 1-10 (levels 11-20 should be rejected)
+            $result.EntryStructure.Pain.Keys.Count | Should -Be 10
+            
+            # Verify that only valid pain levels are included
+            $validLocations = 1..10 | ForEach-Object { "location$_" }
+            foreach ($location in $result.EntryStructure.Pain.Keys) {
+                $validLocations | Should -Contain $location
+            }
         }
     }
     
