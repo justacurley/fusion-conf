@@ -1,6 +1,4 @@
 ﻿New-UDApp -Content {
-    $script:PainEntryCounter = 2
-    $script:ActivityEntryCounter = 2
     New-UDContainer -Children {
         New-UDPaper -Children {
             New-UDGrid -Container -Children {
@@ -292,8 +290,10 @@
                             # Add More Button - Separate container
                             New-UDContainer -Children {
                                 New-UDButton -Text '➕ Add Another Pain Entry' -Color primary -Variant outlined -OnClick {
-                                    $entryCount = $script:PainEntryCounter
-                                    $script:PainEntryCounter++
+                                    # Use PowerShell Universal Session scope for persistent counters
+                                    if (-not $Session:PainEntryCounter) { $Session:PainEntryCounter = 2 }
+                                    $entryCount = $Session:PainEntryCounter
+                                    $Session:PainEntryCounter++
                                     
                                     # Use Show-UDToast to debug
                                     Show-UDToast -Message "Adding Pain Entry #$entryCount" -Duration 2000
