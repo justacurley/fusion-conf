@@ -127,7 +127,7 @@ class PainLocation {
         return @{
             pain_level = $this.pain_level
             location   = $this.location
-            Note       = $this.note
+            Note       = $this.Note
         }
     }
 }
@@ -189,7 +189,12 @@ class HealthEntry {
     # Overall notes for this health entry
     [string] $Note = ''
     
-    # Constructors
+    # # Constructors
+    # HealthEntry([PainLocation[]] $Pain,[MedicationTaken[]] $Medication,[Activity[]] $Activity,[Vitals] $Vitals,[string] $Note) {
+
+    # }
+
+    # Constructor with parameters
     HealthEntry() {}
     
     # Validation method
@@ -205,9 +210,9 @@ class HealthEntry {
         [hashtable]$Medications = @{}
         [string[]]$MedicationsTaken = @()
         $this.Medication.ForEach({ 
-            $Medications.add($_.medication, $_.dosage) 
-            if (-not $_.medication -in $MedicationsTaken) {
-                $MedicationsTaken+=$_.medication
+            $Medications[$_.medication] = $_.dosage  # Use assignment instead of .add()
+            if ($_.medication -notin $MedicationsTaken) {
+                $MedicationsTaken = $MedicationsTaken + $_.medication
             }
         })
         
@@ -227,7 +232,7 @@ class HealthEntry {
         
         $Pains = @{}
         $this.Pain.ForEach({
-            $Location = $_.location
+            $Location = $_.location.ToString()  # Convert enum to string
             $PainData = @{
                 pain_level = $_.pain_level
                 note = $_.Note
@@ -251,7 +256,9 @@ class HealthEntry {
 
         if ($MedicationsTaken.length -gt 0) {
             $Output.Add('medication_taken', ($MedicationsTaken -join ','))
-        } else { $Output.add('medication_taken','')}
+        } else { 
+            $Output.Add('medication_taken','')
+        }
 
         return $Output
     }
