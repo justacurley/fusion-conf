@@ -274,7 +274,7 @@
                                     New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 6 -Children {
                                         New-UDTextbox -Id "pain_note_1" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth
                                     }
-                                    $script:PainEntryCounter = 2
+                                    $script:PainEntryCounter = 1
                                 }
                             } -Style @{
                                 padding         = "15px"
@@ -291,6 +291,7 @@
                             New-UDContainer -Children {
                                 New-UDButton -Text "➕ Add Another Pain Entry" -Color primary -Variant outlined -OnClick {
                                     $entryCount = $script:PainEntryCounter
+                                    $script:PainEntryCounter++
                                     
                                     # Use Show-UDToast to debug
                                     Show-UDToast -Message "Adding Pain Entry #$entryCount" -Duration 2000
@@ -340,7 +341,6 @@
                                                 New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 6 -Children {
                                                     New-UDTextbox -Id "pain_note_$currentEntryCount" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth
                                                 }
-                                                $script:PainEntryCounter++
                                             }
                                         } -Style @{
                                             padding         = "15px"
