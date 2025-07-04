@@ -242,7 +242,7 @@
             New-UDCheckbox -Id "add_pain" -Label "🩹 Add Pain Entry" -OnChange {
                 if ($EventData) {
                     # Checkbox is checked - show pain entry section
-                    Set-UDElement -Id "pain_section" -Content {
+                    Set-UDElement -Id "pain_section" -Content {                        
                         New-UDCard -Title "🩹 Pain Tracking" -Content {
                             # Initial pain entry in its own Paper
                             New-UDPaper -Children {
@@ -274,6 +274,7 @@
                                     New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 6 -Children {
                                         New-UDTextbox -Id "pain_note_1" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth
                                     }
+                                    $script:PainEntryCounter = 2
                                 }
                             } -Style @{
                                 padding         = "15px"
@@ -289,8 +290,7 @@
                             # Add More Button - Separate container
                             New-UDContainer -Children {
                                 New-UDButton -Text "➕ Add Another Pain Entry" -Color primary -Variant outlined -OnClick {
-                                    # Generate unique ID for new pain entry
-                                    $entryCount = (Get-Random -Minimum 100 -Maximum 999)
+                                    $entryCount = $script:PainEntryCounter
                                     
                                     # Use Show-UDToast to debug
                                     Show-UDToast -Message "Adding Pain Entry #$entryCount" -Duration 2000
@@ -340,6 +340,7 @@
                                                 New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 6 -Children {
                                                     New-UDTextbox -Id "pain_note_$currentEntryCount" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth
                                                 }
+                                                $script:PainEntryCounter++
                                             }
                                         } -Style @{
                                             padding         = "15px"
