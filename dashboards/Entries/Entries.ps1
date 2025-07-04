@@ -69,6 +69,66 @@ function New-PainEntryElement {
     }
 }
 
+# Helper function to create activity entry elements (reduces code duplication)
+function New-ActivityEntryElement {
+    param(
+        [int]$EntryNumber,
+        [bool]$IncludeRemoveButton = $false
+    )
+    
+    $paperId = if ($EntryNumber -eq 1) { $null } else { "activities_entry_$EntryNumber" }
+    
+    return New-UDPaper -Id $paperId -Children {
+        New-UDGrid -Container -Children {
+            if ($IncludeRemoveButton) {
+                New-UDGrid -Item -ExtraSmallSize 10 -Children {
+                    New-UDTypography -Text "Activity #$EntryNumber" -Variant subtitle2 -Style @{
+                        marginBottom = '15px'
+                        color        = '#1976d2'
+                        fontWeight   = '500'
+                    }
+                }
+                New-UDGrid -Item -ExtraSmallSize 2 -Children {
+                    New-UDButton -Text '🗑️' -Color secondary -Size small -OnClick {
+                        # Remove this specific activity Paper using Clear-UDElement
+                        try {
+                            Show-UDToast -Message "Removing Activity #$EntryNumber" -Duration 2000
+                            # Clear the content of this specific activity entry
+                            Clear-UDElement -Id "activities_entry_$EntryNumber"
+                        }
+                        catch {
+                            Show-UDToast -Message "Error removing activity: $($_.Exception.Message)" -Duration 3000 -BackgroundColor red
+                        }
+                    } -Id "remove_btn_$EntryNumber"
+                }
+            } else {
+                New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                    New-UDTypography -Text "Activity #$EntryNumber" -Variant subtitle2 -Style @{
+                        marginBottom = '15px'
+                        color        = '#1976d2'
+                        fontWeight   = '500'
+                    }
+                }
+            }
+            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
+                New-UDTextbox -Id "activities_type_$EntryNumber" -Label '🏃‍♂️ Activity Type' -Type text -Placeholder 'Walking, Running, Swimming, etc.' -FullWidth
+            }
+            New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Children {
+                New-UDTextbox -Id "activities_length_$EntryNumber" -Label '⏱️ Duration (min)' -Type number -Placeholder '20' -FullWidth
+            }
+            New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Children {
+                New-UDTextbox -Id "activities_note_$EntryNumber" -Label '📝 Note' -Type text -Placeholder 'Optional note' -FullWidth
+            }
+        }
+    } -Style @{
+        padding         = '15px'
+        margin          = '10px 0'
+        backgroundColor = '#f8f9fa'
+        borderLeft      = '4px solid #28a745'
+        borderRadius    = '8px'
+    }
+}
+
 New-UDApp -Content {
     New-UDContainer -Children {
         New-UDPaper -Children {
@@ -205,33 +265,8 @@ New-UDApp -Content {
                     # Checkbox is checked - show activities entry section
                     Set-UDElement -Id 'activities_section' -Content {
                         New-UDCard -Title '🏃‍♂️ Physical Activities' -Content {
-                            # Initial activity entry in its own Paper
-                            New-UDPaper -Children {
-                                New-UDGrid -Container -Children {
-                                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                        New-UDTypography -Text 'Activity #1' -Variant subtitle2 -Style @{
-                                            marginBottom = '15px'
-                                            color        = '#1976d2'
-                                            fontWeight   = '500'
-                                        }
-                                    }
-                                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
-                                        New-UDTextbox -Id 'activities_type_1' -Label '🏃‍♂️ Activity Type' -Type text -Placeholder 'Walking, Running, Swimming, etc.' -FullWidth
-                                    }
-                                    New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Children {
-                                        New-UDTextbox -Id 'activities_length_1' -Label '⏱️ Duration (min)' -Type number -Placeholder '20' -FullWidth
-                                    }
-                                    New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Children {
-                                        New-UDTextbox -Id 'activities_note_1' -Label '📝 Note' -Type text -Placeholder 'Optional note' -FullWidth
-                                    }
-                                }
-                            } -Style @{
-                                padding         = '15px'
-                                margin          = '10px 0'
-                                backgroundColor = '#f8f9fa'
-                                borderLeft      = '4px solid #28a745'
-                                borderRadius    = '8px'
-                            }
+                            # Initial activity entry using reusable function
+                            New-ActivityEntryElement -EntryNumber 1 -IncludeRemoveButton $false
                             
                             # Container for additional activities
                             New-UDElement -Id 'additional_activities_container' -Tag 'div'
@@ -249,45 +284,7 @@ New-UDApp -Content {
                                     # Add the new activity using Add-UDElement with proper syntax
                                     Add-UDElement -ParentId 'additional_activities_container' -Content {
                                         $currentEntryCount = $entryCount  # Capture the variable in local scope
-                                        New-UDPaper -Id "activities_entry_$currentEntryCount" -Children {
-                                            New-UDGrid -Container -Children {
-                                                New-UDGrid -Item -ExtraSmallSize 10 -Children {
-                                                    New-UDTypography -Text "Activity #$currentEntryCount" -Variant subtitle2 -Style @{
-                                                        marginBottom = '15px'
-                                                        color        = '#1976d2'
-                                                        fontWeight   = '500'
-                                                    }
-                                                }
-                                                New-UDGrid -Item -ExtraSmallSize 2 -Children {
-                                                    New-UDButton -Text '🗑️' -Color secondary -Size small -OnClick {
-                                                        # Remove this specific activity Paper using Clear-UDElement
-                                                        try {
-                                                            Show-UDToast -Message "Removing Activity #$currentEntryCount" -Duration 2000
-                                                            # Clear the content of this specific activity entry
-                                                            Clear-UDElement -Id "activities_entry_$currentEntryCount"
-                                                        }
-                                                        catch {
-                                                            Show-UDToast -Message "Error removing activity: $($_.Exception.Message)" -Duration 3000 -BackgroundColor red
-                                                        }
-                                                    } -Id "remove_btn_$currentEntryCount"
-                                                }
-                                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
-                                                    New-UDTextbox -Id "activities_type_$currentEntryCount" -Label '🏃‍♂️ Activity Type' -Type text -Placeholder 'Walking, Running, Swimming, etc.' -FullWidth
-                                                }
-                                                New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Children {
-                                                    New-UDTextbox -Id "activities_length_$currentEntryCount" -Label '⏱️ Duration (min)' -Type number -Placeholder '20' -FullWidth
-                                                }
-                                                New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Children {
-                                                    New-UDTextbox -Id "activities_note_$currentEntryCount" -Label '📝 Note' -Type text -Placeholder 'Optional note' -FullWidth
-                                                }
-                                            }
-                                        } -Style @{
-                                            padding         = '15px'
-                                            margin          = '10px 0'
-                                            backgroundColor = '#f8f9fa'
-                                            borderLeft      = '4px solid #28a745'
-                                            borderRadius    = '8px'
-                                        }
+                                        New-ActivityEntryElement -EntryNumber $currentEntryCount -IncludeRemoveButton $true
                                     }
                                 }
                             }
