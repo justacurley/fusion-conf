@@ -36,14 +36,13 @@ class MedicationTaken {
     # Try adding 2-3 basic properties here
     [string] $dosage = '4mg'    
     [string] $medication = 'dilaudid'
-    [string] $Note = ''
 
     # Valid Medication Names
     
     # Default constructor
     MedicationTaken() {}
 
-    MedicationTaken([string]$dosage, [string]$medication, [string]$Note) {
+    MedicationTaken([string]$dosage, [string]$medication) {
         $MedValidator = [MedicationValidator]::new()
         $ValidMeds = $MedValidator.GetValidValues()
         if ($ValidMeds -inotcontains $medication) {
@@ -55,7 +54,6 @@ class MedicationTaken {
         }
         $this.dosage = $dosage
         $this.medication = $medication
-        $this.Note = $Note
     }
 
     # Validation method
@@ -73,7 +71,6 @@ class MedicationTaken {
         return @{
             dosage     = $this.dosage 
             medication = $this.medication 
-            Note       = $this.Note 
         }
     }
 }

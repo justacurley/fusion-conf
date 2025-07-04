@@ -40,37 +40,35 @@ Describe 'MedicationValidator Tests' -Tag MedicationValidator, Medication {
 Describe 'MedicationTaken Tests' -Tag MedicationTaken, Medication {
     Context 'Valid Medication Creation' {
         It 'Should create with valid medication and dosage' {
-            { [MedicationTaken]::new('4mg', 'dilaudid', 'Test Note') } | Should -Not -Throw
+            { [MedicationTaken]::new('4mg', 'dilaudid') } | Should -Not -Throw
         }
 
         It 'Should set properties correctly' {
-            $med = [MedicationTaken]::new('4mg', 'dilaudid', 'Test Note')
+            $med = [MedicationTaken]::new('4mg', 'dilaudid')
             $med.medication | Should -Be 'dilaudid'
             $med.dosage | Should -Be '4mg'
-            $med.Note | Should -Be 'Test Note'
         }
 
         It 'Should validate as valid' {
-            $med = [MedicationTaken]::new('4mg', 'dilaudid', 'Test Note')
+            $med = [MedicationTaken]::new('4mg', 'dilaudid')
             $med.IsValid() | Should -Be $true
         }
 
         It 'Should convert to hashtable correctly' {
-            $med = [MedicationTaken]::new('4mg', 'dilaudid', 'Test Note')
+            $med = [MedicationTaken]::new('4mg', 'dilaudid')
             $hashtable = $med.ToHashtable()
             $hashtable.medication | Should -Be 'dilaudid'
             $hashtable.dosage | Should -Be '4mg'
-            $hashtable.Note | Should -Be 'Test Note'
         }
     }
 
     Context 'Invalid Medication Validation' {
         It 'Should throw for invalid medication' {
-            { [MedicationTaken]::new('4mg', 'invalid-med', 'Test Note') } | Should -Throw '*Must provide valid medication*'
+            { [MedicationTaken]::new('4mg', 'invalid-med') } | Should -Throw '*Must provide valid medication*'
         }
 
         It 'Should throw for invalid dosage' {
-            { [MedicationTaken]::new('999mg', 'dilaudid', 'Test Note') } | Should -Throw '*Must provide valid dosage*'
+            { [MedicationTaken]::new('999mg', 'dilaudid') } | Should -Throw '*Must provide valid dosage*'
         }
     }
 
@@ -79,7 +77,6 @@ Describe 'MedicationTaken Tests' -Tag MedicationTaken, Medication {
             $med = [MedicationTaken]::new()
             $med.medication | Should -Be 'dilaudid'
             $med.dosage | Should -Be '4mg'
-            $med.Note | Should -Be ''
         }
 
         It 'Should validate default values as valid' {
@@ -350,8 +347,8 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
         }
 
         It 'Should serialize Medication data correctly' {
-            $script:TestEntry.Medication += [MedicationTaken]::new('4mg', 'dilaudid', 'For pain')
-            $script:TestEntry.Medication += [MedicationTaken]::new('2mg', 'dilaudid', 'Second dose')
+            $script:TestEntry.Medication += [MedicationTaken]::new('4mg', 'dilaudid')
+            $script:TestEntry.Medication += [MedicationTaken]::new('2mg', 'dilaudid')
         
             $hash = $script:TestEntry.ToHashtable()
         
@@ -404,7 +401,7 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
         It 'Should handle complex entry with all components' {
             # Add all types of data
             $script:TestEntry.Pain += [PainLocation]::new(8.0, [PainLocationEnum]::Back, 'Severe back pain')
-            $script:TestEntry.Medication += [MedicationTaken]::new('4mg', 'dilaudid', 'Pain relief')
+            $script:TestEntry.Medication += [MedicationTaken]::new('4mg', 'dilaudid')
             $script:TestEntry.Activity += [Activity]::new('Walking', 15, 'Short walk')
             $script:TestEntry.Vitals = [Vitals]::new(94, '130/85')
             $script:TestEntry.Note = 'Complex health entry'
@@ -426,8 +423,8 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
         }
 
         It 'Should handle multiple medications of same type' {
-            $script:TestEntry.Medication += [MedicationTaken]::new('2mg', 'dilaudid', 'Morning dose')
-            $script:TestEntry.Medication += [MedicationTaken]::new('4mg', 'dilaudid', 'Evening dose')
+            $script:TestEntry.Medication += [MedicationTaken]::new('2mg', 'dilaudid')
+            $script:TestEntry.Medication += [MedicationTaken]::new('4mg', 'dilaudid')
         
             $hash = $script:TestEntry.ToHashtable()
         
@@ -442,7 +439,7 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
 
 Describe 'Integration Tests' {
     It 'Should be able to create both classes together' {
-        $med = [MedicationTaken]::new('4mg', 'dilaudid', 'For pain management')
+        $med = [MedicationTaken]::new('4mg', 'dilaudid')
         $pain = [PainLocation]::new(8.0, [PainLocationEnum]::Back, 'Lower back pain')
         
         $med.IsValid() | Should -Be $true
@@ -450,13 +447,13 @@ Describe 'Integration Tests' {
     }
 
     It 'Should serialize both classes to hashtables for potential JSON export' {
-        $med = [MedicationTaken]::new('4mg', 'dilaudid', 'For pain management')
+        $med = [MedicationTaken]::new('4mg', 'dilaudid')
         $pain = [PainLocation]::new(8.0, [PainLocationEnum]::Back, 'Lower back pain')
         
         $medHash = $med.ToHashtable()
         $painHash = $pain.ToHashtable()
         
-        $medHash.Keys.Count | Should -Be 3
+        $medHash.Keys.Count | Should -Be 2
         $painHash.Keys.Count | Should -Be 3
     }
 }
