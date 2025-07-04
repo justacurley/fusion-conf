@@ -222,7 +222,7 @@ class HealthEntry {
     [hashtable] ToHashtable() {
         [hashtable]$Output = @{}
         
-        # Handle medications - create arrays for multiple doses
+        # Handle medications - match real-world format
         [hashtable]$Medications = @{}
         [string[]]$MedicationsTaken = @()
         $this.Medication.ForEach({ 
@@ -230,13 +230,14 @@ class HealthEntry {
             $dosage = $_.dosage
             
             if ($Medications.ContainsKey($medName)) {
-                # Convert single value to array or add to existing array
+                # Multiple doses - convert to array
                 if ($Medications[$medName] -is [array]) {
                     $Medications[$medName] += $dosage
                 } else {
                     $Medications[$medName] = @($Medications[$medName], $dosage)
                 }
             } else {
+                # Single dose - store as string (matches real data format)
                 $Medications[$medName] = $dosage
             }
             

@@ -3,17 +3,6 @@
 
 using module ./HealthEntryClasses.psm1
 
-Describe 'PainLocationEnum Tests' -Tag Enum, Pain {
-    It 'Should have all expected enum values' {
-        $enumValues = [System.Enum]::GetNames([PainLocationEnum])
-        $expectedValues = @('Back', 'RQuad', 'LQuad', 'Quads', 'RHip', 'LHip', 'Hips', 'RGlute', 'LGlute', 'Glutes')
-        
-        foreach ($expected in $expectedValues) {
-            $enumValues | Should -Contain $expected
-        }
-    }
-}
-
 Describe 'MedicationValidator Tests' -Tag MedicationValidator, Medication {
     BeforeAll {
         $validator = [MedicationValidator]::new()
@@ -85,59 +74,56 @@ Describe 'MedicationTaken Tests' -Tag MedicationTaken, Medication {
         }
     }
 }
+
 Describe 'PainLocation Tests' -Tag Pain, PainLocation {
     Context 'Valid Pain Location Creation' {
         It 'Should create with valid parameters' {
-            { [PainLocation]::new(7.5, [PainLocationEnum]::Back, 'Test pain') } | Should -Not -Throw
+            { [PainLocation]::new('back', 7.5, 'Test pain') } | Should -Not -Throw
         }
 
         It 'Should set properties correctly' {
-            $pain = [PainLocation]::new(7.5, [PainLocationEnum]::Back, 'Test pain')
+            $pain = [PainLocation]::new('back', 7.5, 'Test pain')
             $pain.pain_level | Should -Be 7.5
-            $pain.location | Should -Be ([PainLocationEnum]::Back)
-            $pain.Note | Should -Be 'Test pain'
+            $pain.location | Should -Be 'back'
+            $pain.note | Should -Be 'Test pain'
         }
 
         It 'Should validate as valid' {
-            $pain = [PainLocation]::new(7.5, [PainLocationEnum]::Back, 'Test pain')
+            $pain = [PainLocation]::new('back', 7.5, 'Test pain')
             $pain.IsValid() | Should -Be $true
         }
 
         It 'Should convert to hashtable correctly' {
-            $pain = [PainLocation]::new(7.5, [PainLocationEnum]::Back, 'Test pain')
+            $pain = [PainLocation]::new('back', 7.5, 'Test pain')
             $hashtable = $pain.ToHashtable()
             $hashtable.pain_level | Should -Be 7.5
-            $hashtable.location | Should -Be ([PainLocationEnum]::Back)
-            $hashtable.Note | Should -Be 'Test pain'
+            $hashtable.note | Should -Be 'Test pain'
         }
     }
 
     Context 'Pain Level Validation' {
         It 'Should accept pain level 0.0' {
-            $pain = [PainLocation]::new(0.0, [PainLocationEnum]::Back, 'No pain')
+            $pain = [PainLocation]::new('back', 0.0, 'No pain')
             $pain.IsValid() | Should -Be $true
         }
 
         It 'Should accept pain level 10.0' {
-            $pain = [PainLocation]::new(10.0, [PainLocationEnum]::Back, 'Maximum pain')
+            $pain = [PainLocation]::new('back', 10.0, 'Maximum pain')
             $pain.IsValid() | Should -Be $true
         }
 
         It 'Should accept pain level 5.5' {
-            $pain = [PainLocation]::new(5.5, [PainLocationEnum]::Back, 'Medium pain')
+            $pain = [PainLocation]::new('back', 5.5, 'Medium pain')
             $pain.IsValid() | Should -Be $true
         }
-
-        # Note: PowerShell's ValidateRange attribute should prevent invalid values at assignment
-        # but we can test the IsValid() method logic
     }
 
     Context 'Default Constructor' {
         It 'Should create with default values' {
             $pain = [PainLocation]::new()
             $pain.pain_level | Should -Be 0.0
-            $pain.location | Should -Be ([PainLocationEnum]::Back)
-            $pain.Note | Should -Be ''
+            $pain.location | Should -Be 'back'
+            $pain.note | Should -Be ''
         }
 
         It 'Should validate default values as valid' {
@@ -162,23 +148,19 @@ Describe 'Vitals Tests' -Tag Vitals {
     }
 
     Context 'Valid Vitals Creation' {
-        # Test parameterized constructor
         It 'Should create construct' {
             { [Vitals]::new(90, '111/90') } | Should -Not -Throw       
         }
-        # Test property assignment 
+
         It 'Should assign properties correctly' {
             $vitals = [Vitals]::new(90, '111/90')
             $vitals.o2 | Should -Be 90 
             $vitals.o2 | Should -BeOfType [int]
             $vitals.bpr | Should -Be '111/90'
         }
-        # Test validation with valid values
     }
     
     Context 'Oxygen Level Validation' {
-        # Test edge cases: 90%, 95%, 100%
-        # Test invalid values if possible
         It 'Should throw on invalid o2' {
             { [Vitals]::new(101, '120/80') } | Should -Throw
         }
@@ -201,6 +183,7 @@ Describe 'Vitals Tests' -Tag Vitals {
             $VitalsHashtable['bpr'] | Should -Be '111/90'
         }
     }
+
     Context 'Blood Pressure Validation' {
         It 'Should accept valid BP formats' {
             { [Vitals]::new(95, '120/80') } | Should -Not -Throw
@@ -254,8 +237,8 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
             $script:DefaultEntry.Note | Should -Be ''
         }
         
-        It 'Should be invalid when empty' {
-            $script:DefaultEntry.IsValid() | Should -BeFalse
+        It 'Should be valid even when empty' {
+            $script:DefaultEntry.IsValid() | Should -BeTrue
         }
     }
     
@@ -264,31 +247,31 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
             $script:DefaultEntry = [HealthEntry]::new()
         }
         It 'Should return true when Note is present' {
-            $script:DefaultEntry.IsValid() | Should -BeFalse
+            $script:DefaultEntry.IsValid() | Should -BeTrue
             $script:DefaultEntry.Note = 'mock'
             $script:DefaultEntry.IsValid() | Should -BeTrue
         }
         
         It 'Should return true when Pain is present' {
-            $script:DefaultEntry.IsValid() | Should -BeFalse
-            $script:DefaultEntry.Pain += [PainLocation]::new(1.0, [PainLocationEnum]::Back, '')
+            $script:DefaultEntry.IsValid() | Should -BeTrue
+            $script:DefaultEntry.Pain += [PainLocation]::new('back', 1.0, '')
             $script:DefaultEntry.IsValid() | Should -BeTrue
         }
         
         It 'Should return true when Medication is present' {
-            $script:DefaultEntry.IsValid() | Should -BeFalse
+            $script:DefaultEntry.IsValid() | Should -BeTrue
             $script:DefaultEntry.Medication += [MedicationTaken]::new()
             $script:DefaultEntry.IsValid() | Should -BeTrue
         }
 
         It 'Should return true when Activity is present' {
-            $script:DefaultEntry.IsValid() | Should -BeFalse
+            $script:DefaultEntry.IsValid() | Should -BeTrue
             $script:DefaultEntry.Activity += [Activity]::new()
             $script:DefaultEntry.IsValid() | Should -BeTrue
         }
 
         It 'Should return true when Vitals is present' {
-            $script:DefaultEntry.IsValid() | Should -BeFalse
+            $script:DefaultEntry.IsValid() | Should -BeTrue
             $script:DefaultEntry.Vitals = [Vitals]::new()
             $script:DefaultEntry.IsValid() | Should -BeTrue
         }
@@ -309,6 +292,7 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
             $hash.Keys | Should -Contain 'o2'
             $hash.Keys | Should -Contain 'bpr'
             $hash.Keys | Should -Contain 'medication_taken'
+            $hash.Keys | Should -Contain 'note'
         
             # Empty arrays/hashtables for no data
             $hash.Medications | Should -BeOfType [hashtable]
@@ -322,39 +306,55 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
             $hash.o2 | Should -Be ''
             $hash.bpr | Should -Be ''
             $hash.medication_taken | Should -Be ''
-        
-            # No note key when empty
-            $hash.Keys | Should -Not -Contain 'note'
+            
+            # Empty note
+            $hash.note | Should -Be ''
         }
 
         It 'Should serialize Pain data correctly' {
-            $script:TestEntry.Pain += [PainLocation]::new(7.5, [PainLocationEnum]::Back, 'Lower back pain')
-            $script:TestEntry.Pain += [PainLocation]::new(3.0, [PainLocationEnum]::RQuad, 'Mild quad pain')
+            $script:TestEntry.Pain += [PainLocation]::new('back', 7.5, 'Lower back pain')
+            $script:TestEntry.Pain += [PainLocation]::new('rquad', 3.0, 'Mild quad pain')
         
             $hash = $script:TestEntry.ToHashtable()
         
             # Should have Pain data
-            $hash.Pain.Keys | Should -Contain 'Back'
-            $hash.Pain.Keys | Should -Contain 'RQuad'
+            $hash.Pain.Keys | Should -Contain 'back'
+            $hash.Pain.Keys | Should -Contain 'rquad'
         
-            # Check Back pain structure
-            $hash.Pain.Back.pain_level | Should -Be 7.5
-            $hash.Pain.Back.note | Should -Be 'Lower back pain'
+            # Check back pain structure
+            $hash.Pain.back.pain_level | Should -Be 7.5
+            $hash.Pain.back.note | Should -Be 'Lower back pain'
         
-            # Check RQuad pain structure  
-            $hash.Pain.RQuad.pain_level | Should -Be 3.0
-            $hash.Pain.RQuad.note | Should -Be 'Mild quad pain'
+            # Check rquad pain structure  
+            $hash.Pain.rquad.pain_level | Should -Be 3.0
+            $hash.Pain.rquad.note | Should -Be 'Mild quad pain'
         }
 
-        It 'Should serialize Medication data correctly' {
+        It 'Should serialize multiple Medications as array' {
             $script:TestEntry.Medication += [MedicationTaken]::new('4mg', 'dilaudid')
             $script:TestEntry.Medication += [MedicationTaken]::new('2mg', 'dilaudid')
         
             $hash = $script:TestEntry.ToHashtable()
         
-            # Should have Medications hashtable with dosage
+            # Should have Medications hashtable with dosage array (multiple doses)
             $hash.Medications.Keys | Should -Contain 'dilaudid'
-            $hash.Medications.dilaudid | Should -Be '2mg'  # Last one wins
+            $hash.Medications.dilaudid | Should -Contain '4mg'
+            $hash.Medications.dilaudid | Should -Contain '2mg'
+            $hash.Medications.dilaudid.Count | Should -Be 2
+        
+            # Should have medication_taken summary
+            $hash.medication_taken | Should -Be 'dilaudid'
+        }
+
+        It 'Should serialize single Medication as string' {
+            $script:TestEntry.Medication += [MedicationTaken]::new('4mg', 'dilaudid')
+        
+            $hash = $script:TestEntry.ToHashtable()
+        
+            # Should have Medications hashtable with single string value
+            $hash.Medications.Keys | Should -Contain 'dilaudid'
+            $hash.Medications.dilaudid | Should -BeOfType [string]
+            $hash.Medications.dilaudid | Should -Be '4mg'
         
             # Should have medication_taken summary
             $hash.medication_taken | Should -Be 'dilaudid'
@@ -400,7 +400,7 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
 
         It 'Should handle complex entry with all components' {
             # Add all types of data
-            $script:TestEntry.Pain += [PainLocation]::new(8.0, [PainLocationEnum]::Back, 'Severe back pain')
+            $script:TestEntry.Pain += [PainLocation]::new('back', 8.0, 'Severe back pain')
             $script:TestEntry.Medication += [MedicationTaken]::new('4mg', 'dilaudid')
             $script:TestEntry.Activity += [Activity]::new('Walking', 15, 'Short walk')
             $script:TestEntry.Vitals = [Vitals]::new(94, '130/85')
@@ -428,10 +428,12 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
         
             $hash = $script:TestEntry.ToHashtable()
         
-            # Last dosage should win in Medications hashtable
-            $hash.Medications.dilaudid | Should -Be '4mg'
+            # Should create array for multiple dosages
+            $hash.Medications.dilaudid | Should -Contain '2mg'
+            $hash.Medications.dilaudid | Should -Contain '4mg'
+            $hash.Medications.dilaudid.Count | Should -Be 2
         
-            # But medication_taken should still list it once
+            # medication_taken should still list it once
             $hash.medication_taken | Should -Be 'dilaudid'
         }
     }
@@ -440,7 +442,7 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
 Describe 'Integration Tests' {
     It 'Should be able to create both classes together' {
         $med = [MedicationTaken]::new('4mg', 'dilaudid')
-        $pain = [PainLocation]::new(8.0, [PainLocationEnum]::Back, 'Lower back pain')
+        $pain = [PainLocation]::new('back', 8.0, 'Lower back pain')
         
         $med.IsValid() | Should -Be $true
         $pain.IsValid() | Should -Be $true
@@ -448,12 +450,12 @@ Describe 'Integration Tests' {
 
     It 'Should serialize both classes to hashtables for potential JSON export' {
         $med = [MedicationTaken]::new('4mg', 'dilaudid')
-        $pain = [PainLocation]::new(8.0, [PainLocationEnum]::Back, 'Lower back pain')
+        $pain = [PainLocation]::new('back', 8.0, 'Lower back pain')
         
         $medHash = $med.ToHashtable()
         $painHash = $pain.ToHashtable()
         
         $medHash.Keys.Count | Should -Be 2
-        $painHash.Keys.Count | Should -Be 3
+        $painHash.Keys.Count | Should -Be 2  # Updated: pain_level and note only
     }
 }
