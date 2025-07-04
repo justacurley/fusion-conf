@@ -13,7 +13,7 @@ function New-PainEntryElement {
                 New-UDGrid -Item -ExtraSmallSize 10 -Children {
                     New-UDTypography -Text "Pain Entry #$EntryNumber" -Variant subtitle2 -Style @{
                         marginBottom = '15px'
-                        color        = '#1976d2'
+                        color        = 'var(--theme-palette-primary-main)'
                         fontWeight   = '500'
                     }
                 }
@@ -34,7 +34,7 @@ function New-PainEntryElement {
                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
                     New-UDTypography -Text "Pain Entry #$EntryNumber" -Variant subtitle2 -Style @{
                         marginBottom = '15px'
-                        color        = '#1976d2'
+                        color        = 'var(--theme-palette-primary-main)'
                         fontWeight   = '500'
                     }
                 }
@@ -51,21 +51,29 @@ function New-PainEntryElement {
                     New-UDSelectOption -Name 'Right Quad' -Value 'rquad'
                     New-UDSelectOption -Name 'Left Quad' -Value 'lquad'
                     New-UDSelectOption -Name 'Quads' -Value 'quads'
+                } -Style @{
+                    backgroundColor = 'var(--theme-palette-background-default)'
                 }
             }
             New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
-                New-UDTextbox -Id "pain_level_$EntryNumber" -Label '📊 Level (0-10)' -Type number -Minimum 0.0 -Maximum 10.0 -Placeholder 5.0 -FullWidth
+                New-UDTextbox -Id "pain_level_$EntryNumber" -Label '📊 Level (0-10)' -Type number -Minimum 0.0 -Maximum 10.0 -Placeholder 5.0 -FullWidth -Style @{
+                    backgroundColor = 'var(--theme-palette-background-default)'
+                }
             }
             New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 6 -Children {
-                New-UDTextbox -Id "pain_note_$EntryNumber" -Label '📝 Note' -Type text -Placeholder 'Optional note' -FullWidth
+                New-UDTextbox -Id "pain_note_$EntryNumber" -Label '📝 Note' -Type text -Placeholder 'Optional note' -FullWidth -Style @{
+                    backgroundColor = 'var(--theme-palette-background-default)'
+                }
             }
         }
     } -Style @{
         padding         = '15px'
         margin          = '10px 0'
-        backgroundColor = '#fff5f5'
+        backgroundColor = 'var(--theme-palette-background-paper)'
         borderLeft      = '4px solid #dc3545'
         borderRadius    = '8px'
+        border          = '1px solid var(--theme-palette-divider)'
+        boxShadow       = '0 2px 4px rgba(0,0,0,0.1)'
     }
 }
 
