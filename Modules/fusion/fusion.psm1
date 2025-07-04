@@ -1,3 +1,4 @@
+using module ../HealthEntryClasses/HealthEntryClasses.psm1
 $Remote = Get-ChildItem Env:HOSTNAME -ErrorAction Ignore
 if ($Remote -and $Remote.Value -like "*us-west-2*") {
     $global:EntriesPath =  "/home/data/fusion-data/entries/entries.json"
@@ -124,44 +125,37 @@ function ConvertTo-EntriesFormat {
     # Convert to entries.json format
     Write-Host "Converting entry to entries.json format..."
 
-    # Extract basic info
-    $Date = if ($Entry.date) { $Entry.date } else { "" }
-    $Timestamp = if ($Entry.timestamp) { $Entry.timestamp } else { "" }
-
-    # Build Medications object - New format uses boolean flags like med_dilaudid_4mg: true
-    $Medications = @{}
-    $medProperties = $Entry.PSObject.Properties | Where-Object { $_.Name -like "med_*" -and $_.Value -eq $true }
+    # Create new HealthEntry instance
+    $healthEntry = [HealthEntry]::new()
     
+    # Set Date and Time
+    $healthEntry.Date = if ($Entry.date) { $Entry.date } else { "" }
+    $healthEntry.Time = if ($Entry.timestamp) { $Entry.timestamp } else { "" }
+
+    # Process medications using MedicationTaken class
+    $medProperties = $Entry.PSObject.Properties | Where-Object { $_.Name -like "med_*" -and ($_.Value -eq $true -or $_.Value -eq "true") }    
     foreach ($medProp in $medProperties) {
         # Parse "med_dilaudid_4mg" format
         if ($medProp.Name -match "^med_(.+?)_(.+)$") {
             $medName = $matches[1]
             $dosage = $matches[2]
             
-            # Validate that this looks like a valid medication name (known medication names)
-            $validMedicationNames = @("tylenol", "dilaudid", "valium", "vitaminD", "lexapro", "journavx", "oxycodone")
-            if ($medName -in $validMedicationNames) {
-                # Handle multiple doses of same medication
-                if ($Medications.ContainsKey($medName)) {
-                    # Convert to array if not already
-                    if ($Medications[$medName] -is [string]) {
-                        $Medications[$medName] = @($Medications[$medName], $dosage)
-                    } else {
-                        # Already an array, add new element
-                        $Medications[$medName] = $Medications[$medName] + @($dosage)
-                    }
-                } else {
-                    $Medications[$medName] = $dosage
-                }
+            try {
+                $medication = [MedicationTaken]::new($dosage, $medName)
+                $healthEntry.Medication += $medication
+                Write-Information "Added medication: $medName $dosage"
+            } catch {
+                Write-Warning "Invalid medication: $medName $dosage - $($_.Exception.Message)"
             }
         }
     }
 
-    # Build Pain object - New Schema: { "location": { "pain_level": 0.0, "note": "" } }
-    $Pain = @{}
-    # Only process pain data if add_pain flag is true or pain properties exist
-    if ($Entry.add_pain -eq $true -or ($Entry.PSObject.Properties | Where-Object { $_.Name -like "pain_location_*" })) {
-        # Get all pain location/level pairs
+    # Process pain using PainLocation class with flexible location names
+    # Handle boolean strings as well as boolean values
+    $shouldProcessPain = ($Entry.add_pain -eq $true -or $Entry.add_pain -eq "true") -or 
+                         ($Entry.PSObject.Properties | Where-Object { $_.Name -like "pain_location_*" })
+    
+    if ($shouldProcessPain) {
         $painProperties = $Entry.PSObject.Properties | Where-Object { $_.Name -like "pain_location_*" }
         foreach ($painProp in $painProperties) {
             $id = $painProp.Name -replace "pain_location_", ""
@@ -169,36 +163,28 @@ function ConvertTo-EntriesFormat {
             $levelProp = "pain_level_$id"
             $noteProp = "pain_note_$id"
             
-            if ($Entry.PSObject.Properties[$levelProp]) {
-                $level = $Entry.PSObject.Properties[$levelProp].Value
-                $note = if ($Entry.PSObject.Properties[$noteProp]) { 
-                    $Entry.PSObject.Properties[$noteProp].Value 
-                } else { "" }
-                
-                if ($location -and $level) {
-                    # Try to convert level to double with error handling
-                    try {
-                        $levelDouble = [double]$level
-                        # New schema format: nested object with pain_level as decimal number and note
-                        $Pain[$location] = @{
-                            "pain_level" = $levelDouble
-                            "note" = $note
-                        }
-                    } catch {
-                        Write-Warning "Invalid pain level '$level' for location '$location' - skipping entry"
-                    }
+            if ($Entry.PSObject.Properties[$levelProp] -and $location) {
+                try {
+                    $level = [double]$Entry.PSObject.Properties[$levelProp].Value
+                    $note = if ($Entry.PSObject.Properties[$noteProp]) { $Entry.PSObject.Properties[$noteProp].Value } else { '' }
+                    
+                    # Use the new constructor signature: location, level, note
+                    $pain = [PainLocation]::new($location, $level, $note)
+                    $healthEntry.Pain += $pain
+                    Write-Information "Added pain: $location level $level"
+                } catch {
+                    Write-Warning "Invalid pain entry: $location $level - $($_.Exception.Message)"
                 }
             }
         }
     }
 
-    # Build Activities object - New Schema: { "activity_name": { "duration": 0, "note": "" } }
-    $Activities = @{}
-    Write-Information "Looking for activity properties..."
-
-    # Only process activity data if add_activity flag is true or activity properties exist
-    if ($Entry.add_activity -eq $true -or ($Entry.PSObject.Properties | Where-Object { $_.Name -like "activities_type_*" })) {
-        # Get all activity type/length pairs
+    # Process activities using Activity class
+    # Handle boolean strings as well as boolean values
+    $shouldProcessActivity = ($Entry.add_activity -eq $true -or $Entry.add_activity -eq "true") -or 
+                             ($Entry.PSObject.Properties | Where-Object { $_.Name -like "activities_type_*" })
+    
+    if ($shouldProcessActivity) {
         $activityProperties = $Entry.PSObject.Properties | Where-Object { $_.Name -like "activities_type_*" }
         Write-Information "Found $($activityProperties.Count) activity type properties"
 
@@ -209,74 +195,64 @@ function ConvertTo-EntriesFormat {
             $noteProp = "activities_note_$id"
             
             Write-Information "Processing activity ID $id, Type: $activityType"
-            Write-Information "Looking for $lengthProp"
             
-            # Check for corresponding length and note properties
-            $duration = $null
-            $note = ""
-            if ($Entry.PSObject.Properties[$lengthProp]) {
+            if ($Entry.PSObject.Properties[$lengthProp] -and $activityType) {
                 try {
                     $duration = [int]$Entry.PSObject.Properties[$lengthProp].Value
-                    Write-Information "Found length property with value: $duration"
+                    $note = if ($Entry.PSObject.Properties[$noteProp]) { $Entry.PSObject.Properties[$noteProp].Value } else { '' }
+                    
+                    $activity = [Activity]::new($activityType, $duration, $note)
+                    $healthEntry.Activity += $activity
+                    Write-Information "Added activity: $activityType duration $duration"
                 } catch {
-                    Write-Warning "Invalid activity duration '$($Entry.PSObject.Properties[$lengthProp].Value)' for activity '$activityType' - skipping"
-                    continue
+                    Write-Warning "Invalid activity entry: $activityType - $($_.Exception.Message)"
                 }
-            } else {
-                Write-Information "No matching duration property found for ID $id"
-                # List all available properties for debugging
-                $availableProps = $Entry.PSObject.Properties | Where-Object { $_.Name -like "*$id*" } | Select-Object -ExpandProperty Name
-                Write-Information "Available properties with ID $id : $($availableProps -join ', ')"
-            }
-            
-            if ($Entry.PSObject.Properties[$noteProp]) {
-                $note = $Entry.PSObject.Properties[$noteProp].Value
-            }
-            
-            if ($activityType -and $null -ne $duration) {
-                # New schema format: nested object with duration and note
-                $Activities[$activityType] = @{
-                    "duration" = $duration
-                    "note" = $note
-                }
-                Write-Information "Added activity: $activityType = {duration: $duration, note: '$note'}"
-            } else {
-                Write-Information "Skipping activity - Type: '$activityType', Duration: '$duration'"
             }
         }
     }
     
-    # Create the entry structure
-    $EntryStructure = @{
-        "Medications" = $Medications
-        "Pain"        = $Pain
-        "Activities"  = $Activities
-        "o2"          = if ($Entry.o2) { $Entry.o2 } else { "" }
-        "bpr"         = if ($Entry.bpr) { $Entry.bpr } else { "" }
-        "note"        = if ($Entry.notes) { $Entry.notes } else { "" }
-        
-        # DynamoDB GSI fields - Updated for new schema
-        "medication_taken" = if ($Medications.Keys.Count -gt 0) { ($Medications.Keys -join ",") } else { "" }
+    # Process vitals using Vitals class
+    if ($Entry.o2 -or $Entry.bpr) {
+        try {
+            $o2 = if ($Entry.o2) { [int]$Entry.o2 } else { 95 }
+            $bpr = if ($Entry.bpr) { $Entry.bpr } else { '120/80' }
+            
+            $healthEntry.Vitals = [Vitals]::new($o2, $bpr)
+            Write-Information "Added vitals: o2=$o2 bpr=$bpr"
+        } catch {
+            Write-Warning "Invalid vitals: o2=$($Entry.o2) bpr=$($Entry.bpr) - $($_.Exception.Message)"
+        }
     }
-
+    
+    # Set notes
+    if ($Entry.notes) {
+        $healthEntry.Note = $Entry.notes
+    }
+    
+    # No need for strict validation - allow empty entries
+    # The individual classes handle their own validation
+    
+    # Use the class's ToHashtable() method for consistent serialization
+    $entryStructure = $healthEntry.ToHashtable()
+    
     # Create the full structure for entries.json
-    $FullEntry = @{
-        $Date = @{
-            $Timestamp = $EntryStructure
+    $fullEntry = @{
+        $healthEntry.Date = @{
+            $healthEntry.Time = $entryStructure
         }
     }
     
     # Add date-level fields like Sleep if present
     if ($Entry.sleep) {
-        $FullEntry[$Date]["Sleep"] = $Entry.sleep
+        $fullEntry[$healthEntry.Date]["Sleep"] = $Entry.sleep
     }
 
     # Return the result
     return @{
-        FullEntry = $FullEntry
-        EntryStructure = $EntryStructure
-        Date = $Date
-        Timestamp = $Timestamp
+        FullEntry = $fullEntry
+        EntryStructure = $entryStructure
+        Date = $healthEntry.Date
+        Timestamp = $healthEntry.Time
     }
 }
 Export-ModuleMember -Function ConvertTo-EntriesFormat

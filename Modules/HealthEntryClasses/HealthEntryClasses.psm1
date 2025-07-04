@@ -3,17 +3,26 @@
 # R now this is the only way to import the module: using module ./HealthEntryClasses.psm1
 
 using namespace System.Collections.Generic
-enum PainLocationEnum {
-    Back
-    RQuad
-    LQuad
-    Quads
-    RHip
-    LHip
-    Hips
-    RGlute
-    LGlute
-    Glutes
+
+# Pain location validation - more flexible approach
+class PainLocationValidator {
+    static [string[]] $CommonLocations = @(
+        'back', 'rquad', 'lquad', 'quads', 'rhip', 'lhip', 'hips', 
+        'rglute', 'lglute', 'glutes', 'righthip', 'lefthip', 
+        'right_glute', 'left_glute', 'right_hip', 'left_hip'
+    )
+    
+    static [bool] IsValidLocation([string]$location) {
+        # Allow any non-empty string for flexibility, but warn if not in common list
+        if ([string]::IsNullOrWhiteSpace($location)) {
+            return $false
+        }
+        return $true
+    }
+    
+    static [string] NormalizeLocation([string]$location) {
+        return $location.ToLower().Trim()
+    }
 }
 
 # Class for Mediation data
@@ -101,30 +110,37 @@ class Activity {
 class PainLocation {
     [ValidateRange(0.0, 10.0)]
     [double] $pain_level = 0.0
-    [PainLocationEnum] $location = 'Back'
-    [string] $Note = ''
+    [string] $location = 'back'
+    [string] $note = ''
     
     # Default constructor
     PainLocation() {}
 
-    # Parameterized constructor
-    PainLocation([double]$level, [PainLocationEnum]$location, [string]$Note) {
-        $this.pain_level = $level
-        $this.location = $location
-        $this.Note = $Note
+    # Two-parameter constructor (location, level)
+    PainLocation([string]$location, [double]$level) {
+        $this.location = [PainLocationValidator]::NormalizeLocation($location)
+        $this.pain_level = $level  # This will enforce the 0-10 range via ValidateRange
+        $this.note = ''
+    }
+
+    # Three-parameter constructor (location, level, note)
+    PainLocation([string]$location, [double]$level, [string]$note) {
+        $this.location = [PainLocationValidator]::NormalizeLocation($location)
+        $this.pain_level = $level  # This will enforce the 0-10 range via ValidateRange
+        $this.note = $note
     }
     
     # Validation method
     [bool] IsValid() {
-        return $this.pain_level -ge 0.0 -and $this.pain_level -le 10.0 -and $null -ne $this.location
+        return $this.pain_level -ge 0.0 -and $this.pain_level -le 10.0 -and 
+               [PainLocationValidator]::IsValidLocation($this.location)
     }
     
     # Convert to hashtable for JSON serialization
     [hashtable] ToHashtable() {
         return @{
             pain_level = $this.pain_level
-            location   = $this.location
-            Note       = $this.Note
+            note       = $this.note
         }
     }
 }
@@ -194,9 +210,11 @@ class HealthEntry {
     # Constructor with parameters
     HealthEntry() {}
     
-    # Validation method
+    # Validation method - allow empty entries
     [bool] IsValid() {
-        return $this.Pain.Length -gt 0 -or $this.Medication.Length -gt 0 -or $this.Activity.Length -gt 0 -or $null -ne $this.Vitals -or -not [string]::IsNullOrEmpty($this.Note)
+        # Always return true - allow empty entries
+        # Individual components have their own validation
+        return $true
     }
     
     
@@ -204,12 +222,26 @@ class HealthEntry {
     [hashtable] ToHashtable() {
         [hashtable]$Output = @{}
         
+        # Handle medications - create arrays for multiple doses
         [hashtable]$Medications = @{}
         [string[]]$MedicationsTaken = @()
         $this.Medication.ForEach({ 
-            $Medications[$_.medication] = $_.dosage  # Use assignment instead of .add()
-            if ($_.medication -notin $MedicationsTaken) {
-                $MedicationsTaken = $MedicationsTaken + $_.medication
+            $medName = $_.medication
+            $dosage = $_.dosage
+            
+            if ($Medications.ContainsKey($medName)) {
+                # Convert single value to array or add to existing array
+                if ($Medications[$medName] -is [array]) {
+                    $Medications[$medName] += $dosage
+                } else {
+                    $Medications[$medName] = @($Medications[$medName], $dosage)
+                }
+            } else {
+                $Medications[$medName] = $dosage
+            }
+            
+            if ($medName -notin $MedicationsTaken) {
+                $MedicationsTaken += $medName
             }
         })
         
@@ -229,10 +261,10 @@ class HealthEntry {
         
         $Pains = @{}
         $this.Pain.ForEach({
-            $Location = $_.location.ToString()  # Convert enum to string
+            $Location = $_.location  # location is now a string, not enum
             $PainData = @{
                 pain_level = $_.pain_level
-                note = $_.Note
+                note = $_.note  # note is lowercase in the new structure
             }
             $Pains.Add($Location,$PainData)
         })
@@ -249,6 +281,8 @@ class HealthEntry {
 
         if (-not [string]::IsNullOrEmpty($this.Note)) {
             $Output.Add('note',$this.Note)
+        } else {
+            $Output.Add('note','')
         }
 
         if ($MedicationsTaken.length -gt 0) {
