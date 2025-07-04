@@ -274,7 +274,7 @@
                                     New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 6 -Children {
                                         New-UDTextbox -Id "pain_note_1" -Label "📝 Note" -Type text -Placeholder "Optional note" -FullWidth
                                     }
-                                    $script:PainEntryCounter = 1
+                                    $script:PainEntryCounter = 2
                                 }
                             } -Style @{
                                 padding         = "15px"
