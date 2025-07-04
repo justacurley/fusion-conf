@@ -168,8 +168,9 @@
                             # Add More Button - Separate container
                             New-UDContainer -Children {
                                 New-UDButton -Text '➕ Add Another Activity' -Color primary -Variant outlined -OnClick {
-                                    # Generate unique ID for new activity
-                                    $entryCount = (Get-Random -Minimum 100 -Maximum 999)
+                                    if (-not $Session:ActivityEntryCounter) { $Session:ActivityEntryCounter = 2 }
+                                    $entryCount = $Session:ActivityEntryCounter
+                                    $Session:ActivityEntryCounter++
                                     
                                     # Use Show-UDToast to debug
                                     Show-UDToast -Message "Adding Activity #$entryCount" -Duration 2000
