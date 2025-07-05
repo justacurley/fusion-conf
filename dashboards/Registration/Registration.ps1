@@ -20,13 +20,30 @@
             }
         } -Style @{ padding = '20px'; marginBottom = '20px'; backgroundColor = 'var(--theme-palette-background-paper)' }
         New-UDForm -Children {
-            New-UDCard -Title "Registration Fields" -Content {
-                New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                    New-UDTextbox -id email -label 'Email Address' -Type text
-                    New-UDTextbox -id password -label 'Password' -Type password 
-                    New-UDTextbox -id confirm_password -label 'Confirm Password' -Type password 
-                }
+            New-UDCard -Title 'Registration Fields' -Content {
+                New-UDGrid -Item -ExtraSmallSize 6 -Direction row -Children {
+                    New-UDTextbox -Id email -Label 'Email Address' -Type text
+                    New-UDTextbox -Id password -Label 'Password' -Type password 
+                    New-UDTextbox -Id confirm_password -Label 'Confirm Password' -Type password 
+                    New-UDTextbox -Id firstname -Label 'First Name' -Type text
+                    New-UDTextbox -Id lastname -Label 'Last Name' -Type text
+                    New-UDSelect -Id 'timezone' -Label 'Timezone' -Option {
+                        # Auto-generate all system timezones
+                        [System.TimeZoneInfo]::GetSystemTimeZones() | ForEach-Object {
+                            New-UDSelectOption -Name $_.DisplayName -Value $_.Id
+                        }
+                    } -DefaultValue 'Mountain Standard Time'
+                    New-UDCheckBox -Id tos -Label 'Accept Terms of Service'
+                } 
+            } -Style @{
+                padding         = '15px'
+                margin          = '5px'
+                backgroundColor = 'var(--theme-palette-background-default)'
+                borderLeft      = '4px solid var(--theme-palette-primary-main)'
+                borderRadius    = '8px'
+                minHeight       = '120px'
+                border          = '1px solid var(--theme-palette-divider)'
             }
-        }
+        } -OnSubmit {}
     }
 }
