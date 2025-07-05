@@ -23,6 +23,8 @@
             New-UDCard -Title "Registration Fields" -Content {
                 New-UDGrid -Item -ExtraSmallSize 6 -Children {
                     New-UDTextbox -id email -label 'Email Address' -Type text
+                    New-UDTextbox -id password -label 'Password' -Type password 
+                    New-UDTextbox -id confirm_password -label 'Confirm Password' -Type password 
                 }
             }
         }
