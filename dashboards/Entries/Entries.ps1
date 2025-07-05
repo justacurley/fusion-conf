@@ -64,7 +64,7 @@ function New-PainEntryElement {
         padding         = '15px'
         margin          = '10px 0'
         backgroundColor = 'var(--theme-palette-background-paper)'
-        borderLeft      = '4px solid #dc3545'
+        borderLeft      = '4px solid var(--theme-palette-error-main)'
         borderRadius    = '8px'
         border          = '1px solid var(--theme-palette-divider)'
         boxShadow       = '0 2px 4px rgba(0,0,0,0.1)'
@@ -86,7 +86,7 @@ function New-ActivityEntryElement {
                 New-UDGrid -Item -ExtraSmallSize 10 -Children {
                     New-UDTypography -Text "Activity #$EntryNumber" -Variant subtitle2 -Style @{
                         marginBottom = '15px'
-                        color        = '#1976d2'
+                        color        = 'var(--theme-palette-primary-main)'
                         fontWeight   = '500'
                     }
                 }
@@ -107,7 +107,7 @@ function New-ActivityEntryElement {
                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
                     New-UDTypography -Text "Activity #$EntryNumber" -Variant subtitle2 -Style @{
                         marginBottom = '15px'
-                        color        = '#1976d2'
+                        color        = 'var(--theme-palette-primary-main)'
                         fontWeight   = '500'
                     }
                 }
@@ -125,9 +125,10 @@ function New-ActivityEntryElement {
     } -Style @{
         padding         = '15px'
         margin          = '10px 0'
-        backgroundColor = '#f8f9fa'
-        borderLeft      = '4px solid #28a745'
+        backgroundColor = 'var(--theme-palette-background-paper)'
+        borderLeft      = '4px solid var(--theme-palette-success-main)'
         borderRadius    = '8px'
+        border          = '1px solid var(--theme-palette-divider)'
     }
 }
 
@@ -138,7 +139,7 @@ New-UDApp -Content {
                 New-UDTypography -Text '🏥 Health Recovery Entry Form' -Variant h4 -Style @{
                     textAlign    = 'center'
                     marginBottom = '5px'
-                    color        = '#1976d2'
+                    color        = 'var(--theme-palette-primary-main)'
                     fontWeight   = 'bold'
                 }
             }
@@ -147,11 +148,11 @@ New-UDApp -Content {
                     textAlign    = 'center'
                     marginBottom = '20px'
                     marginTop    = '8px'
-                    color        = '#666'
+                    color        = 'var(--theme-palette-text-secondary)'
                     fontStyle    = 'italic'
                 }
             }
-        } -Style @{ padding = '20px'; marginBottom = '20px'; backgroundColor = '#f8f9fa' }
+        } -Style @{ padding = '20px'; marginBottom = '20px'; backgroundColor = 'var(--theme-palette-background-paper)' }
         New-UDForm -Children {
             # Date and Time fields
             New-UDCard -Title '📅 Date & Time' -Content {
@@ -169,7 +170,7 @@ New-UDApp -Content {
                 }
                 New-UDTypography -Text '💡 Automatically set to current Mountain Time - adjust if needed' -Variant caption -Style @{
                     marginTop = '5px'
-                    color     = '#666'
+                    color     = 'var(--theme-palette-text-secondary)'
                     fontStyle = 'italic'
                     textAlign = 'center'
                 }
@@ -219,7 +220,7 @@ New-UDApp -Content {
                                         New-UDTypography -Text "💊 $($medType.ToUpper())" -Variant subtitle1 -Style @{
                                             fontWeight   = 'bold'
                                             marginBottom = '10px'
-                                            color        = '#1976d2'
+                                            color        = 'var(--theme-palette-primary-main)'
                                             textAlign    = 'center'
                                         }
                                         
@@ -230,10 +231,11 @@ New-UDApp -Content {
                                     } -Style @{
                                         padding         = '15px'
                                         margin          = '5px'
-                                        backgroundColor = '#fafafa'
-                                        borderLeft      = '4px solid #1976d2'
+                                        backgroundColor = 'var(--theme-palette-background-default)'
+                                        borderLeft      = '4px solid var(--theme-palette-primary-main)'
                                         borderRadius    = '8px'
                                         minHeight       = '120px'
+                                        border          = '1px solid var(--theme-palette-divider)'
                                     }
                                 }
                             }
@@ -248,7 +250,7 @@ New-UDApp -Content {
                     
                     New-UDTypography -Text '💡 Select all, if any, medications taken at the time of entry' -Variant caption -Style @{
                         marginTop = '15px'
-                        color     = '#666'
+                        color     = 'var(--theme-palette-text-secondary)'
                         fontStyle = 'italic'
                         textAlign = 'center'
                     }
@@ -289,7 +291,7 @@ New-UDApp -Content {
                             
                             New-UDTypography -Text '💡 Track your physical activities and exercise duration' -Variant caption -Style @{
                                 marginTop = '15px'
-                                color     = '#666'
+                                color     = 'var(--theme-palette-text-secondary)'
                                 fontStyle = 'italic'
                                 textAlign = 'center'
                             }
@@ -339,7 +341,7 @@ New-UDApp -Content {
                             
                             New-UDTypography -Text '💡 Track pain levels and locations for better health monitoring' -Variant caption -Style @{
                                 marginTop = '15px'
-                                color     = '#666'
+                                color     = 'var(--theme-palette-text-secondary)'
                                 fontStyle = 'italic'
                                 textAlign = 'center'
                             }
@@ -367,7 +369,7 @@ New-UDApp -Content {
                                     New-UDGrid -Item -ExtraSmallSize 12 -Children {
                                         New-UDTypography -Text 'Vital Measurements' -Variant subtitle2 -Style @{
                                             marginBottom = '15px'
-                                            color        = '#1976d2'
+                                            color        = 'var(--theme-palette-primary-main)'
                                             fontWeight   = '500'
                                         }
                                     }
@@ -381,14 +383,15 @@ New-UDApp -Content {
                             } -Style @{
                                 padding         = '15px'
                                 margin          = '10px 0'
-                                backgroundColor = '#f0f8ff'
-                                borderLeft      = '4px solid #007bff'
+                                backgroundColor = 'var(--theme-palette-background-paper)'
+                                borderLeft      = '4px solid var(--theme-palette-info-main)'
                                 borderRadius    = '8px'
+                                border          = '1px solid var(--theme-palette-divider)'
                             }
                             
                             New-UDTypography -Text '💡 Record oxygen saturation and blood pressure readings' -Variant caption -Style @{
                                 marginTop = '15px'
-                                color     = '#666'
+                                color     = 'var(--theme-palette-text-secondary)'
                                 fontStyle = 'italic'
                                 textAlign = 'center'
                             }
