@@ -1,0 +1,16 @@
+services:
+  PSU:
+    container_name: PSU
+    image: ironmansoftware/universal:latest
+    ports:
+      - 5000:5000
+    restart: unless-stopped
+    deploy:
+      resources:
+        limits:
+          cpus: '2'
+          memory: 1024M
+    environment:
+      - TZ=America/Denver
+    volumes:
+      - C:\Users\curle\source\fuse-local\data:/root
