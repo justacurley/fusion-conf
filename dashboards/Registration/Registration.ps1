@@ -19,45 +19,46 @@
                 }
             }
         } -Style @{ padding = '20px'; marginBottom = '20px'; backgroundColor = 'var(--theme-palette-background-paper)' }
-        New-UDForm -Children {
-            New-UDCard -Title 'Registration Fields' -Content {
-                New-UDGrid -Item -ExtraSmallSize 6 -Direction row -Children {
-                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                        New-UDTextbox -Id email -Label 'Email Address' -Type email -Required
-                    }
-                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                        New-UDTextbox -Id password -Label 'Password' -Type password -Required
-                    }
-                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children { New-UDTextbox -Id confirm_password -Label 'Confirm Password' -Type password -Required }
-                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children { New-UDTextbox -Id firstname -Label 'First Name' -Type text -Required }
-                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children { New-UDTextbox -Id lastname -Label 'Last Name' -Type text -Required }
-                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children { New-UDSelect -Id 'timezone' -Label 'Timezone' -Option {
-                            # Auto-generate all system timezones
-                            [System.TimeZoneInfo]::GetSystemTimeZones() | ForEach-Object {
-                                New-UDSelectOption -Name $_.DisplayName -Value $_.Id
-                            }
-                        } -DefaultValue 'Mountain Standard Time' -Required
-                    }
-                    New-UDGrid -Item -ExtraSmallSize 12 -Children { 
-                        New-UDCheckBox -Id tos -Label 'I have read and agree to the Terms of Service' -Required
-                    }
-                    New-UDGrid -Item -ExtraSmallSize 12 -Children { 
-                        New-UDButton -Text "Create Account" -Color primary -Size large -FullWidth -Style @{
-                            marginTop = '20px'
-                            padding = '12px'
-                            fontWeight = 'bold'
-                        }
-                    }
-                } 
-            } -Style @{
-                padding         = '15px'
-                margin          = '5px'
-                backgroundColor = 'var(--theme-palette-background-default)'
-                borderLeft      = '4px solid var(--theme-palette-primary-main)'
-                borderRadius    = '8px'
-                minHeight       = '120px'
-                border          = '1px solid var(--theme-palette-divider)'
+        New-UDForm -Schema @{
+            title = "Registration Fields"
+            type = "object"
+            properties = @{
+                email = @{
+                    title = "Email Address"
+                    type = "string"
+                    format = "email"
+                }
+                password = @{
+                    title = "Password"
+                    type = "string"
+                    format = "password"
+                    minLength = 8
+                }
+                confirm_password = @{
+                    title = "Confirm Password"
+                    type = "string"
+                    format = "password"
+                }
+                firstname = @{
+                    title = "First Name"
+                    type = "string"
+                }
+                lastname = @{
+                    title = "Last Name"
+                    type = "string"
+                }
+                timezone = @{
+                    title = "Timezone"
+                    type = "string"
+                    enum = @([System.TimeZoneInfo]::GetSystemTimeZones() | ForEach-Object { $_.Id })
+                    default = "Mountain Standard Time"
+                }
+                tos = @{
+                    title = "I have read and agree to the Terms of Service"
+                    type = "boolean"
+                }
             }
+            required = @('email', 'password', 'confirm_password', 'firstname', 'lastname', 'timezone', 'tos')
         } -OnSubmit {}
     }
 }
