@@ -51,19 +51,13 @@ function New-PainEntryElement {
                     New-UDSelectOption -Name 'Right Quad' -Value 'rquad'
                     New-UDSelectOption -Name 'Left Quad' -Value 'lquad'
                     New-UDSelectOption -Name 'Quads' -Value 'quads'
-                } -Style @{
-                    backgroundColor = 'var(--theme-palette-background-default)'
                 }
             }
             New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
-                New-UDTextbox -Id "pain_level_$EntryNumber" -Label '📊 Level (0-10)' -Type number -Minimum 0.0 -Maximum 10.0 -Placeholder 5.0 -FullWidth -Style @{
-                    backgroundColor = 'var(--theme-palette-background-default)'
-                }
+                New-UDTextbox -Id "pain_level_$EntryNumber" -Label '📊 Level (0-10)' -Type number -Minimum 0.0 -Maximum 10.0 -Placeholder 5.0 -FullWidth
             }
             New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 6 -Children {
-                New-UDTextbox -Id "pain_note_$EntryNumber" -Label '📝 Note' -Type text -Placeholder 'Optional note' -FullWidth -Style @{
-                    backgroundColor = 'var(--theme-palette-background-default)'
-                }
+                New-UDTextbox -Id "pain_note_$EntryNumber" -Label '📝 Note' -Type text -Placeholder 'Optional note' -FullWidth
             }
         }
     } -Style @{
@@ -167,14 +161,10 @@ New-UDApp -Content {
                     $currentTime = $MSTDate.ToString('HH:mm')
                     
                     New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDTextbox -Id 'date' -Label '📅 Date' -Type 'date' -FullWidth -Value $currentDate -Style @{
-                            marginBottom = '10px'
-                        }
+                        New-UDTextbox -Id 'date' -Label '📅 Date' -Type 'date' -FullWidth -Value $currentDate
                     }
                     New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDTextbox -Id 'timestamp' -Label '🕐 Time' -Type 'time' -FullWidth -Value $currentTime -Style @{
-                            marginBottom = '10px'
-                        }
+                        New-UDTextbox -Id 'timestamp' -Label '🕐 Time' -Type 'time' -FullWidth -Value $currentTime
                     }
                 }
                 New-UDTypography -Text '💡 Automatically set to current Mountain Time - adjust if needed' -Variant caption -Style @{
@@ -425,9 +415,7 @@ New-UDApp -Content {
             # Sleep tracking section
             New-UDGrid -Container -Children {
                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                    New-UDTextbox -Id 'sleep' -Label '😴 Sleep Duration' -Type text -Placeholder 'e.g., 7.5 hours, 8:30, 6h 45m' -FullWidth -Style @{
-                        marginTop = '10px'
-                    }
+                    New-UDTextbox -Id 'sleep' -Label '😴 Sleep Duration' -Type text -Placeholder 'e.g., 7.5 hours, 8:30, 6h 45m' -FullWidth
                 }
             }
 
