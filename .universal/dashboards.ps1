@@ -4,6 +4,7 @@ New-PSUApp -Name "entries" -FilePath "dashboards/Entries/Entries.ps1" -BaseUrl "
 New-PSUApp -Name "gallery" -FilePath "dashboards/gallery/gallery.ps1" -BaseUrl "/gallery" -AutoDeploy -Description "Gallery of incision healing" 
 New-PSUApp -Name "HealthTimeline" -FilePath "dashboards/timeline/timeline.ps1" -BaseUrl "/healthtimeline" -Environment "PowerShell 7" -AutoDeploy 
 New-PSUApp -Name "HomePage" -FilePath "dashboards/home/home-app.ps1" -BaseUrl "/" -Environment "PowerShell 7" -AutoDeploy -Description "Health Dashboard Homepage with Navigation" 
+New-PSUApp -Name "Registration" -FilePath "dashboards/Registration/Registration.ps1" -BaseUrl "/register" -Environment "Integrated" -AutoDeploy -Description "multi-user registration page" 
 New-PSUApp -Name "test" -FilePath "dashboards/test/test.ps1" -BaseUrl "/testme" -Environment "PowerShell 7" -Authenticated -AutoDeploy 
 New-PSUApp -Name "test_calendars" -FilePath "dashboards/test_calendars/test_calendars.ps1" -BaseUrl "/testcalendar" -Environment "PowerShell 7" -Authenticated -AutoDeploy 
 New-PSUApp -Name "UpdateEntries" -FilePath "dashboards/UpdateEntries/UpdateEntries.ps1" -BaseUrl "/updateentry" -Authenticated -AutoDeploy
