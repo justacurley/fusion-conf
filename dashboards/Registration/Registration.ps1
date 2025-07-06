@@ -1,4 +1,61 @@
 ﻿New-UDApp -Content { 
+    # Add custom CSS for better form styling
+    New-UDElement -Tag "style" -Content "
+        .registration-form {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 30px;
+            background: var(--theme-palette-background-paper);
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .registration-form .form-group {
+            margin-bottom: 24px !important;
+        }
+        
+        .registration-form .MuiFormControl-root {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        
+        .registration-form .MuiButton-contained {
+            background-color: var(--theme-palette-primary-main);
+            color: white;
+            padding: 12px 32px;
+            font-size: 16px;
+            font-weight: 600;
+            border-radius: 8px;
+            text-transform: none;
+            margin-top: 20px;
+        }
+        
+        .registration-form .MuiButton-contained:hover {
+            background-color: var(--theme-palette-primary-dark);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+        
+        .registration-form .MuiTextField-root {
+            margin-bottom: 16px;
+        }
+        
+        .registration-form .MuiFormHelperText-root {
+            color: var(--theme-palette-text-secondary);
+            font-size: 13px;
+        }
+        
+        .registration-form .MuiFormControlLabel-root {
+            margin-top: 16px;
+            margin-bottom: 8px;
+        }
+        
+        .registration-form .field-description {
+            font-size: 14px;
+            color: var(--theme-palette-text-secondary);
+            margin-top: 4px;
+        }
+    "
+    
     New-UDContainer -Children {
         New-UDPaper -Children {
             New-UDGrid -Container -Children {
@@ -18,8 +75,11 @@
                     fontStyle    = 'italic'
                 }
             }
-        } -Style @{ padding = '20px'; marginBottom = '20px'; backgroundColor = 'var(--theme-palette-background-paper)' }
-        New-UDForm -Schema @{
+        } -Style @{ padding = '20px'; marginBottom = '30px'; backgroundColor = 'var(--theme-palette-background-paper)' }
+        
+        # Form container with better styling
+        New-UDPaper -Children {
+            New-UDForm -Schema @{
             title = "Registration Fields"
             type = "object"
             properties = @{
@@ -27,38 +87,72 @@
                     title = "Email Address"
                     type = "string"
                     format = "email"
+                    description = "We'll use this to send you important account updates"
                 }
                 password = @{
                     title = "Password"
                     type = "string"
                     format = "password"
                     minLength = 8
+                    description = "Must be at least 8 characters long"
                 }
                 confirm_password = @{
                     title = "Confirm Password"
                     type = "string"
                     format = "password"
+                    description = "Re-enter your password to confirm"
                 }
                 firstname = @{
                     title = "First Name"
                     type = "string"
+                    minLength = 1
+                    maxLength = 50
                 }
                 lastname = @{
                     title = "Last Name"
                     type = "string"
+                    minLength = 1
+                    maxLength = 50
                 }
                 timezone = @{
                     title = "Timezone"
                     type = "string"
                     enum = @([System.TimeZoneInfo]::GetSystemTimeZones() | ForEach-Object { $_.Id })
                     default = "Mountain Standard Time"
+                    description = "Select your local timezone for accurate time tracking"
                 }
                 tos = @{
-                    title = "I have read and agree to the Terms of Service"
+                    title = "I have read and agree to the Terms of Service and Privacy Policy"
                     type = "boolean"
+                    description = "You must accept our terms to create an account"
                 }
             }
             required = @('email', 'password', 'confirm_password', 'firstname', 'lastname', 'timezone', 'tos')
-        } -OnSubmit {}
+        } -UiSchema @{
+            "ui:order" = @('email', 'firstname', 'lastname', 'password', 'confirm_password', 'timezone', 'tos')
+            email = @{
+                "ui:help" = "Enter a valid email address"
+                "ui:placeholder" = "your.email@example.com"
+            }
+            firstname = @{
+                "ui:placeholder" = "Enter your first name"
+            }
+            lastname = @{
+                "ui:placeholder" = "Enter your last name"
+            }
+            password = @{
+                "ui:help" = "Use a strong password with letters, numbers, and symbols"
+            }
+            confirm_password = @{
+                "ui:help" = "Must match your password exactly"
+            }
+            timezone = @{
+                "ui:help" = "This helps us show times in your local timezone"
+            }
+            tos = @{
+                "ui:widget" = "checkbox"
+            }
+        } -ButtonVariant "contained" -SubmitText "Create Account" -ClassName "registration-form" -OnSubmit {}
+        } -Style @{ padding = '0'; backgroundColor = 'transparent'; boxShadow = 'none' }
     }
 }
