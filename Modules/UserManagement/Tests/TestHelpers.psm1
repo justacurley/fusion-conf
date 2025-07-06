@@ -3,7 +3,7 @@
 
 # Test configuration
 $script:TestConfig = @{
-    TestDataPath = "$env:TEMP\UserManagementTests"
+    TestDataPath = "/tmp/UserManagementTests"
     MockUserCount = 5
     TestTimeout = 30 # seconds
 }

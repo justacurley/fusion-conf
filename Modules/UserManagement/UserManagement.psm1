@@ -34,7 +34,7 @@ class UserProfile {
         return $null -ne (Get-PSUIdentity -Name $this.Email)
     }
 
-    [PowerShellUniversal.Identity] GetPSUIdentity([string]$email) {
+    [System.Object] GetPSUIdentity([string]$email) {
         return Get-PSUIdentity -Name $this.Email
     }
 

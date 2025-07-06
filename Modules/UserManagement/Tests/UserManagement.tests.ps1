@@ -183,11 +183,92 @@ Describe "UserProfile Class" {
         }
         
         It "Should create user directory structure" {
-            # TODO: Test directory creation method
+            # Setup test environment
+            $testPath = Initialize-TestEnvironment
+            $testUserPath = Join-Path $testPath $testProfile.ProfileId
+            
+            # Mock the PSU identity check and file system operations
+            Mock Get-PSUIdentity { return $script:NewPSUIdentity } -ModuleName UserManagement
+            Mock New-Item { 
+                param($ItemType, $Path, $Name, $ErrorAction)
+                if ($ItemType -eq "Directory") {
+                    $fullPath = if ($Name) { Join-Path $Path $Name } else { $Path }
+                    return @{ FullName = $fullPath }
+                } else {
+                    $fullPath = Join-Path $Path $Name
+                    return @{ FullName = $fullPath }
+                }
+            } -ModuleName UserManagement
+            
+            $result = $testProfile.CreateUserDirectory()
+            
+            # Verify directory creation calls
+            Should -Invoke New-Item -ParameterFilter { 
+                $ItemType -eq "Directory" -and $Name -eq $testProfile.ProfileId 
+            } -Exactly 1 -ModuleName UserManagement
+            
+            Should -Invoke New-Item -ParameterFilter { 
+                $ItemType -eq "Directory" -and $Name -eq "health-data" 
+            } -Exactly 1 -ModuleName UserManagement
+            
+            Should -Invoke New-Item -ParameterFilter { 
+                $ItemType -eq "File" -and $Name -eq "profile.json" 
+            } -Exactly 1 -ModuleName UserManagement
+            
+            Should -Invoke New-Item -ParameterFilter { 
+                $ItemType -eq "File" -and $Name -eq "preferences.json" 
+            } -Exactly 1 -ModuleName UserManagement
+            
+            $result | Should -Match $testProfile.ProfileId
+        }
+        
+        It "Should throw when directory creation fails for non-existent PSU identity" {
+            Mock Get-PSUIdentity { return $null } -ModuleName UserManagement
+            
+            { $testProfile.CreateUserDirectory() } | Should -Throw -ExpectedMessage "*Could not find identity*"
         }
         
         It "Should serialize profile to JSON" {
-            # TODO: Test profile serialization
+            # Setup test environment  
+            $testPath = Initialize-TestEnvironment
+            $expectedProfilePath = "/home/data/users/$($testProfile.ProfileId)/profile.json"
+            
+            # Mock file operations
+            Mock Out-File { return $null } -ModuleName UserManagement
+            Mock Join-Path { return $expectedProfilePath } -ModuleName UserManagement
+            
+            $result = $testProfile.SaveUserProfile()
+            
+            $result | Should -Be $expectedProfilePath
+            Should -Invoke Out-File -Exactly 1 -ModuleName UserManagement
+        }
+        
+        It "Should include correct properties in serialized profile" {
+            # Setup test environment
+            $testPath = Initialize-TestEnvironment
+            $capturedJson = ""
+            
+            # Mock Out-File to capture the JSON content
+            Mock Out-File { 
+                param($FilePath, $InputObject)
+                $script:capturedJson = $InputObject
+            } -ModuleName UserManagement
+            Mock Join-Path { return "/home/data/users/test/profile.json" } -ModuleName UserManagement
+            
+            $testProfile.SaveUserProfile()
+            
+            # Parse the captured JSON and verify properties
+            $profileData = $script:capturedJson | ConvertFrom-Json
+            $profileData.Email | Should -Be $testProfile.Email
+            $profileData.FirstName | Should -Be $testProfile.FirstName
+            $profileData.LastName | Should -Be $testProfile.LastName
+            $profileData.Timezone | Should -Be $testProfile.Timezone
+            $profileData.ProfileId | Should -Be $testProfile.ProfileId
+            # TOSAccepted is a switch, so check the IsPresent property
+            $profileData.TOSAccepted.IsPresent | Should -Be $testProfile.TOSAccepted.IsPresent
+            
+            # Verify sensitive data is not included
+            $profileData.PSObject.Properties.Name | Should -Not -Contain "Password"
         }
     }
 }
