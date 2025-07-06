@@ -1,6 +1,7 @@
 ﻿New-UDApp -Content { 
     # Add custom CSS for better form styling
-    New-UDElement -Tag "style" -Content "
+    New-UDElement -Tag "style" -Content {
+        @"
         .registration-form {
             max-width: 600px;
             margin: 0 auto;
@@ -54,7 +55,8 @@
             color: var(--theme-palette-text-secondary);
             margin-top: 4px;
         }
-    "
+"@
+    }
     
     New-UDContainer -Children {
         New-UDPaper -Children {
