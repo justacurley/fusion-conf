@@ -96,13 +96,17 @@
                     type = "string"
                     format = "password"
                     minLength = 8
-                    description = "Must be at least 8 characters long"
+                    maxLength = 128
+                    pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
+                    description = "Must contain at least 8 characters with uppercase, lowercase, number, and special character (@$!%*?&)"
                 }
                 confirm_password = @{
                     title = "Confirm Password"
                     type = "string"
                     format = "password"
-                    description = "Re-enter your password to confirm"
+                    minLength = 8
+                    maxLength = 128
+                    description = "Re-enter your password to confirm (must match exactly)"
                 }
                 firstname = @{
                     title = "First Name"
@@ -143,7 +147,7 @@
                 "ui:placeholder" = "Enter your last name"
             }
             password = @{
-                "ui:help" = "Use a strong password with letters, numbers, and symbols"
+                "ui:help" = "Required: 8+ characters, uppercase, lowercase, number, and special character (@$!%*?&)"
             }
             confirm_password = @{
                 "ui:help" = "Must match your password exactly"
@@ -157,11 +161,29 @@
         } -ButtonVariant "contained" -ClassName "registration-form" -OnSubmit {
             param($Data)
             
-            # TODO: Implement registration logic
-            Show-UDToast -Message "Registration functionality coming soon!" -MessageColor blue
+            # Password confirmation validation (schema can't handle this)
+            if ($Data.password -ne $Data.confirm_password) {
+                Show-UDToast -Message "Passwords do not match. Please try again." -MessageColor red
+                return
+            }
             
-            # For now, just log the submitted data for testing
-            Write-Host "Registration data submitted: $($Data | ConvertTo-Json -Depth 3)"
+            # Additional password strength validation (backup to regex)
+            if ($Data.password.Length -lt 8) {
+                Show-UDToast -Message "Password must be at least 8 characters long." -MessageColor red
+                return
+            }
+            
+            if (-not ($Data.password -match "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])")) {
+                Show-UDToast -Message "Password must contain uppercase, lowercase, number, and special character." -MessageColor red
+                return
+            }
+            
+            # TODO: Implement registration logic
+            Show-UDToast -Message "Registration functionality coming soon! Password validation passed." -MessageColor green
+            
+            # For now, just log the submitted data for testing (excluding passwords)
+            $safeData = $Data | Select-Object * -ExcludeProperty password, confirm_password
+            Write-Host "Registration data submitted: $($safeData | ConvertTo-Json -Depth 3)"
         }
         } -Style @{ padding = '0'; backgroundColor = 'transparent'; boxShadow = 'none' }
     }
