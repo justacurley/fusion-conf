@@ -39,6 +39,9 @@ A comprehensive health tracking system built with PowerShell Universal, featurin
 
 ## 🚀 **Next Priority Tasks**
 
+### **Data schema changes**
+- [ ] **Add YYYY to data schema
+- [ ] **Add `steps` to date object (MMDD)
 ### 📊 **Enhanced Analytics & Visualizations**
 - [ ] **Pain Correlation Analysis**
   - Correlation between weather data and pain levels
