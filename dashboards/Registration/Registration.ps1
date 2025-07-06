@@ -154,7 +154,15 @@
             tos = @{
                 "ui:widget" = "checkbox"
             }
-        } -ButtonVariant "contained" -SubmitText "Create Account" -ClassName "registration-form" -OnSubmit {}
+        } -ButtonVariant "contained" -SubmitText "Create Account" -ClassName "registration-form" -OnSubmit {
+            param($Data)
+            
+            # TODO: Implement registration logic
+            Show-UDToast -Message "Registration functionality coming soon!" -MessageColor blue
+            
+            # For now, just log the submitted data for testing
+            Write-Host "Registration data submitted: $($Data | ConvertTo-Json -Depth 3)"
+        }
         } -Style @{ padding = '0'; backgroundColor = 'transparent'; boxShadow = 'none' }
     }
 }
