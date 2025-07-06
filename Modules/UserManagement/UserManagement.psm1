@@ -39,6 +39,7 @@ class UserProfile {
     }
 
     [System.Object] CreatePSUIdentity() {
+        $Identity = $null
         try {
             if (-not $this.PSUIdentityExists()) {
                 $UserRole = Get-PSURole -Name 'User' -ErrorAction Stop
@@ -57,7 +58,7 @@ class UserProfile {
     [string] CreateUserDirectory() {
         $ProfilesPath = '/home/data/users/'
         try {
-            if ($null -ne ($Identity = $this.GetPSUIdentity($this.Email))) {
+            if ($null -ne ($this.GetPSUIdentity($this.Email))) {
                 New-Item -ItemType Directory -Path $ProfilesPath -Name $this.ProfileId -ErrorAction Stop
                 $UserPath = Join-Path $ProfilesPath $this.ProfileId
                 New-Item -ItemType Directory -Path $UserPath -Name 'health-data' -ErrorAction Stop
@@ -84,3 +85,4 @@ class UserProfile {
         }
 
     }
+}
