@@ -154,7 +154,7 @@
             tos = @{
                 "ui:widget" = "checkbox"
             }
-        } -ButtonVariant "contained" -SubmitText "Create Account" -ClassName "registration-form" -OnSubmit {
+        } -ButtonVariant "contained" -ClassName "registration-form" -OnSubmit {
             param($Data)
             
             # TODO: Implement registration logic
