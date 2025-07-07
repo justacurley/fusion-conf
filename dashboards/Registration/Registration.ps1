@@ -159,21 +159,21 @@
                 "ui:widget" = "checkbox"
             }
         } -ButtonVariant "contained" -ClassName "registration-form" -OnSubmit {
-            param($Data)
+            
             
             # Password confirmation validation (schema can't handle this)
-            if ($Data.password -ne $Data.confirm_password) {
+            if ($EventData.password -ne $EventData.confirm_password) {
                 Show-UDToast -Message "Passwords do not match. Please try again." -MessageColor red
                 return
             }
             
             # Additional password strength validation (backup to regex)
-            if ($Data.password.Length -lt 8) {
+            if ($EventData.password.Length -lt 8) {
                 Show-UDToast -Message "Password must be at least 8 characters long." -MessageColor red
                 return
             }
             
-            if (-not ($Data.password -match "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])")) {
+            if (-not ($EventData.password -match "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])")) {
                 Show-UDToast -Message "Password must contain uppercase, lowercase, number, and special character." -MessageColor red
                 return
             }
@@ -182,7 +182,7 @@
             Show-UDToast -Message "Registration functionality coming soon! Password validation passed." -MessageColor green
             
             # For now, just log the submitted data for testing (excluding passwords)
-            $safeData = $Data | Select-Object * -ExcludeProperty password, confirm_password
+            $safeData = $EventData | Select-Object * -ExcludeProperty password, confirm_password
             Write-Information "Registration data submitted: $($safeData | ConvertTo-Json -Depth 3)"
         }
         } -Style @{ padding = '0'; backgroundColor = 'transparent'; boxShadow = 'none' }
