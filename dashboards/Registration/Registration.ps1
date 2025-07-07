@@ -201,15 +201,13 @@
                     return
                 }
             
-                # Create new user registration
-                $UserParams = $EventData | Select-Object email, @{n='FirstName';e={$_.firstname}}, @{n='LastName';e={$_.lastname}}, @{n = 'password'; e = { $_.password | ConvertTo-SecureString -AsPlainText -Force } }, timezone
-                Write-Information "UserParams"
-                Write-Information ($UserParams | ConvertTo-Json)
-                # Handle TOSAccepted as a switch parameter
                 if ($EventData.tos -eq $true) {
-                    $NewUser = New-PSUUser @UserParams -TOSAccepted
+                    $NewUser = New-PSUUser -Email $EventData.email -FirstName $EventData.firstname -LastName $EventData.lastname `
+                    -Password ($EventData.password| ConvertTo-SecureString -AsPlainText -Force) -Timezone $EventData.timezone `
+                    -TOSAccepted
                 } else {
-                    $NewUser = New-PSUUser @UserParams
+                    $NewUser = New-PSUUser -Email $EventData.email -FirstName $EventData.firstname -LastName $EventData.lastname `
+                    -Password ($EventData.password| ConvertTo-SecureString -AsPlainText -Force) -Timezone $EventData.timezone
                 }
                 
                 if ($NewUser.Success) {
