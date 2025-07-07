@@ -1,7 +1,7 @@
 ﻿New-UDApp -Content { 
     # Add custom CSS for better form styling
-    New-UDElement -Tag "style" -Content {
-        @"
+    New-UDElement -Tag 'style' -Content {
+        @'
         .registration-form {
             max-width: 600px;
             margin: 0 auto;
@@ -55,7 +55,7 @@
             color: var(--theme-palette-text-secondary);
             margin-top: 4px;
         }
-"@
+'@
     }
     
     New-UDContainer -Children {
@@ -82,109 +82,119 @@
         # Form container with better styling
         New-UDPaper -Children {
             New-UDForm -Schema @{
-            title = "Registration Fields"
-            type = "object"
-            properties = @{
-                email = @{
-                    title = "Email Address"
-                    type = "string"
-                    format = "email"
-                    description = "We'll use this to send you important account updates"
+                title      = 'Registration Fields'
+                type       = 'object'
+                properties = @{
+                    email            = @{
+                        title       = 'Email Address'
+                        type        = 'string'
+                        format      = 'email'
+                        description = "We'll use this to send you important account updates"
+                    }
+                    password         = @{
+                        title       = 'Password'
+                        type        = 'string'
+                        format      = 'password'
+                        minLength   = 8
+                        maxLength   = 128
+                        pattern     = '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'
+                        description = 'Must contain at least 8 characters with uppercase, lowercase, number, and special character (@$!%*?&)'
+                    }
+                    confirm_password = @{
+                        title       = 'Confirm Password'
+                        type        = 'string'
+                        format      = 'password'
+                        minLength   = 8
+                        maxLength   = 128
+                        description = 'Re-enter your password to confirm (must match exactly)'
+                    }
+                    firstname        = @{
+                        title     = 'First Name'
+                        type      = 'string'
+                        minLength = 1
+                        maxLength = 50
+                    }
+                    lastname         = @{
+                        title     = 'Last Name'
+                        type      = 'string'
+                        minLength = 1
+                        maxLength = 50
+                    }
+                    timezone         = @{
+                        title       = 'Timezone'
+                        type        = 'string'
+                        enum        = @([System.TimeZoneInfo]::GetSystemTimeZones() | ForEach-Object { $_.Id })
+                        default     = 'Mountain Standard Time'
+                        description = 'Select your local timezone for accurate time tracking'
+                    }
+                    tos              = @{
+                        title       = 'I have read and agree to the Terms of Service and Privacy Policy'
+                        type        = 'boolean'
+                        description = 'You must accept our terms to create an account'
+                    }
                 }
-                password = @{
-                    title = "Password"
-                    type = "string"
-                    format = "password"
-                    minLength = 8
-                    maxLength = 128
-                    pattern = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$"
-                    description = "Must contain at least 8 characters with uppercase, lowercase, number, and special character (@$!%*?&)"
+                required   = @('email', 'password', 'confirm_password', 'firstname', 'lastname', 'timezone', 'tos')
+            } -UiSchema @{
+                'ui:order'       = @('email', 'firstname', 'lastname', 'password', 'confirm_password', 'timezone', 'tos')
+                email            = @{
+                    'ui:help'        = 'Enter a valid email address'
+                    'ui:placeholder' = 'your.email@example.com'
+                }
+                firstname        = @{
+                    'ui:placeholder' = 'Enter your first name'
+                }
+                lastname         = @{
+                    'ui:placeholder' = 'Enter your last name'
+                }
+                password         = @{
+                    'ui:help' = 'Required: 8+ characters, uppercase, lowercase, number, and special character (@$!%*?&)'
                 }
                 confirm_password = @{
-                    title = "Confirm Password"
-                    type = "string"
-                    format = "password"
-                    minLength = 8
-                    maxLength = 128
-                    description = "Re-enter your password to confirm (must match exactly)"
+                    'ui:help' = 'Must match your password exactly'
                 }
-                firstname = @{
-                    title = "First Name"
-                    type = "string"
-                    minLength = 1
-                    maxLength = 50
+                timezone         = @{
+                    'ui:help' = 'This helps us show times in your local timezone'
                 }
-                lastname = @{
-                    title = "Last Name"
-                    type = "string"
-                    minLength = 1
-                    maxLength = 50
+                tos              = @{
+                    'ui:widget' = 'checkbox'
                 }
-                timezone = @{
-                    title = "Timezone"
-                    type = "string"
-                    enum = @([System.TimeZoneInfo]::GetSystemTimeZones() | ForEach-Object { $_.Id })
-                    default = "Mountain Standard Time"
-                    description = "Select your local timezone for accurate time tracking"
+            } -ButtonVariant 'contained' -ClassName 'registration-form' -OnSubmit {
+                Import-Module UserManagement -Force
+
+                if (Test-PSUUserExists -Email $EventData.email) {
+                    Show-UDToast -Message "User $email already exists." -MessageColor Red -Duration 5000
+                    return
+                } else { Write-Information "$email not found in db, continuing to register" }
+                
+                # Password confirmation validation (schema can't handle this)
+                if ($EventData.password -ne $EventData.confirm_password) {
+                    Show-UDToast -Message 'Passwords do not match. Please try again.' -MessageColor red
+                    return
                 }
-                tos = @{
-                    title = "I have read and agree to the Terms of Service and Privacy Policy"
-                    type = "boolean"
-                    description = "You must accept our terms to create an account"
+            
+                # Additional password strength validation (backup to regex)
+                if ($EventData.password.Length -lt 8) {
+                    Show-UDToast -Message 'Password must be at least 8 characters long.' -MessageColor red
+                    return
+                }
+            
+                if (-not ($EventData.password -match '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])')) {
+                    Show-UDToast -Message 'Password must contain uppercase, lowercase, number, and special character.' -MessageColor red
+                    return
+                }
+            
+                # Create new user registration
+                $UserParams = $EventData | Select-Object email, firstname, lastname, @{n = 'password'; e = { $_.password | ConvertTo-SecureString -AsPlainText -Force } }, timezone, @{n = 'TOSAccepted'; e = { $_.tos } }
+                
+                $NewUser = New-PSUUser @UserParams
+                
+                if ($NewUser.Success) {
+                    Show-UDToast -Message $NewUser.Message -MessageColor green
+                    # Maybe redirect to login page or dashboard?
+                } else {
+                    Show-UDToast -Message $NewUser.Message -MessageColor red
                 }
             }
-            required = @('email', 'password', 'confirm_password', 'firstname', 'lastname', 'timezone', 'tos')
-        } -UiSchema @{
-            "ui:order" = @('email', 'firstname', 'lastname', 'password', 'confirm_password', 'timezone', 'tos')
-            email = @{
-                "ui:help" = "Enter a valid email address"
-                "ui:placeholder" = "your.email@example.com"
-            }
-            firstname = @{
-                "ui:placeholder" = "Enter your first name"
-            }
-            lastname = @{
-                "ui:placeholder" = "Enter your last name"
-            }
-            password = @{
-                "ui:help" = "Required: 8+ characters, uppercase, lowercase, number, and special character (@$!%*?&)"
-            }
-            confirm_password = @{
-                "ui:help" = "Must match your password exactly"
-            }
-            timezone = @{
-                "ui:help" = "This helps us show times in your local timezone"
-            }
-            tos = @{
-                "ui:widget" = "checkbox"
-            }
-        } -ButtonVariant "contained" -ClassName "registration-form" -OnSubmit {
-            
-            
-            # Password confirmation validation (schema can't handle this)
-            if ($EventData.password -ne $EventData.confirm_password) {
-                Show-UDToast -Message "Passwords do not match. Please try again." -MessageColor red
-                return
-            }
-            
-            # Additional password strength validation (backup to regex)
-            if ($EventData.password.Length -lt 8) {
-                Show-UDToast -Message "Password must be at least 8 characters long." -MessageColor red
-                return
-            }
-            
-            if (-not ($EventData.password -match "^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])")) {
-                Show-UDToast -Message "Password must contain uppercase, lowercase, number, and special character." -MessageColor red
-                return
-            }
-            
-            # TODO: Implement registration logic
-            Show-UDToast -Message "Registration functionality coming soon! Password validation passed." -MessageColor green
-            
-            # For now, just log the submitted data for testing (excluding passwords)
-            $safeData = $EventData | Select-Object * -ExcludeProperty password, confirm_password
-            Write-Information "Registration data submitted: $($safeData | ConvertTo-Json -Depth 3)"
-        }
         } -Style @{ padding = '0'; backgroundColor = 'transparent'; boxShadow = 'none' }
     }
 }

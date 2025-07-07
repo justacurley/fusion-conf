@@ -38,6 +38,14 @@ class UserProfile {
         return Get-PSUIdentity -Name $this.Email
     }
 
+    static [bool] UserExists([string]$Email) {
+        try {
+            return $null -ne (Get-PSUIdentity -Name $Email)
+        } catch {
+            return $false
+        }
+    }
+
     [System.Object] CreatePSUIdentity() {
         $Identity = $null
         try {
@@ -77,7 +85,7 @@ class UserProfile {
         try {
             $UserPath = "/home/data/users/$($this.ProfileId)"
             $UserSettingsPath = Join-Path $UserPath profile.json
-            $this | Select-Object Email,FirstName,LastName,Timezone,CreatedOn,ProfileId,PSUProfileId,TOSAccepted | ConvertTo-Json | Out-File $UserSettingsPath 
+            $this | Select-Object Email, FirstName, LastName, Timezone, CreatedOn, ProfileId, PSUProfileId, TOSAccepted | ConvertTo-Json | Out-File $UserSettingsPath 
             return $UserSettingsPath
         } catch {
             Write-Warning "Failed to update profile.json for user profile $($this.Email)"
@@ -85,4 +93,39 @@ class UserProfile {
         }
 
     }
+}
+
+function New-PSUUser {
+    param (
+        [string]$Email,
+        [string]$FirstName,
+        [string]$LastName,
+        [securestring]$Password,
+        [string]$Timezone,
+        [switch]$TOSAccepted
+    )
+    $Response = @{}
+    try {
+        $NewUser = [UserProfile]::new($Email, $FirstName, $LastName, $Password, $Timezone, $TOSAccepted)
+        $NewUser.CreatePSUIdentity()
+        $NewUser.CreateUserDirectory()
+        $NewUser.SaveUserProfile()
+        $Response['Success'] = $true
+        $Response['Message'] = "User $Email registered successfully"
+        $Response['UserProfile'] = $NewUser
+    }
+    catch {
+        $Response['Success'] = $false
+        $Response['Message'] = "User $Email failed to register"
+        $Response['UserProfile'] = $null
+        Write-Error $_
+    }    
+    return $Response
+}
+function Test-PSUUserExists {
+    param(
+        [ValidateNotNullOrEmpty()]
+        [string]$Email
+    )
+    return [UserProfile]::UserExists($Email)
 }
