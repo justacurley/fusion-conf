@@ -159,7 +159,8 @@
                     'ui:widget' = 'checkbox'
                 }
             } -ButtonVariant 'contained' -ClassName 'registration-form' -OnSubmit {
-                Import-Module UserManagement -Force
+                Write-Information (Get-Module -ListAvailable | Out-String)
+                Import-Module UserManagement -Force -Verbose
 
                 if (Test-PSUUserExists -Email $EventData.email) {
                     Show-UDToast -Message "User $email already exists." -MessageColor Red -Duration 5000
