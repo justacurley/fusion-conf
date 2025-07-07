@@ -123,8 +123,25 @@
                     timezone         = @{
                         title       = 'Timezone'
                         type        = 'string'
-                        enum        = @([System.TimeZoneInfo]::GetSystemTimeZones() | ForEach-Object { $_.Id })
-                        default     = 'Mountain Standard Time'
+                        enum        = @(
+                            'America/New_York',
+                            'America/Chicago', 
+                            'America/Denver',
+                            'America/Phoenix',
+                            'America/Los_Angeles',
+                            'America/Anchorage',
+                            'Pacific/Honolulu'
+                        )
+                        enumNames   = @(
+                            'Eastern Time (New York)',
+                            'Central Time (Chicago)',
+                            'Mountain Time (Denver)', 
+                            'Arizona Time (Phoenix)',
+                            'Pacific Time (Los Angeles)',
+                            'Alaska Time (Anchorage)',
+                            'Hawaii Time (Honolulu)'
+                        )
+                        default     = 'America/Denver'
                         description = 'Select your local timezone for accurate time tracking'
                     }
                     tos              = @{
