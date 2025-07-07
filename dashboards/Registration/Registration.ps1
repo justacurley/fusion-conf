@@ -202,7 +202,7 @@
                 }
             
                 # Create new user registration
-                $UserParams = $EventData | Select-Object email, firstname, lastname, @{n = 'password'; e = { $_.password | ConvertTo-SecureString -AsPlainText -Force } }, timezone
+                $UserParams = $EventData | Select-Object email, @{n='FirstName';e={$_.firstname}}, @{n='LastName';e={$_.lastname}}, @{n = 'password'; e = { $_.password | ConvertTo-SecureString -AsPlainText -Force } }, timezone
                 Write-Information "UserParams"
                 Write-Information ($UserParams | ConvertTo-Json)
                 # Handle TOSAccepted as a switch parameter
