@@ -183,7 +183,7 @@
             
             # For now, just log the submitted data for testing (excluding passwords)
             $safeData = $Data | Select-Object * -ExcludeProperty password, confirm_password
-            Write-Host "Registration data submitted: $($safeData | ConvertTo-Json -Depth 3)"
+            Write-Information "Registration data submitted: $($safeData | ConvertTo-Json -Depth 3)"
         }
         } -Style @{ padding = '0'; backgroundColor = 'transparent'; boxShadow = 'none' }
     }
