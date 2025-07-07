@@ -102,7 +102,7 @@ function New-PSUUser {
         [string]$LastName,
         [securestring]$Password,
         [string]$Timezone,
-        [switch]$TOSAccepted
+        [bool]$TOSAccepted
     )
     $Response = @{}
     try {
