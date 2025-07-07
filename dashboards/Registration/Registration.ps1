@@ -202,9 +202,14 @@
                 }
             
                 # Create new user registration
-                $UserParams = $EventData | Select-Object email, firstname, lastname, @{n = 'password'; e = { $_.password | ConvertTo-SecureString -AsPlainText -Force } }, timezone, @{n = 'TOSAccepted'; e = { $_.tos } }
+                $UserParams = $EventData | Select-Object email, firstname, lastname, @{n = 'password'; e = { $_.password | ConvertTo-SecureString -AsPlainText -Force } }, timezone
                 
-                $NewUser = New-PSUUser @UserParams
+                # Handle TOSAccepted as a switch parameter
+                if ($EventData.tos -eq $true) {
+                    $NewUser = New-PSUUser @UserParams -TOSAccepted
+                } else {
+                    $NewUser = New-PSUUser @UserParams
+                }
                 
                 if ($NewUser.Success) {
                     Show-UDToast -Message $NewUser.Message -MessageColor green
