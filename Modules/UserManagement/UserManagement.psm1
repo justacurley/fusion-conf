@@ -51,7 +51,7 @@ class UserProfile {
         try {
             if (-not $this.PSUIdentityExists()) {
                 $UserRole = Get-PSURole -Name 'User' -ErrorAction Stop
-                $Identity = New-PSUIdentity -Name $this.Email -Role $UserRole -Password $this.Password -Integrated -Vault "Database" -ErrorAction Stop
+                $Identity = New-PSUIdentity -Name $this.Email -Role $UserRole -Password $this.Password -Integrated -CredentialVault "Database" -ErrorAction Stop
                 $this.PSUProfileId = $Identity.Id
             } else {
                 Write-Warning "Profile for $($this.Email) already exists"
