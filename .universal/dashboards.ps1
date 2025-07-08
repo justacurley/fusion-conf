@@ -8,3 +8,4 @@ New-PSUApp -Name "Registration" -FilePath "dashboards/Registration/Registration.
 New-PSUApp -Name "test" -FilePath "dashboards/test/test.ps1" -BaseUrl "/testme" -Environment "PowerShell 7" -Authenticated -AutoDeploy 
 New-PSUApp -Name "test_calendars" -FilePath "dashboards/test_calendars/test_calendars.ps1" -BaseUrl "/testcalendar" -Environment "PowerShell 7" -Authenticated -AutoDeploy 
 New-PSUApp -Name "UpdateEntries" -FilePath "dashboards/UpdateEntries/UpdateEntries.ps1" -BaseUrl "/updateentry" -Authenticated -AutoDeploy
+New-PSUApp -Name "Test Viewer" -Module "PowerShellUniversal.Apps.Pester" -Command 'New-UDPesterApp' -BaseUrl "/test-viewer" -Authenticated -AutoDeploy -Description "A Pester test result viewer for PowerShell Universal."
