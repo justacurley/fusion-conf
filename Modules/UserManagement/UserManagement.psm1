@@ -51,7 +51,7 @@ class UserProfile {
         try {
             if (-not $this.PSUIdentityExists()) {
                 $UserRole = Get-PSURole -Name 'User' -ErrorAction Stop
-                $Identity = New-PSUIdentity -Name $this.Email -Role $UserRole -Password $this.Password -ErrorAction Stop
+                $Identity = New-PSUIdentity -Name $this.Email -Role $UserRole -Password $this.Password -Integrated -ErrorAction Stop
                 $this.PSUProfileId = $Identity.Id
             } else {
                 Write-Warning "Profile for $($this.Email) already exists"
@@ -128,4 +128,19 @@ function Test-PSUUserExists {
         [string]$Email
     )
     return [UserProfile]::UserExists($Email)
+}
+
+function Invoke-UserAuthentication {
+    [CmdletBinding()]
+    param (
+        [string]$Email,
+        [securestring]$Password
+    )
+    end {
+        $UserExists = Test-PSUUserExists -Email $Email
+        if (! $UserExists) {
+            throw "User $Email is not found"
+        }
+        
+    }
 }
