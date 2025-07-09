@@ -9,12 +9,10 @@ param(
     Import-Module UserManagement
     $AuthResult = Invoke-UserAuthentication -Email $Credential.UserName
     if ($AuthResult.Success) {
-        Write-Information "Auth Result:"
-        Write-Information ($AuthResult | ConvertTo-Json -depth 3)
+        Write-PSULog -Level Information -Message "Auth Result" -Feature "authentication" -Properties ($AuthResult | ConvertTo-Json -depth 3 | ConvertFrom-Json -AsHashtable)
         $SessionResult = Set-UserSession -UserProfile $AuthResult.UserProfile
         if ($SessionResult.Success) {
-            Write-Information "Session Result:"
-            Write-Information ($SessionResult | ConvertTo-Json -depth 3)
+            Write-PSULog -Level Information -Message "Session Result" -Feature "authentication" -Properties ($SessionResult | ConvertTo-Json -depth 3 | Convertfrom-json -AsHashtable)
             New-PSUAuthenticationResult -Success -UserName $Credential.UserName
         } else {
             New-PSUAuthenticationResult -ErrorMessage 'Session setup failed'
