@@ -7,6 +7,7 @@ param(
     #   Just make sure to return the $Result with the Success property set to $true
     #
     Import-Module UserManagement
+    Write-PSULog -Level Information -Message "vars" -Feature "Security" -Resource 'authentication.ps1' -Properties (gv|convertto-json|convertfrom-json -ashashtable)
     $AuthResult = Invoke-UserAuthentication -Email $Credential.UserName
     if ($AuthResult.Success) {
         Write-PSULog -Level Information -Message "Auth Result" -Feature "Security" -Resource 'authentication.ps1' -Properties ($AuthResult | ConvertTo-Json -depth 3 | ConvertFrom-Json -AsHashtable)
@@ -20,4 +21,5 @@ param(
     } else {
         New-PSUAuthenticationResult -ErrorMessage 'Bad username or password'
     }
+    Write-PSULog -Level Information -Message "varsEND" -Feature "Security" -Resource 'authentication.ps1' -Properties (gv|convertto-json|convertfrom-json -ashashtable)
 }
