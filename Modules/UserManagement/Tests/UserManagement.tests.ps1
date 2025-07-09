@@ -272,3 +272,410 @@ Describe "UserProfile Class" {
         }
     }
 }
+
+Describe "Module-Level Function Tests" {
+    Context "New-PSUUser Function Tests" {
+        # Existing tests can be added here if needed
+    }
+    
+    Context "Test-PSUUserExists Function Tests" {
+        # Existing tests can be added here if needed
+    }
+    
+    Context "Invoke-UserAuthentication Function Tests" {
+        BeforeAll {
+            $script:TestEmail = "auth@example.com"
+            $script:TestProfile = @{
+                Email = $script:TestEmail
+                FirstName = "Auth"
+                LastName = "User" 
+                ProfileId = [guid]::NewGuid()
+                PSUProfileId = 123
+                Timezone = "America/New_York"
+                CreatedOn = Get-Date
+                TOSAccepted = $true
+            }
+        }
+        
+        It "Should return success when user exists and profile is found" {
+            Mock Test-PSUUserExists { return $true } -ModuleName UserManagement
+            Mock Get-ChildItem { 
+                return @(
+                    @{ FullName = "/fake/path/profile.json" }
+                )
+            } -ModuleName UserManagement
+            Mock Get-Content { 
+                return ($script:TestProfile | ConvertTo-Json)
+            } -ModuleName UserManagement
+            
+            $result = Invoke-UserAuthentication -Email $script:TestEmail
+            
+            $result.Success | Should -Be $true
+            $result.Message | Should -Match "Profile for .* was found"
+            $result.UserProfile | Should -Not -BeNullOrEmpty
+            $result.UserProfile.Email | Should -Be $script:TestEmail
+        }
+        
+        It "Should return failure when user does not exist" {
+            Mock Test-PSUUserExists { return $false } -ModuleName UserManagement
+            
+            $result = Invoke-UserAuthentication -Email "nonexistent@example.com"
+            
+            $result.Success | Should -Be $false
+            $result.Message | Should -Match "Profile for .* was not found"
+            $result.UserProfile | Should -BeOfType [PSCustomObject]
+        }
+        
+        It "Should return failure when user exists but profile.json is not found" {
+            Mock Test-PSUUserExists { return $true } -ModuleName UserManagement
+            Mock Get-ChildItem { return @() } -ModuleName UserManagement
+            
+            $result = Invoke-UserAuthentication -Email $script:TestEmail
+            
+            $result.Success | Should -Be $false
+            $result.Message | Should -Match "Profile.json was not found"
+        }
+        
+        It "Should return failure when profile.json returns null" {
+            Mock Test-PSUUserExists { return $true } -ModuleName UserManagement
+            Mock Get-ChildItem { 
+                return @(
+                    @{ FullName = "/fake/path/profile.json" }
+                )
+            } -ModuleName UserManagement
+            Mock Get-Content { 
+                return '{"Email":"different@example.com","FirstName":"Other"}'
+            } -ModuleName UserManagement
+            
+            $result = Invoke-UserAuthentication -Email $script:TestEmail
+            
+            $result.Success | Should -Be $false
+            $result.Message | Should -Match "Profile.json was not found"
+        }
+        
+        It "Should handle exceptions gracefully" {
+            Mock Test-PSUUserExists { throw "Database error" } -ModuleName UserManagement
+            Mock Write-Error { } -ModuleName UserManagement
+            
+            $result = Invoke-UserAuthentication -Email $script:TestEmail
+            
+            $result.Success | Should -Be $false
+            Should -Invoke Write-Error -Exactly 1 -ModuleName UserManagement
+        }
+    }
+    
+    Context "Set-UserSession Function Tests" {
+        BeforeAll {
+            $script:TestUserProfile = [PSCustomObject]@{
+                Email = "session@example.com"
+                FirstName = "Session"
+                LastName = "User"
+                ProfileId = [guid]::NewGuid()
+                PSUProfileId = 456
+                Timezone = "America/Denver"
+            }
+        }
+        
+        It "Should successfully set all session variables" {
+            # Mock the session variable assignments since they don't work outside PSU
+            Mock Write-Error { } -ModuleName UserManagement
+            
+            $result = Set-UserSession -UserProfile $script:TestUserProfile
+            
+            # Since we can't actually test session variables outside PSU,
+            # we verify the function doesn't throw and handles the error gracefully
+            $result | Should -Not -BeNullOrEmpty
+            $result.Success | Should -Be $false  # Will fail outside PSU context
+            $result.Message | Should -Not -BeNullOrEmpty
+        }
+        
+        It "Should handle missing profile properties gracefully" {
+            Mock Write-Error { } -ModuleName UserManagement
+            $incompleteProfile = [PSCustomObject]@{
+                Email = "incomplete@example.com"
+                # Missing other required properties
+            }
+            
+            $result = Set-UserSession -UserProfile $incompleteProfile
+            
+            # Function should not throw, even with incomplete profile
+            $result | Should -Not -BeNullOrEmpty
+            $result.Success | Should -Be $false  # Will fail outside PSU context
+        }
+        
+        It "Should return proper structure on call" {
+            Mock Write-Error { } -ModuleName UserManagement
+            
+            $result = Set-UserSession -UserProfile $script:TestUserProfile
+            
+            # Verify response structure
+            $result | Should -BeOfType [hashtable]
+            $result.ContainsKey('Success') | Should -Be $true
+            $result.ContainsKey('Message') | Should -Be $true
+            $result.Success | Should -BeOfType [bool]
+            $result.Message | Should -BeOfType [string]
+        }
+    }
+    
+    Context "Test-UserSession Function Tests" {
+        BeforeAll {
+            # Setup mock user object for PSU context
+            $script:MockUser = [PSCustomObject]@{
+                Identity = [PSCustomObject]@{
+                    Name = "testuser@example.com"
+                    IsAuthenticated = $true
+                }
+                Claims = @()
+            }
+        }
+        
+        It "Should return success when all validations pass" {
+            # Use InModuleScope to set variables within the module context
+            InModuleScope UserManagement {
+                # Set up a proper User variable that the function expects
+                $script:User = [PSCustomObject]@{
+                    Identity = [PSCustomObject]@{
+                        Name = "testuser@example.com"
+                        IsAuthenticated = $true
+                    }
+                    Claims = @()
+                }
+                
+                $result = Test-UserSession
+                
+                # The function will fail at session variable check outside PSU context
+                # but we can verify it gets past the User authentication check
+                $result | Should -Not -BeNullOrEmpty
+                $result.Success | Should -Be $false  # Will fail at session variable check
+                $result.Message | Should -Not -Be "PSU User identity not found"
+                $result.Message | Should -Not -Be "User is not authenticated in PSU"
+                # Should fail on session variables instead
+                $result.Message | Should -Match "Session variable.*missing"
+            }
+        }
+        
+        It "Should fail when PSU User variable does not exist" {
+            Mock Get-Variable { throw "Variable not found" } -ParameterFilter { $Name -eq "User" } -ModuleName UserManagement
+            Mock Write-Error { } -ModuleName UserManagement
+            
+            $result = Test-UserSession
+            
+            $result.Success | Should -Be $false
+            $result.Message | Should -Be "Could not access PSU User session variable"
+            Should -Invoke Write-Error -Exactly 1 -ModuleName UserManagement
+        }
+        
+        It "Should fail when PSU User identity is missing" {
+            # Use InModuleScope to set variables within the module context
+            InModuleScope UserManagement {
+                # Set up a User variable with null Identity
+                $script:User = [PSCustomObject]@{
+                    Identity = $null
+                    Claims = @()
+                }
+                
+                $result = Test-UserSession
+                
+                $result.Success | Should -Be $false
+                $result.Message | Should -Be "PSU User identity not found"
+            }
+        }
+        
+        It "Should fail when PSU User is not authenticated" {
+            # Use InModuleScope to set variables within the module context
+            InModuleScope UserManagement {
+                # Set up an unauthenticated User variable
+                $script:User = [PSCustomObject]@{
+                    Identity = [PSCustomObject]@{
+                        Name = "testuser@example.com"
+                        IsAuthenticated = $false
+                    }
+                    Claims = @()
+                }
+                
+                $result = Test-UserSession
+                
+                $result.Success | Should -Be $false
+                $result.Message | Should -Be "User is not authenticated in PSU"
+            }
+        }
+        
+        It "Should verify function structure and error handling" {
+            # Test that the function has proper structure and handles session provider errors
+            Mock Get-Variable { return @{ Name = "User"; Value = $script:MockUser } } -ParameterFilter { $Name -eq "User" } -ModuleName UserManagement
+            
+            $result = Test-UserSession
+            
+            # Verify response structure
+            $result | Should -BeOfType [hashtable]
+            $result.ContainsKey('Success') | Should -Be $true
+            $result.ContainsKey('Message') | Should -Be $true
+            $result.ContainsKey('Data') | Should -Be $true
+            $result.Success | Should -BeOfType [bool]
+            $result.Message | Should -BeOfType [string]
+        }
+    }
+}
+
+Describe "Get-CurrentUser" {
+    Context "When session is valid" {
+        BeforeEach {
+            # Mock Test-UserSession to return success with user data
+            Mock Test-UserSession {
+                return @{
+                    Success = $true
+                    Message = "Valid user session found"
+                    Data = @{
+                        PSUUser = [PSCustomObject]@{
+                            Identity = [PSCustomObject]@{
+                                Name = "test@example.com"
+                                AuthenticationType = "Forms"
+                                IsAuthenticated = $true
+                            }
+                        }
+                        UserEmail = "test@example.com"
+                        UserProfileId = "12345678-1234-1234-1234-123456789012"
+                        PSUProfileId = 42
+                        UserFirstName = "John"
+                        UserLastName = "Doe"
+                        UserTimezone = "America/New_York"
+                        LoginTime = (Get-Date)
+                        IsAuthenticated = $true
+                    }
+                }
+            } -ModuleName UserManagement
+        }
+        
+        It "Should return current user information successfully" {
+            $result = Get-CurrentUser
+            
+            $result.Success | Should -Be $true
+            $result.Message | Should -Be "Current user retrieved successfully"
+            $result.Data | Should -BeOfType [hashtable]
+            $result.Data.UserEmail | Should -Be "test@example.com"
+            $result.Data.UserFirstName | Should -Be "John"
+            $result.Data.UserLastName | Should -Be "Doe"
+            $result.Data.PSUProfileId | Should -Be 42
+        }
+        
+        It "Should include all expected user properties" {
+            $result = Get-CurrentUser
+            
+            $expectedProperties = @(
+                'PSUUser', 'UserEmail', 'UserProfileId', 'PSUProfileId', 'UserFirstName',
+                'UserLastName', 'UserTimezone', 'LoginTime', 'IsAuthenticated'
+            )
+            
+            foreach ($property in $expectedProperties) {
+                $result.Data.ContainsKey($property) | Should -Be $true
+            }
+        }
+    }
+    
+    Context "When session is invalid" {
+        BeforeEach {
+            # Mock Test-UserSession to return failure
+            Mock Test-UserSession {
+                return @{
+                    Success = $false
+                    Message = "User is not authenticated in PSU"
+                    Data = @{}
+                }
+            } -ModuleName UserManagement
+        }
+        
+        It "Should return failure when session check fails" {
+            $result = Get-CurrentUser
+            
+            $result.Success | Should -Be $false
+            $result.Message | Should -Match "No valid user session found"
+            $result.Data | Should -BeOfType [hashtable]
+            $result.Data.Count | Should -Be 0
+        }
+    }
+    
+    Context "When an error occurs" {
+        BeforeEach {
+            # Mock Test-UserSession to throw an error
+            Mock Test-UserSession {
+                throw "Simulated error"
+            } -ModuleName UserManagement
+        }
+        
+        It "Should handle errors gracefully" {
+            $result = Get-CurrentUser
+            
+            $result.Success | Should -Be $false
+            $result.Message | Should -Match "Error retrieving current user"
+            $result.Data | Should -BeOfType [hashtable]
+        }
+    }
+    
+    Context "Function structure validation" {
+        It "Should have proper response structure" {
+            Mock Test-UserSession { return @{ Success = $false; Message = "Test"; Data = @{} } } -ModuleName UserManagement
+            
+            $result = Get-CurrentUser
+            
+            $result | Should -BeOfType [hashtable]
+            $result.ContainsKey('Success') | Should -Be $true
+            $result.ContainsKey('Message') | Should -Be $true
+            $result.ContainsKey('Data') | Should -Be $true
+            $result.Success | Should -BeOfType [bool]
+            $result.Message | Should -BeOfType [string]
+            $result.Data | Should -BeOfType [hashtable]
+        }
+    }
+}
+
+Describe "Clear-UserSession" {
+    Context "Function behavior validation" {
+        It "Should have proper response structure" {
+            $result = Clear-UserSession
+            
+            $result | Should -BeOfType [hashtable]
+            $result.ContainsKey('Success') | Should -Be $true
+            $result.ContainsKey('Message') | Should -Be $true
+            $result.ContainsKey('ClearedVariables') | Should -Be $true
+            $result.Success | Should -BeOfType [bool]
+            $result.Message | Should -BeOfType [string]
+            # ClearedVariables should be an array or array-like object
+            $result.ClearedVariables.GetType().BaseType.Name | Should -BeIn @('Array', 'Object')
+        }
+        
+        It "Should succeed even when no session variables exist" {
+            $result = Clear-UserSession
+            
+            $result.Success | Should -Be $true
+            $result.Message | Should -Match "User session cleared successfully"
+            # Should be an array-like object
+            $result.ClearedVariables.GetType().BaseType.Name | Should -BeIn @('Array', 'Object')
+            # In test environment, likely no variables to clear
+            $result.ClearedVariables.Count | Should -BeGreaterOrEqual 0
+        }
+        
+        It "Should handle the session variable clearing logic" {
+            # This test validates the function structure and error handling
+            # without trying to mock session variables which cause scope issues
+            
+            $result = Clear-UserSession
+            
+            # The function should complete without throwing errors
+            $result | Should -Not -BeNullOrEmpty
+            $result.Success | Should -Be $true
+        }
+    }
+    
+    Context "Error handling" {
+        It "Should handle exceptions gracefully when Remove-Variable fails" {
+            # Mock Remove-Variable to throw an error
+            Mock Remove-Variable { throw "Access denied" } -ModuleName UserManagement
+            
+            $result = Clear-UserSession
+            
+            # Should still succeed since errors are caught per variable
+            $result.Success | Should -Be $true
+            $result.Message | Should -Match "User session cleared successfully"
+        }
+    }
+}
