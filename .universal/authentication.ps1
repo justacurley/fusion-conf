@@ -1,5 +1,5 @@
-﻿Set-PSUAuthenticationMethod -Type 'Form' -ScriptBlock {
-    param(
+﻿Set-PSUAuthenticationMethod -Type "Form" -ScriptBlock {
+param(
         [PSCredential]$Credential
     )
     #
@@ -9,10 +9,13 @@
     Import-Module UserManagement
     $AuthResult = Invoke-UserAuthentication -Email $Credential.UserName
     if ($AuthResult.Success) {
+        Write-Information "Auth Result:"
+        Write-Information ($AuthResult | ConvertTo-Json -depth 3)
         $SessionResult = Set-UserSession -UserProfile $AuthResult.UserProfile
         if ($SessionResult.Success) {
+            Write-Information "Session Result:"
+            Write-Information ($SessionResult | ConvertTo-Json -depth 3)
             New-PSUAuthenticationResult -Success -UserName $Credential.UserName
-            Invoke-UDRedirect -Url /home -Native
         } else {
             New-PSUAuthenticationResult -ErrorMessage 'Session setup failed'
         }
