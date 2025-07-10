@@ -1,14 +1,7 @@
 ﻿$HomePage = New-UDApp -Content {
     Import-Module UserManagement -Force
-    $CurrentUser = Get-CurrentUser
-    if (-not $CurrentUser.Success) {
-        Show-UDToast -Message "Authentication issue, redirecting to login page" -MessageColor Red -Duration 2000
-        Invoke-UDRedirect -Url /login -Native
-    } else {
-        $UserData = $CurrentUser.Data
-        # Set Cache. This is the landing page after logging in, hoping we only have to set these once. 
-        Set-UserCacheData -UserData $UserData -ExpirationHours 1
-    }
+    $UserData = Get-UserCacheData $User
+    Write-Information ($UserData | ConvertTo-Json)
     # Homepage content for the Health Dashboard
     New-UDContainer -Content {
         # Header Section
