@@ -131,7 +131,7 @@ function New-ActivityEntryElement {
         border          = '1px solid var(--theme-palette-divider)'
     }
 }
-New-UDDashboard -Content {
+$Dashboard = New-UDDashboard -Content {
     New-UDApp -Content {
         Write-Information "Testing Session Variable User: $($Session:User)"
         Write-Information "Testing Session Variable UserNoFunction: $($Session:UserNoFunction)"
@@ -488,3 +488,4 @@ New-UDDashboard -Content {
         }
     }
 }
+return $Dashboard
