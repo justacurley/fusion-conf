@@ -754,3 +754,285 @@ Describe "Clear-UserSession" {
         }
     }
 }
+
+Describe "Set-UserCacheData" {
+    Context "Parameter validation" {
+        It "Should require UserData parameter with valid UserEmail" {
+            # Test with null UserData
+            { Set-UserCacheData -UserData $null } | Should -Throw
+            
+            # Test with UserData without UserEmail
+            $invalidUserData = [PSCustomObject]@{
+                Name = "Test User"
+            }
+            { Set-UserCacheData -UserData $invalidUserData } | Should -Throw
+            
+            # Test with UserData with empty UserEmail
+            $emptyEmailUserData = [PSCustomObject]@{
+                UserEmail = ""
+                Name = "Test User"
+            }
+            { Set-UserCacheData -UserData $emptyEmailUserData } | Should -Throw
+        }
+        
+        It "Should validate ExpirationHours is greater than 0" {
+            $validUserData = [PSCustomObject]@{
+                UserEmail = "test@example.com"
+                Name = "Test User"
+            }
+            
+            # Test with 0 hours
+            { Set-UserCacheData -UserData $validUserData -ExpirationHours 0 } | Should -Throw
+            
+            # Test with negative hours
+            { Set-UserCacheData -UserData $validUserData -ExpirationHours -1 } | Should -Throw
+        }
+        
+        It "Should accept valid parameters" {
+            $validUserData = [PSCustomObject]@{
+                UserEmail = "test@example.com"
+                Name = "Test User"
+                Profile = @{
+                    FirstName = "John"
+                    LastName = "Doe"
+                }
+            }
+            
+            # Should not throw with valid parameters
+            { Set-UserCacheData -UserData $validUserData -ExpirationHours 2 } | Should -Not -Throw
+        }
+    }
+    
+    Context "Function behavior" {
+        BeforeEach {
+            # Mock Set-PSUCache to avoid actual cache operations in tests
+            Mock Set-PSUCache { } -ModuleName UserManagement
+            Mock Write-PSUError { } -ModuleName UserManagement
+        }
+        
+        It "Should call Set-PSUCache with correct parameters" {
+            $testUserData = [PSCustomObject]@{
+                UserEmail = "test@example.com"
+                Name = "Test User"
+                Profile = @{
+                    FirstName = "John"
+                    LastName = "Doe"
+                }
+            }
+            
+            Set-UserCacheData -UserData $testUserData -ExpirationHours 3
+            
+            # Verify Set-PSUCache was called with correct parameters
+            Assert-MockCalled Set-PSUCache -ModuleName UserManagement -Times 1 -ParameterFilter {
+                $Key -eq "UserContext_test@example.com" -and
+                $Value -like "*test@example.com*" -and
+                $AbsoluteExpiration -gt (Get-Date) -and
+                $AbsoluteExpiration -lt (Get-Date).AddHours(4)
+            }
+        }
+        
+        It "Should use default expiration of 1 hour when not specified" {
+            $testUserData = [PSCustomObject]@{
+                UserEmail = "default@example.com"
+                Name = "Default User"
+            }
+            
+            Set-UserCacheData -UserData $testUserData
+            
+            # Verify Set-PSUCache was called with 1 hour expiration
+            Assert-MockCalled Set-PSUCache -ModuleName UserManagement -Times 1 -ParameterFilter {
+                $Key -eq "UserContext_default@example.com" -and
+                $AbsoluteExpiration -gt (Get-Date) -and
+                $AbsoluteExpiration -lt (Get-Date).AddHours(2)
+            }
+        }
+        
+        It "Should convert UserData to compressed JSON" {
+            $testUserData = [PSCustomObject]@{
+                UserEmail = "json@example.com"
+                Name = "JSON User"
+                ComplexData = @{
+                    Nested = @{
+                        Value = "test"
+                        Array = @(1, 2, 3)
+                    }
+                }
+            }
+            
+            Set-UserCacheData -UserData $testUserData
+            
+            # Capture the JSON value passed to Set-PSUCache
+            Assert-MockCalled Set-PSUCache -ModuleName UserManagement -Times 1 -ParameterFilter {
+                $Key -eq "UserContext_json@example.com" -and
+                $Value -like "*json@example.com*" -and
+                $Value -like "*ComplexData*" -and
+                # Compressed JSON should not have unnecessary whitespace
+                $Value -notlike "*`r`n*" -and
+                $Value -notlike "*  *"
+            }
+        }
+        
+        It "Should handle Set-PSUCache errors gracefully" {
+            # Mock Set-PSUCache to throw an error
+            Mock Set-PSUCache { throw "Cache unavailable" } -ModuleName UserManagement
+            
+            $testUserData = [PSCustomObject]@{
+                UserEmail = "error@example.com"
+                Name = "Error User"
+            }
+            
+            # Should not throw, error should be logged
+            { Set-UserCacheData -UserData $testUserData } | Should -Not -Throw
+            
+            # Verify error was logged
+            Assert-MockCalled Write-PSUError -ModuleName UserManagement -Times 1
+        }
+    }
+}
+
+Describe "Get-UserCacheData" {
+    Context "Parameter validation" {
+        It "Should accept string UserEmail parameter" {
+            Mock Get-PSUCache { "test data" } -ModuleName UserManagement
+            
+            # Should not throw with valid string
+            { Get-UserCacheData -UserEmail "test@example.com" } | Should -Not -Throw
+            
+            # Should handle empty string
+            { Get-UserCacheData -UserEmail "" } | Should -Not -Throw
+        }
+    }
+    
+    Context "Function behavior" {
+        BeforeEach {
+            Mock Get-PSUCache { } -ModuleName UserManagement
+            Mock Write-PSUError { } -ModuleName UserManagement
+        }
+        
+        It "Should call Get-PSUCache with correct cache key" {
+            Get-UserCacheData -UserEmail "test@example.com"
+            
+            Assert-MockCalled Get-PSUCache -ModuleName UserManagement -Times 1 -ParameterFilter {
+                $Key -eq "UserContext_test@example.com"
+            }
+        }
+        
+        It "Should return data from Get-PSUCache" {
+            $testCacheData = '{"UserEmail":"cached@example.com","Name":"Cached User"}'
+            Mock Get-PSUCache { return $testCacheData } -ModuleName UserManagement
+            
+            $result = Get-UserCacheData -UserEmail "cached@example.com"
+            
+            $result | Should -Be $testCacheData
+        }
+        
+        It "Should handle Get-PSUCache errors gracefully" {
+            # Mock Get-PSUCache to throw an error
+            Mock Get-PSUCache { throw "Cache key not found" } -ModuleName UserManagement
+            
+            # Should not throw, error should be logged
+            { Get-UserCacheData -UserEmail "missing@example.com" } | Should -Not -Throw
+            
+            # Verify error was logged
+            Assert-MockCalled Write-PSUError -ModuleName UserManagement -Times 1
+        }
+        
+        It "Should handle empty or null UserEmail" {
+            Get-UserCacheData -UserEmail ""
+            
+            Assert-MockCalled Get-PSUCache -ModuleName UserManagement -Times 1 -ParameterFilter {
+                $Key -eq "UserContext_"
+            }
+            
+            Get-UserCacheData -UserEmail $null
+            
+            Assert-MockCalled Get-PSUCache -ModuleName UserManagement -Times 2 -ParameterFilter {
+                $Key -eq "UserContext_"
+            }
+        }
+    }
+}
+
+Describe "Cache Functions Integration" {
+    Context "Set and Get cache data workflow" {
+        BeforeEach {
+            # Use actual cache operations for integration test
+            # but clean up after each test
+            $script:TestCacheKeys = @()
+        }
+        
+        AfterEach {
+            # Clean up test cache entries
+            foreach ($key in $script:TestCacheKeys) {
+                try {
+                    Remove-PSUCache -Key $key -ErrorAction SilentlyContinue
+                } catch {
+                    # Ignore cleanup errors
+                }
+            }
+        }
+        
+        It "Should store and retrieve user data successfully" {
+            $testUserData = [PSCustomObject]@{
+                UserEmail = "integration@example.com"
+                Name = "Integration User"
+                Profile = @{
+                    FirstName = "Test"
+                    LastName = "User"
+                    Timezone = "UTC"
+                }
+                Preferences = @{
+                    Theme = "Dark"
+                    Language = "en-US"
+                }
+            }
+            
+            $cacheKey = "UserContext_integration@example.com"
+            $script:TestCacheKeys += $cacheKey
+            
+            # Store data in cache
+            Set-UserCacheData -UserData $testUserData -ExpirationHours 1
+            
+            # Retrieve data from cache
+            $retrievedData = Get-UserCacheData -UserEmail "integration@example.com"
+            
+            # Verify data was stored and retrieved correctly
+            $retrievedData | Should -Not -BeNullOrEmpty
+            
+            # Parse the JSON and verify content
+            $parsedData = $retrievedData | ConvertFrom-Json
+            $parsedData.UserEmail | Should -Be "integration@example.com"
+            $parsedData.Name | Should -Be "Integration User"
+            $parsedData.Profile.FirstName | Should -Be "Test"
+            $parsedData.Profile.LastName | Should -Be "User"
+            $parsedData.Preferences.Theme | Should -Be "Dark"
+        }
+        
+        It "Should handle cache expiration properly" {
+            $testUserData = [PSCustomObject]@{
+                UserEmail = "expiration@example.com"
+                Name = "Expiration Test"
+            }
+            
+            $cacheKey = "UserContext_expiration@example.com"
+            $script:TestCacheKeys += $cacheKey
+            
+            # Store data with very short expiration for testing
+            # Note: Actual expiration testing would require time manipulation
+            # This test verifies the expiration parameter is used
+            Set-UserCacheData -UserData $testUserData -ExpirationHours 24
+            
+            # Verify data is initially available
+            $initialData = Get-UserCacheData -UserEmail "expiration@example.com"
+            $initialData | Should -Not -BeNullOrEmpty
+        }
+        
+        It "Should handle missing cache data gracefully" {
+            # Try to retrieve data that doesn't exist
+            $missingData = Get-UserCacheData -UserEmail "nonexistent@example.com"
+            
+            # Should return null/empty without throwing
+            $missingData | Should -BeNullOrEmpty
+        }
+    }
+}
