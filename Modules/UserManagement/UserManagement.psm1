@@ -343,3 +343,37 @@ function Clear-UserSession {
         return $Response
     }
 }   
+
+function Set-UserCacheData {
+    [CmdletBinding()]
+    param (
+        [ValidateScript({-not [string]::IsNullOrEmpty($_.UserEmail)})]
+        [PSCustomObject]$UserData,
+        [ValidateScript({$_ -gt 0})]
+        [int]$ExpirationHours = 1
+    )
+    end {
+        try {
+            $CacheKey = $UserData.UserEmail
+            $CacheValue = $UserData | ConvertTo-Json -Compress
+            Set-PSUCache -Key $CacheKey -Value $CacheValue -AbsoluteExpiration (Get-Date).AddHours($ExpirationHours) -ErrorAction Stop
+        } catch {
+            Write-PSUError -ErrorRecord $_
+        }
+    }
+}
+
+function Get-UserCacheData {
+    [CmdletBinding()]
+    param (
+        # This is the user email address
+        [string]$CacheKey
+    )
+    end {
+        try {
+            Get-PSUCache -Key $CacheKey -ErrorAction Stop
+        } catch {
+            Write-PSUError -ErrorRecord $_
+        }
+    }
+}

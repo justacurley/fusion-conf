@@ -8,13 +8,8 @@
     } else {
         Write-Information "Current user successfully authenticated"
         $UserData = $CurrentUser.Data
-        # Set Session scoped variables. This is the landing page after logging in, hoping we only have to set these once. 
-        function Set-SessionVariables($UserData) {
-            Set-Variable -Scope Session -Name User -Value $UserData.PSUUser
-        }
-        Set-SessionVariables $UserData
-        Set-Variable -Scope Session -Name UserNoFunction -Value $UserData.PSUUser
-        $Session:UserRaw = $UserData.PSUUser
+        # Set Cache. This is the landing page after logging in, hoping we only have to set these once. 
+        Set-UserCacheData -UserData $UserData -ExpirationHours
     }
   
     # Homepage content for the Health Dashboard
