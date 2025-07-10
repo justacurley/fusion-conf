@@ -12,6 +12,7 @@
             Set-Variable -Scope Session -Name User -Value $UserData.PSUUser
         }
         Set-SessionVariables $UserData
+        Set-Variable -Scope Session -Name UserNoFunction -Value $UserData.PSUUser
     }
   
     # Homepage content for the Health Dashboard
