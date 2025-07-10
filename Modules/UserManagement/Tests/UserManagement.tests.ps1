@@ -38,7 +38,7 @@ BeforeAll {
 "@ | ConvertFrom-Json
 }
 
-Describe "UserProfile Class" {
+Describe "UserProfile Class" -Tag class {
     Context "Constructor Tests" {
         BeforeAll {
             $usr = $script:TestUserData
@@ -273,7 +273,7 @@ Describe "UserProfile Class" {
     }
 }
 
-Describe "Module-Level Function Tests" {
+Describe "Module-Level Function Tests" -Tag functions {
     Context "New-PSUUser Function Tests" {
         # Existing tests can be added here if needed
     }
@@ -595,7 +595,7 @@ Describe "Module-Level Function Tests" {
     }
 }
 
-Describe "Get-CurrentUser" {
+Describe "Get-CurrentUser" -Tag Get-CurrentUser {
     Context "When session is valid" {
         BeforeEach {
             # Mock Test-UserSession to return success with user data
@@ -703,7 +703,7 @@ Describe "Get-CurrentUser" {
     }
 }
 
-Describe "Clear-UserSession" {
+Describe "Clear-UserSession" -Tag Clear-UserSession {
     Context "Function behavior validation" {
         It "Should have proper response structure" {
             $result = Clear-UserSession
@@ -755,19 +755,19 @@ Describe "Clear-UserSession" {
     }
 }
 
-Describe "Set-UserCacheData" {
+Describe "Set-UserCacheData"  -Tag Set-UserCacheData{
     Context "Parameter validation" {
         It "Should require UserData parameter with valid UserEmail" {
-            # Test with null UserData
+            # Test with null UserData - should throw due to ValidateScript
             { Set-UserCacheData -UserData $null } | Should -Throw
             
-            # Test with UserData without UserEmail
+            # Test with UserData without UserEmail - should throw due to ValidateScript
             $invalidUserData = [PSCustomObject]@{
                 Name = "Test User"
             }
             { Set-UserCacheData -UserData $invalidUserData } | Should -Throw
             
-            # Test with UserData with empty UserEmail
+            # Test with UserData with empty UserEmail - should throw due to ValidateScript
             $emptyEmailUserData = [PSCustomObject]@{
                 UserEmail = ""
                 Name = "Test User"
@@ -781,14 +781,18 @@ Describe "Set-UserCacheData" {
                 Name = "Test User"
             }
             
-            # Test with 0 hours
+            # Test with 0 hours - should throw due to ValidateScript
             { Set-UserCacheData -UserData $validUserData -ExpirationHours 0 } | Should -Throw
             
-            # Test with negative hours
+            # Test with negative hours - should throw due to ValidateScript
             { Set-UserCacheData -UserData $validUserData -ExpirationHours -1 } | Should -Throw
         }
         
         It "Should accept valid parameters" {
+            # Mock PSU functions since we're not running in PSU
+            Mock Set-PSUCache { } -ModuleName UserManagement
+            Mock Write-PSUError { } -ModuleName UserManagement
+            
             $validUserData = [PSCustomObject]@{
                 UserEmail = "test@example.com"
                 Name = "Test User"
@@ -890,7 +894,7 @@ Describe "Set-UserCacheData" {
     }
 }
 
-Describe "Get-UserCacheData" {
+Describe "Get-UserCacheData" -Tag Get-UserCacheData {
     Context "Parameter validation" {
         It "Should accept string UserEmail parameter" {
             Mock Get-PSUCache { "test data" } -ModuleName UserManagement
@@ -956,20 +960,39 @@ Describe "Get-UserCacheData" {
 Describe "Cache Functions Integration" {
     Context "Set and Get cache data workflow" {
         BeforeEach {
-            # Use actual cache operations for integration test
-            # but clean up after each test
-            $script:TestCacheKeys = @()
+            # Mock PSU functions since we're not running in PSU environment
+            # Store data in a script variable to simulate cache behavior
+            $script:MockCache = @{}
+            
+            Mock Set-PSUCache {
+                param($Key, $Value, $AbsoluteExpiration)
+                $script:MockCache[$Key] = @{
+                    Value = $Value
+                    Expiration = $AbsoluteExpiration
+                }
+            } -ModuleName UserManagement
+            
+            Mock Get-PSUCache {
+                param($Key)
+                if ($script:MockCache.ContainsKey($Key)) {
+                    return $script:MockCache[$Key].Value
+                }
+                return $null
+            } -ModuleName UserManagement
+            
+            Mock Remove-PSUCache {
+                param($Key)
+                if ($script:MockCache.ContainsKey($Key)) {
+                    $script:MockCache.Remove($Key)
+                }
+            } -ModuleName UserManagement
+            
+            Mock Write-PSUError { } -ModuleName UserManagement
         }
         
         AfterEach {
-            # Clean up test cache entries
-            foreach ($key in $script:TestCacheKeys) {
-                try {
-                    Remove-PSUCache -Key $key -ErrorAction SilentlyContinue
-                } catch {
-                    # Ignore cleanup errors
-                }
-            }
+            # Clean up mock cache
+            $script:MockCache = @{}
         }
         
         It "Should store and retrieve user data successfully" {
@@ -986,9 +1009,6 @@ Describe "Cache Functions Integration" {
                     Language = "en-US"
                 }
             }
-            
-            $cacheKey = "UserContext_integration@example.com"
-            $script:TestCacheKeys += $cacheKey
             
             # Store data in cache
             Set-UserCacheData -UserData $testUserData -ExpirationHours 1
@@ -1014,17 +1034,18 @@ Describe "Cache Functions Integration" {
                 Name = "Expiration Test"
             }
             
-            $cacheKey = "UserContext_expiration@example.com"
-            $script:TestCacheKeys += $cacheKey
-            
-            # Store data with very short expiration for testing
-            # Note: Actual expiration testing would require time manipulation
-            # This test verifies the expiration parameter is used
+            # Store data with expiration
             Set-UserCacheData -UserData $testUserData -ExpirationHours 24
             
             # Verify data is initially available
             $initialData = Get-UserCacheData -UserEmail "expiration@example.com"
             $initialData | Should -Not -BeNullOrEmpty
+            
+            # Verify the mock cache was called correctly
+            Assert-MockCalled Set-PSUCache -ModuleName UserManagement -Times 1 -ParameterFilter {
+                $Key -eq "UserContext_expiration@example.com" -and
+                $Value -like "*expiration@example.com*"
+            }
         }
         
         It "Should handle missing cache data gracefully" {
@@ -1033,6 +1054,11 @@ Describe "Cache Functions Integration" {
             
             # Should return null/empty without throwing
             $missingData | Should -BeNullOrEmpty
+            
+            # Verify Get-PSUCache was called
+            Assert-MockCalled Get-PSUCache -ModuleName UserManagement -Times 1 -ParameterFilter {
+                $Key -eq "UserContext_nonexistent@example.com"
+            }
         }
     }
 }
