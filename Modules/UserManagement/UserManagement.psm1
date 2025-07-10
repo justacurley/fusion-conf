@@ -354,7 +354,7 @@ function Set-UserCacheData {
     )
     end {
         try {
-            $CacheKey = $UserData.UserEmail
+            $CacheKey = "UserContext_$($UserData.UserEmail)"
             $CacheValue = $UserData | ConvertTo-Json -Compress
             Set-PSUCache -Key $CacheKey -Value $CacheValue -AbsoluteExpiration (Get-Date).AddHours($ExpirationHours) -ErrorAction Stop
         } catch {
@@ -366,12 +366,12 @@ function Set-UserCacheData {
 function Get-UserCacheData {
     [CmdletBinding()]
     param (
-        # This is the user email address
-        [string]$CacheKey
+        # This is the postfix of the cachekey
+        [string]$UserEmail
     )
     end {
         try {
-            Get-PSUCache -Key $CacheKey -ErrorAction Stop
+            Get-PSUCache -Key "UserContext_$UserEmail" -ErrorAction Stop
         } catch {
             Write-PSUError -ErrorRecord $_
         }
