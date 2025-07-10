@@ -2,7 +2,7 @@
     Import-Module UserManagement -Force
     $UserData = $null
     try {
-        $UserData = Get-UserCacheData "asdf@asdf.com" -EA Stop
+        $UserData = Get-UserCacheData $User -EA Stop
         Show-UDToast -Message "User data loaded successfully" -MessageColor green -Duration 3000
     } catch {
         Write-Warning "Failed to get user cache data: $($_.Exception.Message)"
