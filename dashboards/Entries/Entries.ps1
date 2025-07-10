@@ -130,9 +130,7 @@ function New-ActivityEntryElement {
 }
 New-UDApp -Content {
     Import-Module UserManagement -Force
-    Write-Information "Testing Session Variable Session: $($Session | Convertto-json -depth 10)"
     $UserData = Get-UserCacheData -UserEmail $User
-    Write-Information "Cached data for $User : $($UserData | ConvertFrom-Json | ConvertTo-Json)"
     New-UDContainer -Children {
         New-UDPaper -Children {
             New-UDGrid -Container -Children {

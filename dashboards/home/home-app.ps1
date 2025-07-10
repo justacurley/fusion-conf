@@ -8,7 +8,6 @@
         $UserData = $CurrentUser.Data
         # Set Cache. This is the landing page after logging in, hoping we only have to set these once. 
         Set-UserCacheData -UserData $UserData -ExpirationHours 1
-        $Session.SessionVariables["Test"] = "Does this persist?"
     }
     # Homepage content for the Health Dashboard
     New-UDContainer -Content {
