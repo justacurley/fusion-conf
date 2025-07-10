@@ -9,7 +9,7 @@
         Write-Information "Current user successfully authenticated"
         $UserData = $CurrentUser.Data
         # Set Cache. This is the landing page after logging in, hoping we only have to set these once. 
-        Set-UserCacheData -UserData $UserData -ExpirationHours
+        Set-UserCacheData -UserData $UserData -ExpirationHours 1
     }
   
     # Homepage content for the Health Dashboard
