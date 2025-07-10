@@ -180,6 +180,9 @@ function Set-UserSession {
     param (
         [PSCustomObject]$UserProfile  # The profile object from authentication
     )
+    # NOTE: This function sets custom session variables for compatibility but these
+    # variables do NOT persist across PSU contexts (authentication -> dashboard).
+    # Primary session validation now relies on PSU's $User variable and dynamic profile loading.
     $Response = @{
         Success = $false
         Message = "Failed to extract one or more properties from user profile"
@@ -187,6 +190,7 @@ function Set-UserSession {
     try {
         Write-Verbose "Setting UserProfileId to: $($UserProfile.ProfileId)"
         Write-Verbose "ProfileId type: $($UserProfile.ProfileId.GetType().Name)"
+        Write-Verbose "NOTE: Custom session variables do not persist between authentication and dashboard contexts"
         $Session:UserEmail = $UserProfile.Email
         $Session:UserProfileId = $UserProfile.ProfileId
         $Session:PSUProfileId = $UserProfile.PSUProfileId
@@ -196,7 +200,7 @@ function Set-UserSession {
         $Session:LoginTime = (Get-Date)
         $Session:IsAuthenticated = $true
         $Response['Success'] = $true
-        $Response['Message'] = "Set all required session variables"
+        $Response['Message'] = "Set all required session variables (for authentication context only)"
     }
     catch {
        Write-Error $_
@@ -214,50 +218,45 @@ function Test-UserSession {
             Data = @{}
         }
         try {
-            # Check if PSU User variable exists
-            Get-Variable User -ErrorAction Stop | Out-Null
-            
-            # Validate PSU authentication
-            if ([string]::IsNullOrEmpty($User)) {
-                $Response['Message'] = "PSU User identity not found"
+            # Check if PSU User variable exists and has a value
+            if (-not (Get-Variable User -ErrorAction SilentlyContinue) -or [string]::IsNullOrEmpty($User)) {
+                $Response['Message'] = "PSU User identity not found or empty"
                 return $Response
             }
             
-            # Validate custom session variables
-            if ($Session:UserEmail -and ($User -ne $Session:UserEmail)) {
-                $Response['Message'] = "PSU user ($User) does not match session user ($Session:UserEmail)"
+            # Dynamically load user profile using the PSU User variable
+            $UserProfile = [UserProfile]::GetUserProfile($User)
+            if ($UserProfile -eq $false -or $null -eq $UserProfile) {
+                $Response['Message'] = "User profile not found for PSU user: $User"
                 return $Response
             }
             
-            if (-not $Session:UserProfileId) {
-                $Response['Message'] = "Session variable UserProfileId is missing"
+            # Validate that the user still exists in PSU
+            if (-not [UserProfile]::UserExists($User)) {
+                $Response['Message'] = "PSU identity no longer exists for user: $User"
                 return $Response
             }
             
-            if (-not $Session:IsAuthenticated) {
-                $Response['Message'] = "Custom session authentication flag is missing or false"
-                return $Response
-            }
-            
-            # All validations passed - return combined session data
+            # All validations passed - return session data based on PSU User and loaded profile
             $Response['Success'] = $true
-            $Response['Message'] = "Valid user session found"
+            $Response['Message'] = "Valid user session found via dynamic profile loading"
             $Response['Data'] = @{
                 PSUUser = $User
-                PSUUserRoles = $Roles
-                UserEmail = $Session:UserEmail
-                UserProfileId = $Session:UserProfileId
-                PSUProfileId = $Session:PSUProfileId
-                UserFirstName = $Session:UserFirstName
-                UserLastName = $Session:UserLastName
-                UserTimezone = $Session:UserTimezone
-                LoginTime = $Session:LoginTime
-                IsAuthenticated = $Session:IsAuthenticated
+                PSUUserRoles = if (Get-Variable Roles -ErrorAction SilentlyContinue) { $Roles } else { @() }
+                UserEmail = $UserProfile.Email
+                UserProfileId = $UserProfile.ProfileId
+                PSUProfileId = $UserProfile.PSUProfileId
+                UserFirstName = $UserProfile.FirstName
+                UserLastName = $UserProfile.LastName
+                UserTimezone = $UserProfile.Timezone
+                CreatedOn = $UserProfile.CreatedOn
+                TOSAccepted = $UserProfile.TOSAccepted
+                IsAuthenticated = $true
             }
         }
         catch {
-            $Response['Message'] = "Could not access PSU User session variable"
-            Write-Error "Could not find User session: $($_.Exception.Message)"
+            $Response['Message'] = "Error validating user session: $($_.Exception.Message)"
+            Write-Error "Error in Test-UserSession: $($_.Exception.Message)"
         }
         return $Response
     }

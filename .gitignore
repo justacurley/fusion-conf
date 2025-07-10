@@ -1,9 +1,5 @@
 **/*Zone.Identifier
 docker/
-MULTI-USER-ROADMAP.md
-SESSION-LOGS.md
-TECHNICAL-DECISIONS.md
-KNOWLEDGE-BASE.md
-IMPLEMENTATION-STATUS.md
-TESTING-SUMMARY.md
 CODE-TEMPLATES/
+
+# Note: Project documentation is organized in project-status/ folder
