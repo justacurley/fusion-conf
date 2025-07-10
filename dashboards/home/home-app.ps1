@@ -1,6 +1,6 @@
 ﻿$HomePage = New-UDApp -Content {
     Import-Module UserManagement -Force
-    $UserData = Get-UserCacheData $User
+    $UserData = Get-UserCacheData "asdf@asdf.com"
     Write-Information ($UserData | ConvertTo-Json)
     # Homepage content for the Health Dashboard
     New-UDContainer -Content {

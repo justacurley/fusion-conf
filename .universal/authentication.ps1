@@ -13,7 +13,6 @@
         if ($SessionResult.Success) {
             $CurrentUser = Get-CurrentUser
             $UserData = $CurrentUser.Data
-            # Set Cache. This is the landing page after logging in, hoping we only have to set these once. 
             Set-UserCacheData -UserData $UserData -ExpirationHours 1
             New-PSUAuthenticationResult -Success -UserName $Credential.UserName
         } else {
