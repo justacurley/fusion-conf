@@ -7,15 +7,13 @@
         Invoke-UDRedirect -Url /login -Native
     } else {
         $UserData = $CurrentUser.Data
+        # Set Session scoped variables. This is the landing page after logging in, hoping we only have to set these once. 
+        function Set-SessionVariables($UserData) {
+            Set-Variable -Scope Session -Name User -Value $UserData.PSUUser
+        }
+        Set-SessionVariables $UserData
     }
-    Write-Information "User authenticated: $($User.Identity.IsAuthenticated)"
-    Write-Information "User name: $($User.Identity.Name)"
-    Write-Information "Session UserEmail: $($Session:UserEmail)"
-    Write-Information "Session UserProfileId: $($Session:UserProfileId)"
-    Write-Information "Just User: $User"
-    Write-Information "Cookies: $($Cookies | ConvertTo-Json)"
-    Write-Information "Headers: $($Headers | ConvertTo-Json)"
-    Write-Information "Roles: $($Roles)"
+  
     # Homepage content for the Health Dashboard
     New-UDContainer -Content {
         # Header Section
