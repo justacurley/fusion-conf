@@ -1,4 +1,6 @@
 ﻿$HomePage = New-UDApp -Content {
+    Import-Module UserManagement -Force
+    Get-CurrentUser
     Write-Information "User authenticated: $($User.Identity.IsAuthenticated)"
     Write-Information "User name: $($User.Identity.Name)"
     Write-Information "Session UserEmail: $($Session:UserEmail)"
