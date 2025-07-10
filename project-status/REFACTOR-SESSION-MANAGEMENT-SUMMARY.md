@@ -38,6 +38,13 @@ Completed the refactor from custom session variables to PSU's `$User` variable w
 - Modified mocking strategy to work with file-based profile loading
 - 46/49 tests passing (3 tests need minor adjustments for mocking static methods)
 
+### 6. Updated Authentication.ps1 (July 9, 2025)
+- **Before**: Called `Set-UserSession` to set custom session variables that don't persist to dashboard context
+- **After**: Simplified to only validate credentials and return PSU authentication result
+- **Reason**: Since session variables don't persist between authentication and dashboard contexts, removed unnecessary session variable setting
+- **Impact**: Authentication is now cleaner and relies entirely on PSU's built-in `$User` variable mechanism
+- **Code Change**: Removed `Set-UserSession` call and complex logging, kept only credential validation and clean success/failure responses
+
 ## Technical Benefits
 
 ### Reliability
