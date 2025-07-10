@@ -130,7 +130,7 @@ function New-ActivityEntryElement {
 }
 New-UDApp -Content {
     
-    Write-Information "Testing Session Variable UserRaw: $(Get-Variable | Convertto-json -depth 2)"
+    Write-Information "Testing Session Variable UserRaw: $(Get-Variable | Convertto-json -depth 99)"
     New-UDContainer -Children {
         New-UDPaper -Children {
             New-UDGrid -Container -Children {
