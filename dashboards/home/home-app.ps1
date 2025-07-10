@@ -1,6 +1,13 @@
 ﻿$HomePage = New-UDApp -Content {
     Import-Module UserManagement -Force
-    Get-CurrentUser
+    $CurrentUser = Get-CurrentUser
+    Write-Information "Get-CurrentUser Output: $($CurrentUser | Convertto-Json -Depth 3)"
+    if (-not $CurrentUser.Success) {
+        Show-UDToast -Message "Authentication issue, redirecting to login page" -MessageColor Red -Duration 2000
+        Invoke-UDRedirect -Url /login -Native
+    } else {
+        $UserData = $CurrentUser.Data
+    }
     Write-Information "User authenticated: $($User.Identity.IsAuthenticated)"
     Write-Information "User name: $($User.Identity.Name)"
     Write-Information "Session UserEmail: $($Session:UserEmail)"
