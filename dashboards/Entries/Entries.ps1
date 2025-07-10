@@ -1,137 +1,136 @@
-﻿# Helper function to create pain entry elements (reduces code duplication)
-function New-PainEntryElement {
-    param(
-        [int]$EntryNumber,
-        [bool]$IncludeRemoveButton = $false
-    )
-    
-    $paperId = if ($EntryNumber -eq 1) { $null } else { "pain_entry_$EntryNumber" }
-    
-    return New-UDPaper -Id $paperId -Children {
-        New-UDGrid -Container -Children {
-            if ($IncludeRemoveButton) {
-                New-UDGrid -Item -ExtraSmallSize 10 -Children {
-                    New-UDTypography -Text "Pain Entry #$EntryNumber" -Variant subtitle2 -Style @{
-                        marginBottom = '15px'
-                        color        = 'var(--theme-palette-primary-main)'
-                        fontWeight   = '500'
+﻿$Dashboard = New-UDDashboard -Title "TITLE!" -Content {
+    # Helper function to create pain entry elements (reduces code duplication)
+    function New-PainEntryElement {
+        param(
+            [int]$EntryNumber,
+            [bool]$IncludeRemoveButton = $false
+        )
+        
+        $paperId = if ($EntryNumber -eq 1) { $null } else { "pain_entry_$EntryNumber" }
+        
+        return New-UDPaper -Id $paperId -Children {
+            New-UDGrid -Container -Children {
+                if ($IncludeRemoveButton) {
+                    New-UDGrid -Item -ExtraSmallSize 10 -Children {
+                        New-UDTypography -Text "Pain Entry #$EntryNumber" -Variant subtitle2 -Style @{
+                            marginBottom = '15px'
+                            color        = 'var(--theme-palette-primary-main)'
+                            fontWeight   = '500'
+                        }
+                    }
+                    New-UDGrid -Item -ExtraSmallSize 2 -Children {
+                        New-UDButton -Text '🗑️' -Color secondary -Size small -OnClick {
+                            # Remove this specific pain Paper using Clear-UDElement
+                            try {
+                                Show-UDToast -Message "Removing Pain Entry #$EntryNumber" -Duration 2000
+                                # Clear the content of this specific pain entry
+                                Clear-UDElement -Id "pain_entry_$EntryNumber"
+                            }
+                            catch {
+                                Show-UDToast -Message "Error removing pain entry: $($_.Exception.Message)" -Duration 3000 -BackgroundColor red
+                            }
+                        } -Id "remove_pain_btn_$EntryNumber"
+                    }
+                } else {
+                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                        New-UDTypography -Text "Pain Entry #$EntryNumber" -Variant subtitle2 -Style @{
+                            marginBottom = '15px'
+                            color        = 'var(--theme-palette-primary-main)'
+                            fontWeight   = '500'
+                        }
                     }
                 }
-                New-UDGrid -Item -ExtraSmallSize 2 -Children {
-                    New-UDButton -Text '🗑️' -Color secondary -Size small -OnClick {
-                        # Remove this specific pain Paper using Clear-UDElement
-                        try {
-                            Show-UDToast -Message "Removing Pain Entry #$EntryNumber" -Duration 2000
-                            # Clear the content of this specific pain entry
-                            Clear-UDElement -Id "pain_entry_$EntryNumber"
-                        }
-                        catch {
-                            Show-UDToast -Message "Error removing pain entry: $($_.Exception.Message)" -Duration 3000 -BackgroundColor red
-                        }
-                    } -Id "remove_pain_btn_$EntryNumber"
-                }
-            } else {
-                New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                    New-UDTypography -Text "Pain Entry #$EntryNumber" -Variant subtitle2 -Style @{
-                        marginBottom = '15px'
-                        color        = 'var(--theme-palette-primary-main)'
-                        fontWeight   = '500'
+                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
+                    New-UDSelect -Id "pain_location_$EntryNumber" -Label '🎯 Pain Location' -FullWidth -Option {
+                        New-UDSelectOption -Name 'Back' -Value 'back'
+                        New-UDSelectOption -Name 'Right Glute' -Value 'right_glute'
+                        New-UDSelectOption -Name 'Left Glute' -Value 'left_glute'
+                        New-UDSelectOption -Name 'Glutes' -Value 'glutes'
+                        New-UDSelectOption -Name 'Right Hip' -Value 'righthip'
+                        New-UDSelectOption -Name 'Left Hip' -Value 'lhip'
+                        New-UDSelectOption -Name 'Hips' -Value 'hips'
+                        New-UDSelectOption -Name 'Right Quad' -Value 'rquad'
+                        New-UDSelectOption -Name 'Left Quad' -Value 'lquad'
+                        New-UDSelectOption -Name 'Quads' -Value 'quads'
                     }
                 }
-            }
-            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
-                New-UDSelect -Id "pain_location_$EntryNumber" -Label '🎯 Pain Location' -FullWidth -Option {
-                    New-UDSelectOption -Name 'Back' -Value 'back'
-                    New-UDSelectOption -Name 'Right Glute' -Value 'right_glute'
-                    New-UDSelectOption -Name 'Left Glute' -Value 'left_glute'
-                    New-UDSelectOption -Name 'Glutes' -Value 'glutes'
-                    New-UDSelectOption -Name 'Right Hip' -Value 'righthip'
-                    New-UDSelectOption -Name 'Left Hip' -Value 'lhip'
-                    New-UDSelectOption -Name 'Hips' -Value 'hips'
-                    New-UDSelectOption -Name 'Right Quad' -Value 'rquad'
-                    New-UDSelectOption -Name 'Left Quad' -Value 'lquad'
-                    New-UDSelectOption -Name 'Quads' -Value 'quads'
+                New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
+                    New-UDTextbox -Id "pain_level_$EntryNumber" -Label '📊 Level (0-10)' -Type number -Minimum 0.0 -Maximum 10.0 -Placeholder 5.0 -FullWidth
+                }
+                New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 6 -Children {
+                    New-UDTextbox -Id "pain_note_$EntryNumber" -Label '📝 Note' -Type text -Placeholder 'Optional note' -FullWidth
                 }
             }
-            New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
-                New-UDTextbox -Id "pain_level_$EntryNumber" -Label '📊 Level (0-10)' -Type number -Minimum 0.0 -Maximum 10.0 -Placeholder 5.0 -FullWidth
-            }
-            New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 6 -Children {
-                New-UDTextbox -Id "pain_note_$EntryNumber" -Label '📝 Note' -Type text -Placeholder 'Optional note' -FullWidth
-            }
+        } -Style @{
+            padding         = '15px'
+            margin          = '10px 0'
+            backgroundColor = 'var(--theme-palette-background-paper)'
+            borderLeft      = '4px solid var(--theme-palette-error-main)'
+            borderRadius    = '8px'
+            border          = '1px solid var(--theme-palette-divider)'
+            boxShadow       = '0 2px 4px rgba(0,0,0,0.1)'
         }
-    } -Style @{
-        padding         = '15px'
-        margin          = '10px 0'
-        backgroundColor = 'var(--theme-palette-background-paper)'
-        borderLeft      = '4px solid var(--theme-palette-error-main)'
-        borderRadius    = '8px'
-        border          = '1px solid var(--theme-palette-divider)'
-        boxShadow       = '0 2px 4px rgba(0,0,0,0.1)'
     }
-}
-
-# Helper function to create activity entry elements (reduces code duplication)
-function New-ActivityEntryElement {
-    param(
-        [int]$EntryNumber,
-        [bool]$IncludeRemoveButton = $false
-    )
-    
-    $paperId = if ($EntryNumber -eq 1) { $null } else { "activities_entry_$EntryNumber" }
-    
-    return New-UDPaper -Id $paperId -Children {
-        New-UDGrid -Container -Children {
-            if ($IncludeRemoveButton) {
-                New-UDGrid -Item -ExtraSmallSize 10 -Children {
-                    New-UDTypography -Text "Activity #$EntryNumber" -Variant subtitle2 -Style @{
-                        marginBottom = '15px'
-                        color        = 'var(--theme-palette-primary-main)'
-                        fontWeight   = '500'
+    # Helper function to create activity entry elements (reduces code duplication)
+    function New-ActivityEntryElement {
+        param(
+            [int]$EntryNumber,
+            [bool]$IncludeRemoveButton = $false
+        )
+        
+        $paperId = if ($EntryNumber -eq 1) { $null } else { "activities_entry_$EntryNumber" }
+        
+        return New-UDPaper -Id $paperId -Children {
+            New-UDGrid -Container -Children {
+                if ($IncludeRemoveButton) {
+                    New-UDGrid -Item -ExtraSmallSize 10 -Children {
+                        New-UDTypography -Text "Activity #$EntryNumber" -Variant subtitle2 -Style @{
+                            marginBottom = '15px'
+                            color        = 'var(--theme-palette-primary-main)'
+                            fontWeight   = '500'
+                        }
+                    }
+                    New-UDGrid -Item -ExtraSmallSize 2 -Children {
+                        New-UDButton -Text '🗑️' -Color secondary -Size small -OnClick {
+                            # Remove this specific activity Paper using Clear-UDElement
+                            try {
+                                Show-UDToast -Message "Removing Activity #$EntryNumber" -Duration 2000
+                                # Clear the content of this specific activity entry
+                                Clear-UDElement -Id "activities_entry_$EntryNumber"
+                            }
+                            catch {
+                                Show-UDToast -Message "Error removing activity: $($_.Exception.Message)" -Duration 3000 -BackgroundColor red
+                            }
+                        } -Id "remove_btn_$EntryNumber"
+                    }
+                } else {
+                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                        New-UDTypography -Text "Activity #$EntryNumber" -Variant subtitle2 -Style @{
+                            marginBottom = '15px'
+                            color        = 'var(--theme-palette-primary-main)'
+                            fontWeight   = '500'
+                        }
                     }
                 }
-                New-UDGrid -Item -ExtraSmallSize 2 -Children {
-                    New-UDButton -Text '🗑️' -Color secondary -Size small -OnClick {
-                        # Remove this specific activity Paper using Clear-UDElement
-                        try {
-                            Show-UDToast -Message "Removing Activity #$EntryNumber" -Duration 2000
-                            # Clear the content of this specific activity entry
-                            Clear-UDElement -Id "activities_entry_$EntryNumber"
-                        }
-                        catch {
-                            Show-UDToast -Message "Error removing activity: $($_.Exception.Message)" -Duration 3000 -BackgroundColor red
-                        }
-                    } -Id "remove_btn_$EntryNumber"
+                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
+                    New-UDTextbox -Id "activities_type_$EntryNumber" -Label '🏃‍♂️ Activity Type' -Type text -Placeholder 'Walking, Running, Swimming, etc.' -FullWidth
                 }
-            } else {
-                New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                    New-UDTypography -Text "Activity #$EntryNumber" -Variant subtitle2 -Style @{
-                        marginBottom = '15px'
-                        color        = 'var(--theme-palette-primary-main)'
-                        fontWeight   = '500'
-                    }
+                New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Children {
+                    New-UDTextbox -Id "activities_length_$EntryNumber" -Label '⏱️ Duration (min)' -Type number -Placeholder '20' -FullWidth
+                }
+                New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Children {
+                    New-UDTextbox -Id "activities_note_$EntryNumber" -Label '📝 Note' -Type text -Placeholder 'Optional note' -FullWidth
                 }
             }
-            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
-                New-UDTextbox -Id "activities_type_$EntryNumber" -Label '🏃‍♂️ Activity Type' -Type text -Placeholder 'Walking, Running, Swimming, etc.' -FullWidth
-            }
-            New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Children {
-                New-UDTextbox -Id "activities_length_$EntryNumber" -Label '⏱️ Duration (min)' -Type number -Placeholder '20' -FullWidth
-            }
-            New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Children {
-                New-UDTextbox -Id "activities_note_$EntryNumber" -Label '📝 Note' -Type text -Placeholder 'Optional note' -FullWidth
-            }
+        } -Style @{
+            padding         = '15px'
+            margin          = '10px 0'
+            backgroundColor = 'var(--theme-palette-background-paper)'
+            borderLeft      = '4px solid var(--theme-palette-success-main)'
+            borderRadius    = '8px'
+            border          = '1px solid var(--theme-palette-divider)'
         }
-    } -Style @{
-        padding         = '15px'
-        margin          = '10px 0'
-        backgroundColor = 'var(--theme-palette-background-paper)'
-        borderLeft      = '4px solid var(--theme-palette-success-main)'
-        borderRadius    = '8px'
-        border          = '1px solid var(--theme-palette-divider)'
     }
-}
-$Dashboard = New-UDDashboard -Content {
     New-UDApp -Content {
         Write-Information "Testing Session Variable User: $($Session:User)"
         Write-Information "Testing Session Variable UserNoFunction: $($Session:UserNoFunction)"
