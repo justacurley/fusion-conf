@@ -3,7 +3,9 @@
     try {
         $UserData = Get-UserCacheData "asdf@asdf.com" -EA Stop
     } catch {
-        Write-PSUError $_
+        Write-Warning "Failed to get user cache data: $($_.Exception.Message)"
+        # For dashboard apps, we can show an error message to the user
+        Show-UDToast -Message "Error loading user data: $($_.Exception.Message)" -MessageColor red -Duration 5000
         throw $_
     }
     # Homepage content for the Health Dashboard
