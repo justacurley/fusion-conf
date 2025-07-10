@@ -1,7 +1,10 @@
 ﻿$HomePage = New-UDApp -Content {
     Import-Module UserManagement -Force
-    $UserData = Get-UserCacheData "asdf@asdf.com"
-    Write-Information ($UserData | ConvertTo-Json)
+    try {
+        $UserData = Get-UserCacheData "asdf@asdf.com" -EA Stop
+    } catch {
+        Write-Warning "Failed to get cache"
+    }
     # Homepage content for the Health Dashboard
     New-UDContainer -Content {
         # Header Section
