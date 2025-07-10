@@ -6,6 +6,7 @@
         Show-UDToast -Message "Authentication issue, redirecting to login page" -MessageColor Red -Duration 2000
         Invoke-UDRedirect -Url /login -Native
     } else {
+        Write-Information "Current user successfully authenticated"
         $UserData = $CurrentUser.Data
         # Set Session scoped variables. This is the landing page after logging in, hoping we only have to set these once. 
         function Set-SessionVariables($UserData) {
@@ -13,6 +14,7 @@
         }
         Set-SessionVariables $UserData
         Set-Variable -Scope Session -Name UserNoFunction -Value $UserData.PSUUser
+        $Session:UserRaw = $UserData.PSUUser
     }
   
     # Homepage content for the Health Dashboard
