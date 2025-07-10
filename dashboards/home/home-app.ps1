@@ -3,7 +3,7 @@
     try {
         $UserData = Get-UserCacheData "asdf@asdf.com" -EA Stop
     } catch {
-        Write-Warning "Failed to get cache"
+        Write-PSUError $_
     }
     # Homepage content for the Health Dashboard
     New-UDContainer -Content {
