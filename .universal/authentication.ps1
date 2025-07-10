@@ -12,9 +12,11 @@
         $SessionResult = Set-UserSession -UserPRofile $AuthResult.UserProfile
         if ($SessionResult.Success) {
             try {
-                $CurrentUser = Get-CurrentUser
-                $UserData = $CurrentUser.Data
-                Set-UserCacheData -UserData $UserData -ExpirationHours 1
+                if ($Credential.UserName -ine 'admin') {
+                    $CurrentUser = Get-CurrentUser
+                    $UserData = $CurrentUser.Data
+                    Set-UserCacheData -UserData $UserData -ExpirationHours 1
+                }
                 New-PSUAuthenticationResult -Success -UserName $Credential.UserName                
             }
             catch {
