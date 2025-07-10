@@ -4,8 +4,8 @@
     Write-Information "Session UserEmail: $($Session:UserEmail)"
     Write-Information "Session UserProfileId: $($Session:UserProfileId)"
     Write-Information "Just User: $User"
-    Write-Information "Cookies: $($Cookies)"
-    Write-Information "Headers: $($Headers)"
+    Write-Information "Cookies: $($Cookies | ConvertTo-Json)"
+    Write-Information "Headers: $($Headers | ConvertTo-Json)"
     Write-Information "Roles: $($Roles)"
     # Homepage content for the Health Dashboard
     New-UDContainer -Content {
