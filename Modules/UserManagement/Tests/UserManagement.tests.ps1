@@ -419,38 +419,36 @@ Describe "Module-Level Function Tests" {
     
     Context "Test-UserSession Function Tests" {
         BeforeAll {
-            # Setup mock user object for PSU context
-            $script:MockUser = [PSCustomObject]@{
-                Identity = [PSCustomObject]@{
-                    Name = "testuser@example.com"
-                    IsAuthenticated = $true
-                }
-                Claims = @()
-            }
+            # Setup mock PSU variables as simple types (not objects)
+            $script:TestUser = "testuser@example.com"
+            $script:TestRoles = @("User")
         }
         
         It "Should return success when all validations pass" {
             # Use InModuleScope to set variables within the module context
             InModuleScope UserManagement {
-                # Set up a proper User variable that the function expects
-                $script:User = [PSCustomObject]@{
-                    Identity = [PSCustomObject]@{
-                        Name = "testuser@example.com"
-                        IsAuthenticated = $true
-                    }
-                    Claims = @()
-                }
+                # Set up PSU variables as simple types
+                $global:User = "testuser@example.com"
+                $global:Roles = @("User")
+                
+                # Set up session variables - all must be present for success
+                $global:Session:UserEmail = "testuser@example.com"
+                $global:Session:UserProfileId = "12345678-1234-1234-1234-123456789012"
+                $global:Session:PSUProfileId = 42
+                $global:Session:UserFirstName = "Test"
+                $global:Session:UserLastName = "User"
+                $global:Session:UserTimezone = "America/New_York"
+                $global:Session:LoginTime = (Get-Date)
+                $global:Session:IsAuthenticated = $true
                 
                 $result = Test-UserSession
                 
-                # The function will fail at session variable check outside PSU context
-                # but we can verify it gets past the User authentication check
                 $result | Should -Not -BeNullOrEmpty
-                $result.Success | Should -Be $false  # Will fail at session variable check
-                $result.Message | Should -Not -Be "PSU User identity not found"
-                $result.Message | Should -Not -Be "User is not authenticated in PSU"
-                # Should fail on session variables instead
-                $result.Message | Should -Match "Session variable.*missing"
+                $result.Success | Should -Be $true
+                $result.Message | Should -Be "Valid user session found"
+                $result.Data.PSUUser | Should -Be "testuser@example.com"
+                $result.Data.PSUUserRoles | Should -Be @("User")
+                $result.Data.UserEmail | Should -Be "testuser@example.com"
             }
         }
         
@@ -465,14 +463,10 @@ Describe "Module-Level Function Tests" {
             Should -Invoke Write-Error -Exactly 1 -ModuleName UserManagement
         }
         
-        It "Should fail when PSU User identity is missing" {
-            # Use InModuleScope to set variables within the module context
+        It "Should fail when PSU User is null or empty" {
             InModuleScope UserManagement {
-                # Set up a User variable with null Identity
-                $script:User = [PSCustomObject]@{
-                    Identity = $null
-                    Claims = @()
-                }
+                # Set up empty User variable
+                $global:User = ""
                 
                 $result = Test-UserSession
                 
@@ -481,28 +475,53 @@ Describe "Module-Level Function Tests" {
             }
         }
         
-        It "Should fail when PSU User is not authenticated" {
-            # Use InModuleScope to set variables within the module context
+        It "Should fail when User doesn't match session email" {
             InModuleScope UserManagement {
-                # Set up an unauthenticated User variable
-                $script:User = [PSCustomObject]@{
-                    Identity = [PSCustomObject]@{
-                        Name = "testuser@example.com"
-                        IsAuthenticated = $false
-                    }
-                    Claims = @()
-                }
+                # Set up mismatched user and session
+                $global:User = "different@example.com"
+                $global:Session:UserEmail = "testuser@example.com"
+                $global:Session:UserProfileId = "12345678-1234-1234-1234-123456789012"
+                $global:Session:IsAuthenticated = $true
                 
                 $result = Test-UserSession
                 
                 $result.Success | Should -Be $false
-                $result.Message | Should -Be "User is not authenticated in PSU"
+                $result.Message | Should -Match "PSU user.*does not match session user"
+            }
+        }
+        
+        It "Should fail when session UserProfileId is missing" {
+            InModuleScope UserManagement {
+                $global:User = "testuser@example.com"
+                $global:Session:UserEmail = "testuser@example.com"
+                # Missing UserProfileId
+                $global:Session:IsAuthenticated = $true
+                
+                $result = Test-UserSession
+                
+                $result.Success | Should -Be $false
+                $result.Message | Should -Be "Session variable UserProfileId is missing"
+            }
+        }
+        
+        It "Should fail when session IsAuthenticated is missing or false" {
+            InModuleScope UserManagement {
+                $global:User = "testuser@example.com"
+                $global:Session:UserEmail = "testuser@example.com"
+                $global:Session:UserProfileId = "12345678-1234-1234-1234-123456789012"
+                # Set IsAuthenticated to false
+                $global:Session:IsAuthenticated = $false
+                
+                $result = Test-UserSession
+                
+                $result.Success | Should -Be $false
+                $result.Message | Should -Be "Custom session authentication flag is missing or false"
             }
         }
         
         It "Should verify function structure and error handling" {
             # Test that the function has proper structure and handles session provider errors
-            Mock Get-Variable { return @{ Name = "User"; Value = $script:MockUser } } -ParameterFilter { $Name -eq "User" } -ModuleName UserManagement
+            Mock Get-Variable { return @{ Name = "User"; Value = $script:TestUser } } -ParameterFilter { $Name -eq "User" } -ModuleName UserManagement
             
             $result = Test-UserSession
             
@@ -526,13 +545,8 @@ Describe "Get-CurrentUser" {
                     Success = $true
                     Message = "Valid user session found"
                     Data = @{
-                        PSUUser = [PSCustomObject]@{
-                            Identity = [PSCustomObject]@{
-                                Name = "test@example.com"
-                                AuthenticationType = "Forms"
-                                IsAuthenticated = $true
-                            }
-                        }
+                        PSUUser = "test@example.com"
+                        PSUUserRoles = @("User")
                         UserEmail = "test@example.com"
                         UserProfileId = "12345678-1234-1234-1234-123456789012"
                         PSUProfileId = 42
@@ -556,13 +570,15 @@ Describe "Get-CurrentUser" {
             $result.Data.UserFirstName | Should -Be "John"
             $result.Data.UserLastName | Should -Be "Doe"
             $result.Data.PSUProfileId | Should -Be 42
+            $result.Data.PSUUser | Should -Be "test@example.com"
+            $result.Data.PSUUserRoles | Should -Be @("User")
         }
         
         It "Should include all expected user properties" {
             $result = Get-CurrentUser
             
             $expectedProperties = @(
-                'PSUUser', 'UserEmail', 'UserProfileId', 'PSUProfileId', 'UserFirstName',
+                'PSUUser', 'PSUUserRoles', 'UserEmail', 'UserProfileId', 'PSUProfileId', 'UserFirstName',
                 'UserLastName', 'UserTimezone', 'LoginTime', 'IsAuthenticated'
             )
             

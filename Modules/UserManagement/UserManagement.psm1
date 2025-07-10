@@ -185,6 +185,8 @@ function Set-UserSession {
         Message = "Failed to extract one or more properties from user profile"
     }
     try {
+        Write-Verbose "Setting UserProfileId to: $($UserProfile.ProfileId)"
+        Write-Verbose "ProfileId type: $($UserProfile.ProfileId.GetType().Name)"
         $Session:UserEmail = $UserProfile.Email
         $Session:UserProfileId = $UserProfile.ProfileId
         $Session:PSUProfileId = $UserProfile.PSUProfileId
@@ -216,19 +218,14 @@ function Test-UserSession {
             Get-Variable User -ErrorAction Stop | Out-Null
             
             # Validate PSU authentication
-            if (-not $User.Identity) {
+            if ([string]::IsNullOrEmpty($User)) {
                 $Response['Message'] = "PSU User identity not found"
                 return $Response
             }
             
-            if (-not $User.Identity.IsAuthenticated) {
-                $Response['Message'] = "User is not authenticated in PSU"
-                return $Response
-            }
-            
             # Validate custom session variables
-            if (-not $Session:UserEmail) {
-                $Response['Message'] = "Session variable UserEmail is missing"
+            if ($Session:UserEmail -and ($User -ne $Session:UserEmail)) {
+                $Response['Message'] = "PSU user ($User) does not match session user ($Session:UserEmail)"
                 return $Response
             }
             
@@ -247,6 +244,7 @@ function Test-UserSession {
             $Response['Message'] = "Valid user session found"
             $Response['Data'] = @{
                 PSUUser = $User
+                PSUUserRoles = $Roles
                 UserEmail = $Session:UserEmail
                 UserProfileId = $Session:UserProfileId
                 PSUProfileId = $Session:PSUProfileId
