@@ -1,12 +1,14 @@
 ﻿$HomePage = New-UDApp -Content {
     Import-Module UserManagement -Force
+    $UserData = $null
     try {
         $UserData = Get-UserCacheData "asdf@asdf.com" -EA Stop
+        Show-UDToast -Message "User data loaded successfully" -MessageColor green -Duration 3000
     } catch {
         Write-Warning "Failed to get user cache data: $($_.Exception.Message)"
-        # For dashboard apps, we can show an error message to the user
-        Show-UDToast -Message "Error loading user data: $($_.Exception.Message)" -MessageColor red -Duration 5000
-        throw $_
+        # For dashboard apps, we can show an error message to the user but continue loading
+        Show-UDToast -Message "Warning: User data not available. Using default view." -MessageColor orange -Duration 5000
+        # Don't throw - allow the dashboard to load with default data
     }
     # Homepage content for the Health Dashboard
     New-UDContainer -Content {
