@@ -8,6 +8,7 @@
         Write-Warning "Failed to get user cache data: $($_.Exception.Message)"
         # For dashboard apps, we can show an error message to the user but continue loading
         Show-UDToast -Message "Warning: User data not available. Using default view." -MessageColor orange -Duration 5000
+        Show-UDToast -Message "Please log out and log back in." -MessageColor orange -Duration 5000
         # Don't throw - allow the dashboard to load with default data
     }
     # Homepage content for the Health Dashboard

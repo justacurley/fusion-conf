@@ -14,13 +14,14 @@
             try {
                 if ($Credential.UserName -ine 'admin') {
                     $CurrentUser = Get-CurrentUser
+                    Show-UDToast "Got Current User, attempting to set cache."
                     $UserData = $CurrentUser.Data
                     Set-UserCacheData -UserData $UserData -ExpirationHours 1
                 }
                 New-PSUAuthenticationResult -Success -UserName $Credential.UserName                
             }
             catch {
-                Write-PSUError $_
+                Write-Warning "Failed to cache data for $($Credential.UserName)"
                 throw $_
             }
         } else {
