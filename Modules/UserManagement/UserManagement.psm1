@@ -185,12 +185,12 @@ function Set-UserSession {
     # Primary session validation now relies on PSU's $User variable and dynamic profile loading.
     $Response = @{
         Success = $false
-        Message = "Failed to extract one or more properties from user profile"
+        Message = 'Failed to extract one or more properties from user profile'
     }
     try {
         Write-Verbose "Setting UserProfileId to: $($UserProfile.ProfileId)"
         Write-Verbose "ProfileId type: $($UserProfile.ProfileId.GetType().Name)"
-        Write-Verbose "NOTE: Custom session variables do not persist between authentication and dashboard contexts"
+        Write-Verbose 'NOTE: Custom session variables do not persist between authentication and dashboard contexts'
         $Session:UserEmail = $UserProfile.Email
         $Session:UserProfileId = $UserProfile.ProfileId
         $Session:PSUProfileId = $UserProfile.PSUProfileId
@@ -200,10 +200,9 @@ function Set-UserSession {
         $Session:LoginTime = (Get-Date)
         $Session:IsAuthenticated = $true
         $Response['Success'] = $true
-        $Response['Message'] = "Set all required session variables (for authentication context only)"
-    }
-    catch {
-       Write-Error $_
+        $Response['Message'] = 'Set all required session variables (for authentication context only)'
+    } catch {
+        Write-Error $_
     }
     return $Response
 }
@@ -214,13 +213,13 @@ function Test-UserSession {
     end {
         $Response = @{
             Success = $false
-            Message = "Failed to get user session"
-            Data = @{}
+            Message = 'Failed to get user session'
+            Data    = @{}
         }
         try {
             # Check if PSU User variable exists and has a value
             if (-not (Get-Variable User -ErrorAction SilentlyContinue) -or [string]::IsNullOrEmpty($User)) {
-                $Response['Message'] = "PSU User identity not found or empty"
+                $Response['Message'] = 'PSU User identity not found or empty'
                 return $Response
             }
             
@@ -239,22 +238,21 @@ function Test-UserSession {
             
             # All validations passed - return session data based on PSU User and loaded profile
             $Response['Success'] = $true
-            $Response['Message'] = "Valid user session found via dynamic profile loading"
+            $Response['Message'] = 'Valid user session found via dynamic profile loading'
             $Response['Data'] = @{
-                PSUUser = $User
-                PSUUserRoles = if (Get-Variable Roles -ErrorAction SilentlyContinue) { $Roles } else { @() }
-                UserEmail = $UserProfile.Email
-                UserProfileId = $UserProfile.ProfileId
-                PSUProfileId = $UserProfile.PSUProfileId
-                UserFirstName = $UserProfile.FirstName
-                UserLastName = $UserProfile.LastName
-                UserTimezone = $UserProfile.Timezone
-                CreatedOn = $UserProfile.CreatedOn
-                TOSAccepted = $UserProfile.TOSAccepted
+                PSUUser         = $User
+                PSUUserRoles    = if (Get-Variable Roles -ErrorAction SilentlyContinue) { $Roles } else { @() }
+                UserEmail       = $UserProfile.Email
+                UserProfileId   = $UserProfile.ProfileId
+                PSUProfileId    = $UserProfile.PSUProfileId
+                UserFirstName   = $UserProfile.FirstName
+                UserLastName    = $UserProfile.LastName
+                UserTimezone    = $UserProfile.Timezone
+                CreatedOn       = $UserProfile.CreatedOn
+                TOSAccepted     = $UserProfile.TOSAccepted
                 IsAuthenticated = $true
             }
-        }
-        catch {
+        } catch {
             $Response['Message'] = "Error validating user session: $($_.Exception.Message)"
             Write-Error "Error in Test-UserSession: $($_.Exception.Message)"
         }
@@ -268,8 +266,8 @@ function Get-CurrentUser {
     end {
         $Response = @{
             Success = $false
-            Message = "Failed to get current user"
-            Data = @{}
+            Message = 'Failed to get current user'
+            Data    = @{}
         }
         try {
             # First check if we have a valid session
@@ -283,10 +281,9 @@ function Get-CurrentUser {
             $CurrentUser = $SessionCheck.Data
             
             $Response['Success'] = $true
-            $Response['Message'] = "Current user retrieved successfully"
+            $Response['Message'] = 'Current user retrieved successfully'
             $Response['Data'] = $CurrentUser
-        }
-        catch {
+        } catch {
             $Response['Message'] = "Error retrieving current user: $($_.Exception.Message)"
             Write-Error "Error in Get-CurrentUser: $($_.Exception.Message)"
         }
@@ -299,8 +296,8 @@ function Clear-UserSession {
     param ()
     end {
         $Response = @{
-            Success = $false
-            Message = "Failed to clear user session"
+            Success          = $false
+            Message          = 'Failed to clear user session'
             ClearedVariables = @()
         }
         try {
@@ -324,8 +321,7 @@ function Clear-UserSession {
                     # In test context, this may fail gracefully
                     Remove-Variable -Name "Session:$Variable" -ErrorAction Stop
                     $ClearedVariables += $Variable
-                }
-                catch {
+                } catch {
                     # Variable doesn't exist or can't be removed - this is OK
                     Write-Verbose "Session variable $Variable not found or could not be removed: $($_.Exception.Message)"
                 }
@@ -334,8 +330,7 @@ function Clear-UserSession {
             $Response['Success'] = $true
             $Response['Message'] = "User session cleared successfully. Cleared variables: $($ClearedVariables -join ', ')"
             $Response['ClearedVariables'] = $ClearedVariables
-        }
-        catch {
+        } catch {
             $Response['Message'] = "Error clearing user session: $($_.Exception.Message)"
             $Response['ClearedVariables'] = @()  # Ensure it's always an array
             Write-Error "Error in Clear-UserSession: $($_.Exception.Message)"
@@ -347,9 +342,9 @@ function Clear-UserSession {
 function Set-UserCacheData {
     [CmdletBinding()]
     param (
-        [ValidateScript({-not [string]::IsNullOrEmpty($_.UserEmail)})]
+        [ValidateScript({ -not [string]::IsNullOrEmpty($_.UserEmail) })]
         [PSCustomObject]$UserData,
-        [ValidateScript({$_ -gt 0})]
+        [ValidateScript({ $_ -gt 0 })]
         [int]$ExpirationHours = 1
     )
     end {
@@ -358,7 +353,7 @@ function Set-UserCacheData {
             $CacheValue = $UserData | ConvertTo-Json -Compress
             Set-PSUCache -Key $CacheKey -Value $CacheValue -AbsoluteExpiration (Get-Date).AddHours($ExpirationHours) -ErrorAction Stop
         } catch {
-            Write-PSUError -ErrorRecord $_
+            throw $_
         }
     }
 }
@@ -371,9 +366,14 @@ function Get-UserCacheData {
     )
     end {
         try {
-            Get-PSUCache -Key "UserContext_$UserEmail" -ErrorAction Stop
+            $CacheKey = "UserContext_$UserEmail"
+            $Cache = Get-PSUCache -Key $CacheKey -ErrorAction Stop
+            if (! $Cache) {
+                throw "Failed to retrieve cache for key: $CacheKey"
+            }
+            return $Cache
         } catch {
-            Write-PSUError -ErrorRecord $_
+            throw $_
         }
     }
 }

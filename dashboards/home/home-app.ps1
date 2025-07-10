@@ -4,6 +4,7 @@
         $UserData = Get-UserCacheData "asdf@asdf.com" -EA Stop
     } catch {
         Write-PSUError $_
+        throw $_
     }
     # Homepage content for the Health Dashboard
     New-UDContainer -Content {

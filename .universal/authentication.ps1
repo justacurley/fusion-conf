@@ -11,10 +11,16 @@
     if ($AuthResult.Success) {
         $SessionResult = Set-UserSession -UserPRofile $AuthResult.UserProfile
         if ($SessionResult.Success) {
-            $CurrentUser = Get-CurrentUser
-            $UserData = $CurrentUser.Data
-            Set-UserCacheData -UserData $UserData -ExpirationHours 1
-            New-PSUAuthenticationResult -Success -UserName $Credential.UserName
+            try {
+                $CurrentUser = Get-CurrentUser
+                $UserData = $CurrentUser.Data
+                Set-UserCacheData -UserData $UserData -ExpirationHours 1
+                New-PSUAuthenticationResult -Success -UserName $Credential.UserName                
+            }
+            catch {
+                Write-PSUError $_
+                throw $_
+            }
         } else {
             New-PSUAuthenticationResult -ErrorMessage 'Session setup failed'
         }
