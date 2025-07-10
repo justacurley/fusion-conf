@@ -11,7 +11,7 @@
         # Set Cache. This is the landing page after logging in, hoping we only have to set these once. 
         Set-UserCacheData -UserData $UserData -ExpirationHours 1
     }
-  
+    Write-Information -MessageData (Get-Variable | ConvertTo-Json -Depth 5)
     # Homepage content for the Health Dashboard
     New-UDContainer -Content {
         # Header Section
