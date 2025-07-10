@@ -134,6 +134,8 @@ function New-ActivityEntryElement {
 
 New-UDApp -Content {
     Write-Information "Testing Session Variable User: $($Session:User)"
+    Write-Information "Testing Session Variable UserNoFunction: $($Session:UserNoFunction)"
+    Write-Information "Testing Session Variable UserRaw: $($Session:UserRaw)"
     New-UDContainer -Children {
         New-UDPaper -Children {
             New-UDGrid -Container -Children {
