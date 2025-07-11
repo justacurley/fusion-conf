@@ -9,11 +9,13 @@
     Import-Module UserManagement
     $AuthResult = Invoke-UserAuthentication -Email $Credential.UserName
     if ($AuthResult.Success) {
-        $SessionResult = Set-UserSession -UserPRofile $AuthResult.UserProfile
+        $SessionResult = Set-UserSession -UserProfile $AuthResult.UserProfile
         if ($SessionResult.Success) {
             New-PSUAuthenticationResult -Success -UserName $Credential.UserName                
         } else {
             New-PSUAuthenticationResult -ErrorMessage 'Session setup failed'
-            New-PSUAuthenticationResult -ErrorMessage 'Bad username or password'
         }
+    } else {
+        New-PSUAuthenticationResult -ErrorMessage 'Bad username or password'
     }
+}

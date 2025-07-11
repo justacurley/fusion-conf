@@ -130,7 +130,7 @@ function New-ActivityEntryElement {
 }
 New-UDApp -Content {
     Import-Module UserManagement -Force
-    $UserData = Get-UserCacheData -UserEmail $User
+    $UserData = Initialize-UserContext -UserEmail $User
     New-UDContainer -Children {
         New-UDPaper -Children {
             New-UDGrid -Container -Children {
