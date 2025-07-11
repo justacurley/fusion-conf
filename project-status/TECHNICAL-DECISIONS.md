@@ -220,6 +220,111 @@
 
 ---
 
+### Decision: User Context Caching Architecture
+**Date**: July 10, 2025
+**Status**: Confirmed
+
+**Context**: PowerShell Universal cache functions don't work in authentication context, but dashboard apps need fast access to user-specific data including profile, preferences, and health entries. Need to implement efficient caching that works across all dashboard contexts.
+
+**Options Considered**:
+1. Cache in authentication script - Failed due to PSU limitations
+2. Individual cache per dashboard - Would cause inconsistency and redundant loading
+3. Centralized cache initialization per user - Load once, use everywhere
+4. No caching - Would be too slow for complex dashboards
+
+**Decision**: Centralized user context caching with `Initialize-UserContext` function that loads and caches all user data (identity, preferences, health entries) in dashboard apps.
+
+**Rationale**:
+- Cache functions only work in dashboard/job contexts, not authentication
+- Single source of truth for user data across all dashboards
+- Significant performance improvement (cache hit vs file system read)
+- Consistent user experience across all apps
+- Graceful degradation when cache/data unavailable
+
+**Implications**:
+- All dashboard apps must call `Initialize-UserContext` at startup
+- User data changes require cache invalidation strategy
+- Memory usage scales with concurrent users
+- Cache expiration affects user experience (currently 1 hour)
+
+**Implementation Notes**:
+- Function returns comprehensive user object with identity, preferences, and health data
+- Graceful error handling with user-friendly toast messages
+- Uses PSU cache with configurable expiration
+- Supports silent mode for background operations
+- Automatic fallback to fresh data loading on cache miss
+
+---
+
+### Decision: User Profile Class Architecture Enhancement
+**Date**: July 10, 2025
+**Status**: Confirmed
+
+**Context**: Original user profile system only handled identity data. Need comprehensive user data management including preferences, health entries, and file system structure.
+
+**Options Considered**:
+1. Separate classes for different data types - Complex inheritance hierarchy
+2. External functions for data loading - Scattered logic across codebase
+3. Enhanced single class with comprehensive static methods - Centralized approach
+4. Database-based approach - Overkill for current requirements
+
+**Decision**: Enhanced UserProfile class with comprehensive static methods for loading all user data types (identity, preferences, health entries) in single operations.
+
+**Rationale**:
+- Centralized user data logic in single class
+- Static methods allow easy access without instantiation
+- Consistent file structure creation and management
+- Atomic loading of all user data reduces file system calls
+- Built-in error handling and validation
+
+**Implications**:
+- All user data operations go through UserProfile class
+- File system structure is standardized and enforced
+- Easier testing and maintenance of user data logic
+- Breaking changes to existing authentication flows (handled)
+
+**Implementation Notes**:
+- `GetUserProfile()` loads identity, preferences, and health entries atomically
+- `GetUserProfilePath()` provides file system path resolution
+- Automatic creation of user directory structure with required files
+- JSON files initialized with valid empty objects to prevent parsing errors
+- `BaseProfilePath` property for configuration flexibility
+
+---
+
+### Decision: Authentication Script Simplification
+**Date**: July 10, 2025
+**Status**: Confirmed
+
+**Context**: Authentication script contained cache-related code that didn't work in authentication context, causing errors and complexity.
+
+**Options Considered**:
+1. Fix caching in authentication context - Not possible due to PSU limitations
+2. Create custom login page to enable caching - Significant development overhead
+3. Remove caching from authentication, handle in dashboards - Clean separation
+4. Hybrid approach with session variables - Session variables don't persist across contexts
+
+**Decision**: Simplified authentication script focused solely on credential validation and PSU identity creation, with all caching moved to dashboard apps.
+
+**Rationale**:
+- Authentication script only handles its core responsibility
+- Eliminates errors from unsupported cache operations
+- Clean separation of concerns (auth vs data loading)
+- Proper error handling for all authentication scenarios
+
+**Implications**:
+- Authentication script is now simpler and more reliable
+- All user data loading happens in dashboard context where it works
+- Consistent user experience across authentication and dashboard access
+
+**Implementation Notes**:
+- Removed all cache-related code from authentication
+- Fixed logical flow to handle all authentication outcomes
+- Proper error messages for different failure scenarios
+- Clean dependency on UserManagement module only
+
+---
+
 ## 🔄 **Under Review**
 
 ### Decision: Frontend Framework Enhancement
