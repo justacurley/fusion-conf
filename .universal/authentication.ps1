@@ -11,25 +11,9 @@
     if ($AuthResult.Success) {
         $SessionResult = Set-UserSession -UserPRofile $AuthResult.UserProfile
         if ($SessionResult.Success) {
-            try {
-                if ($Credential.UserName -ine 'admin') {
-                    $CurrentUser = Get-CurrentUser
-                    Show-UDToast "Got Current User, attempting to set cache."
-                    Write-Information "Got Current User, attempting to set cache."
-
-                    $UserData = $CurrentUser.Data
-                    Set-UserCacheData -UserData $UserData -ExpirationHours 1
-                }
-                New-PSUAuthenticationResult -Success -UserName $Credential.UserName                
-            }
-            catch {
-                Write-Warning "Failed to cache data for $($Credential.UserName)"
-                throw $_
-            }
+            New-PSUAuthenticationResult -Success -UserName $Credential.UserName                
         } else {
             New-PSUAuthenticationResult -ErrorMessage 'Session setup failed'
+            New-PSUAuthenticationResult -ErrorMessage 'Bad username or password'
         }
-    } else {
-        New-PSUAuthenticationResult -ErrorMessage 'Bad username or password'
     }
-}
