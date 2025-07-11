@@ -15,6 +15,8 @@
                 if ($Credential.UserName -ine 'admin') {
                     $CurrentUser = Get-CurrentUser
                     Show-UDToast "Got Current User, attempting to set cache."
+                    Write-Information "Got Current User, attempting to set cache."
+
                     $UserData = $CurrentUser.Data
                     Set-UserCacheData -UserData $UserData -ExpirationHours 1
                 }
