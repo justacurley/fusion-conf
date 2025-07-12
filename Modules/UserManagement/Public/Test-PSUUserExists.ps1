@@ -7,6 +7,6 @@ function Test-PSUUserExists {
     if (-not (Get-Module UserManagement)) {
         Import-Module UserManagement -Force
     }
-    
+
     return [UserProfile]::UserExists($Email)
 }

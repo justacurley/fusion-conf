@@ -1,7 +1,8 @@
 # UserManagement Module - Main Entry Point
 # This module provides comprehensive user management functionality for health tracking applications
 
-# Note: The UserProfile class is loaded via ScriptsToProcess in the module manifest
+# Load the UserProfile class first (before other functions that depend on it)
+. "$PSScriptRoot\Classes\UserProfile.ps1"
 
 # Import all private functions (internal use only)
 Get-ChildItem "$PSScriptRoot\Private\*.ps1" | ForEach-Object {
