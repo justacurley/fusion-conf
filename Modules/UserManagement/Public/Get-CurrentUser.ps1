@@ -8,6 +8,11 @@ function Get-CurrentUser {
             Data    = @{}
         }
         try {
+            # Ensure the UserManagement module is imported
+            if (-not (Get-Module UserManagement)) {
+                Import-Module UserManagement -Force
+            }
+
             # First check if we have a valid session
             $SessionCheck = Test-UserSession
             if (-not $SessionCheck.Success) {

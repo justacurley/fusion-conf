@@ -122,6 +122,11 @@ function New-UserHealthPreferences {
             activities = $Activities
         }
 
+        # Ensure the UserManagement module is imported
+        if (-not (Get-Module UserManagement)) {
+            Import-Module UserManagement -Force
+        }
+
         # Call the static method to set preferences
         $Result = [UserProfile]::SetUserPreferences($Email, $UserId, $PreferenceData)
 

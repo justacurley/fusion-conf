@@ -46,6 +46,11 @@ function New-SampleHealthEntries {
     }
 
     try {
+        # Ensure the UserManagement module is imported
+        if (-not (Get-Module UserManagement)) {
+            Import-Module UserManagement -Force
+        }
+
         # Get user profile path if SaveToFile is specified
         if ($SaveToFile) {
             $UserData = [UserProfile]::GetUserProfilePath($Email)

@@ -10,6 +10,11 @@ function Invoke-UserAuthentication {
             'UserProfile' = [PSCustomObject]@{}
         }
         try {
+            # Ensure the UserManagement module is imported
+            if (-not (Get-Module UserManagement)) {
+                Import-Module UserManagement -Force
+            }
+
             $UserExists = Test-PSUUserExists -Email $Email
             if (! $UserExists) {
                 return $Response

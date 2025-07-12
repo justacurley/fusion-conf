@@ -9,6 +9,11 @@ function New-PSUUser {
     )
     $Response = @{}
     try {
+        # Ensure the UserManagement module is imported
+        if (-not (Get-Module UserManagement)) {
+            Import-Module UserManagement -Force
+        }
+
         $NewUser = [UserProfile]::new($Email, $FirstName, $LastName, $Password, $Timezone, $TOSAccepted)
         $NewUser.CreatePSUIdentity()
         $NewUser.CreateUserDirectory()

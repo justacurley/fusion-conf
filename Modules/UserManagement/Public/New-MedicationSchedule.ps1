@@ -136,6 +136,11 @@ function New-MedicationSchedule {
     }
 
     try {
+        # Ensure the UserManagement module is imported
+        if (-not (Get-Module UserManagement)) {
+            Import-Module UserManagement -Force
+        }
+
         # Validate user exists
         $UserData = [UserProfile]::GetUserProfilePath($Email, $UserId)
         if ($UserData.Count -eq 0) {

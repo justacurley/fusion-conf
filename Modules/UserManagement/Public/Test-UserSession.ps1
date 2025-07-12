@@ -8,6 +8,11 @@ function Test-UserSession {
             Data    = @{}
         }
         try {
+            # Ensure the UserManagement module is imported
+            if (-not (Get-Module UserManagement)) {
+                Import-Module UserManagement -Force
+            }
+
             # Check if PSU User variable exists and has a value
             if (-not (Get-Variable User -ErrorAction SilentlyContinue) -or [string]::IsNullOrEmpty($User)) {
                 $Response['Message'] = 'PSU User identity not found or empty'
@@ -45,7 +50,7 @@ function Test-UserSession {
                 IsAuthenticated = $true
                 Preferences     = $AllUserData.Preferences
                 UserDataPath    = $AllUserData.UserDataPath
-                Entries         = $AllUSerData.Entries
+                Entries         = $AllUserData.Entries
             }
         } catch {
             $Response['Message'] = "Error validating user session: $($_.Exception.Message)"

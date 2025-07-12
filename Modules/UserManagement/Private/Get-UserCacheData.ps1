@@ -7,13 +7,19 @@ function Get-UserCacheData {
     end {
         try {
             $CacheKey = "UserContext_$UserEmail"
-            $Cache = Get-PSUCache -Key $CacheKey -ErrorAction Stop
-            Write-Information ($Cache)
-            Write-Informaiton ($Cache.GetType())
-            if (! $Cache) {
+            $CacheJson = Get-PSUCache -Key $CacheKey -ErrorAction Stop
+            Write-Information "Raw cache data: $CacheJson"
+            Write-Information "Cache data type: $($CacheJson.GetType())"
+            
+            if (-not $CacheJson) {
                 Write-Warning "No cache data found for key: $CacheKey"
-                throw
+                throw "Cache miss"
             }
+            
+            # Deserialize the JSON back to an object
+            $Cache = $CacheJson | ConvertFrom-Json
+            Write-Information "Deserialized cache data type: $($Cache.GetType())"
+            
             return $Cache
         } catch {
             $errorMessage = $_.Exception.Message
