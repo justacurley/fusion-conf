@@ -120,7 +120,7 @@
                     New-UDTypography -Text '👤 Profile Preferences' -Variant h5
                     New-UDTypography -Text 'Basic settings for your health dashboard experience' -Style @{ class = 'section-description' }
 
-                    New-UDGrid -Container -Children {
+                    New-UDStack -Content {
                         New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                             New-UDSelect -Id 'timezone' -Label '🌍 Timezone' -FullWidth -Option {
                                 New-UDSelectOption -Name 'UTC' -Value 'UTC'
@@ -143,7 +143,7 @@
                                 New-UDSelectOption -Name 'Kilograms' -Value 'kilograms'
                             } -DefaultValue 'pounds'
                         }
-                    }
+                    } -Direction Column
                 }
 
                 # Optional Tracking Section
