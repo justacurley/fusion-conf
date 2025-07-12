@@ -12,7 +12,7 @@ function Get-UserCacheData {
             Write-Informaiton ($Cache.GetType())
             if (! $Cache) {
                 Write-Warning "No cache data found for key: $CacheKey"
-                return $null
+                throw
             }
             return $Cache
         } catch {
