@@ -169,30 +169,6 @@
                 }
             }
 
-            # Mandatory Tracking Section
-            New-UDElement -Tag 'div' -Attributes @{ class = 'settings-section' } -Content {
-                New-UDTypography -Text '📋 Required Tracking' -Variant h5
-                New-UDTypography -Text 'These health metrics are always tracked and cannot be disabled' -Style @{ class = 'section-description' }
-
-                # Mandatory tracking items (always enabled)
-                New-UDGrid -Container -Children {
-                    New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDTypography -Text '🩹 Pain Levels (Required)' -Variant body1 -Style @{
-                            color = 'var(--theme-palette-text-primary)'
-                            fontWeight = '500'
-                            padding = '8px 0'
-                        }
-                    }
-                    New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDTypography -Text '💊 Medications (Required)' -Variant body1 -Style @{
-                            color = 'var(--theme-palette-text-primary)'
-                            fontWeight = '500'
-                            padding = '8px 0'
-                        }
-                    }
-                }
-            }
-
             # Medications Section
             New-UDElement -Tag 'div' -Attributes @{ class = 'settings-section' } -Content {
                 New-UDTypography -Text '💊 Medications' -Variant h5
