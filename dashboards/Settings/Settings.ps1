@@ -156,15 +156,14 @@
                     New-UDGrid -Container -Children {
                         # TODO: Align these properly, they look sloppy right now
                         New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                            New-UDCheckbox -Id 'track_weight' -Label '⚖️ Track Weight (Daily)'
+                            New-UDCheckbox -Id 'track_sleep' -Label '😴 Track Sleep (Daily)'
                             New-UDCheckbox -Id 'track_temperature' -Label '🌡️ Track Temperature (As Needed)'
                             New-UDCheckbox -Id 'track_blood_pressure' -Label '🩸 Track Blood Pressure (As Needed)'
-                            New-UDCheckbox -Id 'track_weight' -Label '⚖️ Track Weight (Daily)'
                             New-UDCheckbox -Id 'track_oxygen' -Label '🫁 Track Oxygen Saturation (As Needed)'
                             New-UDCheckbox -Id 'track_heart_rate' -Label '💗 Track Heart Rate (As Needed)'
                             New-UDCheckbox -Id 'track_glucose' -Label '🩸 Track Blood Glucose (As Needed)'
-                            New-UDCheckbox -Id 'track_activities' -Label '🏃 Track Activities & Exercise'
-                            New-UDCheckbox -Id 'track_sleep' -Label '😴 Track Sleep'
-                            New-UDCheckbox -Id 'track_mood' -Label '😊 Track Mood'
+                            New-UDCheckbox -Id 'track_mood' -Label '😊 Track Mood (As Needed)'
                         }
                     }
                 }
