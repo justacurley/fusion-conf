@@ -265,15 +265,6 @@
                         }
                     }
                 }
-
-                # Save Settings Button - Wrapped in Form for data collection
-
-                # Hidden submit button (we'll trigger this programmatically)
-                # New-UDElement -Tag 'button' -Attributes @{
-                #     type = 'submit'
-                #     style = 'display: none;'
-                #     id = 'hidden-submit-btn'
-                # }
             }
         } -OnSubmit {
             try {
@@ -344,6 +335,6 @@
         }
     }
 }
-}
+
 # Return the settings app
 $SettingsPage
