@@ -571,6 +571,7 @@ class UserProfile {
                             frequency = $PreferenceData.hr_frequency ?? 'daily'
                             target_resting = $PreferenceData.hr_target_resting ?? 70
                             alerts_enabled = [bool]($PreferenceData.hr_alerts ?? $false)
+                            device = $PreferenceData.hr_device ?? ''
                         }
                         temperature = @{
                             enabled = [bool]($PreferenceData.track_temperature ?? $false)
@@ -659,6 +660,7 @@ class UserProfile {
                     enabled = [bool]($PreferenceData.track_steps ?? $false)
                     daily_goal = $PreferenceData.daily_step_goal ?? 10000
                     alerts_enabled = [bool]($PreferenceData.step_alerts ?? $false)
+                    device = $PreferenceData.steps_device ?? ''
                 }
 
                 # Metadata
