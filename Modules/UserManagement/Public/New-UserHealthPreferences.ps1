@@ -134,9 +134,16 @@ function New-UserHealthPreferences {
             activities = $Activities
         }
 
-        # Ensure the UserManagement module is imported
         if (-not (Get-Module UserManagement)) {
             Import-Module UserManagement -Force
+        }
+
+        # Verify UserProfile class is available
+        try {
+            $TestClass = [UserProfile]
+            Write-Information "UserProfile class loaded successfully"
+        } catch {
+            throw "UserProfile class is not available: $($_.Exception.Message)"
         }
 
         # Call the static method to set preferences
