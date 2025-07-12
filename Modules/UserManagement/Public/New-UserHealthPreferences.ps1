@@ -120,6 +120,17 @@ function New-UserHealthPreferences {
             glucose_device = $BloodGlucoseDevice
             hr_device = $HeartRateDevice
             steps_device = $StepsDevice
+            # Notifications
+            notifications_enabled = if ($PSBoundParameters.ContainsKey('NotificationsEnabled')) { $NotificationsEnabled.IsPresent } else { $true }
+            critical_alerts = if ($PSBoundParameters.ContainsKey('CriticalAlerts')) { $CriticalAlerts.IsPresent } else { $true }
+            daily_summary = $DailySummary.IsPresent
+            weekly_report = $WeeklyReport.IsPresent
+            reminder_time = $ReminderTime
+
+            # Complex data
+            medications = $Medications
+            pain_locations = $PainLocations
+            activities = $Activities
         }
 
         # Debug device values being passed
@@ -135,18 +146,7 @@ function New-UserHealthPreferences {
         Write-Information "hr_device: '$($PreferenceData.hr_device)'" -InformationAction Continue
         Write-Information "steps_device: '$($PreferenceData.steps_device)'" -InformationAction Continue
 
-        # Notifications
-            notifications_enabled = if ($PSBoundParameters.ContainsKey('NotificationsEnabled')) { $NotificationsEnabled.IsPresent } else { $true }
-            critical_alerts = if ($PSBoundParameters.ContainsKey('CriticalAlerts')) { $CriticalAlerts.IsPresent } else { $true }
-            daily_summary = $DailySummary.IsPresent
-            weekly_report = $WeeklyReport.IsPresent
-            reminder_time = $ReminderTime
 
-            # Complex data
-            medications = $Medications
-            pain_locations = $PainLocations
-            activities = $Activities
-        }
 
         if (-not (Get-Module UserManagement)) {
             Import-Module UserManagement -Force
