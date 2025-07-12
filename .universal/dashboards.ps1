@@ -5,6 +5,7 @@ New-PSUApp -Name "gallery" -FilePath "dashboards/gallery/gallery.ps1" -BaseUrl "
 New-PSUApp -Name "HealthTimeline" -FilePath "dashboards/timeline/timeline.ps1" -BaseUrl "/healthtimeline" -Environment "PowerShell 7" -Authenticated -Role @('User','Administrator') -AutoDeploy 
 New-PSUApp -Name "HomePage" -FilePath "dashboards/home/home-app.ps1" -BaseUrl "/home" -Environment "PowerShell 7" -Authenticated -Role @('User','Administrator') -AutoDeploy -Description "Health Dashboard Homepage with Navigation" 
 New-PSUApp -Name "Registration" -FilePath "dashboards/Registration/Registration.ps1" -BaseUrl "/register" -Environment "Integrated" -AutoDeploy -Description "multi-user registration page" 
+New-PSUApp -Name "Settings" -FilePath "dashboards/Settings/Settings.ps1" -BaseUrl "/Settings" -Environment "Integrated" -AutoDeploy -Description "multi-user Settings page" 
 New-PSUApp -Name "test" -FilePath "dashboards/test/test.ps1" -BaseUrl "/testme" -Environment "PowerShell 7" -Authenticated -Role @('User','Administrator') -AutoDeploy 
 New-PSUApp -Name "Test Viewer" -FilePath "dashboards/Test Viewer/Test Viewer.ps1" -BaseUrl "/test-viewer" -Authenticated -AutoDeploy -Description "A Pester test result viewer for PowerShell Universal." -Module "PowerShellUniversal.Apps.Pester" -Command "New-UDPesterApp" 
 New-PSUApp -Name "test_calendars" -FilePath "dashboards/test_calendars/test_calendars.ps1" -BaseUrl "/testcalendar" -Environment "PowerShell 7" -Authenticated -AutoDeploy 
