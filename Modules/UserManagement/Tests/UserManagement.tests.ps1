@@ -1370,7 +1370,7 @@ Describe "New-PSUUser Function - Base64 Integration" -Tag "New-PSUUser", "Integr
                     return $null
                 }
             } -ModuleName UserManagement
-            
+
             Mock Get-PSURole { return @{ Name = "User" } } -ModuleName UserManagement
             Mock New-PSUIdentity {
                 $script:IdentityCreated = $true
@@ -1463,7 +1463,7 @@ Describe "New-PSUUser Function - Base64 Integration" -Tag "New-PSUUser", "Integr
                     return $null
                 }
             } -ModuleName UserManagement
-            
+
             Mock Get-PSURole { return @{ Name = "User" } } -ModuleName UserManagement
             Mock New-PSUIdentity {
                 $script:IdentityCreated2 = $true

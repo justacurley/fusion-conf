@@ -162,7 +162,7 @@ class UserProfile {
                 $Base64FolderName = [UserProfile]::ConvertEmailToBase64($Email)
                 $FullUserPath = Join-Path $UserPath $Base64FolderName
                 $ProfilePath = Join-Path $FullUserPath 'profile.json'
-                
+
                 if ((Test-Path $FullUserPath) -and (Test-Path $ProfilePath)) {
                     try {
                         $ProfileContent = Get-Content $ProfilePath | ConvertFrom-Json
