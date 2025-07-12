@@ -292,49 +292,13 @@
             # Activities Section
             New-UDElement -Tag 'div' -Attributes @{ class = 'settings-section' } -Content {
                 New-UDTypography -Text '🏃 Activities & Exercise' -Variant h5
-                New-UDTypography -Text 'Define activities and exercises you want to track' -Style @{ class = 'section-description' }
+                New-UDTypography -Text 'Enter the names of activities and exercises you expect to perform during your recovery, separated by commas' -Style @{ class = 'section-description' }
 
-                New-UDElement -Id 'activities-container' -Tag 'div' -Content {
-                    # Initial activity entry
-                    New-UDElement -Tag 'div' -Attributes @{ class = 'activity-item' } -Content {
-                        New-UDGrid -Container -Children {
-                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                New-UDTextbox -Id 'activity_name_1' -Label 'Activity Name' -FullWidth
-                            }
-                        }
+                New-UDGrid -Container -Children {
+                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                        New-UDTextbox -Id 'activities_list' -Label 'Activities (comma-separated)' -Placeholder 'e.g., Walking, Physical Therapy, Swimming, Stretching, Yoga' -Multiline -Rows 3 -FullWidth
                     }
                 }
-
-                New-UDButton -Text '+ Add Another Activity' -Color success -OnClick {
-                    # Use session variable to track activity count
-                    if (-not $Session:ActivityCounter) { $Session:ActivityCounter = 2 }
-                    $activityCount = $Session:ActivityCounter
-                    $Session:ActivityCounter++
-
-                    Show-UDToast -Message "Adding Activity #$activityCount" -Duration 2000
-
-                    # Add new activity entry to the container
-                    Add-UDElement -ParentId 'activities-container' -Content {
-                        $currentActivityCount = $activityCount  # Capture in local scope
-                        New-UDElement -Id "activity-item-$currentActivityCount" -Tag 'div' -Attributes @{ class = 'activity-item' } -Content {
-                            New-UDGrid -Container -Children {
-                                New-UDGrid -Item -ExtraSmallSize 10 -Children {
-                                    New-UDTextbox -Id "activity_name_$currentActivityCount" -Label 'Activity Name' -FullWidth
-                                }
-                                New-UDGrid -Item -ExtraSmallSize 2 -Children {
-                                    New-UDButton -Text '🗑️' -Color secondary -Size small -OnClick {
-                                        try {
-                                            Show-UDToast -Message "Removing Activity #$currentActivityCount" -Duration 2000
-                                            Clear-UDElement -Id "activity-item-$currentActivityCount"
-                                        } catch {
-                                            Show-UDToast -Message "Error removing activity: $($_.Exception.Message)" -Duration 3000 -BackgroundColor red
-                                        }
-                                    } -Style @{ class = 'remove-btn' }
-                                }
-                            }
-                        }
-                    }
-                } -Style @{ class = 'add-btn' }
             }
 
             # Save Settings Button - Wrapped in Form for data collection
@@ -380,11 +344,11 @@
                         }
                     }
 
-                    # Collect activities (dynamic entries)
+                    # Collect activities (comma-separated list)
                     $Activities = @()
-                    for ($i = 1; $i -le 10; $i++) {  # Check up to 10 activity entries
-                        $activityName = $FormData["activity_name_$i"]
-                        if (-not [string]::IsNullOrEmpty($activityName)) {
+                    if (-not [string]::IsNullOrEmpty($FormData.activities_list)) {
+                        $activityNames = $FormData.activities_list -split ',' | ForEach-Object { $_.Trim() } | Where-Object { -not [string]::IsNullOrEmpty($_) }
+                        foreach ($activityName in $activityNames) {
                             $Activities += @{
                                 name = $activityName
                             }
