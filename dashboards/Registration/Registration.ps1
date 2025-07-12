@@ -1,4 +1,4 @@
-﻿New-UDApp -Content { 
+﻿New-UDApp -Content {
     # Add custom CSS for better form styling
     New-UDElement -Tag 'style' -Content {
         @'
@@ -10,16 +10,16 @@
             border-radius: 12px;
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
-        
+
         .registration-form .form-group {
             margin-bottom: 24px !important;
         }
-        
+
         .registration-form .MuiFormControl-root {
             margin-bottom: 20px;
             width: 100%;
         }
-        
+
         .registration-form .MuiButton-contained {
             background-color: var(--theme-palette-primary-main);
             color: white;
@@ -30,26 +30,26 @@
             text-transform: none;
             margin-top: 20px;
         }
-        
+
         .registration-form .MuiButton-contained:hover {
             background-color: var(--theme-palette-primary-dark);
             box-shadow: 0 6px 16px rgba(0,0,0,0.2);
         }
-        
+
         .registration-form .MuiTextField-root {
             margin-bottom: 16px;
         }
-        
+
         .registration-form .MuiFormHelperText-root {
             color: var(--theme-palette-text-secondary);
             font-size: 13px;
         }
-        
+
         .registration-form .MuiFormControlLabel-root {
             margin-top: 16px;
             margin-bottom: 8px;
         }
-        
+
         .registration-form .field-description {
             font-size: 14px;
             color: var(--theme-palette-text-secondary);
@@ -57,7 +57,7 @@
         }
 '@
     }
-    
+
     New-UDContainer -Children {
         New-UDPaper -Children {
             New-UDGrid -Container -Children {
@@ -78,7 +78,7 @@
                 }
             }
         } -Style @{ padding = '20px'; marginBottom = '30px'; backgroundColor = 'var(--theme-palette-background-paper)' }
-        
+
         # Form container with better styling
         New-UDPaper -Children {
             New-UDForm -Schema @{
@@ -125,7 +125,7 @@
                         type        = 'string'
                         enum        = @(
                             'America/New_York',
-                            'America/Chicago', 
+                            'America/Chicago',
                             'America/Denver',
                             'America/Phoenix',
                             'America/Los_Angeles',
@@ -135,7 +135,7 @@
                         enumNames   = @(
                             'Eastern Time (New York)',
                             'Central Time (Chicago)',
-                            'Mountain Time (Denver)', 
+                            'Mountain Time (Denver)',
                             'Arizona Time (Phoenix)',
                             'Pacific Time (Los Angeles)',
                             'Alaska Time (Anchorage)',
@@ -176,31 +176,30 @@
                     'ui:widget' = 'checkbox'
                 }
             } -ButtonVariant 'contained' -ClassName 'registration-form' -OnSubmit {
-                Write-Information (Get-Module -ListAvailable | Out-String)
                 Import-Module UserManagement -Force -Verbose
 
                 if (Test-PSUUserExists -Email $EventData.email) {
                     Show-UDToast -Message "User $email already exists." -MessageColor Red -Duration 5000
                     return
                 } else { Write-Information "$email not found in db, continuing to register" }
-                
+
                 # Password confirmation validation (schema can't handle this)
                 if ($EventData.password -ne $EventData.confirm_password) {
                     Show-UDToast -Message 'Passwords do not match. Please try again.' -MessageColor red
                     return
                 }
-            
+
                 # Additional password strength validation (backup to regex)
                 if ($EventData.password.Length -lt 8) {
                     Show-UDToast -Message 'Password must be at least 8 characters long.' -MessageColor red
                     return
                 }
-            
+
                 if (-not ($EventData.password -match '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])')) {
                     Show-UDToast -Message 'Password must contain uppercase, lowercase, number, and special character.' -MessageColor red
                     return
                 }
-            
+
                 if ($EventData.tos -eq $true) {
                     $NewUser = New-PSUUser -Email $EventData.email -FirstName $EventData.firstname -LastName $EventData.lastname `
                     -Password ($EventData.password| ConvertTo-SecureString -AsPlainText -Force) -Timezone $EventData.timezone `
@@ -209,7 +208,7 @@
                     $NewUser = New-PSUUser -Email $EventData.email -FirstName $EventData.firstname -LastName $EventData.lastname `
                     -Password ($EventData.password| ConvertTo-SecureString -AsPlainText -Force) -Timezone $EventData.timezone
                 }
-                
+
                 if ($NewUser.Success) {
                     Show-UDToast -Message $NewUser.Message -MessageColor green
                     # Maybe redirect to login page or dashboard?

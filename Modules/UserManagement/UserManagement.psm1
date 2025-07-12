@@ -21,6 +21,34 @@ class UserProfile {
 
     UserProfile() {}
 
+    # Method to get base64-encoded version of the email for folder names
+    [string] GetEmailBase64() {
+        $emailBytes = [System.Text.Encoding]::UTF8.GetBytes($this.Email)
+        $base64String = [Convert]::ToBase64String($emailBytes)
+        # Remove padding and replace URL-unsafe characters for filesystem compatibility
+        return $base64String.TrimEnd('=').Replace('+', '-').Replace('/', '_')
+    }
+
+    # Static method to convert any email to base64 format
+    static [string] ConvertEmailToBase64([string]$Email) {
+        $emailBytes = [System.Text.Encoding]::UTF8.GetBytes($Email)
+        $base64String = [Convert]::ToBase64String($emailBytes)
+        # Remove padding and replace URL-unsafe characters for filesystem compatibility
+        return $base64String.TrimEnd('=').Replace('+', '-').Replace('/', '_')
+    }
+
+    # Static method to convert base64 back to email
+    static [string] ConvertBase64ToEmail([string]$Base64String) {
+        # Restore URL-safe characters and padding
+        $paddedBase64 = $Base64String.Replace('-', '+').Replace('_', '/')
+        # Add padding if needed
+        while ($paddedBase64.Length % 4 -ne 0) {
+            $paddedBase64 += '='
+        }
+        $emailBytes = [Convert]::FromBase64String($paddedBase64)
+        return [System.Text.Encoding]::UTF8.GetString($emailBytes)
+    }
+
     UserProfile([string]$Email, [string]$FirstName, [string]$LastName, [securestring]$Password, [string]$Timezone, [switch]$TOSAccepted) {
         if ($TOSAccepted -eq $false) {
             throw 'Terms of Service must be accepted'
@@ -37,7 +65,7 @@ class UserProfile {
         return $null -ne (Get-PSUIdentity -Name $this.Email)
     }
 
-    [System.Object] GetPSUIdentity([string]$email) {
+    [System.Object] GetPSUIdentity([string]$Email) {
         return Get-PSUIdentity -Name $this.Email
     }
 
@@ -70,8 +98,9 @@ class UserProfile {
         $ProfilesPath = [UserProfile]::BaseProfilePath
         try {
             if ($null -ne ($this.GetPSUIdentity($this.Email))) {
-                New-Item -ItemType Directory -Path $ProfilesPath -Name $this.ProfileId -ErrorAction Stop
-                $UserPath = Join-Path $ProfilesPath $this.ProfileId
+                $FolderName = $this.GetEmailBase64()
+                New-Item -ItemType Directory -Path $ProfilesPath -Name $FolderName -ErrorAction Stop
+                $UserPath = Join-Path $ProfilesPath $FolderName
                 New-Item -ItemType Directory -Path $UserPath -Name 'health-data' -ErrorAction Stop
                 New-Item -ItemType Directory -Path $UserPath -Name 'img' -ErrorAction Stop
                 @('profile.json', 'preferences.json').ForEach({ New-Item -ItemType File -Path $UserPath -Name $_ -ErrorAction Stop })
@@ -88,7 +117,8 @@ class UserProfile {
 
     [string] SaveUserProfile() {
         try {
-            $UserPath = Join-Path ([UserProfile]::BaseProfilePath) $this.ProfileId
+            $FolderName = $this.GetEmailBase64()
+            $UserPath = Join-Path ([UserProfile]::BaseProfilePath) $FolderName
             $PreferencesPath = Join-Path $UserPath preferences.json
             $EntriesPath = Join-Path $UserPath 'health-data/entries.json'
             $UserSettingsPath = Join-Path $UserPath profile.json
@@ -108,6 +138,7 @@ class UserProfile {
         try {
             $UserPath = [UserProfile]::BaseProfilePath
             if ( -not [string]::IsNullOrEmpty($UserId)) {
+                # UserId-based lookup (for backwards compatibility or direct folder access)
                 $FullUserPath = Join-Path $UserPath $UserId
                 $ProfilePath = Join-Path $FullUserPath 'profile.json'
                 if ((Test-Path $FullUserPath) -and (Test-Path $ProfilePath)) {
@@ -127,19 +158,40 @@ class UserProfile {
                     }
                 }
             } else {
-                $Profiles = Get-ChildItem $UserPath -Recurse -File 'profile.json'
-                foreach ($ProfilePath in $Profiles) {
+                # Email-based lookup using base64-encoded folder names
+                $Base64FolderName = [UserProfile]::ConvertEmailToBase64($Email)
+                $FullUserPath = Join-Path $UserPath $Base64FolderName
+                $ProfilePath = Join-Path $FullUserPath 'profile.json'
+                
+                if ((Test-Path $FullUserPath) -and (Test-Path $ProfilePath)) {
                     try {
                         $ProfileContent = Get-Content $ProfilePath | ConvertFrom-Json
                         if ($ProfileContent.Email -eq $Email) {
                             return @{
-                                UserDataPath   = (Split-Path $ProfilePath -Parent)
+                                UserDataPath   = $FullUserPath
                                 ProfileContent = $ProfileContent
                             }
                         }
                     } catch {
-                        # Skip corrupted profile.json files when searching by email
-                        continue
+                        # Skip corrupted profile.json files
+                        return @{}
+                    }
+                } else {
+                    # Fallback: search all profile.json files (for migration from GUID-based folders)
+                    $Profiles = Get-ChildItem $UserPath -Recurse -File 'profile.json'
+                    foreach ($ProfilePath in $Profiles) {
+                        try {
+                            $ProfileContent = Get-Content $ProfilePath | ConvertFrom-Json
+                            if ($ProfileContent.Email -eq $Email) {
+                                return @{
+                                    UserDataPath   = (Split-Path $ProfilePath -Parent)
+                                    ProfileContent = $ProfileContent
+                                }
+                            }
+                        } catch {
+                            # Skip corrupted profile.json files when searching by email
+                            continue
+                        }
                     }
                 }
             }
