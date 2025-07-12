@@ -685,14 +685,24 @@ class UserProfile {
             # Process custom pain locations if provided
             if ($PreferenceData.pain_locations -and $PreferenceData.pain_locations.Count -gt 0) {
                 foreach ($location in $PreferenceData.pain_locations) {
-                    $locationEntry = @{
-                        name = $location.name ?? $location
-                        description = $location.description ?? ''
-                        chronic = [bool]($location.chronic ?? $false)
-                        severity_baseline = $location.baseline ?? 0
+                    # Handle both string and hashtable formats
+                    if ($location -is [string]) {
+                        $locationEntry = @{
+                            name = @{
+                                location = $location
+                            }
+                            description = ''
+                        }
+                    } else {
+                        $locationEntry = @{
+                            name = @{
+                                location = $location.name ?? $location.location ?? 'unknown'
+                            }
+                            description = $location.description ?? ''
+                        }
                     }
                     $Preferences.tracking.pain.locations += $locationEntry
-                    $Result.PreferencesSet += "Added pain location: $($locationEntry.name)"
+                    $Result.PreferencesSet += "Added pain location: $($locationEntry.name.location)"
                 }
             }
 
@@ -774,9 +784,10 @@ class UserProfile {
 
             pain_locations = @(
                 @{
-                    name = 'Lower Back'
-                    chronic = $true
-                    baseline = 3
+                    name = @{
+                        location = 'lower_back'
+                    }
+                    description = ''
                 }
             )
 
