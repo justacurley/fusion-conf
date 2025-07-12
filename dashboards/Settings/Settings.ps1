@@ -158,15 +158,8 @@ $SettingsPage = New-UDApp -Content {
                 # Blood Pressure
                 New-UDElement -Tag 'div' -Attributes @{ class = 'tracking-toggle' } -Content {
                     New-UDGrid -Container -Children {
-                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                            New-UDCheckbox -Id 'track_blood_pressure' -Label '🩸 Track Blood Pressure' -Style @{ marginBottom = '16px' }
-                        }
-                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                            New-UDSelect -Id 'bp_frequency' -Label 'Frequency' -FullWidth -Option {
-                                New-UDSelectOption -Name 'Daily' -Value 'daily'
-                                New-UDSelectOption -Name 'Weekly' -Value 'weekly'
-                                New-UDSelectOption -Name 'As Needed' -Value 'as_needed'
-                            } -DefaultValue 'daily'
+                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                            New-UDCheckbox -Id 'track_blood_pressure' -Label '🩸 Track Blood Pressure (As Needed)' -Style @{ marginBottom = '16px' }
                         }
                     }
                 }
@@ -174,15 +167,8 @@ $SettingsPage = New-UDApp -Content {
                 # Oxygen Saturation
                 New-UDElement -Tag 'div' -Attributes @{ class = 'tracking-toggle' } -Content {
                     New-UDGrid -Container -Children {
-                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                            New-UDCheckbox -Id 'track_oxygen' -Label '🫁 Track Oxygen Saturation' -Style @{ marginBottom = '16px' }
-                        }
-                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                            New-UDSelect -Id 'o2_frequency' -Label 'Frequency' -FullWidth -Option {
-                                New-UDSelectOption -Name 'Daily' -Value 'daily'
-                                New-UDSelectOption -Name 'Weekly' -Value 'weekly'
-                                New-UDSelectOption -Name 'As Needed' -Value 'as_needed'
-                            } -DefaultValue 'daily'
+                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                            New-UDCheckbox -Id 'track_oxygen' -Label '🫁 Track Oxygen Saturation (As Needed)' -Style @{ marginBottom = '16px' }
                         }
                     }
                 }
@@ -190,15 +176,8 @@ $SettingsPage = New-UDApp -Content {
                 # Heart Rate
                 New-UDElement -Tag 'div' -Attributes @{ class = 'tracking-toggle' } -Content {
                     New-UDGrid -Container -Children {
-                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                            New-UDCheckbox -Id 'track_heart_rate' -Label '💗 Track Heart Rate' -Style @{ marginBottom = '16px' }
-                        }
-                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                            New-UDSelect -Id 'hr_frequency' -Label 'Frequency' -FullWidth -Option {
-                                New-UDSelectOption -Name 'Daily' -Value 'daily'
-                                New-UDSelectOption -Name 'Weekly' -Value 'weekly'
-                                New-UDSelectOption -Name 'As Needed' -Value 'as_needed'
-                            } -DefaultValue 'daily'
+                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                            New-UDCheckbox -Id 'track_heart_rate' -Label '💗 Track Heart Rate (As Needed)' -Style @{ marginBottom = '16px' }
                         }
                     }
                 }
@@ -206,13 +185,13 @@ $SettingsPage = New-UDApp -Content {
                 # Additional Vitals
                 New-UDGrid -Container -Children {
                     New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDCheckbox -Id 'track_temperature' -Label '🌡️ Track Temperature'
+                        New-UDCheckbox -Id 'track_temperature' -Label '🌡️ Track Temperature (As Needed)'
                     }
                     New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDCheckbox -Id 'track_weight' -Label '⚖️ Track Weight'
+                        New-UDCheckbox -Id 'track_weight' -Label '⚖️ Track Weight (Daily)'
                     }
                     New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDCheckbox -Id 'track_glucose' -Label '🩸 Track Blood Glucose'
+                        New-UDCheckbox -Id 'track_glucose' -Label '🩸 Track Blood Glucose (As Needed)'
                     }
                 }
             }
@@ -233,7 +212,7 @@ $SettingsPage = New-UDApp -Content {
                         New-UDCheckbox -Id 'track_mood' -Label '� Track Mood'
                     }
                 }
-                
+
                 # Mandatory tracking items (always enabled)
                 New-UDGrid -Container -Children {
                     New-UDGrid -Item -ExtraSmallSize 6 -Children {
