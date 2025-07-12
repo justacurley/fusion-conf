@@ -122,7 +122,7 @@ New-UserHealthPreferences -Email "user@example.com" -TrackBloodPressure -TrackWe
 When adding new functionality:
 
 1. **Public functions** go in `Public/` directory
-2. **Private/internal functions** go in `Private/` directory  
+2. **Private/internal functions** go in `Private/` directory
 3. **Class modifications** go in `Classes/UserProfile.ps1`
 4. **Update the manifest** (`UserManagement.psd1`) to export new public functions
 5. **Test thoroughly** to ensure the module loads and functions work correctly

@@ -1,6 +1,7 @@
 $SettingsPage = New-UDApp -Content {
     Import-Module UserManagement -Force
     $UserData = Initialize-UserContext -UserEmail $User
+    Write-Information ($UserData | ConvertTo-Json -Depth 90)
     if (!$UserData) {
         sleep 6
         Show-UDToast -Message "Redirecting to login page." -MessageColor Green -Duration 1000
