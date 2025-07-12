@@ -2,7 +2,8 @@ $SettingsPage = New-UDApp -Content {
     Import-Module UserManagement -Force
     $UserData = Initialize-UserContext -UserEmail $User
     if (!$UserData) {
-        sleep 2
+        sleep 6
+        Show-UDToast -Message "Redirecting to login page." -MessageColor Green -Duration 1000
         Invoke-UDRedirect -Url /login -Native
     }
     # Add custom CSS for settings form styling
