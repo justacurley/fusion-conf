@@ -1206,3 +1206,521 @@ function New-UserHealthPreferences {
     
     return $Response
 }
+
+function New-MedicationSchedule {
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$Email,
+        
+        [string]$UserId = $null,
+        
+        [Parameter(Mandatory = $true)]
+        [hashtable[]]$MedicationSchedules,
+        
+        [ValidateSet('preferences', 'separate_file')]
+        [string]$OutputType = 'preferences',
+        
+        [string]$ScheduleName = "Medication Schedule - $(Get-Date -Format 'yyyy-MM-dd')",
+        
+        [switch]$OverwriteExisting
+    )
+    
+    <#
+    .SYNOPSIS
+    Generates a detailed medication schedule supporting multiple daily dosages of the same medication.
+    
+    .DESCRIPTION
+    Creates comprehensive medication schedules with support for:
+    - Same medication multiple times per day with different dosages
+    - Flexible time-based scheduling
+    - Integration with existing user preferences
+    - Export to preferences.json or separate schedule file
+    
+    .PARAMETER Email
+    User's email address to identify the profile
+    
+    .PARAMETER UserId
+    Optional user ID for direct lookup
+    
+    .PARAMETER MedicationSchedules
+    Array of hashtables defining medication schedules. Each hashtable should contain:
+    - medication_name (required): Name of the medication
+    - schedules (required): Array of schedule entries with time, dosage, notes
+    - prescribing_doctor: Doctor who prescribed the medication
+    - start_date: When to start this medication schedule
+    - end_date: When to end this medication schedule (optional)
+    - active: Whether this schedule is currently active
+    
+    .PARAMETER OutputType
+    Where to save the schedule: 'preferences' (add to preferences.json) or 'separate_file' (create dedicated schedule file)
+    
+    .PARAMETER ScheduleName
+    Name for the medication schedule
+    
+    .PARAMETER OverwriteExisting
+    Whether to overwrite existing medication schedules
+    
+    .EXAMPLE
+    # Single medication with multiple daily dosages
+    $Schedule = @(
+        @{
+            medication_name = "Metformin"
+            prescribing_doctor = "Dr. Smith"
+            start_date = "2025-07-11"
+            active = $true
+            schedules = @(
+                @{
+                    time = "08:00"
+                    dosage = "500mg"
+                    notes = "Take with breakfast"
+                    frequency = "daily"
+                },
+                @{
+                    time = "20:00"
+                    dosage = "500mg"
+                    notes = "Take with dinner"
+                    frequency = "daily"
+                }
+            )
+        }
+    )
+    
+    New-MedicationSchedule -Email "user@example.com" -MedicationSchedules $Schedule
+    
+    .EXAMPLE
+    # Multiple medications with complex schedules
+    $ComplexSchedule = @(
+        @{
+            medication_name = "Lisinopril"
+            prescribing_doctor = "Dr. Johnson"
+            start_date = "2025-07-11"
+            active = $true
+            schedules = @(
+                @{
+                    time = "09:00"
+                    dosage = "10mg"
+                    notes = "Morning dose with water"
+                    frequency = "daily"
+                }
+            )
+        },
+        @{
+            medication_name = "Insulin"
+            prescribing_doctor = "Dr. Williams"
+            start_date = "2025-07-11"
+            active = $true
+            schedules = @(
+                @{
+                    time = "07:30"
+                    dosage = "15 units"
+                    notes = "Before breakfast"
+                    frequency = "daily"
+                },
+                @{
+                    time = "12:30"
+                    dosage = "12 units"
+                    notes = "Before lunch"
+                    frequency = "daily"
+                },
+                @{
+                    time = "18:30"
+                    dosage = "18 units"
+                    notes = "Before dinner"
+                    frequency = "daily"
+                }
+            )
+        }
+    )
+    
+    New-MedicationSchedule -Email "user@example.com" -MedicationSchedules $ComplexSchedule -OutputType "separate_file"
+    #>
+    
+    $Response = @{
+        Success = $false
+        Message = ''
+        SchedulePath = ''
+        ScheduleCreated = @()
+        TotalDailyDoses = 0
+    }
+    
+    try {
+        # Validate user exists
+        $UserData = [UserProfile]::GetUserProfilePath($Email, $UserId)
+        if ($UserData.Count -eq 0) {
+            $Response.Message = "User $Email not found"
+            return $Response
+        }
+        
+        $UserPath = $UserData['UserDataPath']
+        
+        # Validate and process medication schedules
+        $ProcessedSchedules = @()
+        $TotalDoses = 0
+        
+        foreach ($MedSchedule in $MedicationSchedules) {
+            # Validate required fields
+            if (-not $MedSchedule.medication_name) {
+                throw "medication_name is required for all medication schedules"
+            }
+            if (-not $MedSchedule.schedules -or $MedSchedule.schedules.Count -eq 0) {
+                throw "schedules array is required and must contain at least one schedule entry for $($MedSchedule.medication_name)"
+            }
+            
+            # Process each schedule entry for this medication
+            $ProcessedMedication = @{
+                medication_name = $MedSchedule.medication_name
+                prescribing_doctor = $MedSchedule.prescribing_doctor ?? ''
+                start_date = $MedSchedule.start_date ?? (Get-Date -Format 'yyyy-MM-dd')
+                end_date = $MedSchedule.end_date ?? $null
+                active = [bool]($MedSchedule.active ?? $true)
+                total_daily_doses = $MedSchedule.schedules.Count
+                daily_schedules = @()
+            }
+            
+            # Validate and process each time/dosage entry
+            foreach ($Schedule in $MedSchedule.schedules) {
+                if (-not $Schedule.time) {
+                    throw "time is required for all schedule entries for $($MedSchedule.medication_name)"
+                }
+                if (-not $Schedule.dosage) {
+                    throw "dosage is required for all schedule entries for $($MedSchedule.medication_name)"
+                }
+                
+                # Validate time format (basic check for HH:mm)
+                if ($Schedule.time -notmatch '^\d{1,2}:\d{2}$') {
+                    throw "Invalid time format '$($Schedule.time)' for $($MedSchedule.medication_name). Use HH:mm format (e.g., '08:30')"
+                }
+                
+                $ScheduleEntry = @{
+                    time = $Schedule.time
+                    dosage = $Schedule.dosage
+                    notes = $Schedule.notes ?? ''
+                    frequency = $Schedule.frequency ?? 'daily'
+                    reminder_enabled = [bool]($Schedule.reminder_enabled ?? $true)
+                    taken_with_food = [bool]($Schedule.taken_with_food ?? $false)
+                    special_instructions = $Schedule.special_instructions ?? ''
+                }
+                
+                $ProcessedMedication.daily_schedules += $ScheduleEntry
+                $TotalDoses++
+            }
+            
+            # Sort schedules by time for better organization
+            $ProcessedMedication.daily_schedules = $ProcessedMedication.daily_schedules | Sort-Object { [DateTime]::ParseExact($_.time, 'H:mm', $null) }
+            
+            $ProcessedSchedules += $ProcessedMedication
+            $Response.ScheduleCreated += "$($ProcessedMedication.medication_name) ($($ProcessedMedication.total_daily_doses) daily doses)"
+        }
+        
+        $Response.TotalDailyDoses = $TotalDoses
+        
+        # Create the complete schedule structure
+        $MedicationScheduleData = @{
+            schedule_info = @{
+                schedule_name = $ScheduleName
+                created_date = (Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ')
+                created_by = $Email
+                total_medications = $ProcessedSchedules.Count
+                total_daily_doses = $TotalDoses
+                schedule_type = 'daily_medication_schedule'
+                version = '1.0'
+            }
+            medications = $ProcessedSchedules
+            schedule_summary = @{
+                earliest_dose = ($ProcessedSchedules.daily_schedules | Sort-Object { [DateTime]::ParseExact($_.time, 'H:mm', $null) } | Select-Object -First 1).time
+                latest_dose = ($ProcessedSchedules.daily_schedules | Sort-Object { [DateTime]::ParseExact($_.time, 'H:mm', $null) } | Select-Object -Last 1).time
+                medications_with_multiple_doses = @($ProcessedSchedules | Where-Object { $_.total_daily_doses -gt 1 }).Count
+                active_medications = @($ProcessedSchedules | Where-Object { $_.active }).Count
+            }
+        }
+        
+        if ($OutputType -eq 'separate_file') {
+            # Save to separate medication schedule file
+            $ScheduleFileName = "medication-schedule-$(Get-Date -Format 'yyyy-MM-dd-HHmm').json"
+            $SchedulePath = Join-Path $UserPath $ScheduleFileName
+            
+            $MedicationScheduleData | ConvertTo-Json -Depth 10 | Out-File -FilePath $SchedulePath -Force -ErrorAction Stop
+            $Response.SchedulePath = $SchedulePath
+            $Response.Message = "Medication schedule saved to separate file: $ScheduleFileName"
+            
+        } else {
+            # Add to existing preferences.json
+            $PreferencesPath = Join-Path $UserPath 'preferences.json'
+            
+            if (Test-Path $PreferencesPath) {
+                # Load existing preferences
+                $ExistingPrefs = Get-Content $PreferencesPath | ConvertFrom-Json
+                
+                # Add or update medication schedule section
+                if (-not $ExistingPrefs.PSObject.Properties['medication_schedules']) {
+                    $ExistingPrefs | Add-Member -MemberType NoteProperty -Name 'medication_schedules' -Value @()
+                }
+                
+                if ($OverwriteExisting) {
+                    $ExistingPrefs.medication_schedules = @($MedicationScheduleData)
+                } else {
+                    # Check if a schedule with the same name exists
+                    $ExistingSchedule = $ExistingPrefs.medication_schedules | Where-Object { $_.schedule_info.schedule_name -eq $ScheduleName }
+                    if ($ExistingSchedule) {
+                        throw "A medication schedule named '$ScheduleName' already exists. Use -OverwriteExisting to replace it."
+                    }
+                    $ExistingPrefs.medication_schedules += $MedicationScheduleData
+                }
+                
+                # Update metadata
+                if ($ExistingPrefs.PSObject.Properties['meta']) {
+                    $ExistingPrefs.meta.last_updated = (Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ')
+                }
+                
+                # Save updated preferences
+                $ExistingPrefs | ConvertTo-Json -Depth 10 | Out-File -FilePath $PreferencesPath -Force -ErrorAction Stop
+                $Response.SchedulePath = $PreferencesPath
+                $Response.Message = "Medication schedule added to user preferences"
+                
+            } else {
+                throw "Preferences file not found. Please run New-UserHealthPreferences first to create the preferences structure."
+            }
+        }
+        
+        $Response.Success = $true
+        
+        # Generate summary message
+        $SummaryLines = @(
+            "✓ Medication schedule created successfully",
+            "  📊 Total medications: $($ProcessedSchedules.Count)",
+            "  💊 Total daily doses: $TotalDoses",
+            "  ⏰ Schedule span: $($MedicationScheduleData.schedule_summary.earliest_dose) - $($MedicationScheduleData.schedule_summary.latest_dose)",
+            "  📝 Medications configured:"
+        )
+        $Response.ScheduleCreated | ForEach-Object { $SummaryLines += "    • $_" }
+        
+        Write-Host ($SummaryLines -join "`n") -ForegroundColor Green
+        
+        return $Response
+        
+    } catch {
+        $Response.Message = "Failed to create medication schedule: $($_.Exception.Message)"
+        Write-Error $Response.Message
+        return $Response
+    }
+}
+
+function New-SampleHealthEntries {
+    <#
+    .SYNOPSIS
+    Generates sample health entries data for testing and development purposes.
+    
+    .DESCRIPTION
+    Creates realistic sample health data entries including vital signs, medications, 
+    pain levels, activities, and mood tracking for a specified number of days.
+    
+    .PARAMETER Email
+    User's email address to identify the profile
+    
+    .PARAMETER DaysBack
+    Number of days back from today to generate data for (default: 30)
+    
+    .PARAMETER EntriesPerDay
+    Average number of entries to generate per day (default: 2)
+    
+    .PARAMETER SaveToFile
+    If specified, saves the data directly to the user's entries.json file
+    
+    .EXAMPLE
+    New-SampleHealthEntries -Email "user@example.com" -DaysBack 14 -EntriesPerDay 3
+    
+    .EXAMPLE
+    New-SampleHealthEntries -Email "user@example.com" -SaveToFile
+    
+    #>
+    [CmdletBinding()]
+    param (
+        [Parameter(Mandatory = $true)]
+        [string]$Email,
+        
+        [int]$DaysBack = 30,
+        [int]$EntriesPerDay = 2,
+        [switch]$SaveToFile
+    )
+    
+    
+    $Response = @{
+        Success = $false
+        Message = ''
+        EntriesGenerated = 0
+        SampleData = @()
+        FilePath = ''
+    }
+    
+    try {
+        # Get user profile path if SaveToFile is specified
+        if ($SaveToFile) {
+            $UserData = [UserProfile]::GetUserProfilePath($Email)
+            if ($UserData.Count -eq 0) {
+                $Response.Message = "User $Email not found"
+                return $Response
+            }
+            $UserPath = $UserData['UserDataPath']
+            $EntriesPath = Join-Path $UserPath 'health-data/entries.json'
+        }
+        
+        # Sample data arrays for realistic generation
+        $Activities = @('Walking', 'Jogging', 'Swimming', 'Cycling', 'Yoga', 'Weight Training', 'Stretching', 'Dancing')
+        $PainLocations = @('Lower Back', 'Neck', 'Shoulders', 'Knees', 'Headache', 'Wrist', 'Ankle')
+        $MoodDescriptions = @('Excellent', 'Good', 'Fair', 'Poor', 'Anxious', 'Stressed', 'Relaxed', 'Energetic')
+        $Medications = @('Lisinopril', 'Metformin', 'Atorvastatin', 'Vitamin D', 'Multivitamin', 'Aspirin')
+        
+        $SampleEntries = @()
+        $EntryId = 1
+        
+        # Generate entries for each day
+        for ($day = $DaysBack; $day -ge 0; $day--) {
+            $CurrentDate = (Get-Date).AddDays(-$day)
+            $EntriesForDay = Get-Random -Minimum 1 -Maximum ($EntriesPerDay + 2)
+            
+            for ($entry = 0; $entry -lt $EntriesForDay; $entry++) {
+                # Random time during the day
+                $Hour = Get-Random -Minimum 6 -Maximum 23
+                $Minute = Get-Random -Minimum 0 -Maximum 59
+                $EntryTime = $CurrentDate.Date.AddHours($Hour).AddMinutes($Minute)
+                
+                # Generate random entry type
+                $EntryTypes = @('vitals', 'medication', 'activity', 'pain', 'mood', 'weight', 'sleep')
+                $EntryType = $EntryTypes | Get-Random
+                
+                $BaseEntry = @{
+                    id = $EntryId++
+                    timestamp = $EntryTime.ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
+                    date = $EntryTime.ToString('yyyy-MM-dd')
+                    time = $EntryTime.ToString('HH:mm')
+                    type = $EntryType
+                    user_email = $Email
+                }
+                
+                # Generate specific data based on entry type
+                switch ($EntryType) {
+                    'vitals' {
+                        $BaseEntry['data'] = @{
+                            blood_pressure = @{
+                                systolic = Get-Random -Minimum 110 -Maximum 140
+                                diastolic = Get-Random -Minimum 70 -Maximum 90
+                            }
+                            heart_rate = Get-Random -Minimum 60 -Maximum 100
+                            oxygen_saturation = Get-Random -Minimum 95 -Maximum 100
+                            temperature = [math]::Round((Get-Random -Minimum 97.0 -Maximum 99.5), 1)
+                        }
+                        $BaseEntry['notes'] = 'Regular vital signs check'
+                    }
+                    
+                    'medication' {
+                        $Med = $Medications | Get-Random
+                        $BaseEntry['data'] = @{
+                            medication_name = $Med
+                            dosage = switch ($Med) {
+                                'Lisinopril' { '10mg' }
+                                'Metformin' { '500mg' }
+                                'Atorvastatin' { '20mg' }
+                                'Vitamin D' { '1000 IU' }
+                                'Multivitamin' { '1 tablet' }
+                                'Aspirin' { '81mg' }
+                                default { '1 tablet' }
+                            }
+                            taken_at = $EntryTime.ToString('HH:mm')
+                            taken_as_prescribed = $true
+                        }
+                        $BaseEntry['notes'] = "Took $Med as scheduled"
+                    }
+                    
+                    'activity' {
+                        $Activity = $Activities | Get-Random
+                        $BaseEntry['data'] = @{
+                            activity_name = $Activity
+                            duration_minutes = Get-Random -Minimum 15 -Maximum 90
+                            intensity = @('light', 'moderate', 'vigorous') | Get-Random
+                            calories_burned = Get-Random -Minimum 50 -Maximum 400
+                        }
+                        $BaseEntry['notes'] = "Completed $Activity session"
+                    }
+                    
+                    'pain' {
+                        $Location = $PainLocations | Get-Random
+                        $BaseEntry['data'] = @{
+                            location = $Location
+                            severity = Get-Random -Minimum 1 -Maximum 10
+                            duration_hours = Get-Random -Minimum 1 -Maximum 8
+                            pain_type = @('sharp', 'dull', 'throbbing', 'burning', 'aching') | Get-Random
+                        }
+                        $BaseEntry['notes'] = "Pain in $Location area"
+                    }
+                    
+                    'mood' {
+                        $Mood = $MoodDescriptions | Get-Random
+                        $BaseEntry['data'] = @{
+                            mood_rating = Get-Random -Minimum 1 -Maximum 10
+                            mood_description = $Mood
+                            stress_level = Get-Random -Minimum 1 -Maximum 10
+                            energy_level = Get-Random -Minimum 1 -Maximum 10
+                        }
+                        $BaseEntry['notes'] = "Daily mood check - feeling $($Mood.ToLower())"
+                    }
+                    
+                    'weight' {
+                        $BaseEntry['data'] = @{
+                            weight_lbs = [math]::Round((Get-Random -Minimum 120.0 -Maximum 220.0), 1)
+                            bmi = [math]::Round((Get-Random -Minimum 18.5 -Maximum 32.0), 1)
+                        }
+                        $BaseEntry['notes'] = 'Daily weight check'
+                    }
+                    
+                    'sleep' {
+                        $SleepHours = [math]::Round((Get-Random -Minimum 5.0 -Maximum 10.0), 1)
+                        $BaseEntry['data'] = @{
+                            sleep_hours = $SleepHours
+                            sleep_quality = Get-Random -Minimum 1 -Maximum 10
+                            bedtime = (Get-Date).AddDays(-1).Date.AddHours(22).AddMinutes((Get-Random -Minimum 0 -Maximum 120)).ToString('HH:mm')
+                            wake_time = (Get-Date).Date.AddHours(6).AddMinutes((Get-Random -Minimum 0 -Maximum 120)).ToString('HH:mm')
+                        }
+                        $BaseEntry['notes'] = "Slept $SleepHours hours"
+                    }
+                }
+                
+                $SampleEntries += $BaseEntry
+            }
+        }
+        
+        # Sort entries by timestamp (newest first)
+        $SampleEntries = $SampleEntries | Sort-Object timestamp -Descending
+        
+        $Response.EntriesGenerated = $SampleEntries.Count
+        $Response.SampleData = $SampleEntries
+        
+        # Save to file if requested
+        if ($SaveToFile) {
+            $SampleEntries | ConvertTo-Json -Depth 10 | Out-File -FilePath $EntriesPath -Force -ErrorAction Stop
+            $Response.FilePath = $EntriesPath
+            $Response.Message = "Successfully generated and saved $($SampleEntries.Count) sample entries to $EntriesPath"
+        } else {
+            $Response.Message = "Successfully generated $($SampleEntries.Count) sample entries"
+        }
+        
+        $Response.Success = $true
+        
+        # Display summary
+        $TypeCounts = $SampleEntries | Group-Object type | ForEach-Object { "$($_.Name): $($_.Count)" }
+        Write-Host "✓ Generated $($SampleEntries.Count) sample health entries for $Email" -ForegroundColor Green
+        Write-Host "  Entry types: $($TypeCounts -join ', ')" -ForegroundColor Cyan
+        Write-Host "  Date range: $((Get-Date).AddDays(-$DaysBack).ToString('yyyy-MM-dd')) to $((Get-Date).ToString('yyyy-MM-dd'))" -ForegroundColor Cyan
+        
+        if ($SaveToFile) {
+            Write-Host "  Saved to: $EntriesPath" -ForegroundColor Green
+        }        
+        return $Response
+        
+    } 
+    catch {
+        $Response.Message = "Failed to generate sample entries: $($_.Exception.Message)"
+        Write-Error $Response.Message
+        return $Response
+    }
+}

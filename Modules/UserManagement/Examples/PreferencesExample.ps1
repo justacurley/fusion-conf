@@ -185,3 +185,115 @@ Example PSU form structure:
       }
   }
 "@ -ForegroundColor Gray
+
+Write-Host "`n=== Example 4: Creating Medication Schedules ===" -ForegroundColor Yellow
+
+# Example 4: After setting up health preferences, create detailed medication schedules
+# This demonstrates how medication schedules integrate with the preference system
+
+# First, let's create a user with medication tracking enabled
+$UserWithMedications = @{
+    Email = "medication.user@example.com"
+    UserId = "11111111-2222-3333-4444-555555555555"
+    TrackMedications = $true
+    NotificationsEnabled = $true
+    CriticalAlerts = $true
+    
+    # Basic medication in preferences (simple tracking)
+    Medications = @(
+        @{
+            name = "Lisinopril"
+            dosage = "10mg"
+            frequency = "daily"
+            time_of_day = @("morning")
+            doctor = "Dr. Johnson"
+            reminders = $true
+        }
+    )
+}
+
+# Set up the basic preferences first
+$BasicResult = New-UserHealthPreferences @UserWithMedications
+if ($BasicResult.Success) {
+    Write-Host "✓ Basic preferences with medication tracking set up" -ForegroundColor Green
+    
+    # Now create a detailed medication schedule that supports multiple daily doses
+    $DetailedMedicationSchedule = @(
+        @{
+            medication_name = "Metformin Extended Release"
+            prescribing_doctor = "Dr. Johnson"
+            start_date = "2025-07-11"
+            active = $true
+            schedules = @(
+                @{
+                    time = "08:00"
+                    dosage = "500mg"
+                    notes = "With breakfast - helps reduce stomach upset"
+                    frequency = "daily"
+                    taken_with_food = $true
+                    special_instructions = "Monitor blood glucose levels"
+                },
+                @{
+                    time = "20:00"
+                    dosage = "500mg"
+                    notes = "With dinner - evening dose"
+                    frequency = "daily"
+                    taken_with_food = $true
+                    special_instructions = "Avoid alcohol consumption"
+                }
+            )
+        },
+        @{
+            medication_name = "Atorvastatin"
+            prescribing_doctor = "Dr. Johnson"
+            start_date = "2025-07-11"
+            active = $true
+            schedules = @(
+                @{
+                    time = "22:00"
+                    dosage = "20mg"
+                    notes = "Bedtime dose - statins work best at night"
+                    frequency = "daily"
+                    special_instructions = "Report any muscle pain or weakness"
+                }
+            )
+        }
+    )
+    
+    # Create the detailed schedule
+    $ScheduleResult = New-MedicationSchedule -Email "medication.user@example.com" -MedicationSchedules $DetailedMedicationSchedule -ScheduleName "Daily Medication Regimen"
+    
+    if ($ScheduleResult.Success) {
+        Write-Host "✓ Detailed medication schedule created successfully!" -ForegroundColor Green
+        Write-Host "  📊 Total daily doses: $($ScheduleResult.TotalDailyDoses)" -ForegroundColor Cyan
+        Write-Host "  💊 Medications scheduled:" -ForegroundColor Cyan
+        $ScheduleResult.ScheduleCreated | ForEach-Object { Write-Host "    • $_" -ForegroundColor Gray }
+        Write-Host "  📁 Saved to: $($ScheduleResult.SchedulePath)" -ForegroundColor Gray
+    } else {
+        Write-Host "✗ Failed to create medication schedule: $($ScheduleResult.Message)" -ForegroundColor Red
+    }
+} else {
+    Write-Host "✗ Failed to set up basic preferences: $($BasicResult.Message)" -ForegroundColor Red
+}
+
+Write-Host "`n=== Integration Summary ===" -ForegroundColor Yellow
+Write-Host @"
+🔄 Medication Tracking Integration:
+
+1. Basic Preferences (New-UserHealthPreferences):
+   • Sets up medication tracking flag
+   • Creates simple medication list in preferences.json
+   • Establishes notification and reminder preferences
+
+2. Detailed Schedules (New-MedicationSchedule):
+   • Adds comprehensive scheduling to preferences.json
+   • Supports multiple daily doses of same medication
+   • Includes detailed clinical information and instructions
+   • Provides time-based scheduling with precise dosing
+
+3. Combined Benefits:
+   • User preferences control whether medication tracking is enabled
+   • Detailed schedules provide the actual medication timing
+   • Notifications and reminders are controlled by preference settings
+   • All data is stored in user's isolated directory structure
+"@ -ForegroundColor Gray
