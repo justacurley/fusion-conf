@@ -274,75 +274,76 @@
                 #     style = 'display: none;'
                 #     id = 'hidden-submit-btn'
                 # }
-            } -OnSubmit {
-                try {
-                    Import-Module UserManagement -Force
-                    $FormData = $EventData[0]
+            }
+        } -OnSubmit {
+            try {
+                Import-Module UserManagement -Force
+                $FormData = $EventData[0]
 
-                    Write-Information "Settings form data received: $($FormData | ConvertTo-Json -Depth 3)"
+                Write-Information "Settings form data received: $($FormData | ConvertTo-Json -Depth 3)"
 
-                    # Collect medications (dynamic entries)
-                    $Medications = @()
-                    for ($i = 1; $i -le 10; $i++) {
-                        # Check up to 10 medication entries
-                        $medName = $FormData["med_name_$i"]
-                        if (-not [string]::IsNullOrEmpty($medName)) {
-                            $Medications += @{
-                                name   = $medName
-                                dosage = $FormData["med_dosage_$i"]
-                            }
+                # Collect medications (dynamic entries)
+                $Medications = @()
+                for ($i = 1; $i -le 10; $i++) {
+                    # Check up to 10 medication entries
+                    $medName = $FormData["med_name_$i"]
+                    if (-not [string]::IsNullOrEmpty($medName)) {
+                        $Medications += @{
+                            name   = $medName
+                            dosage = $FormData["med_dosage_$i"]
                         }
                     }
+                }
 
-                    # Collect pain locations (multi-select)
-                    $PainLocations = @()
-                    if ($FormData.pain_locations) {
-                        # Handle both single value and array
-                        $selectedLocations = if ($FormData.pain_locations -is [array]) {
-                            $FormData.pain_locations
-                        }
-                        else {
-                            @($FormData.pain_locations)
-                        }
-                        foreach ($location in $selectedLocations) {
-                            $PainLocations += @{
-                                location = $location
-                            }
-                        }
-                    }
-
-                    # Collect activities (comma-separated list)
-                    $Activities = @()
-                    if (-not [string]::IsNullOrEmpty($FormData.activities_list)) {
-                        $activityNames = $FormData.activities_list -split ',' | ForEach-Object { $_.Trim() } | Where-Object { -not [string]::IsNullOrEmpty($_) }
-                        foreach ($activityName in $activityNames) {
-                            $Activities += @{
-                                name = $activityName
-                            }
-                        }
-                    }
-
-                    # Call New-UserHealthPreferences with collected data
-                    $PreferencesResult = New-UserHealthPreferences -Email $User -Timezone $FormData.timezone -TemperatureUnit $FormData.temperature_unit -WeightUnit $FormData.weight_unit -TrackBloodPressure:($FormData.track_blood_pressure -eq $true) -TrackOxygen:($FormData.track_oxygen -eq $true) -TrackHeartRate:($FormData.track_heart_rate -eq $true) -TrackTemperature:($FormData.track_temperature -eq $true) -TrackWeight:($FormData.track_weight -eq $true) -TrackGlucose:($FormData.track_glucose -eq $true) -TrackMedications:$true -TrackPain:$true -TrackActivities:($FormData.track_activities -eq $true) -TrackSleep:($FormData.track_sleep -eq $true) -TrackMood:($FormData.track_mood -eq $true) -Medications $Medications -PainLocations $PainLocations -Activities $Activities
-
-                    if ($PreferencesResult.Success) {
-                        Show-UDToast -Message 'Health tracking settings saved successfully!' -Duration 3000 -BackgroundColor '#4caf50'
-                        Write-Information "Preferences saved successfully: $($PreferencesResult.Message)"
+                # Collect pain locations (multi-select)
+                $PainLocations = @()
+                if ($FormData.pain_locations) {
+                    # Handle both single value and array
+                    $selectedLocations = if ($FormData.pain_locations -is [array]) {
+                        $FormData.pain_locations
                     }
                     else {
-                        Show-UDToast -Message "Error saving settings: $($PreferencesResult.Message)" -Duration 5000 -BackgroundColor '#f44336'
-                        Write-Error "Failed to save preferences: $($PreferencesResult.Message)"
+                        @($FormData.pain_locations)
                     }
+                    foreach ($location in $selectedLocations) {
+                        $PainLocations += @{
+                            location = $location
+                        }
+                    }
+                }
 
+                # Collect activities (comma-separated list)
+                $Activities = @()
+                if (-not [string]::IsNullOrEmpty($FormData.activities_list)) {
+                    $activityNames = $FormData.activities_list -split ',' | ForEach-Object { $_.Trim() } | Where-Object { -not [string]::IsNullOrEmpty($_) }
+                    foreach ($activityName in $activityNames) {
+                        $Activities += @{
+                            name = $activityName
+                        }
+                    }
                 }
-                catch {
-                    $errorMsg = "Error processing settings: $($_.Exception.Message)"
-                    Write-Error $errorMsg
-                    Show-UDToast -Message $errorMsg -Duration 5000 -BackgroundColor '#f44336'
+
+                # Call New-UserHealthPreferences with collected data
+                $PreferencesResult = New-UserHealthPreferences -Email $User -Timezone $FormData.timezone -TemperatureUnit $FormData.temperature_unit -WeightUnit $FormData.weight_unit -TrackBloodPressure:($FormData.track_blood_pressure -eq $true) -TrackOxygen:($FormData.track_oxygen -eq $true) -TrackHeartRate:($FormData.track_heart_rate -eq $true) -TrackTemperature:($FormData.track_temperature -eq $true) -TrackWeight:($FormData.track_weight -eq $true) -TrackGlucose:($FormData.track_glucose -eq $true) -TrackMedications:$true -TrackPain:$true -TrackActivities:($FormData.track_activities -eq $true) -TrackSleep:($FormData.track_sleep -eq $true) -TrackMood:($FormData.track_mood -eq $true) -Medications $Medications -PainLocations $PainLocations -Activities $Activities
+
+                if ($PreferencesResult.Success) {
+                    Show-UDToast -Message 'Health tracking settings saved successfully!' -Duration 3000 -BackgroundColor '#4caf50'
+                    Write-Information "Preferences saved successfully: $($PreferencesResult.Message)"
                 }
+                else {
+                    Show-UDToast -Message "Error saving settings: $($PreferencesResult.Message)" -Duration 5000 -BackgroundColor '#f44336'
+                    Write-Error "Failed to save preferences: $($PreferencesResult.Message)"
+                }
+
+            }
+            catch {
+                $errorMsg = "Error processing settings: $($_.Exception.Message)"
+                Write-Error $errorMsg
+                Show-UDToast -Message $errorMsg -Duration 5000 -BackgroundColor '#f44336'
             }
         }
     }
+}
 }
 # Return the settings app
 $SettingsPage
