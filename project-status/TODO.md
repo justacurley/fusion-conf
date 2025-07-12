@@ -122,6 +122,26 @@ A comprehensive **multi-user** health tracking platform built with PowerShell Un
   - Test error scenarios (invalid data, cache corruption, PSU cache unavailable)
   - **Estimated Effort**: 2-3 hours
 
+### 💊 **Medication Entry Enhancement**
+- [ ] **RxNav API Integration for Medication Autocomplete** - Enhance medication entry UX
+  - **Purpose**: Investigate and implement medication name autocomplete using NIH RxNav API
+  - **API Reference**: https://lhncbc.nlm.nih.gov/RxNav/APIs/index.html
+  - **Requirements**:
+    * Research RxNav API capabilities and rate limits
+    * Implement autocomplete for medication names in Settings.ps1 form
+    * Add real-time suggestion dropdown with drug names and dosage forms
+    * Validate medication names against RxNav database
+    * Cache frequently used medications for performance
+    * Handle API errors gracefully with fallback to manual entry
+  - **Technical Implementation**:
+    * PowerShell Invoke-RestMethod integration with RxNav REST API
+    * Universal Dashboard autocomplete component integration
+    * Medication validation and normalization logic
+    * Local caching strategy for medication suggestions
+  - **Benefits**: Reduce medication entry errors, improve UX, standardize drug names
+  - **Estimated Effort**: 4-6 hours (research + implementation + testing)
+  - **Priority**: High (directly improves core user workflow)
+
 ## 🚀 **Phase 2 Priorities (Next Development Cycle)**
 
 ### 👤 **User Authentication & Session Management**
