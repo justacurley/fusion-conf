@@ -1,7 +1,6 @@
 $SettingsPage = New-UDApp -Content {
     Import-Module UserManagement -Force
     $UserData = Initialize-UserContext -UserEmail $User
-    Write-Information ($UserData | ConvertTo-Json -Depth 90)
     if (!$UserData) {
         sleep 6
         Show-UDToast -Message "Redirecting to login page." -MessageColor Green -Duration 1000
@@ -159,24 +158,15 @@ $SettingsPage = New-UDApp -Content {
                 # Blood Pressure
                 New-UDElement -Tag 'div' -Attributes @{ class = 'tracking-toggle' } -Content {
                     New-UDGrid -Container -Children {
-                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                             New-UDCheckbox -Id 'track_blood_pressure' -Label '🩸 Track Blood Pressure' -Style @{ marginBottom = '16px' }
                         }
-                        New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                            New-UDTextbox -Id 'bp_target_systolic' -Label 'Target Systolic' -Type 'number' -Value '120' -FullWidth
-                        }
-                        New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                            New-UDTextbox -Id 'bp_target_diastolic' -Label 'Target Diastolic' -Type 'number' -Value '80' -FullWidth
-                        }
-                        New-UDGrid -Item -ExtraSmallSize 6 -Children {
+                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                             New-UDSelect -Id 'bp_frequency' -Label 'Frequency' -FullWidth -Option {
                                 New-UDSelectOption -Name 'Daily' -Value 'daily'
                                 New-UDSelectOption -Name 'Weekly' -Value 'weekly'
                                 New-UDSelectOption -Name 'As Needed' -Value 'as_needed'
                             } -DefaultValue 'daily'
-                        }
-                        New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                            New-UDCheckbox -Id 'bp_alerts' -Label '🔔 Enable Alerts'
                         }
                     }
                 }
@@ -184,21 +174,15 @@ $SettingsPage = New-UDApp -Content {
                 # Oxygen Saturation
                 New-UDElement -Tag 'div' -Attributes @{ class = 'tracking-toggle' } -Content {
                     New-UDGrid -Container -Children {
-                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                             New-UDCheckbox -Id 'track_oxygen' -Label '🫁 Track Oxygen Saturation' -Style @{ marginBottom = '16px' }
                         }
-                        New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                            New-UDTextbox -Id 'o2_target_min' -Label 'Target Minimum %' -Type 'number' -Value '95' -FullWidth
-                        }
-                        New-UDGrid -Item -ExtraSmallSize 6 -Children {
+                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                             New-UDSelect -Id 'o2_frequency' -Label 'Frequency' -FullWidth -Option {
                                 New-UDSelectOption -Name 'Daily' -Value 'daily'
                                 New-UDSelectOption -Name 'Weekly' -Value 'weekly'
                                 New-UDSelectOption -Name 'As Needed' -Value 'as_needed'
                             } -DefaultValue 'daily'
-                        }
-                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                            New-UDCheckbox -Id 'o2_alerts' -Label '🔔 Enable Alerts'
                         }
                     }
                 }
@@ -206,21 +190,15 @@ $SettingsPage = New-UDApp -Content {
                 # Heart Rate
                 New-UDElement -Tag 'div' -Attributes @{ class = 'tracking-toggle' } -Content {
                     New-UDGrid -Container -Children {
-                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                             New-UDCheckbox -Id 'track_heart_rate' -Label '💗 Track Heart Rate' -Style @{ marginBottom = '16px' }
                         }
-                        New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                            New-UDTextbox -Id 'hr_target_resting' -Label 'Target Resting HR' -Type 'number' -Value '70' -FullWidth
-                        }
-                        New-UDGrid -Item -ExtraSmallSize 6 -Children {
+                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                             New-UDSelect -Id 'hr_frequency' -Label 'Frequency' -FullWidth -Option {
                                 New-UDSelectOption -Name 'Daily' -Value 'daily'
                                 New-UDSelectOption -Name 'Weekly' -Value 'weekly'
                                 New-UDSelectOption -Name 'As Needed' -Value 'as_needed'
                             } -DefaultValue 'daily'
-                        }
-                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                            New-UDCheckbox -Id 'hr_alerts' -Label '🔔 Enable Alerts'
                         }
                     }
                 }
@@ -299,9 +277,9 @@ $SettingsPage = New-UDApp -Content {
                     if (-not $Session:MedicationCounter) { $Session:MedicationCounter = 2 }
                     $medCount = $Session:MedicationCounter
                     $Session:MedicationCounter++
-                    
+
                     Show-UDToast -Message "Adding Medication #$medCount" -Duration 2000
-                    
+
                     # Add new medication entry to the container
                     Add-UDElement -ParentId 'medications-container' -Content {
                         $currentMedCount = $medCount  # Capture in local scope
@@ -383,9 +361,9 @@ $SettingsPage = New-UDApp -Content {
                     if (-not $Session:PainLocationCounter) { $Session:PainLocationCounter = 2 }
                     $painCount = $Session:PainLocationCounter
                     $Session:PainLocationCounter++
-                    
+
                     Show-UDToast -Message "Adding Pain Location #$painCount" -Duration 2000
-                    
+
                     # Add new pain location entry to the container
                     Add-UDElement -ParentId 'pain-locations-container' -Content {
                         $currentPainCount = $painCount  # Capture in local scope
@@ -480,9 +458,9 @@ $SettingsPage = New-UDApp -Content {
                     if (-not $Session:ActivityCounter) { $Session:ActivityCounter = 2 }
                     $activityCount = $Session:ActivityCounter
                     $Session:ActivityCounter++
-                    
+
                     Show-UDToast -Message "Adding Activity #$activityCount" -Duration 2000
-                    
+
                     # Add new activity entry to the container
                     Add-UDElement -ParentId 'activities-container' -Content {
                         $currentActivityCount = $activityCount  # Capture in local scope
@@ -562,18 +540,18 @@ $SettingsPage = New-UDApp -Content {
             # Save Settings Button - Wrapped in Form for data collection
             New-UDForm -Id 'settings-form' -Children {
                 # Hidden submit button (we'll trigger this programmatically)
-                New-UDElement -Tag 'button' -Attributes @{ 
-                    type = 'submit' 
-                    style = 'display: none;' 
-                    id = 'hidden-submit-btn' 
+                New-UDElement -Tag 'button' -Attributes @{
+                    type = 'submit'
+                    style = 'display: none;'
+                    id = 'hidden-submit-btn'
                 }
             } -OnSubmit {
                 try {
                     Import-Module UserManagement -Force
                     $FormData = $EventData[0]
-                    
+
                     Write-Information "Settings form data received: $($FormData | ConvertTo-Json -Depth 3)"
-                    
+
                     # Collect medications (dynamic entries)
                     $Medications = @()
                     for ($i = 1; $i -le 10; $i++) {  # Check up to 10 medication entries
@@ -587,7 +565,7 @@ $SettingsPage = New-UDApp -Content {
                             }
                         }
                     }
-                    
+
                     # Collect pain locations (dynamic entries)
                     $PainLocations = @()
                     for ($i = 1; $i -le 10; $i++) {  # Check up to 10 pain location entries
@@ -601,7 +579,7 @@ $SettingsPage = New-UDApp -Content {
                             }
                         }
                     }
-                    
+
                     # Collect activities (dynamic entries)
                     $Activities = @()
                     for ($i = 1; $i -le 10; $i++) {  # Check up to 10 activity entries
@@ -616,10 +594,10 @@ $SettingsPage = New-UDApp -Content {
                             }
                         }
                     }
-                    
+
                     # Call New-UserHealthPreferences with collected data
-                    $PreferencesResult = New-UserHealthPreferences -Email $User -Timezone $FormData.timezone -TemperatureUnit $FormData.temperature_unit -WeightUnit $FormData.weight_unit -Theme $FormData.theme -TrackBloodPressure:($FormData.track_blood_pressure -eq $true) -BloodPressureTargetSystolic ([int]($FormData.bp_target_systolic ?? 120)) -BloodPressureTargetDiastolic ([int]($FormData.bp_target_diastolic ?? 80)) -TrackOxygen:($FormData.track_oxygen -eq $true) -OxygenTargetMin ([int]($FormData.o2_target_min ?? 95)) -TrackHeartRate:($FormData.track_heart_rate -eq $true) -HeartRateTargetResting ([int]($FormData.hr_target_resting ?? 70)) -TrackTemperature:($FormData.track_temperature -eq $true) -TrackWeight:($FormData.track_weight -eq $true) -TrackGlucose:($FormData.track_glucose -eq $true) -TrackMedications:($FormData.track_medications -eq $true) -TrackPain:($FormData.track_pain -eq $true) -TrackActivities:($FormData.track_activities -eq $true) -TrackSleep:($FormData.track_sleep -eq $true) -TrackMood:($FormData.track_mood -eq $true) -NotificationsEnabled:($FormData.notifications_enabled -eq $true) -CriticalAlerts:($FormData.critical_alerts -eq $true) -DailySummary:($FormData.daily_summary -eq $true) -WeeklyReport:($FormData.weekly_report -eq $true) -ReminderTime ($FormData.reminder_time ?? '09:00') -Medications $Medications -PainLocations $PainLocations -Activities $Activities
-                    
+                    $PreferencesResult = New-UserHealthPreferences -Email $User -Timezone $FormData.timezone -TemperatureUnit $FormData.temperature_unit -WeightUnit $FormData.weight_unit -Theme $FormData.theme -TrackBloodPressure:($FormData.track_blood_pressure -eq $true) -TrackOxygen:($FormData.track_oxygen -eq $true) -TrackHeartRate:($FormData.track_heart_rate -eq $true) -TrackTemperature:($FormData.track_temperature -eq $true) -TrackWeight:($FormData.track_weight -eq $true) -TrackGlucose:($FormData.track_glucose -eq $true) -TrackMedications:($FormData.track_medications -eq $true) -TrackPain:($FormData.track_pain -eq $true) -TrackActivities:($FormData.track_activities -eq $true) -TrackSleep:($FormData.track_sleep -eq $true) -TrackMood:($FormData.track_mood -eq $true) -NotificationsEnabled:($FormData.notifications_enabled -eq $true) -CriticalAlerts:($FormData.critical_alerts -eq $true) -DailySummary:($FormData.daily_summary -eq $true) -WeeklyReport:($FormData.weekly_report -eq $true) -ReminderTime ($FormData.reminder_time ?? '09:00') -Medications $Medications -PainLocations $PainLocations -Activities $Activities
+
                     if ($PreferencesResult.Success) {
                         Show-UDToast -Message 'Health tracking settings saved successfully!' -Duration 3000 -BackgroundColor '#4caf50'
                         Write-Information "Preferences saved successfully: $($PreferencesResult.Message)"
@@ -627,14 +605,14 @@ $SettingsPage = New-UDApp -Content {
                         Show-UDToast -Message "Error saving settings: $($PreferencesResult.Message)" -Duration 5000 -BackgroundColor '#f44336'
                         Write-Error "Failed to save preferences: $($PreferencesResult.Message)"
                     }
-                    
+
                 } catch {
                     $errorMsg = "Error processing settings: $($_.Exception.Message)"
                     Write-Error $errorMsg
                     Show-UDToast -Message $errorMsg -Duration 5000 -BackgroundColor '#f44336'
                 }
             }
-            
+
             # Visible Save Button
             New-UDGrid -Container -Children {
                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
