@@ -121,8 +121,7 @@
                     New-UDTypography -Text '👤 Profile Preferences' -Variant h5
                     New-UDTypography -Text 'Basic settings for your health dashboard experience' -Style @{ class = 'section-description' }
 
-                    New-UDStack -Content {
-                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
+                    New-UDStack -Id 'profile_preferences' -Content {                        
                             New-UDSelect -Id 'timezone' -Label '🌍 Timezone' -FullWidth -Option {
                                 New-UDSelectOption -Name 'UTC' -Value 'UTC'
                                 New-UDSelectOption -Name 'Eastern Time' -Value 'America/New_York'
@@ -130,20 +129,14 @@
                                 New-UDSelectOption -Name 'Mountain Time' -Value 'America/Denver'
                                 New-UDSelectOption -Name 'Pacific Time' -Value 'America/Los_Angeles'
                             } -DefaultValue 'America/Denver'
-                        }
-                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                             New-UDSelect -Id 'temperature_unit' -Label '🌡️ Temperature Unit' -FullWidth -Option {
                                 New-UDSelectOption -Name 'Fahrenheit' -Value 'fahrenheit'
                                 New-UDSelectOption -Name 'Celsius' -Value 'celsius'
                             } -DefaultValue 'fahrenheit'
-                        }
-
-                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                             New-UDSelect -Id 'weight_unit' -Label '⚖️ Weight Unit' -FullWidth -Option {
                                 New-UDSelectOption -Name 'Pounds' -Value 'pounds'
                                 New-UDSelectOption -Name 'Kilograms' -Value 'kilograms'
                             } -DefaultValue 'pounds'
-                        }
                     } -Direction Column
                 }
 
@@ -155,19 +148,20 @@
                     # Vital Signs and Health Metrics
                     New-UDElement -Tag 'div' -Attributes @{ class = 'tracking-toggle' } -Content {
                         New-UDGrid -Container -Children {
-                            # TODO: Align these properly, they look sloppy right now
-                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                            New-UDStack -Id 'optional_tracks' -Children {
                                 New-UDCheckbox -Id 'track_weight' -Label '⚖️ Track Weight (Daily)'
                                 New-UDCheckbox -Id 'track_sleep' -Label '😴 Track Sleep (Daily)'
                                 New-UDCheckbox -Id 'track_temperature' -Label '🌡️ Track Temperature (As Needed)'
                                 New-UDCheckbox -Id 'track_blood_pressure' -Label '🩸 Track Blood Pressure (As Needed)'
                                 New-UDCheckbox -Id 'track_oxygen' -Label '🫁 Track Oxygen Saturation (As Needed)'
+                            } -Direction Column -Divider {New-UDDivider -Variant 'inset'}
+                            New-UDStack -Id 'optional_tracks' -Children {
                                 New-UDCheckbox -Id 'track_heart_rate' -Label '💗 Track Heart Rate (As Needed)'
                                 New-UDCheckbox -Id 'track_glucose' -Label '🩸 Track Blood Glucose (As Needed)'
                                 New-UDCheckbox -Id 'track_mood' -Label '😊 Track Mood (As Needed)'
                                 New-UDCheckbox -Id 'track_steps' -Label '👟 Track Steps (Daily)'
                                 New-UDCheckbox -Id 'track_activities' -Label '🏃 Track Activities & Exercise'
-                            }
+                            } -Direction Column -Divider {New-UDDivider -Variant 'inset'}
                         }
                     }
                 }
