@@ -272,7 +272,7 @@
                 #     type = 'submit'
                 #     style = 'display: none;'
                 #     id = 'hidden-submit-btn'
-                }
+                # }
             } -OnSubmit {
                 try {
                     Import-Module UserManagement -Force
