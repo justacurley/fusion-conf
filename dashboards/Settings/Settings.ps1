@@ -146,12 +146,12 @@
                 }
             }
 
-            # Vital Signs Tracking Section
+            # Optional Tracking Section
             New-UDElement -Tag 'div' -Attributes @{ class = 'settings-section' } -Content {
-                New-UDTypography -Text '💓 Vital Signs Tracking' -Variant h5
-                New-UDTypography -Text 'Choose which vital signs you want to track regularly' -Style @{ class = 'section-description' }
+                New-UDTypography -Text '� Optional Tracking' -Variant h5
+                New-UDTypography -Text 'Choose which optional health metrics you want to track' -Style @{ class = 'section-description' }
 
-                # Blood Pressure
+                # Vital Signs and Health Metrics
                 New-UDElement -Tag 'div' -Attributes @{ class = 'tracking-toggle' } -Content {
                     New-UDGrid -Container -Children {
                         # TODO: Align these properly, they look sloppy right now
@@ -162,29 +162,18 @@
                             New-UDCheckbox -Id 'track_oxygen' -Label '🫁 Track Oxygen Saturation (As Needed)'
                             New-UDCheckbox -Id 'track_heart_rate' -Label '💗 Track Heart Rate (As Needed)'
                             New-UDCheckbox -Id 'track_glucose' -Label '🩸 Track Blood Glucose (As Needed)'
+                            New-UDCheckbox -Id 'track_activities' -Label '🏃 Track Activities & Exercise'
+                            New-UDCheckbox -Id 'track_sleep' -Label '😴 Track Sleep'
+                            New-UDCheckbox -Id 'track_mood' -Label '😊 Track Mood'
                         }
                     }
                 }
             }
 
-            # Other Health Tracking Section
+            # Mandatory Tracking Section
             New-UDElement -Tag 'div' -Attributes @{ class = 'settings-section' } -Content {
-                New-UDTypography -Text '🏥 Other Health Tracking' -Variant h5
-                New-UDTypography -Text 'Additional health metrics and lifestyle tracking' -Style @{ class = 'section-description' }
-
-                New-UDGrid -Container -Children {
-                    New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        # TODO: Find a public database of activities/rehab exercises
-                        New-UDCheckbox -Id 'track_activities' -Label '🏃 Track Activities & Exercise'
-                    }
-                    New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDCheckbox -Id 'track_sleep' -Label '😴 Track Sleep'
-                    }
-                    # TODO: Make this emoji faces in entries.ps1
-                    New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDCheckbox -Id 'track_mood' -Label '� Track Mood'
-                    }
-                }
+                New-UDTypography -Text '📋 Required Tracking' -Variant h5
+                New-UDTypography -Text 'These health metrics are always tracked and cannot be disabled' -Style @{ class = 'section-description' }
 
                 # Mandatory tracking items (always enabled)
                 New-UDGrid -Container -Children {
