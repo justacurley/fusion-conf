@@ -53,31 +53,32 @@
         }
 
         .tracking-toggle {
-            background: #f8f9fa;
+            background: var(--theme-palette-background-default);
             border-radius: 8px;
             padding: 16px;
             margin-bottom: 16px;
             border-left: 4px solid var(--theme-palette-primary-main);
+            border: 1px solid var(--theme-palette-divider);
         }
 
         .medication-item, .activity-item, .pain-location-item {
-            background: #f0f7ff;
+            background: var(--theme-palette-background-paper);
             border-radius: 8px;
             padding: 16px;
             margin-bottom: 12px;
-            border: 1px solid #e3f2fd;
+            border: 1px solid var(--theme-palette-divider);
         }
 
         .remove-btn {
-            background-color: #f44336 !important;
-            color: white !important;
+            background-color: var(--theme-palette-error-main) !important;
+            color: var(--theme-palette-error-contrastText) !important;
             min-width: 40px !important;
             padding: 8px !important;
         }
 
         .add-btn {
-            background-color: #4caf50 !important;
-            color: white !important;
+            background-color: var(--theme-palette-success-main) !important;
+            color: var(--theme-palette-success-contrastText) !important;
             margin-top: 12px !important;
         }
 
