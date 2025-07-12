@@ -214,20 +214,11 @@
                     # Initial medication entry
                     New-UDElement -Tag 'div' -Attributes @{ class = 'medication-item' } -Content {
                         New-UDGrid -Container -Children {
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
+                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                                 New-UDTextbox -Id 'med_name_1' -Label 'Medication Name' -FullWidth
                             }
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
+                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                                 New-UDTextbox -Id 'med_dosage_1' -Label 'Dosage (e.g., 10mg)' -FullWidth
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 3 -Children {
-                                New-UDSelect -Id 'med_frequency_1' -Label 'Frequency' -FullWidth -Option {
-                                    New-UDSelectOption -Name 'Once Daily' -Value 'daily'
-                                    New-UDSelectOption -Name 'Twice Daily' -Value 'twice_daily'
-                                    New-UDSelectOption -Name 'Three Times Daily' -Value 'three_times_daily'
-                                    New-UDSelectOption -Name 'As Needed' -Value 'as_needed'
-                                    New-UDSelectOption -Name 'Weekly' -Value 'weekly'
-                                }
                             }
                         }
                     }
@@ -246,20 +237,11 @@
                         $currentMedCount = $medCount  # Capture in local scope
                         New-UDElement -Id "medication-item-$currentMedCount" -Tag 'div' -Attributes @{ class = 'medication-item' } -Content {
                             New-UDGrid -Container -Children {
-                                New-UDGrid -Item -ExtraSmallSize 10 -SmallSize 4 -Children {
+                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
                                     New-UDTextbox -Id "med_name_$currentMedCount" -Label 'Medication Name' -FullWidth
                                 }
-                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 3 -Children {
+                                New-UDGrid -Item -ExtraSmallSize 10 -SmallSize 5 -Children {
                                     New-UDTextbox -Id "med_dosage_$currentMedCount" -Label 'Dosage (e.g., 10mg)' -FullWidth
-                                }
-                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 3 -Children {
-                                    New-UDSelect -Id "med_frequency_$currentMedCount" -Label 'Frequency' -FullWidth -Option {
-                                        New-UDSelectOption -Name 'Once Daily' -Value 'daily'
-                                        New-UDSelectOption -Name 'Twice Daily' -Value 'twice_daily'
-                                        New-UDSelectOption -Name 'Three Times Daily' -Value 'three_times_daily'
-                                        New-UDSelectOption -Name 'As Needed' -Value 'as_needed'
-                                        New-UDSelectOption -Name 'Weekly' -Value 'weekly'
-                                    }
                                 }
                                 New-UDGrid -Item -ExtraSmallSize 2 -SmallSize 2 -Children {
                                     New-UDButton -Text '🗑️' -Color secondary -Size small -OnClick {
@@ -280,91 +262,31 @@
             # Pain Locations Section
             New-UDElement -Tag 'div' -Attributes @{ class = 'settings-section' } -Content {
                 New-UDTypography -Text '🩹 Pain Tracking Locations' -Variant h5
-                New-UDTypography -Text 'Specify body areas where you experience pain' -Style @{ class = 'section-description' }
+                New-UDTypography -Text 'Select all body areas where you experience pain (multi-select)' -Style @{ class = 'section-description' }
 
-                New-UDElement -Id 'pain-locations-container' -Tag 'div' -Content {
-                    # Initial pain location entry
-                    New-UDElement -Tag 'div' -Attributes @{ class = 'pain-location-item' } -Content {
-                        New-UDGrid -Container -Children {
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
-                                New-UDSelect -Id 'pain_location_1' -Label 'Pain Location' -FullWidth -Option {
-                                    New-UDSelectOption -Name 'Lower Back' -Value 'lower_back'
-                                    New-UDSelectOption -Name 'Upper Back' -Value 'upper_back'
-                                    New-UDSelectOption -Name 'Neck' -Value 'neck'
-                                    New-UDSelectOption -Name 'Right Hip' -Value 'right_hip'
-                                    New-UDSelectOption -Name 'Left Hip' -Value 'left_hip'
-                                    New-UDSelectOption -Name 'Right Knee' -Value 'right_knee'
-                                    New-UDSelectOption -Name 'Left Knee' -Value 'left_knee'
-                                    New-UDSelectOption -Name 'Right Shoulder' -Value 'right_shoulder'
-                                    New-UDSelectOption -Name 'Left Shoulder' -Value 'left_shoulder'
-                                    New-UDSelectOption -Name 'Head/Headache' -Value 'head'
-                                    New-UDSelectOption -Name 'Other' -Value 'other'
-                                }
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
-                                New-UDTextbox -Id 'pain_description_1' -Label 'Description (optional)' -FullWidth
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
-                                New-UDCheckbox -Id 'pain_chronic_1' -Label 'Chronic'
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
-                                New-UDTextbox -Id 'pain_baseline_1' -Label 'Baseline (0-10)' -Type 'number' -Value '0' -FullWidth
-                            }
+                New-UDGrid -Container -Children {
+                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                        New-UDSelect -Id 'pain_locations' -Label 'Pain Locations' -Multiple -FullWidth -Option {
+                            New-UDSelectOption -Name 'Lower Back' -Value 'lower_back'
+                            New-UDSelectOption -Name 'Upper Back' -Value 'upper_back'
+                            New-UDSelectOption -Name 'Neck' -Value 'neck'
+                            New-UDSelectOption -Name 'Right Hip' -Value 'right_hip'
+                            New-UDSelectOption -Name 'Left Hip' -Value 'left_hip'
+                            New-UDSelectOption -Name 'Right Knee' -Value 'right_knee'
+                            New-UDSelectOption -Name 'Left Knee' -Value 'left_knee'
+                            New-UDSelectOption -Name 'Right Shoulder' -Value 'right_shoulder'
+                            New-UDSelectOption -Name 'Left Shoulder' -Value 'left_shoulder'
+                            New-UDSelectOption -Name 'Head/Headache' -Value 'head'
+                            New-UDSelectOption -Name 'Right Ankle' -Value 'right_ankle'
+                            New-UDSelectOption -Name 'Left Ankle' -Value 'left_ankle'
+                            New-UDSelectOption -Name 'Right Wrist' -Value 'right_wrist'
+                            New-UDSelectOption -Name 'Left Wrist' -Value 'left_wrist'
+                            New-UDSelectOption -Name 'Chest' -Value 'chest'
+                            New-UDSelectOption -Name 'Abdomen' -Value 'abdomen'
+                            New-UDSelectOption -Name 'Other' -Value 'other'
                         }
                     }
                 }
-
-                New-UDButton -Text '+ Add Another Pain Location' -Color success -OnClick {
-                    # Use session variable to track pain location count
-                    if (-not $Session:PainLocationCounter) { $Session:PainLocationCounter = 2 }
-                    $painCount = $Session:PainLocationCounter
-                    $Session:PainLocationCounter++
-
-                    Show-UDToast -Message "Adding Pain Location #$painCount" -Duration 2000
-
-                    # Add new pain location entry to the container
-                    Add-UDElement -ParentId 'pain-locations-container' -Content {
-                        $currentPainCount = $painCount  # Capture in local scope
-                        New-UDElement -Id "pain-location-item-$currentPainCount" -Tag 'div' -Attributes @{ class = 'pain-location-item' } -Content {
-                            New-UDGrid -Container -Children {
-                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
-                                    New-UDSelect -Id "pain_location_$currentPainCount" -Label 'Pain Location' -FullWidth -Option {
-                                        New-UDSelectOption -Name 'Lower Back' -Value 'lower_back'
-                                        New-UDSelectOption -Name 'Upper Back' -Value 'upper_back'
-                                        New-UDSelectOption -Name 'Neck' -Value 'neck'
-                                        New-UDSelectOption -Name 'Right Hip' -Value 'right_hip'
-                                        New-UDSelectOption -Name 'Left Hip' -Value 'left_hip'
-                                        New-UDSelectOption -Name 'Right Knee' -Value 'right_knee'
-                                        New-UDSelectOption -Name 'Left Knee' -Value 'left_knee'
-                                        New-UDSelectOption -Name 'Right Shoulder' -Value 'right_shoulder'
-                                        New-UDSelectOption -Name 'Left Shoulder' -Value 'left_shoulder'
-                                        New-UDSelectOption -Name 'Head/Headache' -Value 'head'
-                                        New-UDSelectOption -Name 'Other' -Value 'other'
-                                    }
-                                }
-                                New-UDGrid -Item -ExtraSmallSize 10 -SmallSize 3 -Children {
-                                    New-UDTextbox -Id "pain_description_$currentPainCount" -Label 'Description (optional)' -FullWidth
-                                }
-                                New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
-                                    New-UDCheckbox -Id "pain_chronic_$currentPainCount" -Label 'Chronic'
-                                }
-                                New-UDGrid -Item -ExtraSmallSize 4 -SmallSize 2 -Children {
-                                    New-UDTextbox -Id "pain_baseline_$currentPainCount" -Label 'Baseline (0-10)' -Type 'number' -Value '0' -FullWidth
-                                }
-                                New-UDGrid -Item -ExtraSmallSize 2 -SmallSize 1 -Children {
-                                    New-UDButton -Text '🗑️' -Color secondary -Size small -OnClick {
-                                        try {
-                                            Show-UDToast -Message "Removing Pain Location #$currentPainCount" -Duration 2000
-                                            Clear-UDElement -Id "pain-location-item-$currentPainCount"
-                                        } catch {
-                                            Show-UDToast -Message "Error removing pain location: $($_.Exception.Message)" -Duration 3000 -BackgroundColor red
-                                        }
-                                    } -Style @{ class = 'remove-btn' }
-                                }
-                            }
-                        }
-                    }
-                } -Style @{ class = 'add-btn' }
             }
 
             # Activities Section
@@ -376,36 +298,8 @@
                     # Initial activity entry
                     New-UDElement -Tag 'div' -Attributes @{ class = 'activity-item' } -Content {
                         New-UDGrid -Container -Children {
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 3 -Children {
+                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
                                 New-UDTextbox -Id 'activity_name_1' -Label 'Activity Name' -FullWidth
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 3 -Children {
-                                New-UDSelect -Id 'activity_category_1' -Label 'Category' -FullWidth -Option {
-                                    New-UDSelectOption -Name 'Cardio' -Value 'cardio'
-                                    New-UDSelectOption -Name 'Strength Training' -Value 'strength'
-                                    New-UDSelectOption -Name 'Flexibility/Stretching' -Value 'flexibility'
-                                    New-UDSelectOption -Name 'Physical Therapy' -Value 'physical_therapy'
-                                    New-UDSelectOption -Name 'Daily Living' -Value 'daily_living'
-                                    New-UDSelectOption -Name 'Sports' -Value 'sports'
-                                    New-UDSelectOption -Name 'Other' -Value 'other'
-                                }
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
-                                New-UDSelect -Id 'activity_intensity_1' -Label 'Intensity' -FullWidth -Option {
-                                    New-UDSelectOption -Name 'Light' -Value 'light'
-                                    New-UDSelectOption -Name 'Moderate' -Value 'moderate'
-                                    New-UDSelectOption -Name 'Vigorous' -Value 'vigorous'
-                                } -DefaultValue 'moderate'
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
-                                New-UDTextbox -Id 'activity_duration_1' -Label 'Duration (min)' -Type 'number' -Value '30' -FullWidth
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 2 -Children {
-                                New-UDSelect -Id 'activity_frequency_1' -Label 'Goal Frequency' -FullWidth -Option {
-                                    New-UDSelectOption -Name 'Daily' -Value 'daily'
-                                    New-UDSelectOption -Name 'Weekly' -Value 'weekly'
-                                    New-UDSelectOption -Name 'Monthly' -Value 'monthly'
-                                } -DefaultValue 'weekly'
                             }
                         }
                     }
@@ -424,38 +318,10 @@
                         $currentActivityCount = $activityCount  # Capture in local scope
                         New-UDElement -Id "activity-item-$currentActivityCount" -Tag 'div' -Attributes @{ class = 'activity-item' } -Content {
                             New-UDGrid -Container -Children {
-                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 2 -Children {
+                                New-UDGrid -Item -ExtraSmallSize 10 -Children {
                                     New-UDTextbox -Id "activity_name_$currentActivityCount" -Label 'Activity Name' -FullWidth
                                 }
-                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 2 -Children {
-                                    New-UDSelect -Id "activity_category_$currentActivityCount" -Label 'Category' -FullWidth -Option {
-                                        New-UDSelectOption -Name 'Cardio' -Value 'cardio'
-                                        New-UDSelectOption -Name 'Strength Training' -Value 'strength'
-                                        New-UDSelectOption -Name 'Flexibility/Stretching' -Value 'flexibility'
-                                        New-UDSelectOption -Name 'Physical Therapy' -Value 'physical_therapy'
-                                        New-UDSelectOption -Name 'Daily Living' -Value 'daily_living'
-                                        New-UDSelectOption -Name 'Sports' -Value 'sports'
-                                        New-UDSelectOption -Name 'Other' -Value 'other'
-                                    }
-                                }
-                                New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
-                                    New-UDSelect -Id "activity_intensity_$currentActivityCount" -Label 'Intensity' -FullWidth -Option {
-                                        New-UDSelectOption -Name 'Light' -Value 'light'
-                                        New-UDSelectOption -Name 'Moderate' -Value 'moderate'
-                                        New-UDSelectOption -Name 'Vigorous' -Value 'vigorous'
-                                    } -DefaultValue 'moderate'
-                                }
-                                New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
-                                    New-UDTextbox -Id "activity_duration_$currentActivityCount" -Label 'Duration (min)' -Type 'number' -Value '30' -FullWidth
-                                }
-                                New-UDGrid -Item -ExtraSmallSize 10 -SmallSize 2 -Children {
-                                    New-UDSelect -Id "activity_frequency_$currentActivityCount" -Label 'Goal Frequency' -FullWidth -Option {
-                                        New-UDSelectOption -Name 'Daily' -Value 'daily'
-                                        New-UDSelectOption -Name 'Weekly' -Value 'weekly'
-                                        New-UDSelectOption -Name 'Monthly' -Value 'monthly'
-                                    } -DefaultValue 'weekly'
-                                }
-                                New-UDGrid -Item -ExtraSmallSize 2 -SmallSize 2 -Children {
+                                New-UDGrid -Item -ExtraSmallSize 2 -Children {
                                     New-UDButton -Text '🗑️' -Color secondary -Size small -OnClick {
                                         try {
                                             Show-UDToast -Message "Removing Activity #$currentActivityCount" -Duration 2000
@@ -494,21 +360,22 @@
                             $Medications += @{
                                 name = $medName
                                 dosage = $FormData["med_dosage_$i"]
-                                frequency = $FormData["med_frequency_$i"]
                             }
                         }
                     }
 
-                    # Collect pain locations (dynamic entries)
+                    # Collect pain locations (multi-select)
                     $PainLocations = @()
-                    for ($i = 1; $i -le 10; $i++) {  # Check up to 10 pain location entries
-                        $painLocation = $FormData["pain_location_$i"]
-                        if (-not [string]::IsNullOrEmpty($painLocation)) {
+                    if ($FormData.pain_locations) {
+                        # Handle both single value and array
+                        $selectedLocations = if ($FormData.pain_locations -is [array]) {
+                            $FormData.pain_locations
+                        } else {
+                            @($FormData.pain_locations)
+                        }
+                        foreach ($location in $selectedLocations) {
                             $PainLocations += @{
-                                location = $painLocation
-                                description = $FormData["pain_description_$i"]
-                                chronic = $FormData["pain_chronic_$i"] -eq $true
-                                baseline = [int]($FormData["pain_baseline_$i"] ?? 0)
+                                location = $location
                             }
                         }
                     }
@@ -520,10 +387,6 @@
                         if (-not [string]::IsNullOrEmpty($activityName)) {
                             $Activities += @{
                                 name = $activityName
-                                category = $FormData["activity_category_$i"]
-                                intensity = $FormData["activity_intensity_$i"]
-                                duration = [int]($FormData["activity_duration_$i"] ?? 30)
-                                frequency = $FormData["activity_frequency_$i"]
                             }
                         }
                     }
