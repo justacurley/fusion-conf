@@ -254,9 +254,17 @@ class UserProfile {
                         return $Result
                     }
                 } else {
-                    # For email-based lookup, if GetUserProfilePath fails, user truly doesn't exist
-                    $Result.Issues += "User $Email not found"
-                    return $Result
+                    # For email-based lookup, check if base64 folder exists even if profile.json is missing
+                    $Base64FolderName = [UserProfile]::ConvertEmailToBase64($Email)
+                    $FullUserPath = Join-Path $UserPath $Base64FolderName
+                    if (Test-Path $FullUserPath) {
+                        $UserPath = $FullUserPath
+                        $Result.Validations.UserFound = $true
+                        $Result.Validations.UserDirectoryExists = $true
+                    } else {
+                        $Result.Issues += "User $Email not found"
+                        return $Result
+                    }
                 }
             } else {
                 $Result.Validations.UserFound = $true

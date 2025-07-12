@@ -211,7 +211,7 @@
 
                 if ($NewUser.Success) {
                     Show-UDToast -Message $NewUser.Message -MessageColor green
-                    # Maybe redirect to login page or dashboard?
+                    Invoke-UDRedirect -Url /Settings -Native
                 } else {
                     Show-UDToast -Message $NewUser.Message -MessageColor red
                 }

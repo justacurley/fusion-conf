@@ -2,11 +2,11 @@ using module '../UserManagement.psm1'
 
 Describe "UserProfile.ValidateUserDataStructure Tests" {
     BeforeAll {
-        # Test user data
+        # Test user data with base64 encoding
         $TestEmail = "test.user@example.com"
-        $TestUserId = "12345678-1234-1234-1234-123456789012"
+        $TestBase64Id = [UserProfile]::ConvertEmailToBase64($TestEmail)
         $TestUserPath = "/tmp/test-users"
-        $TestFullUserPath = Join-Path $TestUserPath $TestUserId
+        $TestFullUserPath = Join-Path $TestUserPath $TestBase64Id
 
         # Override the BaseProfilePath for testing
         [UserProfile]::BaseProfilePath = $TestUserPath
@@ -21,14 +21,14 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             param(
                 [string]$UserPath,
                 [string]$Email = $TestEmail,
-                [string]$UserId = $TestUserId,
+                [string]$Base64Id = $TestBase64Id,
                 [switch]$SkipDirectories,
                 [switch]$SkipFiles,
                 [string[]]$CorruptFiles = @(),
                 [string[]]$MissingFiles = @()
             )
 
-            $FullPath = Join-Path $UserPath $UserId
+            $FullPath = Join-Path $UserPath $Base64Id
 
             if (-not $SkipDirectories) {
                 New-Item -ItemType Directory -Path $FullPath -Force
@@ -43,8 +43,9 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
                         Email = $Email
                         FirstName = "Test"
                         LastName = "User"
-                        ProfileId = $UserId
+                        ProfileId = [guid]::NewGuid()
                         CreatedOn = (Get-Date)
+                        UserDirectory = $FullPath
                     }
                     if ('profile.json' -in $CorruptFiles) {
                         '{invalid json' | Out-File (Join-Path $FullPath 'profile.json') -Force
@@ -103,9 +104,9 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             $result.Validations.UserFound | Should -Be $false
         }
 
-        It "Should return invalid result when UserId doesn't exist" {
-            # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, "nonexistent-guid", $false)
+        It "Should return invalid result when base64 folder doesn't exist" {
+            # Act - Pass email only, let the method derive the base64 ID
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $false)
 
             # Assert
             $result.IsValid | Should -Be $false
@@ -115,12 +116,12 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
     }
 
     Context "Complete Valid User Structure" {
-        It "Should return valid result for complete user structure" {
+        It "Should return valid result for complete user structure with base64 folder" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath
 
-            # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
+            # Act - Use email only, let method derive base64 ID
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $false)
 
             # Assert
             $result.IsValid | Should -Be $true
@@ -142,7 +143,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             Remove-Item (Join-Path $TestFullUserPath 'health-data') -Recurse -Force
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $false)
 
             # Assert
             $result.IsValid | Should -Be $false
@@ -156,7 +157,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             Remove-Item (Join-Path $TestFullUserPath 'img') -Recurse -Force
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $false)
 
             # Assert
             $result.IsValid | Should -Be $false
@@ -171,7 +172,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             New-TestUserStructure -UserPath $TestUserPath -MissingFiles @('profile.json')
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $false)
 
             # Assert
             $result.IsValid | Should -Be $false
@@ -184,7 +185,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             New-TestUserStructure -UserPath $TestUserPath -MissingFiles @('preferences.json')
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $false)
 
             # Assert
             $result.IsValid | Should -Be $false
@@ -197,7 +198,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             New-TestUserStructure -UserPath $TestUserPath -MissingFiles @('entries.json')
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $false)
 
             # Assert
             $result.IsValid | Should -Be $false
@@ -212,7 +213,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             New-TestUserStructure -UserPath $TestUserPath -CorruptFiles @('profile.json')
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $false)
 
             # Assert
             $result.IsValid | Should -Be $false
@@ -225,7 +226,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             New-TestUserStructure -UserPath $TestUserPath -CorruptFiles @('preferences.json')
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $false)
 
             # Assert
             $result.IsValid | Should -Be $false
@@ -238,7 +239,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             New-TestUserStructure -UserPath $TestUserPath -CorruptFiles @('entries.json')
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $false)
 
             # Assert
             $result.IsValid | Should -Be $false
@@ -254,7 +255,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             Remove-Item (Join-Path $TestFullUserPath 'health-data') -Recurse -Force
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $true)
 
             # Assert
             $result.IsValid | Should -Be $true
@@ -269,7 +270,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             Remove-Item (Join-Path $TestFullUserPath 'img') -Recurse -Force
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $true)
 
             # Assert
             $result.IsValid | Should -Be $true
@@ -285,7 +286,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             New-TestUserStructure -UserPath $TestUserPath -MissingFiles @('entries.json')
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $true)
 
             # Assert
             $result.IsValid | Should -Be $true
@@ -301,7 +302,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             New-TestUserStructure -UserPath $TestUserPath -MissingFiles @('preferences.json')
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $true)
 
             # Assert
             $result.IsValid | Should -Be $true
@@ -317,7 +318,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             New-TestUserStructure -UserPath $TestUserPath -CorruptFiles @('entries.json')
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $true)
 
             # Assert
             $result.IsValid | Should -Be $true
@@ -330,7 +331,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             New-TestUserStructure -UserPath $TestUserPath -CorruptFiles @('preferences.json')
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $true)
 
             # Assert
             $result.IsValid | Should -Be $true
@@ -352,7 +353,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             $entries | ConvertTo-Json | Out-File $entriesPath -Force
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $true)
 
             # Assert
             $result.IsValid | Should -Be $true
@@ -372,7 +373,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             $prefs | ConvertTo-Json | Out-File $prefsPath -Force
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $true)
 
             # Assert
             $result.IsValid | Should -Be $true
@@ -386,7 +387,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             '[]' | Out-File $entriesPath -Force
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $true)
 
             # Assert
             $result.IsValid | Should -Be $true
@@ -400,7 +401,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             '{}' | Out-File $prefsPath -Force
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $true)
 
             # Assert
             $result.IsValid | Should -Be $true
@@ -415,7 +416,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             Remove-Item (Join-Path $TestFullUserPath 'health-data') -Recurse -Force
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $true)
 
             # Assert
             $result.IsValid | Should -Be $true
@@ -434,7 +435,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             '' | Out-File $entriesPath -Force  # Empty file
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $true)
 
             # Assert
             $result.IsValid | Should -Be $true
@@ -448,7 +449,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             'invalid' | Out-File $prefsPath -Force  # Single line, invalid JSON
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $true)
 
             # Assert
             $result.IsValid | Should -Be $true
@@ -462,7 +463,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             New-TestUserStructure -UserPath $TestUserPath -MissingFiles @('entries.json')
 
             # Act
-            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
+            $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $false)
 
             # Assert
             $result.IsValid | Should -Be $false
@@ -480,7 +481,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             # This test may vary based on OS permissions
 
             # Act & Assert - Should not throw
-            { $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false) } | Should -Not -Throw
+            { $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $null, $false) } | Should -Not -Throw
         }
     }
 }
