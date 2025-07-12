@@ -532,6 +532,14 @@ class UserProfile {
             $PreferencesPath = Join-Path $UserPath 'preferences.json'
             $Result.PreferencesPath = $PreferencesPath
 
+            # Debug device values in UserProfile
+            Write-Information "DEBUG UserProfile SetUserPreferences - Device Values in PreferenceData:" -InformationAction Continue
+            Write-Information "bp_device: '$($PreferenceData.bp_device)'" -InformationAction Continue
+            Write-Information "o2_device: '$($PreferenceData.o2_device)'" -InformationAction Continue
+            Write-Information "glucose_device: '$($PreferenceData.glucose_device)'" -InformationAction Continue
+            Write-Information "hr_device: '$($PreferenceData.hr_device)'" -InformationAction Continue
+            Write-Information "steps_device: '$($PreferenceData.steps_device)'" -InformationAction Continue
+
             # Create comprehensive preferences structure
             $Preferences = @{
                 # User Profile Preferences

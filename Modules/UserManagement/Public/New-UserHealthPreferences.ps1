@@ -120,8 +120,22 @@ function New-UserHealthPreferences {
             glucose_device = $BloodGlucoseDevice
             hr_device = $HeartRateDevice
             steps_device = $StepsDevice
+        }
 
-            # Notifications
+        # Debug device values being passed
+        Write-Information "DEBUG Device Values:" -InformationAction Continue
+        Write-Information "BloodPressureDevice: '$BloodPressureDevice'" -InformationAction Continue
+        Write-Information "OxygenSaturationDevice: '$OxygenSaturationDevice'" -InformationAction Continue
+        Write-Information "BloodGlucoseDevice: '$BloodGlucoseDevice'" -InformationAction Continue
+        Write-Information "HeartRateDevice: '$HeartRateDevice'" -InformationAction Continue
+        Write-Information "StepsDevice: '$StepsDevice'" -InformationAction Continue
+        Write-Information "PreferenceData device fields:" -InformationAction Continue
+        Write-Information "bp_device: '$($PreferenceData.bp_device)'" -InformationAction Continue
+        Write-Information "o2_device: '$($PreferenceData.o2_device)'" -InformationAction Continue
+        Write-Information "hr_device: '$($PreferenceData.hr_device)'" -InformationAction Continue
+        Write-Information "steps_device: '$($PreferenceData.steps_device)'" -InformationAction Continue
+
+        # Notifications
             notifications_enabled = if ($PSBoundParameters.ContainsKey('NotificationsEnabled')) { $NotificationsEnabled.IsPresent } else { $true }
             critical_alerts = if ($PSBoundParameters.ContainsKey('CriticalAlerts')) { $CriticalAlerts.IsPresent } else { $true }
             daily_summary = $DailySummary.IsPresent
