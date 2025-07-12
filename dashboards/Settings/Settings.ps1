@@ -1,7 +1,10 @@
 $SettingsPage = New-UDApp -Content {
     Import-Module UserManagement -Force
     $UserData = Initialize-UserContext -UserEmail $User
-
+    if (!$UserData) {
+        sleep 2
+        Invoke-UDRedirect -Url /login -Native
+    }
     # Add custom CSS for settings form styling
     New-UDElement -Tag 'style' -Content {
         @'
