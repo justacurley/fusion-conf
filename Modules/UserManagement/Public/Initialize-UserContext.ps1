@@ -18,6 +18,7 @@ function Initialize-UserContext {
         try {
             # Try to get cached user data first
             $UserData = Get-UserCacheData $UserEmail -EA Stop
+            if ($null -eq $UserData) { throw }
             if (-not $SuppressToast) {
                 Show-UDToast -Message 'User data loaded from cache' -MessageColor green -Duration 3000
             }
