@@ -224,19 +224,31 @@ $SettingsPage = New-UDApp -Content {
 
                 New-UDGrid -Container -Children {
                     New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDCheckbox -Id 'track_pain' -Label '🩹 Track Pain Levels'
-                    }
-                    New-UDGrid -Item -ExtraSmallSize 6 -Children {
                         New-UDCheckbox -Id 'track_activities' -Label '🏃 Track Activities & Exercise'
                     }
                     New-UDGrid -Item -ExtraSmallSize 6 -Children {
                         New-UDCheckbox -Id 'track_sleep' -Label '😴 Track Sleep'
                     }
                     New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDCheckbox -Id 'track_mood' -Label '😊 Track Mood'
+                        New-UDCheckbox -Id 'track_mood' -Label '� Track Mood'
+                    }
+                }
+                
+                # Mandatory tracking items (always enabled)
+                New-UDGrid -Container -Children {
+                    New-UDGrid -Item -ExtraSmallSize 6 -Children {
+                        New-UDTypography -Text '🩹 Pain Levels (Required)' -Variant body1 -Style @{
+                            color = 'var(--theme-palette-text-primary)'
+                            fontWeight = '500'
+                            padding = '8px 0'
+                        }
                     }
                     New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDCheckbox -Id 'track_medications' -Label '💊 Track Medications'
+                        New-UDTypography -Text '💊 Medications (Required)' -Variant body1 -Style @{
+                            color = 'var(--theme-palette-text-primary)'
+                            fontWeight = '500'
+                            padding = '8px 0'
+                        }
                     }
                 }
             }
@@ -596,7 +608,7 @@ $SettingsPage = New-UDApp -Content {
                     }
 
                     # Call New-UserHealthPreferences with collected data
-                    $PreferencesResult = New-UserHealthPreferences -Email $User -Timezone $FormData.timezone -TemperatureUnit $FormData.temperature_unit -WeightUnit $FormData.weight_unit -Theme $FormData.theme -TrackBloodPressure:($FormData.track_blood_pressure -eq $true) -TrackOxygen:($FormData.track_oxygen -eq $true) -TrackHeartRate:($FormData.track_heart_rate -eq $true) -TrackTemperature:($FormData.track_temperature -eq $true) -TrackWeight:($FormData.track_weight -eq $true) -TrackGlucose:($FormData.track_glucose -eq $true) -TrackMedications:($FormData.track_medications -eq $true) -TrackPain:($FormData.track_pain -eq $true) -TrackActivities:($FormData.track_activities -eq $true) -TrackSleep:($FormData.track_sleep -eq $true) -TrackMood:($FormData.track_mood -eq $true) -NotificationsEnabled:($FormData.notifications_enabled -eq $true) -CriticalAlerts:($FormData.critical_alerts -eq $true) -DailySummary:($FormData.daily_summary -eq $true) -WeeklyReport:($FormData.weekly_report -eq $true) -ReminderTime ($FormData.reminder_time ?? '09:00') -Medications $Medications -PainLocations $PainLocations -Activities $Activities
+                    $PreferencesResult = New-UserHealthPreferences -Email $User -Timezone $FormData.timezone -TemperatureUnit $FormData.temperature_unit -WeightUnit $FormData.weight_unit -Theme $FormData.theme -TrackBloodPressure:($FormData.track_blood_pressure -eq $true) -TrackOxygen:($FormData.track_oxygen -eq $true) -TrackHeartRate:($FormData.track_heart_rate -eq $true) -TrackTemperature:($FormData.track_temperature -eq $true) -TrackWeight:($FormData.track_weight -eq $true) -TrackGlucose:($FormData.track_glucose -eq $true) -TrackMedications:$true -TrackPain:$true -TrackActivities:($FormData.track_activities -eq $true) -TrackSleep:($FormData.track_sleep -eq $true) -TrackMood:($FormData.track_mood -eq $true) -NotificationsEnabled:($FormData.notifications_enabled -eq $true) -CriticalAlerts:($FormData.critical_alerts -eq $true) -DailySummary:($FormData.daily_summary -eq $true) -WeeklyReport:($FormData.weekly_report -eq $true) -ReminderTime ($FormData.reminder_time ?? '09:00') -Medications $Medications -PainLocations $PainLocations -Activities $Activities
 
                     if ($PreferencesResult.Success) {
                         Show-UDToast -Message 'Health tracking settings saved successfully!' -Duration 3000 -BackgroundColor '#4caf50'
