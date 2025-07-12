@@ -268,10 +268,10 @@
             # Save Settings Button - Wrapped in Form for data collection
             New-UDForm -Id 'settings-form' -Children {
                 # Hidden submit button (we'll trigger this programmatically)
-                New-UDElement -Tag 'button' -Attributes @{
-                    type = 'submit'
-                    style = 'display: none;'
-                    id = 'hidden-submit-btn'
+                # New-UDElement -Tag 'button' -Attributes @{
+                #     type = 'submit'
+                #     style = 'display: none;'
+                #     id = 'hidden-submit-btn'
                 }
             } -OnSubmit {
                 try {
@@ -334,21 +334,6 @@
                     $errorMsg = "Error processing settings: $($_.Exception.Message)"
                     Write-Error $errorMsg
                     Show-UDToast -Message $errorMsg -Duration 5000 -BackgroundColor '#f44336'
-                }
-            }
-
-            # Visible Save Button
-            New-UDGrid -Container -Children {
-                New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                    New-UDButton -Text '💾 Save Health Tracking Settings' -Color primary -Size large -FullWidth -OnClick {
-                        # Trigger the hidden form submit to collect all data
-                        Invoke-UDJavaScript -JavaScript "document.getElementById('hidden-submit-btn').click();"
-                    } -Style @{
-                        marginTop = '30px'
-                        padding = '16px 0'
-                        fontSize = '18px'
-                        fontWeight = 'bold'
-                    }
                 }
             }
         }
