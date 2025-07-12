@@ -70,7 +70,7 @@ RequiredModules = @('Universal')
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = @(
-    'New-PSUUser', 
+    'New-PSUUser',
     'Test-PSUUserExists',
     'Invoke-UserAuthentication',
     'Set-UserSession',
@@ -79,7 +79,10 @@ FunctionsToExport = @(
     'Clear-UserSession',
     'Get-UserCacheData',
     'Set-UserCacheData',
-    'Initialize-UserContext'
+    'Initialize-UserContext',
+    'New-UserHealthPreferences',
+    'New-MedicationSchedule',
+    'New-SampleHealthEntries'
 )
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.

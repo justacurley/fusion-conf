@@ -1,4 +1,4 @@
-using module '../Modules/UserManagement/UserManagement.psm1'
+using module '../UserManagement.psm1'
 
 Describe "UserProfile.ValidateUserDataStructure Tests" {
     BeforeAll {
@@ -7,15 +7,15 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
         $TestUserId = "12345678-1234-1234-1234-123456789012"
         $TestUserPath = "/tmp/test-users"
         $TestFullUserPath = Join-Path $TestUserPath $TestUserId
-        
+
         # Override the BaseProfilePath for testing
         [UserProfile]::BaseProfilePath = $TestUserPath
-        
+
         # Clean up any existing test data
         if (Test-Path $TestUserPath) {
             Remove-Item $TestUserPath -Recurse -Force
         }
-        
+
         # Helper function to create a complete valid user structure
         function New-TestUserStructure {
             param(
@@ -27,15 +27,15 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
                 [string[]]$CorruptFiles = @(),
                 [string[]]$MissingFiles = @()
             )
-            
+
             $FullPath = Join-Path $UserPath $UserId
-            
+
             if (-not $SkipDirectories) {
                 New-Item -ItemType Directory -Path $FullPath -Force
                 New-Item -ItemType Directory -Path (Join-Path $FullPath 'health-data') -Force
                 New-Item -ItemType Directory -Path (Join-Path $FullPath 'img') -Force
             }
-            
+
             if (-not $SkipFiles) {
                 # Create profile.json
                 if ('profile.json' -notin $MissingFiles) {
@@ -52,7 +52,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
                         $profileContent | ConvertTo-Json | Out-File (Join-Path $FullPath 'profile.json') -Force
                     }
                 }
-                
+
                 # Create preferences.json
                 if ('preferences.json' -notin $MissingFiles) {
                     if ('preferences.json' -in $CorruptFiles) {
@@ -61,7 +61,7 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
                         '{"theme":"dark","language":"en"}' | Out-File (Join-Path $FullPath 'preferences.json') -Force
                     }
                 }
-                
+
                 # Create entries.json
                 if ('entries.json' -notin $MissingFiles) {
                     $entriesPath = Join-Path $FullPath 'health-data/entries.json'
@@ -72,18 +72,18 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
                     }
                 }
             }
-            
+
             return $FullPath
         }
     }
-    
+
     AfterAll {
         # Clean up test data
         if (Test-Path $TestUserPath) {
             Remove-Item $TestUserPath -Recurse -Force
         }
     }
-    
+
     BeforeEach {
         # Clean up before each test
         if (Test-Path $TestUserPath) {
@@ -95,18 +95,18 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
         It "Should return invalid result when user email doesn't exist" {
             # Act
             $result = [UserProfile]::ValidateUserDataStructure("nonexistent@example.com", $null, $false)
-            
+
             # Assert
             $result.IsValid | Should -Be $false
             $result.Email | Should -Be "nonexistent@example.com"
             $result.Issues | Should -Contain "User nonexistent@example.com not found"
             $result.Validations.UserFound | Should -Be $false
         }
-        
+
         It "Should return invalid result when UserId doesn't exist" {
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, "nonexistent-guid", $false)
-            
+
             # Assert
             $result.IsValid | Should -Be $false
             $result.Issues | Should -Contain "User $TestEmail not found"
@@ -118,10 +118,10 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
         It "Should return valid result for complete user structure" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
-            
+
             # Assert
             $result.IsValid | Should -Be $true
             $result.Issues.Count | Should -Be 0
@@ -140,24 +140,24 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath
             Remove-Item (Join-Path $TestFullUserPath 'health-data') -Recurse -Force
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
-            
+
             # Assert
             $result.IsValid | Should -Be $false
             $result.Issues | Should -Contain "Missing health-data directory"
             $result.Validations.HealthDataDirectoryExists | Should -Be $false
         }
-        
+
         It "Should detect missing img directory" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath
             Remove-Item (Join-Path $TestFullUserPath 'img') -Recurse -Force
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
-            
+
             # Assert
             $result.IsValid | Should -Be $false
             $result.Issues | Should -Contain "Missing img directory"
@@ -169,36 +169,36 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
         It "Should detect missing profile.json" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath -MissingFiles @('profile.json')
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
-            
+
             # Assert
             $result.IsValid | Should -Be $false
             $result.Issues | Should -Contain "Missing profile.json file"
             $result.Validations.ProfileJsonValid | Should -Be $false
         }
-        
+
         It "Should detect missing preferences.json" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath -MissingFiles @('preferences.json')
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
-            
+
             # Assert
             $result.IsValid | Should -Be $false
             $result.Issues | Should -Contain "Missing preferences.json file"
             $result.Validations.PreferencesJsonValid | Should -Be $false
         }
-        
+
         It "Should detect missing entries.json" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath -MissingFiles @('entries.json')
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
-            
+
             # Assert
             $result.IsValid | Should -Be $false
             $result.Issues | Should -Contain "Missing entries.json file"
@@ -210,36 +210,36 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
         It "Should detect corrupted profile.json" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath -CorruptFiles @('profile.json')
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
-            
+
             # Assert
             $result.IsValid | Should -Be $false
             $result.Issues | Should -Match "Invalid JSON in file profile.json"
             $result.Validations.ProfileJsonValid | Should -Be $false
         }
-        
+
         It "Should detect corrupted preferences.json" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath -CorruptFiles @('preferences.json')
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
-            
+
             # Assert
             $result.IsValid | Should -Be $false
             $result.Issues | Should -Match "Invalid JSON in file preferences.json"
             $result.Validations.PreferencesJsonValid | Should -Be $false
         }
-        
+
         It "Should detect corrupted entries.json" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath -CorruptFiles @('entries.json')
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
-            
+
             # Assert
             $result.IsValid | Should -Be $false
             $result.Issues | Should -Match "Invalid JSON in file entries.json"
@@ -252,25 +252,25 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath
             Remove-Item (Join-Path $TestFullUserPath 'health-data') -Recurse -Force
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
-            
+
             # Assert
             $result.IsValid | Should -Be $true
             $result.Repairs | Should -Contain "Created missing health-data directory"
             $result.Validations.HealthDataDirectoryExists | Should -Be $true
             Test-Path (Join-Path $TestFullUserPath 'health-data') | Should -Be $true
         }
-        
+
         It "Should repair missing img directory with AutoRepair" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath
             Remove-Item (Join-Path $TestFullUserPath 'img') -Recurse -Force
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
-            
+
             # Assert
             $result.IsValid | Should -Be $true
             $result.Repairs | Should -Contain "Created missing img directory"
@@ -283,10 +283,10 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
         It "Should repair missing entries.json with AutoRepair" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath -MissingFiles @('entries.json')
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
-            
+
             # Assert
             $result.IsValid | Should -Be $true
             $result.Repairs | Should -Contain "Created missing entries.json with empty array"
@@ -295,14 +295,14 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             Test-Path $entriesPath | Should -Be $true
             Get-Content $entriesPath | ConvertFrom-Json | Should -BeOfType [System.Array]
         }
-        
+
         It "Should repair missing preferences.json with AutoRepair" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath -MissingFiles @('preferences.json')
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
-            
+
             # Assert
             $result.IsValid | Should -Be $true
             $result.Repairs | Should -Contain "Created missing preferences.json with empty object"
@@ -311,27 +311,27 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             Test-Path $prefsPath | Should -Be $true
             Get-Content $prefsPath | ConvertFrom-Json | Should -BeOfType [PSCustomObject]
         }
-        
+
         It "Should repair corrupted entries.json with AutoRepair" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath -CorruptFiles @('entries.json')
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
-            
+
             # Assert
             $result.IsValid | Should -Be $true
             $result.Repairs | Should -Contain "Repaired entries.json with empty array"
             $result.Validations.EntriesJsonValid | Should -Be $true
         }
-        
+
         It "Should repair corrupted preferences.json with AutoRepair" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath -CorruptFiles @('preferences.json')
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
-            
+
             # Assert
             $result.IsValid | Should -Be $true
             $result.Repairs | Should -Contain "Repaired preferences.json with empty object"
@@ -350,15 +350,15 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
                 @{date="2025-01-03"; value=118}
             )
             $entries | ConvertTo-Json | Out-File $entriesPath -Force
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
-            
+
             # Assert
             $result.IsValid | Should -Be $true
             $result.Repairs | Should -Contain "entries.json already has 3 entries"
         }
-        
+
         It "Should report existing preferences count in preferences.json" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath
@@ -370,38 +370,38 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
                 notifications = $true
             }
             $prefs | ConvertTo-Json | Out-File $prefsPath -Force
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
-            
+
             # Assert
             $result.IsValid | Should -Be $true
             $result.Repairs | Should -Contain "preferences.json already has 4 preferences"
         }
-        
+
         It "Should detect empty entries.json array" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath
             $entriesPath = Join-Path $TestFullUserPath 'health-data/entries.json'
             '[]' | Out-File $entriesPath -Force
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
-            
+
             # Assert
             $result.IsValid | Should -Be $true
             $result.Repairs | Should -Contain "entries.json exists but is empty (just [])"
         }
-        
+
         It "Should detect empty preferences.json object" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath
             $prefsPath = Join-Path $TestFullUserPath 'preferences.json'
             '{}' | Out-File $prefsPath -Force
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
-            
+
             # Assert
             $result.IsValid | Should -Be $true
             $result.Repairs | Should -Contain "preferences.json exists but is empty (just {})"
@@ -413,10 +413,10 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath -MissingFiles @('entries.json', 'preferences.json')
             Remove-Item (Join-Path $TestFullUserPath 'health-data') -Recurse -Force
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
-            
+
             # Assert
             $result.IsValid | Should -Be $true
             $result.Repairs.Count | Should -BeGreaterThan 2
@@ -432,24 +432,24 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
             New-TestUserStructure -UserPath $TestUserPath
             $entriesPath = Join-Path $TestFullUserPath 'health-data/entries.json'
             '' | Out-File $entriesPath -Force  # Empty file
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
-            
+
             # Assert
             $result.IsValid | Should -Be $true
             $result.Repairs | Should -Contain "Repaired entries.json with empty array"
         }
-        
+
         It "Should handle single line corrupted file" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath
             $prefsPath = Join-Path $TestFullUserPath 'preferences.json'
             'invalid' | Out-File $prefsPath -Force  # Single line, invalid JSON
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $true)
-            
+
             # Assert
             $result.IsValid | Should -Be $true
             $result.Repairs | Should -Contain "Repaired preferences.json with empty object"
@@ -460,10 +460,10 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
         It "Should not perform repairs when AutoRepair is false" {
             # Arrange
             New-TestUserStructure -UserPath $TestUserPath -MissingFiles @('entries.json')
-            
+
             # Act
             $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false)
-            
+
             # Assert
             $result.IsValid | Should -Be $false
             $result.Repairs.Count | Should -Be 0
@@ -475,10 +475,10 @@ Describe "UserProfile.ValidateUserDataStructure Tests" {
         It "Should handle critical errors gracefully" {
             # Arrange - Create a scenario that might cause errors
             New-TestUserStructure -UserPath $TestUserPath
-            
+
             # Mock a permission error by making directory read-only (if possible)
             # This test may vary based on OS permissions
-            
+
             # Act & Assert - Should not throw
             { $result = [UserProfile]::ValidateUserDataStructure($TestEmail, $TestUserId, $false) } | Should -Not -Throw
         }

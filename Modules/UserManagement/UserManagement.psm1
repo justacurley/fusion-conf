@@ -3,7 +3,7 @@ using namespace System.Collections.Generic
 class UserProfile {
     # Static class variable for base profile path - shared across all instances
     static [string]$BaseProfilePath = '/home/data/users'
-    
+
     [ValidateNotNullOrEmpty()]
     [string]$Email
     [ValidateNotNullOrEmpty()]
@@ -79,20 +79,20 @@ class UserProfile {
                 return $UserPath
             } else {
                 throw "Could not find identity for $($this.Email)"
-            }            
+            }
         } catch {
             Write-Warning "Failed to create directory for user profile $($this.Email)"
             throw $_
         }
     }
-    
+
     [string] SaveUserProfile() {
         try {
             $UserPath = Join-Path ([UserProfile]::BaseProfilePath) $this.ProfileId
             $PreferencesPath = Join-Path $UserPath preferences.json
             $EntriesPath = Join-Path $UserPath 'health-data/entries.json'
             $UserSettingsPath = Join-Path $UserPath profile.json
-            $this | Select-Object Email, FirstName, LastName, Timezone, CreatedOn, ProfileId, PSUProfileId, TOSAccepted, @{N = 'UserDirectory'; E = { $UserPath } } | ConvertTo-Json | Out-File $UserSettingsPath 
+            $this | Select-Object Email, FirstName, LastName, Timezone, CreatedOn, ProfileId, PSUProfileId, TOSAccepted, @{N = 'UserDirectory'; E = { $UserPath } } | ConvertTo-Json | Out-File $UserSettingsPath
             $PreferencesPath, $EntriesPath | ForEach-Object { '{}' | Out-File $_ }
             return $UserSettingsPath
         } catch {
@@ -100,7 +100,11 @@ class UserProfile {
             throw $_
         }
     }
-    static [hashtable] GetUserProfilePath([string]$Email, [string]$UserId = $null) {
+    static [hashtable] GetUserProfilePath([string]$Email) {
+        return [UserProfile]::GetUserProfilePath($Email, $null)
+    }
+
+    static [hashtable] GetUserProfilePath([string]$Email, [string]$UserId) {
         try {
             $UserPath = [UserProfile]::BaseProfilePath
             if ( -not [string]::IsNullOrEmpty($UserId)) {
@@ -146,7 +150,7 @@ class UserProfile {
     }
     static [PSCustomobject] GetUserProfile([string]$Email) {
         try {
-            $User = [UserProfile]::GetUserProfilePath($Email)      
+            $User = [UserProfile]::GetUserProfilePath($Email)
             if ($User.Count -eq 0 -or -not $User.ContainsKey('UserDataPath') -or [string]::IsNullOrEmpty($User['UserDataPath'])) {
                 throw "User $Email not found"
             } else {
@@ -258,7 +262,7 @@ class UserProfile {
                         Write-Warning "JSON validation failed for $CurrentFile`: $($_.Exception.Message)"
                     }
                 })
-            
+
             # Add issues for missing directories
             if (-not $Result.Validations.HealthDataDirectoryExists) {
                 $Result.Issues += 'Missing health-data directory'
@@ -266,11 +270,11 @@ class UserProfile {
             if (-not $Result.Validations.ImageDirectoryExists) {
                 $Result.Issues += 'Missing img directory'
             }
-            
+
             # Determine overall validity
             $AllValidations = $Result.Validations.Values
             $Result.IsValid = ($AllValidations -notcontains $false) -and ($Result.Issues.Count -eq 0)
-            
+
             # Perform content analysis if AutoRepair is enabled (even for valid files)
             if ($AutoRepair) {
                 # Analyze existing content in JSON files
@@ -285,7 +289,7 @@ class UserProfile {
                         }
                     }
                 }
-                
+
                 if ($Result.Validations.PreferencesJsonValid) {
                     $PrefsPath = Join-Path $UserPath 'preferences.json'
                     if (Test-Path $PrefsPath) {
@@ -299,7 +303,7 @@ class UserProfile {
                     }
                 }
             }
-            
+
             # Perform auto-repair if requested and needed
             if ($AutoRepair -and -not $Result.IsValid) {
                 try {
@@ -309,21 +313,21 @@ class UserProfile {
                         New-Item -ItemType Directory -Path $HealthDataPath -Force -ErrorAction Stop
                         $Result.Repairs += 'Created missing health-data directory'
                         $Result.Validations.HealthDataDirectoryExists = $true
-                        
+
                         # Remove the corresponding issue
                         $Result.Issues = $Result.Issues | Where-Object { $_ -ne 'Missing health-data directory' }
                     }
-                    
+
                     if (-not $Result.Validations.ImageDirectoryExists) {
                         $ImgPath = Join-Path $UserPath 'img'
                         New-Item -ItemType Directory -Path $ImgPath -Force -ErrorAction Stop
                         $Result.Repairs += 'Created missing img directory'
                         $Result.Validations.ImageDirectoryExists = $true
-                        
+
                         # Remove the corresponding issue
                         $Result.Issues = $Result.Issues | Where-Object { $_ -ne 'Missing img directory' }
                     }
-                    
+
                     # Repair missing or corrupted JSON files
                     if (-not $Result.Validations.EntriesJsonValid) {
                         $EntriesPath = Join-Path $UserPath 'health-data/entries.json'
@@ -356,11 +360,11 @@ class UserProfile {
                             }
                         }
                         $Result.Validations.EntriesJsonValid = $true
-                        
+
                         # Remove related issues
                         $Result.Issues = $Result.Issues | Where-Object { $_ -notlike '*entries.json*' }
                     }
-                    
+
                     if (-not $Result.Validations.PreferencesJsonValid) {
                         $PrefsPath = Join-Path $UserPath 'preferences.json'
                         if (! (Test-Path $PrefsPath)) {
@@ -392,11 +396,11 @@ class UserProfile {
                             }
                         }
                         $Result.Validations.PreferencesJsonValid = $true
-                        
+
                         # Remove related issues
                         $Result.Issues = $Result.Issues | Where-Object { $_ -notlike '*preferences.json*' }
                     }
-                    
+
                     if (-not $Result.Validations.ProfileJsonValid) {
                         $ProfilePath = Join-Path $UserPath 'profile.json'
                         # For profile.json, we need the actual user data - get it from UserData we already have
@@ -414,19 +418,19 @@ class UserProfile {
                             $Result.Repairs += 'Created minimal profile.json (data may be incomplete)'
                         }
                         $Result.Validations.ProfileJsonValid = $true
-                        
+
                         # Remove related issues
                         $Result.Issues = $Result.Issues | Where-Object { $_ -notlike '*profile.json*' }
                     }
-                    
+
                     # Re-evaluate overall validity after repairs
                     $AllValidations = $Result.Validations.Values
                     $Result.IsValid = ($AllValidations -notcontains $false) -and ($Result.Issues.Count -eq 0)
-                    
+
                     if ($Result.IsValid) {
                         $Result.Repairs += 'User data structure successfully repaired and validated'
                     }
-                    
+
                 } catch {
                     $RepairError = "Auto-repair failed: $($_.Exception.Message)"
                     $Result.Issues += $RepairError
@@ -434,14 +438,14 @@ class UserProfile {
                     Write-Warning $RepairError
                 }
             }
-            
+
             return $Result
         } catch {
             $Result.Issues += "Critical error during validation: $($_.Exception.Message)"
             return $Result
         }
     }
-    
+
     static [PSCustomObject] SetUserPreferences([string]$Email, [string]$UserId = $null, [hashtable]$PreferenceData) {
         # Configure user health tracking preferences during registration or profile updates
         # This method creates a comprehensive preferences.json file based on user selections
@@ -452,7 +456,7 @@ class UserProfile {
             PreferencesPath = ''
             PreferencesSet = @()
         }
-        
+
         try {
             # Get user profile path
             $UserData = [UserProfile]::GetUserProfilePath($Email, $UserId)
@@ -460,11 +464,11 @@ class UserProfile {
                 $Result.Message = "User $Email not found"
                 return $Result
             }
-            
+
             $UserPath = $UserData['UserDataPath']
             $PreferencesPath = Join-Path $UserPath 'preferences.json'
             $Result.PreferencesPath = $PreferencesPath
-            
+
             # Create comprehensive preferences structure
             $Preferences = @{
                 # User Profile Preferences
@@ -479,7 +483,7 @@ class UserProfile {
                     language = $PreferenceData.language ?? 'en'
                     theme = $PreferenceData.theme ?? 'light'
                 }
-                
+
                 # Health Tracking Configuration
                 tracking = @{
                     # Vital Signs Tracking
@@ -524,14 +528,14 @@ class UserProfile {
                             alerts_enabled = [bool]($PreferenceData.glucose_alerts ?? $false)
                         }
                     }
-                    
+
                     # Medication Tracking
                     medications = @{
                         enabled = [bool]($PreferenceData.track_medications ?? $false)
                         reminder_notifications = [bool]($PreferenceData.med_reminders ?? $false)
                         medications_list = @()
                     }
-                    
+
                     # Pain Tracking
                     pain = @{
                         enabled = [bool]($PreferenceData.track_pain ?? $false)
@@ -539,7 +543,7 @@ class UserProfile {
                         locations = @()
                         trigger_tracking = [bool]($PreferenceData.track_pain_triggers ?? $false)
                     }
-                    
+
                     # Activity and Exercise Tracking
                     activities = @{
                         enabled = [bool]($PreferenceData.track_activities ?? $false)
@@ -547,21 +551,21 @@ class UserProfile {
                         exercise_goal_minutes = $PreferenceData.daily_exercise_minutes ?? 30
                         activities_list = @()
                     }
-                    
+
                     # Sleep Tracking
                     sleep = @{
                         enabled = [bool]($PreferenceData.track_sleep ?? $false)
                         target_hours = $PreferenceData.sleep_target_hours ?? 8
                         bedtime_reminder = [bool]($PreferenceData.bedtime_reminders ?? $false)
                     }
-                    
+
                     # Nutrition/Hydration
                     nutrition = @{
                         water_tracking = [bool]($PreferenceData.track_water ?? $false)
                         daily_water_goal = $PreferenceData.daily_water_goal ?? 8  # glasses
                         meal_logging = [bool]($PreferenceData.track_meals ?? $false)
                     }
-                    
+
                     # Mood and Mental Health
                     mood = @{
                         enabled = [bool]($PreferenceData.track_mood ?? $false)
@@ -569,7 +573,7 @@ class UserProfile {
                         frequency = $PreferenceData.mood_frequency ?? 'daily'
                     }
                 }
-                
+
                 # Notification Preferences
                 notifications = @{
                     enabled = [bool]($PreferenceData.notifications_enabled ?? $true)
@@ -578,14 +582,14 @@ class UserProfile {
                     daily_summary = [bool]($PreferenceData.daily_summary ?? $false)
                     weekly_report = [bool]($PreferenceData.weekly_report ?? $false)
                 }
-                
+
                 # Data Sharing and Privacy
                 privacy = @{
                     share_with_providers = [bool]($PreferenceData.share_with_providers ?? $false)
                     emergency_contacts_access = [bool]($PreferenceData.emergency_access ?? $false)
                     data_retention_days = $PreferenceData.data_retention ?? 365
                 }
-                
+
                 # Dashboard and UI Preferences
                 dashboard = @{
                     default_view = $PreferenceData.default_dashboard ?? 'overview'  # overview, vitals, trends
@@ -593,7 +597,7 @@ class UserProfile {
                     show_trends = [bool]($PreferenceData.show_trends ?? $true)
                     compact_view = [bool]($PreferenceData.compact_view ?? $false)
                 }
-                
+
                 # Metadata
                 meta = @{
                     created_date = (Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ')
@@ -602,7 +606,7 @@ class UserProfile {
                     configured_by = 'registration_wizard'
                 }
             }
-            
+
             # Process custom medications if provided
             if ($PreferenceData.medications -and $PreferenceData.medications.Count -gt 0) {
                 foreach ($medication in $PreferenceData.medications) {
@@ -621,7 +625,7 @@ class UserProfile {
                     $Result.PreferencesSet += "Added medication: $($medication.name)"
                 }
             }
-            
+
             # Process custom pain locations if provided
             if ($PreferenceData.pain_locations -and $PreferenceData.pain_locations.Count -gt 0) {
                 foreach ($location in $PreferenceData.pain_locations) {
@@ -635,7 +639,7 @@ class UserProfile {
                     $Result.PreferencesSet += "Added pain location: $($locationEntry.name)"
                 }
             }
-            
+
             # Process custom activities if provided
             if ($PreferenceData.activities -and $PreferenceData.activities.Count -gt 0) {
                 foreach ($activity in $PreferenceData.activities) {
@@ -651,22 +655,22 @@ class UserProfile {
                     $Result.PreferencesSet += "Added activity: $($activityEntry.name)"
                 }
             }
-            
+
             # Save preferences to file
             $Preferences | ConvertTo-Json -Depth 10 | Out-File -FilePath $PreferencesPath -Force -ErrorAction Stop
-            
+
             $Result.Success = $true
             $Result.Message = "Successfully configured user preferences with $($Result.PreferencesSet.Count) custom items"
-            
+
             return $Result
-            
+
         } catch {
             $Result.Message = "Failed to set user preferences: $($_.Exception.Message)"
             Write-Warning "Error in SetUserPreferences: $($_.Exception.Message)"
             return $Result
         }
     }
-    
+
     static [PSCustomObject] GetDefaultPreferenceTemplate() {
         # Returns a template/example of preference structure for UI forms
         return [PSCustomObject]@{
@@ -676,7 +680,7 @@ class UserProfile {
             weight_unit = 'pounds'  # or 'kilograms'
             language = 'en'
             theme = 'light'  # or 'dark'
-            
+
             # Vital Signs Tracking (boolean flags)
             track_blood_pressure = $false
             track_oxygen = $false
@@ -684,7 +688,7 @@ class UserProfile {
             track_temperature = $false
             track_weight = $false
             track_glucose = $false
-            
+
             # Other Health Tracking
             track_medications = $false
             track_pain = $false
@@ -693,13 +697,13 @@ class UserProfile {
             track_water = $false
             track_meals = $false
             track_mood = $false
-            
+
             # Notification Settings
             notifications_enabled = $true
             critical_alerts = $true
             daily_summary = $false
             weekly_report = $false
-            
+
             # Sample structures for complex data
             medications = @(
                 @{
@@ -711,7 +715,7 @@ class UserProfile {
                     reminders = $true
                 }
             )
-            
+
             pain_locations = @(
                 @{
                     name = 'Lower Back'
@@ -719,7 +723,7 @@ class UserProfile {
                     baseline = 3
                 }
             )
-            
+
             activities = @(
                 @{
                     name = 'Walking'
@@ -756,7 +760,7 @@ function New-PSUUser {
         $Response['Message'] = "User $Email failed to register"
         $Response['UserProfile'] = $null
         Write-Error $_
-    }    
+    }
     return $Response
 }
 function Test-PSUUserExists {
@@ -780,7 +784,7 @@ function Invoke-UserAuthentication {
         }
         try {
             $UserExists = Test-PSUUserExists -Email $Email
-            if (! $UserExists) {                
+            if (! $UserExists) {
                 return $Response
             }
             $UserProfile = [UserProfile]::GetUserProfile($Email)
@@ -845,21 +849,21 @@ function Test-UserSession {
                 $Response['Message'] = 'PSU User identity not found or empty'
                 return $Response
             }
-            
+
             # Validate that the user still exists in PSU
             if (-not [UserProfile]::UserExists($User)) {
                 $Response['Message'] = "PSU identity no longer exists for user: $User"
                 return $Response
             }
-            
+
             # Dynamically load user profile using the PSU User variable
             $AllUserData = [UserProfile]::GetUserProfile($User)
-            $UserProfile = $AllUserData.Profile            
+            $UserProfile = $AllUserData.Profile
             if ($AllUserData -eq $false -or $null -eq $AllUserData) {
                 $Response['Message'] = "User profile not found for PSU user: $User"
                 return $Response
             }
-            
+
             # All validations passed - return session data based on PSU User and loaded profile
             $Response['Success'] = $true
             $Response['Message'] = 'Valid user session found via dynamic profile loading'
@@ -903,10 +907,10 @@ function Get-CurrentUser {
                 $Response['Message'] = "No valid user session found: $($SessionCheck.Message)"
                 return $Response
             }
-            
+
             # Use the data from Test-UserSession since it already validates and extracts everything
             $CurrentUser = $SessionCheck.Data
-            
+
             $Response['Success'] = $true
             $Response['Message'] = 'Current user retrieved successfully'
             $Response['Data'] = $CurrentUser
@@ -931,7 +935,7 @@ function Clear-UserSession {
             # Clear all custom session variables
             $SessionVariables = @(
                 'UserEmail',
-                'UserProfileId', 
+                'UserProfileId',
                 'PSUProfileId',
                 'UserFirstName',
                 'UserLastName',
@@ -939,7 +943,7 @@ function Clear-UserSession {
                 'LoginTime',
                 'IsAuthenticated'
             )
-            
+
             $ClearedVariables = @()
             foreach ($Variable in $SessionVariables) {
                 try {
@@ -953,7 +957,7 @@ function Clear-UserSession {
                     Write-Verbose "Session variable $Variable not found or could not be removed: $($_.Exception.Message)"
                 }
             }
-            
+
             $Response['Success'] = $true
             $Response['Message'] = "User session cleared successfully. Cleared variables: $($ClearedVariables -join ', ')"
             $Response['ClearedVariables'] = $ClearedVariables
@@ -964,7 +968,7 @@ function Clear-UserSession {
         }
         return $Response
     }
-}   
+}
 
 function Set-UserCacheData {
     [CmdletBinding()]
@@ -980,7 +984,9 @@ function Set-UserCacheData {
             $CacheValue = $UserData | ConvertTo-Json -Compress
             Set-PSUCache -Key $CacheKey -Value $CacheValue -AbsoluteExpiration (Get-Date).AddHours($ExpirationHours) -ErrorAction Stop
         } catch {
-            throw $_
+            $errorMessage = $_.Exception.Message
+            Write-Warning "Failed to set cache for user $($UserData.UserEmail): $errorMessage"
+            # Don't throw - cache failures shouldn't break the application
         }
     }
 }
@@ -996,11 +1002,14 @@ function Get-UserCacheData {
             $CacheKey = "UserContext_$UserEmail"
             $Cache = Get-PSUCache -Key $CacheKey -ErrorAction Stop
             if (! $Cache) {
-                throw "Failed to retrieve cache for key: $CacheKey"
+                Write-Warning "No cache data found for key: $CacheKey"
+                return $null
             }
             return $Cache
         } catch {
-            throw $_
+            $errorMessage = $_.Exception.Message
+            Write-Warning "Failed to retrieve cache for user $UserEmail : $errorMessage"
+            return $null
         }
     }
 }
@@ -1020,7 +1029,7 @@ function Initialize-UserContext {
             }
             return $null
         }
-        
+
         $UserData = $null
         try {
             # Try to get cached user data first
@@ -1030,7 +1039,7 @@ function Initialize-UserContext {
             }
         } catch {
             Write-Warning "Cache miss for user $UserEmail, attempting to load and cache user data"
-        
+
             # Cache miss - load user data and set cache
             try {
                 $CurrentUser = Get-CurrentUser
@@ -1052,7 +1061,7 @@ function Initialize-UserContext {
                 }
             }
         }
-        
+
         return $UserData
     }
 }
@@ -1062,9 +1071,9 @@ function New-UserHealthPreferences {
     param (
         [Parameter(Mandatory = $true)]
         [string]$Email,
-        
+
         [string]$UserId = $null,
-        
+
         # Basic Profile Settings
         [string]$Timezone = 'UTC',
         [ValidateSet('fahrenheit', 'celsius')]
@@ -1074,7 +1083,7 @@ function New-UserHealthPreferences {
         [string]$Language = 'en',
         [ValidateSet('light', 'dark')]
         [string]$Theme = 'light',
-        
+
         # Vital Signs Tracking
         [switch]$TrackBloodPressure,
         [switch]$TrackOxygen,
@@ -1082,7 +1091,7 @@ function New-UserHealthPreferences {
         [switch]$TrackTemperature,
         [switch]$TrackWeight,
         [switch]$TrackGlucose,
-        
+
         # Health Targets (optional)
         [int]$BloodPressureTargetSystolic = 120,
         [int]$BloodPressureTargetDiastolic = 80,
@@ -1091,7 +1100,7 @@ function New-UserHealthPreferences {
         [decimal]$TargetWeight = $null,
         [int]$GlucoseTargetMin = 80,
         [int]$GlucoseTargetMax = 120,
-        
+
         # Other Health Tracking
         [switch]$TrackMedications,
         [switch]$TrackPain,
@@ -1100,37 +1109,37 @@ function New-UserHealthPreferences {
         [switch]$TrackWater,
         [switch]$TrackMeals,
         [switch]$TrackMood,
-        
+
         # Goals and Targets
         [int]$DailyStepGoal = 10000,
         [int]$DailyExerciseMinutes = 30,
         [decimal]$SleepTargetHours = 8,
         [int]$DailyWaterGoal = 8,
-        
+
         # Notifications
         [switch]$NotificationsEnabled,
         [switch]$CriticalAlerts,
         [switch]$DailySummary,
         [switch]$WeeklyReport,
         [string]$ReminderTime = '09:00',
-        
+
         # Medications (array of hashtables)
         [hashtable[]]$Medications = @(),
-        
+
         # Pain locations (array of strings or hashtables)
         [object[]]$PainLocations = @(),
-        
-        # Activities (array of strings or hashtables)  
+
+        # Activities (array of strings or hashtables)
         [object[]]$Activities = @()
     )
-    
+
     $Response = @{
         Success = $false
         Message = ''
         PreferencesPath = ''
         PreferencesSet = @()
     }
-    
+
     try {
         # Build preference data hashtable from parameters
         $PreferenceData = @{
@@ -1139,7 +1148,7 @@ function New-UserHealthPreferences {
             weight_unit = $WeightUnit
             language = $Language
             theme = $Theme
-            
+
             # Tracking flags
             track_blood_pressure = $TrackBloodPressure.IsPresent
             track_oxygen = $TrackOxygen.IsPresent
@@ -1154,7 +1163,7 @@ function New-UserHealthPreferences {
             track_water = $TrackWater.IsPresent
             track_meals = $TrackMeals.IsPresent
             track_mood = $TrackMood.IsPresent
-            
+
             # Targets and goals
             bp_target_systolic = $BloodPressureTargetSystolic
             bp_target_diastolic = $BloodPressureTargetDiastolic
@@ -1167,28 +1176,28 @@ function New-UserHealthPreferences {
             daily_exercise_minutes = $DailyExerciseMinutes
             sleep_target_hours = $SleepTargetHours
             daily_water_goal = $DailyWaterGoal
-            
+
             # Notifications
             notifications_enabled = if ($PSBoundParameters.ContainsKey('NotificationsEnabled')) { $NotificationsEnabled.IsPresent } else { $true }
             critical_alerts = if ($PSBoundParameters.ContainsKey('CriticalAlerts')) { $CriticalAlerts.IsPresent } else { $true }
             daily_summary = $DailySummary.IsPresent
             weekly_report = $WeeklyReport.IsPresent
             reminder_time = $ReminderTime
-            
+
             # Complex data
             medications = $Medications
             pain_locations = $PainLocations
             activities = $Activities
         }
-        
+
         # Call the static method to set preferences
         $Result = [UserProfile]::SetUserPreferences($Email, $UserId, $PreferenceData)
-        
+
         $Response.Success = $Result.Success
         $Response.Message = $Result.Message
         $Response.PreferencesPath = $Result.PreferencesPath
         $Response.PreferencesSet = $Result.PreferencesSet
-        
+
         if ($Result.Success) {
             Write-Host "✓ Health preferences configured successfully for $Email" -ForegroundColor Green
             if ($Result.PreferencesSet.Count -gt 0) {
@@ -1198,12 +1207,12 @@ function New-UserHealthPreferences {
         } else {
             Write-Warning "Failed to configure preferences: $($Result.Message)"
         }
-        
+
     } catch {
         $Response.Message = "Error configuring user preferences: $($_.Exception.Message)"
         Write-Error $Response.Message
     }
-    
+
     return $Response
 }
 
@@ -1212,37 +1221,37 @@ function New-MedicationSchedule {
     param (
         [Parameter(Mandatory = $true)]
         [string]$Email,
-        
+
         [string]$UserId = $null,
-        
+
         [Parameter(Mandatory = $true)]
         [hashtable[]]$MedicationSchedules,
-        
+
         [ValidateSet('preferences', 'separate_file')]
         [string]$OutputType = 'preferences',
-        
+
         [string]$ScheduleName = "Medication Schedule - $(Get-Date -Format 'yyyy-MM-dd')",
-        
+
         [switch]$OverwriteExisting
     )
-    
+
     <#
     .SYNOPSIS
     Generates a detailed medication schedule supporting multiple daily dosages of the same medication.
-    
+
     .DESCRIPTION
     Creates comprehensive medication schedules with support for:
     - Same medication multiple times per day with different dosages
     - Flexible time-based scheduling
     - Integration with existing user preferences
     - Export to preferences.json or separate schedule file
-    
+
     .PARAMETER Email
     User's email address to identify the profile
-    
+
     .PARAMETER UserId
     Optional user ID for direct lookup
-    
+
     .PARAMETER MedicationSchedules
     Array of hashtables defining medication schedules. Each hashtable should contain:
     - medication_name (required): Name of the medication
@@ -1251,16 +1260,16 @@ function New-MedicationSchedule {
     - start_date: When to start this medication schedule
     - end_date: When to end this medication schedule (optional)
     - active: Whether this schedule is currently active
-    
+
     .PARAMETER OutputType
     Where to save the schedule: 'preferences' (add to preferences.json) or 'separate_file' (create dedicated schedule file)
-    
+
     .PARAMETER ScheduleName
     Name for the medication schedule
-    
+
     .PARAMETER OverwriteExisting
     Whether to overwrite existing medication schedules
-    
+
     .EXAMPLE
     # Single medication with multiple daily dosages
     $Schedule = @(
@@ -1285,9 +1294,9 @@ function New-MedicationSchedule {
             )
         }
     )
-    
+
     New-MedicationSchedule -Email "user@example.com" -MedicationSchedules $Schedule
-    
+
     .EXAMPLE
     # Multiple medications with complex schedules
     $ComplexSchedule = @(
@@ -1332,10 +1341,10 @@ function New-MedicationSchedule {
             )
         }
     )
-    
+
     New-MedicationSchedule -Email "user@example.com" -MedicationSchedules $ComplexSchedule -OutputType "separate_file"
     #>
-    
+
     $Response = @{
         Success = $false
         Message = ''
@@ -1343,7 +1352,7 @@ function New-MedicationSchedule {
         ScheduleCreated = @()
         TotalDailyDoses = 0
     }
-    
+
     try {
         # Validate user exists
         $UserData = [UserProfile]::GetUserProfilePath($Email, $UserId)
@@ -1351,13 +1360,13 @@ function New-MedicationSchedule {
             $Response.Message = "User $Email not found"
             return $Response
         }
-        
+
         $UserPath = $UserData['UserDataPath']
-        
+
         # Validate and process medication schedules
         $ProcessedSchedules = @()
         $TotalDoses = 0
-        
+
         foreach ($MedSchedule in $MedicationSchedules) {
             # Validate required fields
             if (-not $MedSchedule.medication_name) {
@@ -1366,7 +1375,7 @@ function New-MedicationSchedule {
             if (-not $MedSchedule.schedules -or $MedSchedule.schedules.Count -eq 0) {
                 throw "schedules array is required and must contain at least one schedule entry for $($MedSchedule.medication_name)"
             }
-            
+
             # Process each schedule entry for this medication
             $ProcessedMedication = @{
                 medication_name = $MedSchedule.medication_name
@@ -1377,7 +1386,7 @@ function New-MedicationSchedule {
                 total_daily_doses = $MedSchedule.schedules.Count
                 daily_schedules = @()
             }
-            
+
             # Validate and process each time/dosage entry
             foreach ($Schedule in $MedSchedule.schedules) {
                 if (-not $Schedule.time) {
@@ -1386,12 +1395,12 @@ function New-MedicationSchedule {
                 if (-not $Schedule.dosage) {
                     throw "dosage is required for all schedule entries for $($MedSchedule.medication_name)"
                 }
-                
+
                 # Validate time format (basic check for HH:mm)
                 if ($Schedule.time -notmatch '^\d{1,2}:\d{2}$') {
                     throw "Invalid time format '$($Schedule.time)' for $($MedSchedule.medication_name). Use HH:mm format (e.g., '08:30')"
                 }
-                
+
                 $ScheduleEntry = @{
                     time = $Schedule.time
                     dosage = $Schedule.dosage
@@ -1401,20 +1410,20 @@ function New-MedicationSchedule {
                     taken_with_food = [bool]($Schedule.taken_with_food ?? $false)
                     special_instructions = $Schedule.special_instructions ?? ''
                 }
-                
+
                 $ProcessedMedication.daily_schedules += $ScheduleEntry
                 $TotalDoses++
             }
-            
+
             # Sort schedules by time for better organization
             $ProcessedMedication.daily_schedules = $ProcessedMedication.daily_schedules | Sort-Object { [DateTime]::ParseExact($_.time, 'H:mm', $null) }
-            
+
             $ProcessedSchedules += $ProcessedMedication
             $Response.ScheduleCreated += "$($ProcessedMedication.medication_name) ($($ProcessedMedication.total_daily_doses) daily doses)"
         }
-        
+
         $Response.TotalDailyDoses = $TotalDoses
-        
+
         # Create the complete schedule structure
         $MedicationScheduleData = @{
             schedule_info = @{
@@ -1434,29 +1443,29 @@ function New-MedicationSchedule {
                 active_medications = @($ProcessedSchedules | Where-Object { $_.active }).Count
             }
         }
-        
+
         if ($OutputType -eq 'separate_file') {
             # Save to separate medication schedule file
             $ScheduleFileName = "medication-schedule-$(Get-Date -Format 'yyyy-MM-dd-HHmm').json"
             $SchedulePath = Join-Path $UserPath $ScheduleFileName
-            
+
             $MedicationScheduleData | ConvertTo-Json -Depth 10 | Out-File -FilePath $SchedulePath -Force -ErrorAction Stop
             $Response.SchedulePath = $SchedulePath
             $Response.Message = "Medication schedule saved to separate file: $ScheduleFileName"
-            
+
         } else {
             # Add to existing preferences.json
             $PreferencesPath = Join-Path $UserPath 'preferences.json'
-            
+
             if (Test-Path $PreferencesPath) {
                 # Load existing preferences
                 $ExistingPrefs = Get-Content $PreferencesPath | ConvertFrom-Json
-                
+
                 # Add or update medication schedule section
                 if (-not $ExistingPrefs.PSObject.Properties['medication_schedules']) {
                     $ExistingPrefs | Add-Member -MemberType NoteProperty -Name 'medication_schedules' -Value @()
                 }
-                
+
                 if ($OverwriteExisting) {
                     $ExistingPrefs.medication_schedules = @($MedicationScheduleData)
                 } else {
@@ -1467,24 +1476,24 @@ function New-MedicationSchedule {
                     }
                     $ExistingPrefs.medication_schedules += $MedicationScheduleData
                 }
-                
+
                 # Update metadata
                 if ($ExistingPrefs.PSObject.Properties['meta']) {
                     $ExistingPrefs.meta.last_updated = (Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ')
                 }
-                
+
                 # Save updated preferences
                 $ExistingPrefs | ConvertTo-Json -Depth 10 | Out-File -FilePath $PreferencesPath -Force -ErrorAction Stop
                 $Response.SchedulePath = $PreferencesPath
                 $Response.Message = "Medication schedule added to user preferences"
-                
+
             } else {
                 throw "Preferences file not found. Please run New-UserHealthPreferences first to create the preferences structure."
             }
         }
-        
+
         $Response.Success = $true
-        
+
         # Generate summary message
         $SummaryLines = @(
             "✓ Medication schedule created successfully",
@@ -1494,11 +1503,11 @@ function New-MedicationSchedule {
             "  📝 Medications configured:"
         )
         $Response.ScheduleCreated | ForEach-Object { $SummaryLines += "    • $_" }
-        
+
         Write-Host ($SummaryLines -join "`n") -ForegroundColor Green
-        
+
         return $Response
-        
+
     } catch {
         $Response.Message = "Failed to create medication schedule: $($_.Exception.Message)"
         Write-Error $Response.Message
@@ -1510,41 +1519,41 @@ function New-SampleHealthEntries {
     <#
     .SYNOPSIS
     Generates sample health entries data for testing and development purposes.
-    
+
     .DESCRIPTION
-    Creates realistic sample health data entries including vital signs, medications, 
+    Creates realistic sample health data entries including vital signs, medications,
     pain levels, activities, and mood tracking for a specified number of days.
-    
+
     .PARAMETER Email
     User's email address to identify the profile
-    
+
     .PARAMETER DaysBack
     Number of days back from today to generate data for (default: 30)
-    
+
     .PARAMETER EntriesPerDay
     Average number of entries to generate per day (default: 2)
-    
+
     .PARAMETER SaveToFile
     If specified, saves the data directly to the user's entries.json file
-    
+
     .EXAMPLE
     New-SampleHealthEntries -Email "user@example.com" -DaysBack 14 -EntriesPerDay 3
-    
+
     .EXAMPLE
     New-SampleHealthEntries -Email "user@example.com" -SaveToFile
-    
+
     #>
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)]
         [string]$Email,
-        
+
         [int]$DaysBack = 30,
         [int]$EntriesPerDay = 2,
         [switch]$SaveToFile
     )
-    
-    
+
+
     $Response = @{
         Success = $false
         Message = ''
@@ -1552,7 +1561,7 @@ function New-SampleHealthEntries {
         SampleData = @()
         FilePath = ''
     }
-    
+
     try {
         # Get user profile path if SaveToFile is specified
         if ($SaveToFile) {
@@ -1564,31 +1573,31 @@ function New-SampleHealthEntries {
             $UserPath = $UserData['UserDataPath']
             $EntriesPath = Join-Path $UserPath 'health-data/entries.json'
         }
-        
+
         # Sample data arrays for realistic generation
         $Activities = @('Walking', 'Jogging', 'Swimming', 'Cycling', 'Yoga', 'Weight Training', 'Stretching', 'Dancing')
         $PainLocations = @('Lower Back', 'Neck', 'Shoulders', 'Knees', 'Headache', 'Wrist', 'Ankle')
         $MoodDescriptions = @('Excellent', 'Good', 'Fair', 'Poor', 'Anxious', 'Stressed', 'Relaxed', 'Energetic')
         $Medications = @('Lisinopril', 'Metformin', 'Atorvastatin', 'Vitamin D', 'Multivitamin', 'Aspirin')
-        
+
         $SampleEntries = @()
         $EntryId = 1
-        
+
         # Generate entries for each day
         for ($day = $DaysBack; $day -ge 0; $day--) {
             $CurrentDate = (Get-Date).AddDays(-$day)
             $EntriesForDay = Get-Random -Minimum 1 -Maximum ($EntriesPerDay + 2)
-            
+
             for ($entry = 0; $entry -lt $EntriesForDay; $entry++) {
                 # Random time during the day
                 $Hour = Get-Random -Minimum 6 -Maximum 23
                 $Minute = Get-Random -Minimum 0 -Maximum 59
                 $EntryTime = $CurrentDate.Date.AddHours($Hour).AddMinutes($Minute)
-                
+
                 # Generate random entry type
                 $EntryTypes = @('vitals', 'medication', 'activity', 'pain', 'mood', 'weight', 'sleep')
                 $EntryType = $EntryTypes | Get-Random
-                
+
                 $BaseEntry = @{
                     id = $EntryId++
                     timestamp = $EntryTime.ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
@@ -1597,7 +1606,7 @@ function New-SampleHealthEntries {
                     type = $EntryType
                     user_email = $Email
                 }
-                
+
                 # Generate specific data based on entry type
                 switch ($EntryType) {
                     'vitals' {
@@ -1612,7 +1621,7 @@ function New-SampleHealthEntries {
                         }
                         $BaseEntry['notes'] = 'Regular vital signs check'
                     }
-                    
+
                     'medication' {
                         $Med = $Medications | Get-Random
                         $BaseEntry['data'] = @{
@@ -1631,7 +1640,7 @@ function New-SampleHealthEntries {
                         }
                         $BaseEntry['notes'] = "Took $Med as scheduled"
                     }
-                    
+
                     'activity' {
                         $Activity = $Activities | Get-Random
                         $BaseEntry['data'] = @{
@@ -1642,7 +1651,7 @@ function New-SampleHealthEntries {
                         }
                         $BaseEntry['notes'] = "Completed $Activity session"
                     }
-                    
+
                     'pain' {
                         $Location = $PainLocations | Get-Random
                         $BaseEntry['data'] = @{
@@ -1653,7 +1662,7 @@ function New-SampleHealthEntries {
                         }
                         $BaseEntry['notes'] = "Pain in $Location area"
                     }
-                    
+
                     'mood' {
                         $Mood = $MoodDescriptions | Get-Random
                         $BaseEntry['data'] = @{
@@ -1664,7 +1673,7 @@ function New-SampleHealthEntries {
                         }
                         $BaseEntry['notes'] = "Daily mood check - feeling $($Mood.ToLower())"
                     }
-                    
+
                     'weight' {
                         $BaseEntry['data'] = @{
                             weight_lbs = [math]::Round((Get-Random -Minimum 120.0 -Maximum 220.0), 1)
@@ -1672,7 +1681,7 @@ function New-SampleHealthEntries {
                         }
                         $BaseEntry['notes'] = 'Daily weight check'
                     }
-                    
+
                     'sleep' {
                         $SleepHours = [math]::Round((Get-Random -Minimum 5.0 -Maximum 10.0), 1)
                         $BaseEntry['data'] = @{
@@ -1684,17 +1693,17 @@ function New-SampleHealthEntries {
                         $BaseEntry['notes'] = "Slept $SleepHours hours"
                     }
                 }
-                
+
                 $SampleEntries += $BaseEntry
             }
         }
-        
+
         # Sort entries by timestamp (newest first)
         $SampleEntries = $SampleEntries | Sort-Object timestamp -Descending
-        
+
         $Response.EntriesGenerated = $SampleEntries.Count
         $Response.SampleData = $SampleEntries
-        
+
         # Save to file if requested
         if ($SaveToFile) {
             $SampleEntries | ConvertTo-Json -Depth 10 | Out-File -FilePath $EntriesPath -Force -ErrorAction Stop
@@ -1703,21 +1712,21 @@ function New-SampleHealthEntries {
         } else {
             $Response.Message = "Successfully generated $($SampleEntries.Count) sample entries"
         }
-        
+
         $Response.Success = $true
-        
+
         # Display summary
         $TypeCounts = $SampleEntries | Group-Object type | ForEach-Object { "$($_.Name): $($_.Count)" }
         Write-Host "✓ Generated $($SampleEntries.Count) sample health entries for $Email" -ForegroundColor Green
         Write-Host "  Entry types: $($TypeCounts -join ', ')" -ForegroundColor Cyan
         Write-Host "  Date range: $((Get-Date).AddDays(-$DaysBack).ToString('yyyy-MM-dd')) to $((Get-Date).ToString('yyyy-MM-dd'))" -ForegroundColor Cyan
-        
+
         if ($SaveToFile) {
             Write-Host "  Saved to: $EntriesPath" -ForegroundColor Green
-        }        
+        }
         return $Response
-        
-    } 
+
+    }
     catch {
         $Response.Message = "Failed to generate sample entries: $($_.Exception.Message)"
         Write-Error $Response.Message
