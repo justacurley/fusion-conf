@@ -116,7 +116,6 @@
             New-UDElement -Tag 'div' -Attributes @{ class = 'settings-form' } -Content {
 
                 # Basic Profile Settings Section
-                # TODO: Make these rows so they stack on top of each other
                 New-UDElement -Tag 'div' -Attributes @{ class = 'settings-section' } -Content {
                     New-UDTypography -Text '👤 Profile Preferences' -Variant h5
                     New-UDTypography -Text 'Basic settings for your health dashboard experience' -Style @{ class = 'section-description' }
@@ -152,12 +151,21 @@
                                 New-UDCheckbox -Id 'track_weight' -Label '⚖️ Track Weight (Daily)'
                                 New-UDCheckbox -Id 'track_sleep' -Label '😴 Track Sleep (Daily)'
                                 New-UDCheckbox -Id 'track_temperature' -Label '🌡️ Track Temperature (As Needed)'
-                                New-UDCheckbox -Id 'track_blood_pressure' -Label '🩸 Track Blood Pressure (As Needed)'
-                                New-UDCheckbox -Id 'track_oxygen' -Label '🫁 Track Oxygen Saturation (As Needed)'
+                                New-UDCheckbox -Id 'track_blood_pressure' -Label '🩸 Track Blood Pressure (As Needed)' -OnChange {
+                                    $Session:track_blood_pressure = (Get-UDElement -Id 'track_blood_pressure').Checked
+                                    Sync-UDElement -Id 'tracking_devices'
+                                }
+                                New-UDCheckbox -Id 'track_oxygen' -Label '🫁 Track Oxygen Saturation (As Needed)' -OnChange {
+                                    $Session:track_oxygen = (Get-UDElement -Id 'track_oxygen').Checked
+                                    Sync-UDElement -Id 'tracking_devices'
+                                }
                             } -Direction Column -Divider {New-UDDivider -Variant 'inset'}
                             New-UDStack -Id 'optional_tracks' -Children {
                                 New-UDCheckbox -Id 'track_heart_rate' -Label '💗 Track Heart Rate (As Needed)'
-                                New-UDCheckbox -Id 'track_glucose' -Label '🩸 Track Blood Glucose (As Needed)'
+                                New-UDCheckbox -Id 'track_glucose' -Label '🩸 Track Blood Glucose (As Needed)' -OnChange {
+                                    $Session:track_glucose = (Get-UDElement -Id 'track_glucose').Checked
+                                    Sync-UDElement -Id 'tracking_devices'
+                                }
                                 New-UDCheckbox -Id 'track_mood' -Label '😊 Track Mood (As Needed)'
                                 New-UDCheckbox -Id 'track_steps' -Label '👟 Track Steps (Daily)'
                                 New-UDCheckbox -Id 'track_activities' -Label '🏃 Track Activities & Exercise'
@@ -265,18 +273,26 @@
 
                 # Device Settings Section
                 New-UDElement -Tag 'div' -Attributes @{ class = 'settings-section' } -Content {
-                    New-UDTypography -Text '📱 Device Configuration' -Variant h5
-                    New-UDTypography -Text 'Configure your medical devices for tracking (optional)' -Style @{ class = 'section-description' }
+                    New-UDDynamic -Id 'tracking_devices' -Content {
+                        New-UDTypography -Text '📱 Device Configuration' -Variant h5
+                        New-UDTypography -Text 'Configure your medical devices for tracking (optional)' -Style @{ class = 'section-description' }
 
-                    New-UDGrid -Container -Children {
-                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                            New-UDTextbox -Id 'blood_pressure_device' -Label 'Blood Pressure Monitor' -Placeholder 'e.g., Omron BP742N' -FullWidth
-                        }
-                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                            New-UDTextbox -Id 'oxygen_saturation_device' -Label 'Pulse Oximeter' -Placeholder 'e.g., Zacurate Pro Series 500DL' -FullWidth
-                        }
-                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                            New-UDTextbox -Id 'blood_glucose_device' -Label 'Blood Glucose Meter' -Placeholder 'e.g., FreeStyle Lite' -FullWidth
+                        New-UDGrid -Container -Children {
+                            if ($Session:track_blood_pressure) {
+                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
+                                    New-UDTextbox -Id 'blood_pressure_device' -Label 'Blood Pressure Monitor' -Placeholder 'e.g., Omron BP742N' -FullWidth
+                                }
+                            }
+                            if ($Session:track_oxygen) {
+                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
+                                    New-UDTextbox -Id 'oxygen_saturation_device' -Label 'Pulse Oximeter' -Placeholder 'e.g., Zacurate Pro Series 500DL' -FullWidth
+                                }
+                            }
+                            if ($Session:track_glucose) {
+                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
+                                    New-UDTextbox -Id 'blood_glucose_device' -Label 'Blood Glucose Meter' -Placeholder 'e.g., FreeStyle Lite' -FullWidth
+                                }
+                            }
                         }
                     }
                 }
