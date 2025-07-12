@@ -36,6 +36,8 @@ function New-UserHealthPreferences {
         [string]$BloodPressureDevice = '',
         [string]$OxygenSaturationDevice = '',
         [string]$BloodGlucoseDevice = '',
+        [string]$HeartRateDevice = '',
+        [string]$StepsDevice = '',
 
         # Other Health Tracking
         [switch]$TrackMedications,
@@ -116,6 +118,8 @@ function New-UserHealthPreferences {
             bp_device = $BloodPressureDevice
             o2_device = $OxygenSaturationDevice
             glucose_device = $BloodGlucoseDevice
+            hr_device = $HeartRateDevice
+            steps_device = $StepsDevice
 
             # Notifications
             notifications_enabled = if ($PSBoundParameters.ContainsKey('NotificationsEnabled')) { $NotificationsEnabled.IsPresent } else { $true }

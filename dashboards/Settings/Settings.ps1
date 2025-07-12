@@ -120,7 +120,7 @@
                     New-UDTypography -Text '👤 Profile Preferences' -Variant h5
                     New-UDTypography -Text 'Basic settings for your health dashboard experience' -Style @{ class = 'section-description' }
 
-                    New-UDStack -Id 'profile_preferences' -Content {                        
+                    New-UDStack -Id 'profile_preferences' -Content {
                             New-UDSelect -Id 'timezone' -Label '🌍 Timezone' -FullWidth -Option {
                                 New-UDSelectOption -Name 'UTC' -Value 'UTC'
                                 New-UDSelectOption -Name 'Eastern Time' -Value 'America/New_York'
@@ -161,13 +161,19 @@
                                 }
                             } -Direction Column -Divider {New-UDDivider -Variant 'inset'}
                             New-UDStack -Id 'optional_tracks' -Children {
-                                New-UDCheckbox -Id 'track_heart_rate' -Label '💗 Track Heart Rate (As Needed)'
+                                New-UDCheckbox -Id 'track_heart_rate' -Label '💗 Track Heart Rate (As Needed)' -OnChange {
+                                    $Session:track_heart_rate = (Get-UDElement -Id 'track_heart_rate').Checked
+                                    Sync-UDElement -Id 'tracking_devices'
+                                }
                                 New-UDCheckbox -Id 'track_glucose' -Label '🩸 Track Blood Glucose (As Needed)' -OnChange {
                                     $Session:track_glucose = (Get-UDElement -Id 'track_glucose').Checked
                                     Sync-UDElement -Id 'tracking_devices'
                                 }
                                 New-UDCheckbox -Id 'track_mood' -Label '😊 Track Mood (As Needed)'
-                                New-UDCheckbox -Id 'track_steps' -Label '👟 Track Steps (Daily)'
+                                New-UDCheckbox -Id 'track_steps' -Label '👟 Track Steps (Daily)' -OnChange {
+                                    $Session:track_steps = (Get-UDElement -Id 'track_steps').Checked
+                                    Sync-UDElement -Id 'tracking_devices'
+                                }
                                 New-UDCheckbox -Id 'track_activities' -Label '🏃 Track Activities & Exercise'
                             } -Direction Column -Divider {New-UDDivider -Variant 'inset'}
                         }
@@ -293,6 +299,16 @@
                                     New-UDTextbox -Id 'blood_glucose_device' -Label 'Blood Glucose Meter' -Placeholder 'e.g., FreeStyle Lite' -FullWidth
                                 }
                             }
+                            if ($Session:track_heart_rate) {
+                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
+                                    New-UDTextbox -Id 'heart_rate_device' -Label 'Heart Rate Monitor' -Placeholder 'e.g., Polar H10, Apple Watch, Fitbit' -FullWidth
+                                }
+                            }
+                            if ($Session:track_steps) {
+                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
+                                    New-UDTextbox -Id 'steps_device' -Label 'Step Counter / Fitness Tracker' -Placeholder 'e.g., Fitbit Charge 5, Apple Watch, Garmin' -FullWidth
+                                }
+                            }
                         }
                     }
                 }
@@ -346,7 +362,7 @@
                 }
 
                 # Call New-UserHealthPreferences with collected data
-                $PreferencesResult = New-UserHealthPreferences -Email $User -Timezone $FormData.timezone -TemperatureUnit $FormData.temperature_unit -WeightUnit $FormData.weight_unit -TrackBloodPressure:($FormData.track_blood_pressure -eq $true) -TrackOxygen:($FormData.track_oxygen -eq $true) -TrackHeartRate:($FormData.track_heart_rate -eq $true) -TrackTemperature:($FormData.track_temperature -eq $true) -TrackWeight:($FormData.track_weight -eq $true) -TrackGlucose:($FormData.track_glucose -eq $true) -TrackMedications:$true -TrackPain:$true -TrackActivities:($FormData.track_activities -eq $true) -TrackSleep:($FormData.track_sleep -eq $true) -TrackMood:($FormData.track_mood -eq $true) -TrackSteps:($FormData.track_steps -eq $true) -BloodPressureDevice $FormData.blood_pressure_device -OxygenSaturationDevice $FormData.oxygen_saturation_device -BloodGlucoseDevice $FormData.blood_glucose_device -Medications $Medications -PainLocations $PainLocations -Activities $Activities
+                $PreferencesResult = New-UserHealthPreferences -Email $User -Timezone $FormData.timezone -TemperatureUnit $FormData.temperature_unit -WeightUnit $FormData.weight_unit -TrackBloodPressure:($FormData.track_blood_pressure -eq $true) -TrackOxygen:($FormData.track_oxygen -eq $true) -TrackHeartRate:($FormData.track_heart_rate -eq $true) -TrackTemperature:($FormData.track_temperature -eq $true) -TrackWeight:($FormData.track_weight -eq $true) -TrackGlucose:($FormData.track_glucose -eq $true) -TrackMedications:$true -TrackPain:$true -TrackActivities:($FormData.track_activities -eq $true) -TrackSleep:($FormData.track_sleep -eq $true) -TrackMood:($FormData.track_mood -eq $true) -TrackSteps:($FormData.track_steps -eq $true) -BloodPressureDevice $FormData.blood_pressure_device -OxygenSaturationDevice $FormData.oxygen_saturation_device -BloodGlucoseDevice $FormData.blood_glucose_device -HeartRateDevice $FormData.heart_rate_device -StepsDevice $FormData.steps_device -Medications $Medications -PainLocations $PainLocations -Activities $Activities
 
                 if ($PreferencesResult.Success) {
                     Show-UDToast -Message 'Health tracking settings saved successfully!' -Duration 3000 -BackgroundColor '#4caf50'
