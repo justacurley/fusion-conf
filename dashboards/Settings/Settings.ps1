@@ -1,4 +1,4 @@
-$SettingsPage = New-UDApp -Content {
+﻿$SettingsPage = New-UDApp -Content {
     Import-Module UserManagement -Force
     $UserData = Initialize-UserContext -UserEmail $User
     if (!$UserData) {
@@ -130,17 +130,12 @@ $SettingsPage = New-UDApp -Content {
                         } -DefaultValue 'America/Denver'
                     }
                     New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                        New-UDSelect -Id 'theme' -Label '🎨 Theme' -FullWidth -Option {
-                            New-UDSelectOption -Name 'Light' -Value 'light'
-                            New-UDSelectOption -Name 'Dark' -Value 'dark'
-                        } -DefaultValue 'light'
-                    }
-                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                         New-UDSelect -Id 'temperature_unit' -Label '🌡️ Temperature Unit' -FullWidth -Option {
                             New-UDSelectOption -Name 'Fahrenheit' -Value 'fahrenheit'
                             New-UDSelectOption -Name 'Celsius' -Value 'celsius'
                         } -DefaultValue 'fahrenheit'
                     }
+                    
                     New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                         New-UDSelect -Id 'weight_unit' -Label '⚖️ Weight Unit' -FullWidth -Option {
                             New-UDSelectOption -Name 'Pounds' -Value 'pounds'
@@ -158,40 +153,15 @@ $SettingsPage = New-UDApp -Content {
                 # Blood Pressure
                 New-UDElement -Tag 'div' -Attributes @{ class = 'tracking-toggle' } -Content {
                     New-UDGrid -Container -Children {
+                        # TODO: Align these properly, they look sloppy right now
                         New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                            New-UDCheckbox -Id 'track_blood_pressure' -Label '🩸 Track Blood Pressure (As Needed)' -Style @{ marginBottom = '16px' }
+                            New-UDCheckbox -Id 'track_temperature' -Label '🌡️ Track Temperature (As Needed)'
+                            New-UDCheckbox -Id 'track_blood_pressure' -Label '🩸 Track Blood Pressure (As Needed)'
+                            New-UDCheckbox -Id 'track_weight' -Label '⚖️ Track Weight (Daily)'
+                            New-UDCheckbox -Id 'track_oxygen' -Label '🫁 Track Oxygen Saturation (As Needed)'
+                            New-UDCheckbox -Id 'track_heart_rate' -Label '💗 Track Heart Rate (As Needed)'
+                            New-UDCheckbox -Id 'track_glucose' -Label '🩸 Track Blood Glucose (As Needed)'
                         }
-                    }
-                }
-
-                # Oxygen Saturation
-                New-UDElement -Tag 'div' -Attributes @{ class = 'tracking-toggle' } -Content {
-                    New-UDGrid -Container -Children {
-                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                            New-UDCheckbox -Id 'track_oxygen' -Label '🫁 Track Oxygen Saturation (As Needed)' -Style @{ marginBottom = '16px' }
-                        }
-                    }
-                }
-
-                # Heart Rate
-                New-UDElement -Tag 'div' -Attributes @{ class = 'tracking-toggle' } -Content {
-                    New-UDGrid -Container -Children {
-                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                            New-UDCheckbox -Id 'track_heart_rate' -Label '💗 Track Heart Rate (As Needed)' -Style @{ marginBottom = '16px' }
-                        }
-                    }
-                }
-
-                # Additional Vitals
-                New-UDGrid -Container -Children {
-                    New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDCheckbox -Id 'track_temperature' -Label '🌡️ Track Temperature (As Needed)'
-                    }
-                    New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDCheckbox -Id 'track_weight' -Label '⚖️ Track Weight (Daily)'
-                    }
-                    New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                        New-UDCheckbox -Id 'track_glucose' -Label '🩸 Track Blood Glucose (As Needed)'
                     }
                 }
             }
