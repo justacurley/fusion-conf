@@ -557,12 +557,14 @@ class UserProfile {
                             target_systolic = $PreferenceData.bp_target_systolic ?? 120
                             target_diastolic = $PreferenceData.bp_target_diastolic ?? 80
                             alerts_enabled = [bool]($PreferenceData.bp_alerts ?? $false)
+                            device = $PreferenceData.bp_device ?? ''
                         }
                         oxygen_saturation = @{
                             enabled = [bool]($PreferenceData.track_oxygen ?? $false)
                             frequency = $PreferenceData.o2_frequency ?? 'daily'
                             target_min = $PreferenceData.o2_target_min ?? 95
                             alerts_enabled = [bool]($PreferenceData.o2_alerts ?? $false)
+                            device = $PreferenceData.o2_device ?? ''
                         }
                         heart_rate = @{
                             enabled = [bool]($PreferenceData.track_heart_rate ?? $false)
@@ -578,7 +580,6 @@ class UserProfile {
                         weight = @{
                             enabled = [bool]($PreferenceData.track_weight ?? $false)
                             frequency = $PreferenceData.weight_frequency ?? 'weekly'
-                            target_weight = $PreferenceData.target_weight ?? $null
                             alerts_enabled = [bool]($PreferenceData.weight_alerts ?? $false)
                         }
                         blood_glucose = @{
@@ -589,6 +590,7 @@ class UserProfile {
                                 max = $PreferenceData.glucose_target_max ?? 120
                             }
                             alerts_enabled = [bool]($PreferenceData.glucose_alerts ?? $false)
+                            device = $PreferenceData.glucose_device ?? ''
                         }
                     }
 
@@ -610,8 +612,6 @@ class UserProfile {
                     # Activity and Exercise Tracking
                     activities = @{
                         enabled = [bool]($PreferenceData.track_activities ?? $false)
-                        step_goal = $PreferenceData.daily_step_goal ?? 10000
-                        exercise_goal_minutes = $PreferenceData.daily_exercise_minutes ?? 30
                         activities_list = @()
                     }
 
@@ -652,6 +652,13 @@ class UserProfile {
                     chart_timeframe = $PreferenceData.default_timeframe ?? '7days'  # 1day, 7days, 30days, 90days
                     show_trends = [bool]($PreferenceData.show_trends ?? $true)
                     compact_view = [bool]($PreferenceData.compact_view ?? $false)
+                }
+
+                # Steps Tracking
+                steps = @{
+                    enabled = [bool]($PreferenceData.track_steps ?? $false)
+                    daily_goal = $PreferenceData.daily_step_goal ?? 10000
+                    alerts_enabled = [bool]($PreferenceData.step_alerts ?? $false)
                 }
 
                 # Metadata
@@ -711,10 +718,6 @@ class UserProfile {
                 foreach ($activity in $PreferenceData.activities) {
                     $activityEntry = @{
                         name = $activity.name ?? $activity
-                        category = $activity.category ?? 'general'  # cardio, strength, flexibility, daily_living, etc.
-                        intensity = $activity.intensity ?? 'moderate'  # light, moderate, vigorous
-                        duration_typical = $activity.typical_duration ?? 30
-                        frequency_goal = $activity.frequency ?? 'weekly'
                         notes = $activity.notes ?? ''
                     }
                     $Preferences.tracking.activities.activities_list += $activityEntry
@@ -794,10 +797,7 @@ class UserProfile {
             activities = @(
                 @{
                     name = 'Walking'
-                    category = 'cardio'
-                    intensity = 'moderate'
-                    typical_duration = 30
-                    frequency = 'daily'
+                    notes = ''
                 }
             )
         }

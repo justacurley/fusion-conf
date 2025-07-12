@@ -29,9 +29,13 @@ function New-UserHealthPreferences {
         [int]$BloodPressureTargetDiastolic = 80,
         [int]$OxygenTargetMin = 95,
         [int]$HeartRateTargetResting = 70,
-        [decimal]$TargetWeight = $null,
         [int]$GlucoseTargetMin = 80,
         [int]$GlucoseTargetMax = 120,
+
+        # Device Information (optional)
+        [string]$BloodPressureDevice = '',
+        [string]$OxygenSaturationDevice = '',
+        [string]$BloodGlucoseDevice = '',
 
         # Other Health Tracking
         [switch]$TrackMedications,
@@ -41,10 +45,10 @@ function New-UserHealthPreferences {
         [switch]$TrackWater,
         [switch]$TrackMeals,
         [switch]$TrackMood,
+        [switch]$TrackSteps,
 
         # Goals and Targets
         [int]$DailyStepGoal = 10000,
-        [int]$DailyExerciseMinutes = 30,
         [decimal]$SleepTargetHours = 8,
         [int]$DailyWaterGoal = 8,
 
@@ -95,19 +99,23 @@ function New-UserHealthPreferences {
             track_water = $TrackWater.IsPresent
             track_meals = $TrackMeals.IsPresent
             track_mood = $TrackMood.IsPresent
+            track_steps = $TrackSteps.IsPresent
 
             # Targets and goals
             bp_target_systolic = $BloodPressureTargetSystolic
             bp_target_diastolic = $BloodPressureTargetDiastolic
             o2_target_min = $OxygenTargetMin
             hr_target_resting = $HeartRateTargetResting
-            target_weight = $TargetWeight
             glucose_target_min = $GlucoseTargetMin
             glucose_target_max = $GlucoseTargetMax
             daily_step_goal = $DailyStepGoal
-            daily_exercise_minutes = $DailyExerciseMinutes
             sleep_target_hours = $SleepTargetHours
             daily_water_goal = $DailyWaterGoal
+
+            # Device information
+            bp_device = $BloodPressureDevice
+            o2_device = $OxygenSaturationDevice
+            glucose_device = $BloodGlucoseDevice
 
             # Notifications
             notifications_enabled = if ($PSBoundParameters.ContainsKey('NotificationsEnabled')) { $NotificationsEnabled.IsPresent } else { $true }
