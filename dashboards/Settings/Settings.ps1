@@ -115,6 +115,7 @@
         New-UDElement -Tag 'div' -Attributes @{ class = 'settings-form' } -Content {
 
             # Basic Profile Settings Section
+            # TODO: Make these rows so they stack on top of each other
             New-UDElement -Tag 'div' -Attributes @{ class = 'settings-section' } -Content {
                 New-UDTypography -Text '👤 Profile Preferences' -Variant h5
                 New-UDTypography -Text 'Basic settings for your health dashboard experience' -Style @{ class = 'section-description' }
@@ -135,7 +136,7 @@
                             New-UDSelectOption -Name 'Celsius' -Value 'celsius'
                         } -DefaultValue 'fahrenheit'
                     }
-                    
+
                     New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                         New-UDSelect -Id 'weight_unit' -Label '⚖️ Weight Unit' -FullWidth -Option {
                             New-UDSelectOption -Name 'Pounds' -Value 'pounds'
@@ -173,11 +174,13 @@
 
                 New-UDGrid -Container -Children {
                     New-UDGrid -Item -ExtraSmallSize 6 -Children {
+                        # TODO: Find a public database of activities/rehab exercises
                         New-UDCheckbox -Id 'track_activities' -Label '🏃 Track Activities & Exercise'
                     }
                     New-UDGrid -Item -ExtraSmallSize 6 -Children {
                         New-UDCheckbox -Id 'track_sleep' -Label '😴 Track Sleep'
                     }
+                    # TODO: Make this emoji faces in entries.ps1
                     New-UDGrid -Item -ExtraSmallSize 6 -Children {
                         New-UDCheckbox -Id 'track_mood' -Label '� Track Mood'
                     }
@@ -211,10 +214,10 @@
                     # Initial medication entry
                     New-UDElement -Tag 'div' -Attributes @{ class = 'medication-item' } -Content {
                         New-UDGrid -Container -Children {
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
+                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
                                 New-UDTextbox -Id 'med_name_1' -Label 'Medication Name' -FullWidth
                             }
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 3 -Children {
+                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
                                 New-UDTextbox -Id 'med_dosage_1' -Label 'Dosage (e.g., 10mg)' -FullWidth
                             }
                             New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 3 -Children {
@@ -225,9 +228,6 @@
                                     New-UDSelectOption -Name 'As Needed' -Value 'as_needed'
                                     New-UDSelectOption -Name 'Weekly' -Value 'weekly'
                                 }
-                            }
-                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 2 -Children {
-                                New-UDCheckbox -Id 'med_reminders_1' -Label '🔔 Reminders'
                             }
                         }
                     }
@@ -246,7 +246,7 @@
                         $currentMedCount = $medCount  # Capture in local scope
                         New-UDElement -Id "medication-item-$currentMedCount" -Tag 'div' -Attributes @{ class = 'medication-item' } -Content {
                             New-UDGrid -Container -Children {
-                                New-UDGrid -Item -ExtraSmallSize 10 -SmallSize 3 -Children {
+                                New-UDGrid -Item -ExtraSmallSize 10 -SmallSize 4 -Children {
                                     New-UDTextbox -Id "med_name_$currentMedCount" -Label 'Medication Name' -FullWidth
                                 }
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 3 -Children {
@@ -261,10 +261,7 @@
                                         New-UDSelectOption -Name 'Weekly' -Value 'weekly'
                                     }
                                 }
-                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 2 -Children {
-                                    New-UDCheckbox -Id "med_reminders_$currentMedCount" -Label '🔔 Reminders'
-                                }
-                                New-UDGrid -Item -ExtraSmallSize 2 -SmallSize 1 -Children {
+                                New-UDGrid -Item -ExtraSmallSize 2 -SmallSize 2 -Children {
                                     New-UDButton -Text '🗑️' -Color secondary -Size small -OnClick {
                                         try {
                                             Show-UDToast -Message "Removing Medication #$currentMedCount" -Duration 2000
@@ -474,30 +471,6 @@
                 } -Style @{ class = 'add-btn' }
             }
 
-            # Notifications Section
-            New-UDElement -Tag 'div' -Attributes @{ class = 'settings-section' } -Content {
-                New-UDTypography -Text '🔔 Notifications & Reminders' -Variant h5
-                New-UDTypography -Text 'Configure when and how you want to be reminded' -Style @{ class = 'section-description' }
-
-                New-UDGrid -Container -Children {
-                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                        New-UDCheckbox -Id 'notifications_enabled' -Label '🔔 Enable Notifications' -Checked
-                    }
-                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                        New-UDTextbox -Id 'reminder_time' -Label '⏰ Daily Reminder Time' -Type 'time' -Value '09:00' -FullWidth
-                    }
-                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                        New-UDCheckbox -Id 'critical_alerts' -Label '🚨 Critical Health Alerts' -Checked
-                    }
-                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                        New-UDCheckbox -Id 'daily_summary' -Label '📊 Daily Summary'
-                    }
-                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                        New-UDCheckbox -Id 'weekly_report' -Label '📈 Weekly Report'
-                    }
-                }
-            }
-
             # Save Settings Button - Wrapped in Form for data collection
             New-UDForm -Id 'settings-form' -Children {
                 # Hidden submit button (we'll trigger this programmatically)
@@ -522,7 +495,6 @@
                                 name = $medName
                                 dosage = $FormData["med_dosage_$i"]
                                 frequency = $FormData["med_frequency_$i"]
-                                reminders = $FormData["med_reminders_$i"] -eq $true
                             }
                         }
                     }
@@ -557,7 +529,7 @@
                     }
 
                     # Call New-UserHealthPreferences with collected data
-                    $PreferencesResult = New-UserHealthPreferences -Email $User -Timezone $FormData.timezone -TemperatureUnit $FormData.temperature_unit -WeightUnit $FormData.weight_unit -Theme $FormData.theme -TrackBloodPressure:($FormData.track_blood_pressure -eq $true) -TrackOxygen:($FormData.track_oxygen -eq $true) -TrackHeartRate:($FormData.track_heart_rate -eq $true) -TrackTemperature:($FormData.track_temperature -eq $true) -TrackWeight:($FormData.track_weight -eq $true) -TrackGlucose:($FormData.track_glucose -eq $true) -TrackMedications:$true -TrackPain:$true -TrackActivities:($FormData.track_activities -eq $true) -TrackSleep:($FormData.track_sleep -eq $true) -TrackMood:($FormData.track_mood -eq $true) -NotificationsEnabled:($FormData.notifications_enabled -eq $true) -CriticalAlerts:($FormData.critical_alerts -eq $true) -DailySummary:($FormData.daily_summary -eq $true) -WeeklyReport:($FormData.weekly_report -eq $true) -ReminderTime ($FormData.reminder_time ?? '09:00') -Medications $Medications -PainLocations $PainLocations -Activities $Activities
+                    $PreferencesResult = New-UserHealthPreferences -Email $User -Timezone $FormData.timezone -TemperatureUnit $FormData.temperature_unit -WeightUnit $FormData.weight_unit -TrackBloodPressure:($FormData.track_blood_pressure -eq $true) -TrackOxygen:($FormData.track_oxygen -eq $true) -TrackHeartRate:($FormData.track_heart_rate -eq $true) -TrackTemperature:($FormData.track_temperature -eq $true) -TrackWeight:($FormData.track_weight -eq $true) -TrackGlucose:($FormData.track_glucose -eq $true) -TrackMedications:$true -TrackPain:$true -TrackActivities:($FormData.track_activities -eq $true) -TrackSleep:($FormData.track_sleep -eq $true) -TrackMood:($FormData.track_mood -eq $true) -Medications $Medications -PainLocations $PainLocations -Activities $Activities
 
                     if ($PreferencesResult.Success) {
                         Show-UDToast -Message 'Health tracking settings saved successfully!' -Duration 3000 -BackgroundColor '#4caf50'
