@@ -677,14 +677,14 @@ class UserProfile {
                 foreach ($medication in $PreferenceData.medications) {
                     $medEntry = @{
                         name = $medication.name
-                        dosage = $medication.dosage ?? ''
-                        frequency = $medication.frequency ?? 'daily'
-                        time_of_day = $medication.time_of_day ?? @('morning')
-                        prescribing_doctor = $medication.doctor ?? ''
-                        start_date = $medication.start_date ?? (Get-Date -Format 'yyyy-MM-dd')
-                        notes = $medication.notes ?? ''
-                        active = [bool]($medication.active ?? $true)
-                        reminders_enabled = [bool]($medication.reminders ?? $false)
+                        dosage = if ($medication.dosage) { $medication.dosage } else { '' }
+                        frequency = if ($medication.frequency) { $medication.frequency } else { 'daily' }
+                        time_of_day = if ($medication.time_of_day) { $medication.time_of_day } else { @('morning') }
+                        prescribing_doctor = if ($medication.doctor) { $medication.doctor } else { '' }
+                        start_date = if ($medication.start_date) { $medication.start_date } else { (Get-Date -Format 'yyyy-MM-dd') }
+                        notes = if ($medication.notes) { $medication.notes } else { '' }
+                        active = if ($medication.active) { [bool]$medication.active } else { $true }
+                        reminders_enabled = if ($medication.reminders) { [bool]$medication.reminders } else { $false }
                     }
                     $Preferences.tracking.medications.medications_list += $medEntry
                     $Result.PreferencesSet += "Added medication: $($medication.name)"
@@ -703,11 +703,19 @@ class UserProfile {
                             description = ''
                         }
                     } else {
+                        # For hashtable, safely extract location value
+                        $locationValue = 'unknown'
+                        if ($location.name) {
+                            $locationValue = $location.name
+                        } elseif ($location.location) {
+                            $locationValue = $location.location
+                        }
+
                         $locationEntry = @{
                             name = @{
-                                location = $location.name ?? $location.location ?? 'unknown'
+                                location = $locationValue
                             }
-                            description = $location.description ?? ''
+                            description = if ($location.description) { $location.description } else { '' }
                         }
                     }
                     $Preferences.tracking.pain.locations += $locationEntry
@@ -719,8 +727,8 @@ class UserProfile {
             if ($PreferenceData.activities -and $PreferenceData.activities.Count -gt 0) {
                 foreach ($activity in $PreferenceData.activities) {
                     $activityEntry = @{
-                        name = $activity.name ?? $activity
-                        notes = $activity.notes ?? ''
+                        name = if ($activity.name) { $activity.name } else { $activity }
+                        notes = if ($activity.notes) { $activity.notes } else { '' }
                     }
                     $Preferences.tracking.activities.activities_list += $activityEntry
                     $Result.PreferencesSet += "Added activity: $($activityEntry.name)"
