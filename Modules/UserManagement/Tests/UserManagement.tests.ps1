@@ -182,10 +182,11 @@ Describe "UserProfile Class" -Tag class {
             }
         }
 
-        It "Should create user directory structure" {
+        It "Should create user directory structure (legacy test - now uses base64)" {
             # Setup test environment
             $testPath = Initialize-TestEnvironment
-            $testUserPath = Join-Path $testPath $testProfile.ProfileId
+            $expectedBase64Name = $testProfile.GetEmailBase64()
+            $testUserPath = Join-Path $testPath $expectedBase64Name
 
             # Mock the PSU identity check and file system operations
             Mock Get-PSUIdentity { return $script:NewPSUIdentity } -ModuleName UserManagement
@@ -202,9 +203,9 @@ Describe "UserProfile Class" -Tag class {
 
             $result = $testProfile.CreateUserDirectory()
 
-            # Verify directory creation calls
+            # Verify directory creation calls - now uses base64 instead of GUID
             Should -Invoke New-Item -ParameterFilter {
-                $ItemType -eq "Directory" -and $Name -eq $testProfile.ProfileId
+                $ItemType -eq "Directory" -and $Name -eq $expectedBase64Name
             } -Exactly 1 -ModuleName UserManagement
 
             Should -Invoke New-Item -ParameterFilter {
@@ -219,7 +220,9 @@ Describe "UserProfile Class" -Tag class {
                 $ItemType -eq "File" -and $Name -eq "preferences.json"
             } -Exactly 1 -ModuleName UserManagement
 
-            $result | Should -Match $testProfile.ProfileId
+            # Result should contain base64 name, not GUID
+            $result | Should -Match $expectedBase64Name
+            $result | Should -Not -Match $testProfile.ProfileId
         }
 
         It "Should throw when directory creation fails for non-existent PSU identity" {
@@ -228,10 +231,11 @@ Describe "UserProfile Class" -Tag class {
             { $testProfile.CreateUserDirectory() } | Should -Throw -ExpectedMessage "*Could not find identity*"
         }
 
-        It "Should serialize profile to JSON" {
+        It "Should serialize profile to JSON (now uses base64 folder)" {
             # Setup test environment
             $testPath = Initialize-TestEnvironment
-            $expectedProfilePath = "/home/data/users/$($testProfile.ProfileId)/profile.json"
+            $expectedBase64Name = $testProfile.GetEmailBase64()
+            $expectedProfilePath = "/home/data/users/$expectedBase64Name/profile.json"
 
             # Mock file operations
             Mock Out-File { return $null } -ModuleName UserManagement
@@ -240,6 +244,8 @@ Describe "UserProfile Class" -Tag class {
             $result = $testProfile.SaveUserProfile()
 
             $result | Should -Be $expectedProfilePath
+            $result | Should -Match $expectedBase64Name
+            $result | Should -Not -Match $testProfile.ProfileId
             Should -Invoke Out-File -Exactly 3 -ModuleName UserManagement
         }
 
@@ -280,6 +286,255 @@ Describe "UserProfile Class" -Tag class {
 
             # Verify additional properties from Select-Object
             $script:capturedObject.PSObject.Properties.Name | Should -Contain "UserDirectory"
+        }
+    }
+
+    Context "Base64 Email Conversion Tests" {
+        BeforeAll {
+            $usr = $script:TestUserData
+            $testProfile = [UserProfile]::new($usr.Email,$usr.FirstName,$usr.LastName,$usr.Password,$usr.Timezone,$usr.TOSAccepted)
+        }
+
+        It "Should convert email to base64 format (instance method)" {
+            $result = $testProfile.GetEmailBase64()
+
+            $result | Should -Not -BeNullOrEmpty
+            $result | Should -BeOfType [string]
+            # Base64 should not contain padding or URL-unsafe characters
+            $result | Should -Not -Match "="
+            $result | Should -Not -Match "\+"
+            $result | Should -Not -Match "/"
+        }
+
+        It "Should convert email to base64 format (static method)" {
+            $testEmail = "user@example.com"
+            $result = [UserProfile]::ConvertEmailToBase64($testEmail)
+
+            $result | Should -Not -BeNullOrEmpty
+            $result | Should -BeOfType [string]
+            $result | Should -Be "dXNlckBleGFtcGxlLmNvbQ"
+        }
+
+        It "Should convert base64 back to original email" {
+            $originalEmail = "test@domain.com"
+            $base64 = [UserProfile]::ConvertEmailToBase64($originalEmail)
+            $convertedBack = [UserProfile]::ConvertBase64ToEmail($base64)
+
+            $convertedBack | Should -Be $originalEmail
+        }
+
+        It "Should handle emails with special characters" {
+            $specialEmail = "user+test@sub-domain.co.uk"
+            $base64 = [UserProfile]::ConvertEmailToBase64($specialEmail)
+            $convertedBack = [UserProfile]::ConvertBase64ToEmail($base64)
+
+            $convertedBack | Should -Be $specialEmail
+            # Verify base64 is filesystem-safe
+            $base64 | Should -Not -Match "="
+            $base64 | Should -Not -Match "\+"
+            $base64 | Should -Not -Match "/"
+        }
+
+        It "Should produce consistent results for same email" {
+            $email = "consistent@test.com"
+            $result1 = [UserProfile]::ConvertEmailToBase64($email)
+            $result2 = [UserProfile]::ConvertEmailToBase64($email)
+
+            $result1 | Should -Be $result2
+        }
+
+        It "Should produce different results for different emails" {
+            $email1 = "user1@test.com"
+            $email2 = "user2@test.com"
+            $result1 = [UserProfile]::ConvertEmailToBase64($email1)
+            $result2 = [UserProfile]::ConvertEmailToBase64($email2)
+
+            $result1 | Should -Not -Be $result2
+        }
+
+        It "Should handle empty or null email gracefully" {
+            # Empty string should produce empty result
+            $emptyResult = [UserProfile]::ConvertEmailToBase64("")
+            $emptyResult | Should -Be ""
+
+            # Null should be handled gracefully and return empty string
+            $nullResult = [UserProfile]::ConvertEmailToBase64($null)
+            $nullResult | Should -Be ""
+        }
+
+        It "Should create filesystem-safe folder names" {
+            $problematicEmails = @(
+                "user@domain.com",
+                "user+tag@domain.com",
+                "user.name@sub-domain.co.uk",
+                "user_name@domain-name.org"
+            )
+
+            foreach ($email in $problematicEmails) {
+                $base64 = [UserProfile]::ConvertEmailToBase64($email)
+
+                # Should not contain filesystem-problematic characters
+                $base64 | Should -Not -Match "[\\\/<>:""|?*]"
+                $base64 | Should -Not -Match "\s"
+                # Should be valid base64 (only alphanumeric, -, _)
+                $base64 | Should -Match "^[A-Za-z0-9\-_]*$"
+            }
+        }
+    }
+
+    Context "User Directory Creation with Base64 Naming" {
+        BeforeAll {
+            $usr = $script:TestUserData
+            $testProfile = [UserProfile]::new($usr.Email,$usr.FirstName,$usr.LastName,$usr.Password,$usr.Timezone,$usr.TOSAccepted)
+        }
+
+        It "Should create user directory with base64-encoded email folder name" {
+            # Setup test environment
+            $testPath = Initialize-TestEnvironment
+            $expectedBase64Name = $testProfile.GetEmailBase64()
+            $expectedUserPath = Join-Path $testPath $expectedBase64Name
+
+            # Mock the PSU identity check and file system operations
+            Mock Get-PSUIdentity { return $script:NewPSUIdentity } -ModuleName UserManagement
+            Mock New-Item {
+                param($ItemType, $Path, $Name, $ErrorAction)
+                if ($ItemType -eq "Directory") {
+                    $fullPath = if ($Name) { Join-Path $Path $Name } else { $Path }
+                    return @{ FullName = $fullPath }
+                } else {
+                    $fullPath = Join-Path $Path $Name
+                    return @{ FullName = $fullPath }
+                }
+            } -ModuleName UserManagement
+
+            $result = $testProfile.CreateUserDirectory()
+
+            # Verify directory creation uses base64-encoded email instead of GUID
+            Should -Invoke New-Item -ParameterFilter {
+                $ItemType -eq "Directory" -and $Name -eq $expectedBase64Name
+            } -Exactly 1 -ModuleName UserManagement
+
+            # Verify other directories are still created
+            Should -Invoke New-Item -ParameterFilter {
+                $ItemType -eq "Directory" -and $Name -eq "health-data"
+            } -Exactly 1 -ModuleName UserManagement
+
+            Should -Invoke New-Item -ParameterFilter {
+                $ItemType -eq "Directory" -and $Name -eq "img"
+            } -Exactly 1 -ModuleName UserManagement
+
+            $result | Should -Match $expectedBase64Name
+            $result | Should -Not -Match $testProfile.ProfileId
+        }
+
+        It "Should save user profile to base64-named directory" {
+            # Setup test environment
+            $testPath = Initialize-TestEnvironment
+            $expectedBase64Name = $testProfile.GetEmailBase64()
+            $expectedProfilePath = "/home/data/users/$expectedBase64Name/profile.json"
+
+            # Mock file operations
+            Mock Out-File { return $null } -ModuleName UserManagement
+            Mock Join-Path {
+                param($Path, $ChildPath)
+                if ($Path -match "users" -and $ChildPath -eq "profile.json") {
+                    return $expectedProfilePath
+                }
+                return "$Path/$ChildPath"
+            } -ModuleName UserManagement
+
+            $result = $testProfile.SaveUserProfile()
+
+            $result | Should -Be $expectedProfilePath
+            $result | Should -Match $expectedBase64Name
+            $result | Should -Not -Match $testProfile.ProfileId
+        }
+    }
+
+    Context "User Profile Path Resolution with Base64 Support" {
+        BeforeAll {
+            $testEmail = "pathtest@example.com"
+            $testBase64 = [UserProfile]::ConvertEmailToBase64($testEmail)
+        }
+
+        It "Should find user by base64 folder name first" {
+            $testProfileContent = @{
+                Email = $testEmail
+                FirstName = "Test"
+                LastName = "User"
+                ProfileId = [guid]::NewGuid()
+            }
+
+            # Mock successful base64 path lookup
+            Mock Test-Path {
+                param($Path)
+                return $Path -match $testBase64
+            } -ModuleName UserManagement
+
+            Mock Get-Content {
+                return ($testProfileContent | ConvertTo-Json)
+            } -ModuleName UserManagement
+
+            $result = [UserProfile]::GetUserProfilePath($testEmail)
+
+            $result | Should -Not -BeNullOrEmpty
+            $result.ContainsKey('UserDataPath') | Should -Be $true
+            $result.ContainsKey('ProfileContent') | Should -Be $true
+            $result.UserDataPath | Should -Match $testBase64
+        }
+
+        It "Should fallback to GUID folder search when base64 folder doesn't exist" {
+            $testGuidFolder = [guid]::NewGuid()
+            $testProfileContent = @{
+                Email = $testEmail
+                FirstName = "Legacy"
+                LastName = "User"
+                ProfileId = $testGuidFolder
+            }
+
+            # Mock base64 path not found, but GUID path found
+            Mock Test-Path {
+                param($Path)
+                return $Path -match $testGuidFolder -and $Path -notmatch $testBase64
+            } -ModuleName UserManagement
+
+            Mock Get-ChildItem {
+                return @(
+                    @{ FullName = "/home/data/users/$testGuidFolder/profile.json" }
+                )
+            } -ModuleName UserManagement
+
+            Mock Get-Content {
+                return ($testProfileContent | ConvertTo-Json)
+            } -ModuleName UserManagement
+
+            Mock Split-Path {
+                return "/home/data/users/$testGuidFolder"
+            } -ModuleName UserManagement
+
+            $result = [UserProfile]::GetUserProfilePath($testEmail)
+
+            $result | Should -Not -BeNullOrEmpty
+            $result.UserDataPath | Should -Match $testGuidFolder
+            $result.ProfileContent.Email | Should -Be $testEmail
+        }
+
+        It "Should handle UserId-based lookup for backwards compatibility" {
+            $testGuid = [guid]::NewGuid()
+            $testProfileContent = @{
+                Email = $testEmail
+                ProfileId = $testGuid
+            }
+
+            Mock Test-Path { return $true } -ModuleName UserManagement
+            Mock Get-Content {
+                return ($testProfileContent | ConvertTo-Json)
+            } -ModuleName UserManagement
+
+            $result = [UserProfile]::GetUserProfilePath($testEmail, $testGuid)
+
+            $result | Should -Not -BeNullOrEmpty
+            $result.UserDataPath | Should -Match $testGuid
         }
     }
 }
@@ -1065,7 +1320,9 @@ Describe "Cache Functions Integration" {
             # Verify the mock cache was called correctly
             Assert-MockCalled Set-PSUCache -ModuleName UserManagement -Times 1 -ParameterFilter {
                 $Key -eq "UserContext_expiration@example.com" -and
-                $Value -like "*expiration@example.com*"
+                $Value -like "*expiration@example.com*" -and
+                $AbsoluteExpiration -gt (Get-Date) -and
+                $AbsoluteExpiration -lt (Get-Date).AddHours(24)
             }
         }
 
@@ -1084,6 +1341,167 @@ Describe "Cache Functions Integration" {
             Should -Invoke Get-PSUCache -ModuleName UserManagement -Times 1 -ParameterFilter {
                 $Key -eq "UserContext_nonexistent@example.com"
             }
+        }
+    }
+}
+
+Describe "New-PSUUser Function - Base64 Integration" -Tag "New-PSUUser", "Integration" {
+    BeforeAll {
+        $script:TestNewUserData = @{
+            Email = "newuser@example.com"
+            FirstName = "New"
+            LastName = "User"
+            Timezone = "UTC"
+            Password = (New-SecureString "NewUserPass123!")
+            TOSAccepted = $true
+        }
+    }
+
+    Context "User Registration with Base64-encoded Folder Naming" {
+        It "Should register new user with base64-encoded folder name" {
+            $userData = $script:TestNewUserData
+
+            # Mock PSU identity creation sequence
+            $script:IdentityCreated = $false
+            Mock Get-PSUIdentity {
+                if ($script:IdentityCreated) {
+                    return @{ Id = 123; Name = $userData.Email }
+                } else {
+                    return $null
+                }
+            } -ModuleName UserManagement
+            
+            Mock Get-PSURole { return @{ Name = "User" } } -ModuleName UserManagement
+            Mock New-PSUIdentity {
+                $script:IdentityCreated = $true
+                return @{
+                    Id = 123
+                    Name = $userData.Email
+                }
+            } -ModuleName UserManagement
+
+            # Mock file system operations to track base64 usage
+            Mock New-Item {
+                param($ItemType, $Path, $Name, $ErrorAction)
+                if ($ItemType -eq "Directory") {
+                    $fullPath = if ($Name) { Join-Path $Path $Name } else { $Path }
+                    return @{ FullName = $fullPath }
+                } else {
+                    $fullPath = Join-Path $Path $Name
+                    return @{ FullName = $fullPath }
+                }
+            } -ModuleName UserManagement
+
+            Mock Out-File { return $null } -ModuleName UserManagement
+            Mock Join-Path {
+                param($Path, $ChildPath)
+                return "$Path/$ChildPath"
+            } -ModuleName UserManagement
+
+            # Calculate expected base64 folder name
+            $expectedBase64Name = [UserProfile]::ConvertEmailToBase64($userData.Email)
+
+            # Call the function
+            $result = New-PSUUser -Email $userData.Email -FirstName $userData.FirstName -LastName $userData.LastName -Password $userData.Password -Timezone $userData.Timezone -TOSAccepted:$userData.TOSAccepted
+
+            # Verify success
+            $result.Success | Should -Be $true
+            $result.Message | Should -Match "registered successfully"
+            $result.UserProfile | Should -Not -BeNullOrEmpty
+
+            # Verify base64 folder was created (not GUID)
+            Should -Invoke New-Item -ParameterFilter {
+                $ItemType -eq "Directory" -and $Name -eq $expectedBase64Name
+            } -Exactly 1 -ModuleName UserManagement
+
+            # Verify GUID folder was NOT created
+            $userProfileId = $result.UserProfile.ProfileId
+            Should -Invoke New-Item -ParameterFilter {
+                $ItemType -eq "Directory" -and $Name -eq $userProfileId
+            } -Exactly 0 -ModuleName UserManagement
+        }
+
+        It "Should handle registration failure gracefully" {
+            $userData = $script:TestNewUserData
+
+            # Mock PSU identity creation to fail
+            Mock Get-PSUIdentity { return $null } -ModuleName UserManagement
+            Mock Get-PSURole { throw "Role not found" } -ModuleName UserManagement
+            Mock Write-Warning { } -ModuleName UserManagement
+            Mock Write-Error { } -ModuleName UserManagement
+
+            $result = New-PSUUser -Email $userData.Email -FirstName $userData.FirstName -LastName $userData.LastName -Password $userData.Password -Timezone $userData.Timezone -TOSAccepted:$userData.TOSAccepted
+
+            $result.Success | Should -Be $false
+            $result.Message | Should -Match "failed to register"
+            $result.UserProfile | Should -BeNullOrEmpty
+        }
+
+        It "Should validate that base64 conversion is deterministic for user registration" {
+            $testEmail = "deterministic@test.com"
+
+            # Test that the same email always produces the same base64 folder name
+            $base64_1 = [UserProfile]::ConvertEmailToBase64($testEmail)
+            $base64_2 = [UserProfile]::ConvertEmailToBase64($testEmail)
+
+            $base64_1 | Should -Be $base64_2
+            $base64_1 | Should -Be "ZGV0ZXJtaW5pc3RpY0B0ZXN0LmNvbQ"
+        }
+    }
+
+    Context "User Registration Data Integrity" {
+        It "Should preserve all user data in profile.json with base64 folder structure" {
+            $userData = $script:TestNewUserData
+            $script:capturedProfileData = $null
+
+            # Mock PSU identity creation sequence
+            $script:IdentityCreated2 = $false
+            Mock Get-PSUIdentity {
+                if ($script:IdentityCreated2) {
+                    return @{ Id = 456; Name = $userData.Email }
+                } else {
+                    return $null
+                }
+            } -ModuleName UserManagement
+            
+            Mock Get-PSURole { return @{ Name = "User" } } -ModuleName UserManagement
+            Mock New-PSUIdentity {
+                $script:IdentityCreated2 = $true
+                return @{ Id = 456; Name = $userData.Email }
+            } -ModuleName UserManagement
+
+            # Mock directory creation
+            Mock New-Item {
+                return @{ FullName = "/mocked/path" }
+            } -ModuleName UserManagement
+
+            # Capture the JSON data being saved
+            Mock ConvertTo-Json {
+                param($InputObject)
+                $script:capturedProfileData = $InputObject
+                return '{"mocked":"json"}'
+            } -ModuleName UserManagement
+
+            Mock Out-File { } -ModuleName UserManagement
+            Mock Join-Path { return "/mocked/profile.json" } -ModuleName UserManagement
+
+            # Register user
+            $result = New-PSUUser -Email $userData.Email -FirstName $userData.FirstName -LastName $userData.LastName -Password $userData.Password -Timezone $userData.Timezone -TOSAccepted:$userData.TOSAccepted
+
+            # Verify captured profile data contains expected fields
+            $script:capturedProfileData | Should -Not -BeNullOrEmpty
+            $script:capturedProfileData.Email | Should -Be $userData.Email
+            $script:capturedProfileData.FirstName | Should -Be $userData.FirstName
+            $script:capturedProfileData.LastName | Should -Be $userData.LastName
+            $script:capturedProfileData.Timezone | Should -Be $userData.Timezone
+            $script:capturedProfileData.TOSAccepted | Should -Be $userData.TOSAccepted
+            $script:capturedProfileData.PSUProfileId | Should -Be 456
+
+            # Verify profile contains UserDirectory with base64 path
+            $script:capturedProfileData.UserDirectory | Should -Not -BeNullOrEmpty
+
+            # Verify password is NOT included in saved profile
+            $script:capturedProfileData.PSObject.Properties.Name | Should -Not -Contain "Password"
         }
     }
 }
