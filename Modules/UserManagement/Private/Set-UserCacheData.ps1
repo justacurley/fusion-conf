@@ -9,7 +9,7 @@ function Set-UserCacheData {
     end {
         try {
             $CacheKey = "UserContext_$($UserData.UserEmail)"
-            $CacheValue = $UserData | ConvertTo-Json -Compress
+            $CacheValue = $UserData | ConvertTo-Json -Depth 99 -Compress
             Set-PSUCache -Key $CacheKey -Value $CacheValue -AbsoluteExpiration (Get-Date).AddHours($ExpirationHours) -ErrorAction Stop
         } catch {
             $errorMessage = $_.Exception.Message
