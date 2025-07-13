@@ -5,9 +5,9 @@ function New-PainEntryElement {
         [bool]$IncludeRemoveButton = $false,
         [string[]]$ConfiguredLocations
     )
-        
+
     $paperId = if ($EntryNumber -eq 1) { $null } else { "pain_entry_$EntryNumber" }
-        
+
     return New-UDPaper -Id $paperId -Children {
         New-UDGrid -Container -Children {
             if ($IncludeRemoveButton) {
@@ -43,7 +43,11 @@ function New-PainEntryElement {
                 New-UDSelect -Id "pain_location_$EntryNumber" -Label '🎯 Pain Location' -FullWidth -Option {
                     if ($ConfiguredLocations.Count -gt 0) {
                         $ConfiguredLocations.ForEach({
-                            New-UDSelectOption -Name $_ -Value $_
+                            $DisplayName = if ($_ -like "*_*") {
+                               $_.split('_').foreach({$_.Substring(0,1).ToUpper()+$_.Substring(1)}) -join ' '
+                            }
+                            New-UDSelectOption -Name $DisplayName -Value $_
+                            New-UDSelectOption -Name "Other (specify below)" -Value "other"
                         })
                     } else {
                         New-UDSelectOption -Name 'Back' -Value 'back'
@@ -56,7 +60,11 @@ function New-PainEntryElement {
                         New-UDSelectOption -Name 'Right Quad' -Value 'rquad'
                         New-UDSelectOption -Name 'Left Quad' -Value 'lquad'
                         New-UDSelectOption -Name 'Quads' -Value 'quads'
+                        New-UDSelectOption -Name "Other (specify below)" -Value "other"
                     }
+                } -OnChange {
+                    $IsOther = Get-UDElement -Id "pain_location_$EntryNumber"
+                    Write-Information ($IsOther | ConvertTo-Json)
                 }
             }
             New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
@@ -82,9 +90,9 @@ function New-ActivityEntryElement {
         [int]$EntryNumber,
         [bool]$IncludeRemoveButton = $false
     )
-        
+
     $paperId = if ($EntryNumber -eq 1) { $null } else { "activities_entry_$EntryNumber" }
-        
+
     return New-UDPaper -Id $paperId -Children {
         New-UDGrid -Container -Children {
             if ($IncludeRemoveButton) {
@@ -168,7 +176,7 @@ New-UDApp -Content {
                     $MSTDate = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId((Get-Date), 'Mountain Standard Time')
                     $currentDate = $MSTDate.ToString('yyyy-MM-dd')
                     $currentTime = $MSTDate.ToString('HH:mm')
-                        
+
                     New-UDGrid -Item -ExtraSmallSize 6 -Children {
                         New-UDTextbox -Id 'date' -Label '📅 Date' -Type 'date' -FullWidth -Value $currentDate
                     }
@@ -192,11 +200,11 @@ New-UDApp -Content {
                         # Toggle the transition state
                         $currentState = Get-UDElement -Id 'medications_transition'
                         $newState = -not $currentState.in
-                            
+
                         Set-UDElement -Id 'medications_transition' -Properties @{
                             in = $newState
                         }
-                            
+
                         # Update button text based on state
                         if ($newState) {
                             Set-UDElement -Id 'medications_toggle' -Properties @{
@@ -212,14 +220,14 @@ New-UDApp -Content {
                         width        = '100%'
                     }
                 }
-                    
+
                 # Collapsible medications content
                 New-UDTransition -Id 'medications_transition' -Content {
                     New-UDGrid -Container -Children {
                         try {
                             $MedData = Get-Content -Path '/home/data/Repository/fusion-data/entries/medications_lookup.json' | ConvertFrom-Json -AsHashtable
                             $Dosages = $MedData['Medications']
-                                
+
                             # Create visual cards for each medication type
                             foreach ($medType in $Dosages.Keys | Sort-Object) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -MediumSize 4 -Children {
@@ -230,7 +238,7 @@ New-UDApp -Content {
                                             color        = 'var(--theme-palette-primary-main)'
                                             textAlign    = 'center'
                                         }
-                                            
+
                                         # Create checkboxes for each dosage
                                         foreach ($dosage in $Dosages[$medType]) {
                                             New-UDCheckBox -Id "med_$($medType)_$($dosage -replace '\W', '_')" -Label $dosage
@@ -253,7 +261,7 @@ New-UDApp -Content {
                             }
                         }
                     }
-                        
+
                     New-UDTypography -Text '💡 Select all, if any, medications taken at the time of entry' -Variant caption -Style @{
                         marginTop = '15px'
                         color     = 'var(--theme-palette-text-secondary)'
@@ -271,20 +279,20 @@ New-UDApp -Content {
                         New-UDCard -Title '🏃‍♂️ Physical Activities' -Content {
                             # Initial activity entry using reusable function
                             New-ActivityEntryElement -EntryNumber 1 -IncludeRemoveButton $false
-                                
+
                             # Container for additional activities
                             New-UDElement -Id 'additional_activities_container' -Tag 'div'
-                                
+
                             # Add More Button - Separate container
                             New-UDContainer -Children {
                                 New-UDButton -Text '➕ Add Another Activity' -Color primary -Variant outlined -OnClick {
                                     if (-not $Session:ActivityEntryCounter) { $Session:ActivityEntryCounter = 2 }
                                     $entryCount = $Session:ActivityEntryCounter
                                     $Session:ActivityEntryCounter++
-                                        
+
                                     # Use Show-UDToast to debug
                                     Show-UDToast -Message "Adding Activity #$entryCount" -Duration 2000
-                                        
+
                                     # Add the new activity using Add-UDElement with proper syntax
                                     Add-UDElement -ParentId 'additional_activities_container' -Content {
                                         $currentEntryCount = $entryCount  # Capture the variable in local scope
@@ -292,7 +300,7 @@ New-UDApp -Content {
                                     }
                                 }
                             }
-                                
+
                             New-UDTypography -Text '💡 Track your physical activities and exercise duration' -Variant caption -Style @{
                                 marginTop = '15px'
                                 color     = 'var(--theme-palette-text-secondary)'
@@ -307,22 +315,22 @@ New-UDApp -Content {
                     # Checkbox is unchecked - hide activities section
                     Set-UDElement -Id 'activities_section' -Content { }
                 }
-            }            
+            }
             # Activities section container (appears below checkbox when enabled)
             New-UDElement -Id 'activities_section' -Tag 'div'
-                
+
             #pain section
             New-UDCheckBox -Id 'add_pain' -Label '🩹 Add Pain Entry' -OnChange {
                 if ($EventData) {
                     # Checkbox is checked - show pain entry section
-                    Set-UDElement -Id 'pain_section' -Content {                        
+                    Set-UDElement -Id 'pain_section' -Content {
                         New-UDCard -Title '🩹 Pain Tracking' -Content {
                             # Initial pain entry using reusable function
                             New-PainEntryElement -EntryNumber 1 -ConfiguredLocations $Session:PreferredPainLocations
-                                
+
                             # Container for additional pain entries
                             New-UDElement -Id 'additional_pain_container' -Tag 'div'
-                                
+
                             # Add More Button - Separate container
                             New-UDContainer -Children {
                                 New-UDButton -Text '➕ Add Another Pain Entry' -Color primary -Variant outlined -OnClick {
@@ -330,10 +338,10 @@ New-UDApp -Content {
                                     if (-not $Session:PainEntryCounter) { $Session:PainEntryCounter = 2 }
                                     $entryCount = $Session:PainEntryCounter
                                     $Session:PainEntryCounter++
-                                        
+
                                     # Use Show-UDToast to debug
                                     Show-UDToast -Message "Adding Pain Entry #$entryCount" -Duration 2000
-                                        
+
                                     # Add the new pain entry using Add-UDElement with proper syntax
                                     Add-UDElement -ParentId 'additional_pain_container' -Content {
                                         $currentEntryCount = $entryCount  # Capture the variable in local scope
@@ -341,7 +349,7 @@ New-UDApp -Content {
                                     }
                                 }
                             }
-                                
+
                             New-UDTypography -Text '💡 Track pain levels and locations for better health monitoring' -Variant caption -Style @{
                                 marginTop = '15px'
                                 color     = 'var(--theme-palette-text-secondary)'
@@ -356,10 +364,10 @@ New-UDApp -Content {
                     # Checkbox is unchecked - hide pain section
                     Set-UDElement -Id 'pain_section' -Content { }
                 }
-            }           
+            }
             # Pain section container (appears below checkbox when enabled)
             New-UDElement -Id 'pain_section' -Tag 'div'
-                
+
             # Vitals Section - Enhanced UI
             New-UDCheckBox -Id 'add_vitals' -Label '🩺 Add Vital Signs' -OnChange {
                 if ($EventData) {
@@ -390,7 +398,7 @@ New-UDApp -Content {
                                 borderRadius    = '8px'
                                 border          = '1px solid var(--theme-palette-divider)'
                             }
-                                
+
                             New-UDTypography -Text '💡 Record oxygen saturation and blood pressure readings' -Variant caption -Style @{
                                 marginTop = '15px'
                                 color     = 'var(--theme-palette-text-secondary)'
@@ -423,7 +431,7 @@ New-UDApp -Content {
                 }
             }
 
-            # Upload an image 
+            # Upload an image
             New-UDGrid -Container -Children {
                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
                     New-UDUpload -Id 'ImageFile' -Text 'Select Image to Upload' -Accept 'image/*'
