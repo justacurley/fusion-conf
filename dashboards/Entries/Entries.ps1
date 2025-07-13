@@ -586,7 +586,7 @@ New-UDApp -Content {
 
                             # Hidden input to store mood value for form submission
                             New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                New-UDTextbox -Id 'mood' -Type 'hidden' -Value ($Session:SelectedMood ? $Session:SelectedMood : '')
+                                New-UDTextbox -Id 'mood' -Type 'text' -Value ($Session:SelectedMood ? $Session:SelectedMood : '') -Style @{ display = 'none' }
                             }
                         }
                     } -Style @{
