@@ -2,7 +2,8 @@
 function New-PainEntryElement {
     param(
         [int]$EntryNumber,
-        [bool]$IncludeRemoveButton = $false
+        [bool]$IncludeRemoveButton = $false,
+        [string[]]$ConfiguredLocations
     )
         
     $paperId = if ($EntryNumber -eq 1) { $null } else { "pain_entry_$EntryNumber" }
@@ -40,16 +41,22 @@ function New-PainEntryElement {
             }
             New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
                 New-UDSelect -Id "pain_location_$EntryNumber" -Label '🎯 Pain Location' -FullWidth -Option {
-                    New-UDSelectOption -Name 'Back' -Value 'back'
-                    New-UDSelectOption -Name 'Right Glute' -Value 'right_glute'
-                    New-UDSelectOption -Name 'Left Glute' -Value 'left_glute'
-                    New-UDSelectOption -Name 'Glutes' -Value 'glutes'
-                    New-UDSelectOption -Name 'Right Hip' -Value 'righthip'
-                    New-UDSelectOption -Name 'Left Hip' -Value 'lhip'
-                    New-UDSelectOption -Name 'Hips' -Value 'hips'
-                    New-UDSelectOption -Name 'Right Quad' -Value 'rquad'
-                    New-UDSelectOption -Name 'Left Quad' -Value 'lquad'
-                    New-UDSelectOption -Name 'Quads' -Value 'quads'
+                    if ($ConfiguredLocations.Count -gt 0) {
+                        $ConfiguredLocations.ForEach({
+                            New-UDSelectOption -Name $_ -Value $_
+                        })
+                    } else {
+                        New-UDSelectOption -Name 'Back' -Value 'back'
+                        New-UDSelectOption -Name 'Right Glute' -Value 'right_glute'
+                        New-UDSelectOption -Name 'Left Glute' -Value 'left_glute'
+                        New-UDSelectOption -Name 'Glutes' -Value 'glutes'
+                        New-UDSelectOption -Name 'Right Hip' -Value 'righthip'
+                        New-UDSelectOption -Name 'Left Hip' -Value 'lhip'
+                        New-UDSelectOption -Name 'Hips' -Value 'hips'
+                        New-UDSelectOption -Name 'Right Quad' -Value 'rquad'
+                        New-UDSelectOption -Name 'Left Quad' -Value 'lquad'
+                        New-UDSelectOption -Name 'Quads' -Value 'quads'
+                    }
                 }
             }
             New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
@@ -131,6 +138,9 @@ function New-ActivityEntryElement {
 New-UDApp -Content {
     Import-Module UserManagement -Force
     $UserData = Initialize-UserContext -UserEmail $User
+    Write-Information ($UserData.Preferences.tracking.pain.locations.name.location)
+    $Session:Pain = $UserData.Preferences.tracking.pain
+    $Session:PreferredPainLocations = $Session:Pain.enabled ? $Session:Pain.locations.name.location : @()
     New-UDContainer -Children {
         New-UDPaper -Children {
             New-UDGrid -Container -Children {
@@ -254,8 +264,6 @@ New-UDApp -Content {
             } -Style @{ marginBottom = '20px' }
 
             # Add a section for activities that is comprised of a text box on the left for text data, the "Activity", and an text box next to it for integer data, the "Duration (minutes)", and another for "Note"
-            # Activities Section - Enhanced UI
-            # Checkbox to enable/disable activities section
             New-UDCheckBox -Id 'add_activity' -Label '🏃‍♂️ Add Activity Entry' -OnChange {
                 if ($EventData) {
                     # Checkbox is checked - show activities entry section
@@ -310,7 +318,7 @@ New-UDApp -Content {
                     Set-UDElement -Id 'pain_section' -Content {                        
                         New-UDCard -Title '🩹 Pain Tracking' -Content {
                             # Initial pain entry using reusable function
-                            New-PainEntryElement -EntryNumber 1 -IncludeRemoveButton $false
+                            New-PainEntryElement -EntryNumber 1 -ConfiguredLocations $Session:PreferredPainLocations
                                 
                             # Container for additional pain entries
                             New-UDElement -Id 'additional_pain_container' -Tag 'div'
@@ -329,7 +337,7 @@ New-UDApp -Content {
                                     # Add the new pain entry using Add-UDElement with proper syntax
                                     Add-UDElement -ParentId 'additional_pain_container' -Content {
                                         $currentEntryCount = $entryCount  # Capture the variable in local scope
-                                        New-PainEntryElement -EntryNumber $currentEntryCount -IncludeRemoveButton $true
+                                        New-PainEntryElement -EntryNumber $currentEntryCount -IncludeRemoveButton $true -ConfiguredLocations $Session:PreferredPainLocations
                                     }
                                 }
                             }
