@@ -164,6 +164,9 @@ New-UDApp -Content {
     Write-Information ($UserData.Preferences.tracking.pain.locations.name.location)
     $Session:Pain = $UserData.Preferences.tracking.pain
     $Session:PreferredPainLocations = $Session:Pain.enabled ? $Session:Pain.locations.name.location : @()
+    $Session:Mood = $UserData.Preferences.tracking.mood
+    $Session:MoodEnabled = $Session:Mood.enabled ? $true : $false
+    $Session:MoodScaleType = $Session:Mood.scale_type ? $Session:Mood.scale_type : "numeric_5"
     New-UDContainer -Children {
         New-UDPaper -Children {
             New-UDGrid -Container -Children {
