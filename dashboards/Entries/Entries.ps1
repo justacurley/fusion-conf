@@ -25,12 +25,14 @@ function New-PainEntryElement {
                             Show-UDToast -Message "Removing Pain Entry #$EntryNumber" -Duration 2000
                             # Clear the content of this specific pain entry
                             Clear-UDElement -Id "pain_entry_$EntryNumber"
-                        } catch {
+                        }
+                        catch {
                             Show-UDToast -Message "Error removing pain entry: $($_.Exception.Message)" -Duration 3000 -BackgroundColor red
                         }
                     } -Id "remove_pain_btn_$EntryNumber"
                 }
-            } else {
+            }
+            else {
                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
                     New-UDTypography -Text "Pain Entry #$EntryNumber" -Variant subtitle2 -Style @{
                         marginBottom = '15px'
@@ -43,13 +45,14 @@ function New-PainEntryElement {
                 New-UDSelect -Id "pain_location_$EntryNumber" -Label '🎯 Pain Location' -FullWidth -Option {
                     if ($ConfiguredLocations.Count -gt 0) {
                         $ConfiguredLocations.ForEach({
-                            $DisplayName = if ($_ -like "*_*") {
-                               $_.split('_').foreach({$_.Substring(0,1).ToUpper()+$_.Substring(1)}) -join ' '
-                            }
-                            New-UDSelectOption -Name $DisplayName -Value $_
-                            New-UDSelectOption -Name "Other (specify below)" -Value "other"
-                        })
-                    } else {
+                                $DisplayName = if ($_ -like "*_*") {
+                                    $_.split('_').foreach({ $_.Substring(0, 1).ToUpper() + $_.Substring(1) }) -join ' '
+                                }
+                                New-UDSelectOption -Name $DisplayName -Value $_
+                            })
+                        New-UDSelectOption -Name "Other (specify below)" -Value "other"
+                    }
+                    else {
                         New-UDSelectOption -Name 'Back' -Value 'back'
                         New-UDSelectOption -Name 'Right Glute' -Value 'right_glute'
                         New-UDSelectOption -Name 'Left Glute' -Value 'left_glute'
@@ -63,9 +66,18 @@ function New-PainEntryElement {
                         New-UDSelectOption -Name "Other (specify below)" -Value "other"
                     }
                 } -OnChange {
-                    $IsOther = Get-UDElement -Id "pain_location_$EntryNumber"
-                    Write-Information ($IsOther | ConvertTo-Json)
+                    if ($EventData -eq 'other') {
+                        Write-Information "other was selected from select options"                        
+                        Set-UDElement -Id "custom_location_container_$EntryNumber" -Content {
+                            New-UDTextbox -Id "custom_pain_location_$EntryNumber" -Label "Other Location" -Placeholder "Enter Location..."
+                        }                        
+                    } else {
+                        Set-UDElement -Id "custom_location_container_$EntryNumber" -Content {}
+                    }
                 }
+            }
+            New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                New-UDElement -Id "custom_location_container_$EntryNumber" -Tag 'div'
             }
             New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
                 New-UDTextbox -Id "pain_level_$EntryNumber" -Label '📊 Level (0-10)' -Type number -Minimum 0.0 -Maximum 10.0 -Placeholder 5.0 -FullWidth
@@ -110,12 +122,14 @@ function New-ActivityEntryElement {
                             Show-UDToast -Message "Removing Activity #$EntryNumber" -Duration 2000
                             # Clear the content of this specific activity entry
                             Clear-UDElement -Id "activities_entry_$EntryNumber"
-                        } catch {
+                        }
+                        catch {
                             Show-UDToast -Message "Error removing activity: $($_.Exception.Message)" -Duration 3000 -BackgroundColor red
                         }
                     } -Id "remove_btn_$EntryNumber"
                 }
-            } else {
+            }
+            else {
                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
                     New-UDTypography -Text "Activity #$EntryNumber" -Variant subtitle2 -Style @{
                         marginBottom = '15px'
@@ -210,7 +224,8 @@ New-UDApp -Content {
                             Set-UDElement -Id 'medications_toggle' -Properties @{
                                 text = '� Hide Medications'
                             }
-                        } else {
+                        }
+                        else {
                             Set-UDElement -Id 'medications_toggle' -Properties @{
                                 text = '🔽 Show Medications'
                             }
@@ -254,7 +269,8 @@ New-UDApp -Content {
                                     }
                                 }
                             }
-                        } catch {
+                        }
+                        catch {
                             Write-Error "Failed to get or parse medication data: $_"
                             New-UDGrid -Item -ExtraSmallSize 12 -Children {
                                 New-UDAlert -Severity error -Text 'Unable to load medication options. Please check the medications lookup file.'
@@ -311,7 +327,8 @@ New-UDApp -Content {
                             marginBottom = '20px'
                         }
                     }
-                } else {
+                }
+                else {
                     # Checkbox is unchecked - hide activities section
                     Set-UDElement -Id 'activities_section' -Content { }
                 }
@@ -360,7 +377,8 @@ New-UDApp -Content {
                             marginBottom = '20px'
                         }
                     }
-                } else {
+                }
+                else {
                     # Checkbox is unchecked - hide pain section
                     Set-UDElement -Id 'pain_section' -Content { }
                 }
@@ -409,7 +427,8 @@ New-UDApp -Content {
                             marginBottom = '20px'
                         }
                     }
-                } else {
+                }
+                else {
                     # Checkbox is unchecked - hide vitals section
                     Set-UDElement -Id 'vitals_section' -Content { }
                 }
@@ -450,11 +469,13 @@ New-UDApp -Content {
                 if ($saveResult) {
                     Write-Information 'Successfully saved entry to entries.json'
                     Show-UDToast -Message 'Entry saved successfully!' -MessageColor Green -Duration 3000
-                } else {
+                }
+                else {
                     Write-Warning 'Failed to save entry - function returned false'
                     Show-UDToast -Message 'Failed to save entry' -MessageColor Red -Duration 5000
                 }
-            } catch {
+            }
+            catch {
                 Write-Error "Error saving entry: $($_.Exception.Message)"
                 Write-Error "Stack trace: $($_.ScriptStackTrace)"
                 Show-UDToast -Message "Error saving entry: $($_.Exception.Message)" -MessageColor Red -Duration 5000
@@ -470,7 +491,8 @@ New-UDApp -Content {
                     Copy-Item $EventData.ImageFile.FileName $imagePath
                     Write-Information "Image saved to: $imagePath"
                     Show-UDToast -Message 'Image uploaded successfully!' -MessageColor Green -Duration 3000
-                } catch {
+                }
+                catch {
                     Write-Error "Error saving image: $($_.Exception.Message)"
                     Show-UDToast -Message "Error uploading image: $($_.Exception.Message)" -MessageColor Red -Duration 5000
                 }
@@ -482,7 +504,8 @@ New-UDApp -Content {
                 $Entries = Get-EntriesData -entriesPath $EntriesPath
                 Set-PSUCache -Key 'entriesData' -Value $Entries -AbsoluteExpiration (Get-Date).AddDays(1)
                 Write-Information 'Cache updated with new entries data'
-            } catch {
+            }
+            catch {
                 Write-Error "Error updating cache: $($_.Exception.Message)"
                 Show-UDToast -Message "Error updating cache: $($_.Exception.Message)" -MessageColor Red -Duration 5000
             }
