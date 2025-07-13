@@ -67,11 +67,12 @@ function New-PainEntryElement {
                     }
                 } -OnChange {
                     if ($EventData -eq 'other') {
-                        Write-Information "other was selected from select options"                        
+                        Write-Information "other was selected from select options"
                         Set-UDElement -Id "custom_location_container_$EntryNumber" -Content {
                             New-UDTextbox -Id "custom_pain_location_$EntryNumber" -Label "Other Location" -Placeholder "Enter Location..."
-                        }                        
-                    } else {
+                        }
+                    }
+                    else {
                         Set-UDElement -Id "custom_location_container_$EntryNumber" -Content {}
                     }
                 }
@@ -449,7 +450,159 @@ New-UDApp -Content {
                     New-UDTextbox -Id 'sleep' -Label '😴 Sleep Duration' -Type text -Placeholder 'e.g., 7.5 hours, 8:30, 6h 45m' -FullWidth
                 }
             }
+            # Mood Tracking Section
+            if ($Session:MoodEnabled) {
+                New-UDCard -Title '😊 Mood Tracking' -Content {
+                    New-UDPaper -Children {
+                        New-UDGrid -Container -Children {
+                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                New-UDTypography -Text 'How are you feeling?' -Variant subtitle2 -Style @{
+                                    marginBottom = '20px'
+                                    color        = 'var(--theme-palette-primary-main)'
+                                    fontWeight   = '500'
+                                    textAlign    = 'center'
+                                }
+                            }
 
+                            # Mood face buttons in a row
+                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                New-UDGrid -Container -Spacing 2 -Justify 'center' -Children {
+                                    # Rad (5)
+                                    New-UDGrid -Item -Children {
+                                        New-UDButton -Id 'mood_5' -Text '😃' -Variant outlined -Size large -OnClick {
+                                            $Session:SelectedMood = 5
+                                            Set-UDElement -Id 'mood_display' -Content {
+                                                New-UDTypography -Text 'Feeling: Rad! 😃' -Variant body1 -Style @{
+                                                    color      = 'var(--theme-palette-success-main)'
+                                                    fontWeight = 'bold'
+                                                    textAlign  = 'center'
+                                                }
+                                            }
+                                            # Reset other buttons and highlight selected
+                                            @(1, 2, 3, 4, 5) | ForEach-Object {
+                                                $color = if ($_ -eq 5) { 'primary' } else { 'default' }
+                                                $variant = if ($_ -eq 5) { 'contained' } else { 'outlined' }
+                                                Set-UDElement -Id "mood_$_" -Properties @{ color = $color; variant = $variant }
+                                            }
+                                        } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
+                                        New-UDTypography -Text 'rad' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
+                                    }
+
+                                    # Good (4)
+                                    New-UDGrid -Item -Children {
+                                        New-UDButton -Id 'mood_4' -Text '🙂' -Variant outlined -Size large -OnClick {
+                                            $Session:SelectedMood = 4
+                                            Set-UDElement -Id 'mood_display' -Content {
+                                                New-UDTypography -Text 'Feeling: Good 🙂' -Variant body1 -Style @{
+                                                    color      = 'var(--theme-palette-success-main)'
+                                                    fontWeight = 'bold'
+                                                    textAlign  = 'center'
+                                                }
+                                            }
+                                            @(1, 2, 3, 4, 5) | ForEach-Object {
+                                                $color = if ($_ -eq 4) { 'primary' } else { 'default' }
+                                                $variant = if ($_ -eq 4) { 'contained' } else { 'outlined' }
+                                                Set-UDElement -Id "mood_$_" -Properties @{ color = $color; variant = $variant }
+                                            }
+                                        } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
+                                        New-UDTypography -Text 'good' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
+                                    }
+
+                                    # Meh (3)
+                                    New-UDGrid -Item -Children {
+                                        New-UDButton -Id 'mood_3' -Text '😐' -Variant outlined -Size large -OnClick {
+                                            $Session:SelectedMood = 3
+                                            Set-UDElement -Id 'mood_display' -Content {
+                                                New-UDTypography -Text 'Feeling: Meh 😐' -Variant body1 -Style @{
+                                                    color      = 'var(--theme-palette-warning-main)'
+                                                    fontWeight = 'bold'
+                                                    textAlign  = 'center'
+                                                }
+                                            }
+                                            @(1, 2, 3, 4, 5) | ForEach-Object {
+                                                $color = if ($_ -eq 3) { 'primary' } else { 'default' }
+                                                $variant = if ($_ -eq 3) { 'contained' } else { 'outlined' }
+                                                Set-UDElement -Id "mood_$_" -Properties @{ color = $color; variant = $variant }
+                                            }
+                                        } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
+                                        New-UDTypography -Text 'meh' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
+                                    }
+
+                                    # Bad (2)
+                                    New-UDGrid -Item -Children {
+                                        New-UDButton -Id 'mood_2' -Text '🙁' -Variant outlined -Size large -OnClick {
+                                            $Session:SelectedMood = 2
+                                            Set-UDElement -Id 'mood_display' -Content {
+                                                New-UDTypography -Text 'Feeling: Bad 🙁' -Variant body1 -Style @{
+                                                    color      = 'var(--theme-palette-error-main)'
+                                                    fontWeight = 'bold'
+                                                    textAlign  = 'center'
+                                                }
+                                            }
+                                            @(1, 2, 3, 4, 5) | ForEach-Object {
+                                                $color = if ($_ -eq 2) { 'primary' } else { 'default' }
+                                                $variant = if ($_ -eq 2) { 'contained' } else { 'outlined' }
+                                                Set-UDElement -Id "mood_$_" -Properties @{ color = $color; variant = $variant }
+                                            }
+                                        } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
+                                        New-UDTypography -Text 'bad' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
+                                    }
+
+                                    # Awful (1)
+                                    New-UDGrid -Item -Children {
+                                        New-UDButton -Id 'mood_1' -Text '😞' -Variant outlined -Size large -OnClick {
+                                            $Session:SelectedMood = 1
+                                            Set-UDElement -Id 'mood_display' -Content {
+                                                New-UDTypography -Text 'Feeling: Awful 😞' -Variant body1 -Style @{
+                                                    color      = 'var(--theme-palette-error-main)'
+                                                    fontWeight = 'bold'
+                                                    textAlign  = 'center'
+                                                }
+                                            }
+                                            @(1, 2, 3, 4, 5) | ForEach-Object {
+                                                $color = if ($_ -eq 1) { 'primary' } else { 'default' }
+                                                $variant = if ($_ -eq 1) { 'contained' } else { 'outlined' }
+                                                Set-UDElement -Id "mood_$_" -Properties @{ color = $color; variant = $variant }
+                                            }
+                                        } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
+                                        New-UDTypography -Text 'awful' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
+                                    }
+                                }
+                            }
+
+                            # Display selected mood
+                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                New-UDElement -Id 'mood_display' -Tag 'div' -Content {
+                                    New-UDTypography -Text 'Select your mood above' -Variant body2 -Style @{
+                                        textAlign = 'center'
+                                        color     = 'var(--theme-palette-text-secondary)'
+                                        marginTop = '15px'
+                                    }
+                                }
+                            }
+
+                            # Hidden input to store mood value for form submission
+                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                New-UDTextbox -Id 'mood' -Type 'hidden' -Value ($Session:SelectedMood ? $Session:SelectedMood : '')
+                            }
+                        }
+                    } -Style @{
+                        padding         = '20px'
+                        margin          = '10px 0'
+                        backgroundColor = 'var(--theme-palette-background-paper)'
+                        borderLeft      = '4px solid var(--theme-palette-warning-main)'
+                        borderRadius    = '8px'
+                        border          = '1px solid var(--theme-palette-divider)'
+                    }
+
+                    New-UDTypography -Text '💡 Track your daily mood to identify patterns and trends' -Variant caption -Style @{
+                        marginTop = '15px'
+                        color     = 'var(--theme-palette-text-secondary)'
+                        fontStyle = 'italic'
+                        textAlign = 'center'
+                    }
+                } -Style @{ marginBottom = '20px' }
+            }
             # Upload an image
             New-UDGrid -Container -Children {
                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
