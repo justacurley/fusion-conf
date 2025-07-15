@@ -17,13 +17,13 @@ function New-SampleHealthEntries {
     Average number of entries to generate per day (default: 2)
 
     .PARAMETER SaveToFile
-    If specified, saves the data directly to the user's entries.json file
+    If specified, saves the data to the provided file path. If not specified, only returns the data.
 
     .EXAMPLE
     New-SampleHealthEntries -Email "user@example.com" -DaysBack 14 -EntriesPerDay 3
 
     .EXAMPLE
-    New-SampleHealthEntries -Email "user@example.com" -SaveToFile
+    New-SampleHealthEntries -Email "user@example.com" -SaveToFile "/path/to/entries.json"
 
     #>
     [CmdletBinding()]
@@ -33,7 +33,7 @@ function New-SampleHealthEntries {
 
         [int]$DaysBack = 30,
         [int]$EntriesPerDay = 2,
-        [switch]$SaveToFile
+        [string]$SaveToFile
     )
 
 
@@ -46,27 +46,31 @@ function New-SampleHealthEntries {
     }
 
     try {
-        # Ensure the UserManagement module is imported
-        if (-not (Get-Module UserManagement)) {
-            Import-Module UserManagement -Force
-        }
-
         # Get user profile path if SaveToFile is specified
         if ($SaveToFile) {
-            $UserData = [UserProfile]::GetUserProfilePath($Email)
-            if ($UserData.Count -eq 0) {
-                $Response.Message = "User $Email not found"
-                return $Response
+            # Use the provided path directly
+            $EntriesPath = $SaveToFile
+
+            # Ensure the directory exists
+            $Directory = Split-Path $EntriesPath -Parent
+            if ($Directory -and -not (Test-Path $Directory)) {
+                New-Item -Path $Directory -ItemType Directory -Force | Out-Null
             }
-            $UserPath = $UserData['UserDataPath']
-            $EntriesPath = Join-Path $UserPath 'health-data/entries.json'
         }
 
         # Sample data arrays for realistic generation
         $Activities = @('Walking', 'Jogging', 'Swimming', 'Cycling', 'Yoga', 'Weight Training', 'Stretching', 'Dancing')
         $PainLocations = @('Lower Back', 'Neck', 'Shoulders', 'Knees', 'Headache', 'Wrist', 'Ankle')
-        $MoodDescriptions = @('Excellent', 'Good', 'Fair', 'Poor', 'Anxious', 'Stressed', 'Relaxed', 'Energetic')
         $Medications = @('Lisinopril', 'Metformin', 'Atorvastatin', 'Vitamin D', 'Multivitamin', 'Aspirin')
+
+        # Mood tracking data (matching your 5-point scale implementation)
+        $MoodLevels = @{
+            1 = @{ emoji = '😞'; description = 'Awful'; notes = @('Having a really tough day', 'Feeling overwhelmed', 'Everything seems difficult') }
+            2 = @{ emoji = '🙁'; description = 'Bad'; notes = @('Not feeling great today', 'Stressed about work', 'Having some challenges') }
+            3 = @{ emoji = '😐'; description = 'Meh'; notes = @('Feeling neutral today', 'Neither good nor bad', 'Just getting through the day') }
+            4 = @{ emoji = '🙂'; description = 'Good'; notes = @('Having a nice day', 'Feeling positive', 'Things are going well') }
+            5 = @{ emoji = '😃'; description = 'Rad'; notes = @('Feeling fantastic!', 'Amazing day so far', 'Everything is going great', 'Really happy today') }
+        }
 
         $SampleEntries = @()
         $EntryId = 1
@@ -152,14 +156,18 @@ function New-SampleHealthEntries {
                     }
 
                     'mood' {
-                        $Mood = $MoodDescriptions | Get-Random
+                        # Generate realistic mood data matching your 5-point scale
+                        $MoodLevel = Get-Random -Minimum 1 -Maximum 5
+                        $MoodData = $MoodLevels[$MoodLevel]
+                        $MoodNote = $MoodData.notes | Get-Random
+
                         $BaseEntry['data'] = @{
-                            mood_rating = Get-Random -Minimum 1 -Maximum 10
-                            mood_description = $Mood
-                            stress_level = Get-Random -Minimum 1 -Maximum 10
-                            energy_level = Get-Random -Minimum 1 -Maximum 10
+                            mood_level = $MoodLevel
+                            mood_emoji = $MoodData.emoji
+                            mood_description = $MoodData.description
+                            mood_note = $MoodNote
                         }
-                        $BaseEntry['notes'] = "Daily mood check - feeling $($Mood.ToLower())"
+                        $BaseEntry['notes'] = "Mood: $($MoodData.description) $($MoodData.emoji) - $MoodNote"
                     }
 
                     'weight' {
