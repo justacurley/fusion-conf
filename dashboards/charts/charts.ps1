@@ -3,14 +3,14 @@
     $UserData = Initialize-UserContext -UserEmail $User
     New-UDContainer -Content {
         New-UDTypography -Text 'Max Daily Pain Level Tracker' -Variant h4 -Align center
-        
+
         New-UDDynamic -Content {
-            
-            $EntriesPath = '/home/data/fusion-data/entries/entries.json'
+
             try {
+                $EntriesPath = Join-Path $UserData.UserDataPath 'health-data/entries.json'
                 $entries = Get-Content -Path $EntriesPath | ConvertFrom-Json
                 New-UDAlert -Severity success -Text "Loaded data from: $EntriesPath"
-            
+
                 # Extract max_pain_level data for each date
                 $painData = @()
                 $activityData = @()
@@ -18,17 +18,17 @@
                 $backPainData = @()
                 $sleepData = @()
                 $dates = $entries.PSObject.Properties.Name | Sort-Object
-                
+
                 foreach ($date in $dates) {
                     $dateEntry = $entries.$date
                     if ($dateEntry.PSObject.Properties['max_pain_level']) {
                         $maxPain = [double]$dateEntry.max_pain_level
-                        
+
                         # Convert MMDD to readable date
                         $month = $date.Substring(0, 2)
                         $day = $date.Substring(2, 2)
                         $dateStr = "$month/$day"
-                        
+
                         # Check for sleep data
                         $sleepHours = $null
                         if ($dateEntry.PSObject.Properties['Sleep']) {
@@ -44,20 +44,20 @@
                                 $sleepHours = [double]$matches[1]
                             }
                         }
-                        
+
                         # Calculate total daily activity duration and medication amounts
                         $totalActivityDuration = 0
                         $activityTypes = @{}
                         $totalDilaudid = 0
                         $totalValium = 0
                         $backPainLevels = @()
-                        
+
                         # Check all timestamps for this date
                         foreach ($timestamp in $dateEntry.PSObject.Properties.Name) {
                             if ($timestamp -match '^\d{4}$') {
                                 # This is a timestamp
                                 $entry = $dateEntry.$timestamp
-                                
+
                                 # Process Pain data - specifically back pain
                                 if ($entry.PSObject.Properties['Pain']) {
                                     if ($entry.Pain.PSObject.Properties['back']) {
@@ -65,7 +65,7 @@
                                         $backPainLevels += $backPainLevel
                                     }
                                 }
-                                
+
                                 # Process Activities
                                 if ($entry.PSObject.Properties['Activities']) {
                                     foreach ($activity in $entry.Activities.PSObject.Properties.Name) {
@@ -73,7 +73,7 @@
                                         if ($activityInfo.PSObject.Properties['duration']) {
                                             $duration = [int]$activityInfo.duration
                                             $totalActivityDuration += $duration
-                                            
+
                                             # Track individual activity types
                                             if ($activityTypes.ContainsKey($activity)) {
                                                 $activityTypes[$activity] += $duration
@@ -83,7 +83,7 @@
                                         }
                                     }
                                 }
-                                
+
                                 # Process Medications - dilaudid and valium
                                 if ($entry.PSObject.Properties['Medications']) {
                                     foreach ($medication in $entry.Medications.PSObject.Properties.Name) {
@@ -106,13 +106,13 @@
                                 }
                             }
                         }
-                        
+
                         $painData += [PSCustomObject]@{
                             Date         = $dateStr
                             MaxPainLevel = $maxPain
                             SortDate     = $date
                         }
-                        
+
                         $activityData += [PSCustomObject]@{
                             Date          = $dateStr
                             TotalDuration = $totalActivityDuration
@@ -121,14 +121,14 @@
                             Standing      = if ($activityTypes['standing']) { $activityTypes['standing'] } else { 0 }
                             SortDate      = $date
                         }
-                        
+
                         $medicationData += [PSCustomObject]@{
                             Date          = $dateStr
                             TotalDilaudid = $totalDilaudid
                             TotalValium   = $totalValium
                             SortDate      = $date
                         }
-                        
+
                         # Calculate average back pain for the day
                         if ($backPainLevels.Count -gt 0) {
                             $avgBackPain = [math]::Round(($backPainLevels | Measure-Object -Average).Average, 1)
@@ -138,7 +138,7 @@
                                 SortDate    = $date
                             }
                         }
-                        
+
                         # Add sleep data if available
                         if ($sleepHours -ne $null) {
                             $sleepData += [PSCustomObject]@{
@@ -149,26 +149,26 @@
                         }
                     }
                 }
-                
+
                 if ($painData.Count -eq 0) {
                     New-UDAlert -Severity warning -Text 'No pain level data found in entries'
                     return
                 }
-                
+
                 # Sort by actual date
                 $painData = $painData | Sort-Object SortDate
                 $activityData = $activityData | Sort-Object SortDate
                 $medicationData = $medicationData | Sort-Object SortDate
                 $backPainData = $backPainData | Sort-Object SortDate
                 $sleepData = $sleepData | Sort-Object SortDate
-                
+
                 # Remove SortDate property as it's only needed for sorting
                 $painData = $painData | Select-Object Date, MaxPainLevel
                 $activityData = $activityData | Select-Object Date, TotalDuration, Walking, Stairs, Standing
                 $medicationData = $medicationData | Select-Object Date, TotalDilaudid, TotalValium
                 $backPainData = $backPainData | Select-Object Date, AvgBackPain
                 $sleepData = $sleepData | Select-Object Date, SleepHours
-                
+
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
                         # Line chart for pain levels over time - using explicit dataset syntax
@@ -202,7 +202,7 @@
                         }
                     }
                 }
-                
+
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
                         # Line chart for average back pain levels
@@ -236,7 +236,7 @@
                         }
                     }
                 }
-                
+
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
                         # Line chart for sleep duration
@@ -270,7 +270,7 @@
                         }
                     }
                 }
-                
+
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
                         # Line chart for daily dilaudid consumption
@@ -303,7 +303,7 @@
                         }
                     }
                 }
-                
+
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
                         # Line chart for daily valium consumption
@@ -336,8 +336,8 @@
                         }
                     }
                 }
-                
-                
+
+
                 New-UDRow -Columns {
                     New-UDColumn -Size 2 -Content {
                         # Pain Statistics card
@@ -345,7 +345,7 @@
                         $maxPain = ($painData.MaxPainLevel | Measure-Object -Maximum).Maximum
                         $minPain = ($painData.MaxPainLevel | Measure-Object -Minimum).Minimum
                         $totalDays = $painData.Count
-                        
+
                         New-UDCard -Title 'Pain Statistics' -Content {
                             New-UDElement -Tag 'div' -Content {
                                 New-UDTypography -Text "Average Pain Level: $avgPain" -Variant h6
@@ -355,7 +355,7 @@
                             }
                         }
                     }
-                    
+
                     New-UDColumn -Size 2 -Content {
                         # Sleep Statistics card
                         if ($sleepData.Count -gt 0) {
@@ -363,7 +363,7 @@
                             $maxSleep = ($sleepData.SleepHours | Measure-Object -Maximum).Maximum
                             $minSleep = ($sleepData.SleepHours | Measure-Object -Minimum).Minimum
                             $sleepDays = $sleepData.Count
-                            
+
                             New-UDCard -Title 'Sleep Statistics' -Content {
                                 New-UDElement -Tag 'div' -Content {
                                     New-UDTypography -Text "Average Sleep: $avgSleep hrs" -Variant h6
@@ -380,14 +380,14 @@
                             }
                         }
                     }
-                    
+
                     New-UDColumn -Size 2 -Content {
                         # Activity Statistics card
                         $avgActivity = [math]::Round(($activityData.TotalDuration | Measure-Object -Average).Average, 1)
                         $maxActivity = ($activityData.TotalDuration | Measure-Object -Maximum).Maximum
                         $totalActivity = ($activityData.TotalDuration | Measure-Object -Sum).Sum
                         $activeDays = ($activityData | Where-Object { $_.TotalDuration -gt 0 }).Count
-                        
+
                         New-UDCard -Title 'Activity Statistics' -Content {
                             New-UDElement -Tag 'div' -Content {
                                 New-UDTypography -Text "Average Daily Activity: $avgActivity min" -Variant h6
@@ -397,14 +397,14 @@
                             }
                         }
                     }
-                    
+
                     New-UDColumn -Size 2 -Content {
                         # Dilaudid Statistics card
                         $avgDilaudid = [math]::Round(($medicationData.TotalDilaudid | Measure-Object -Average).Average, 1)
                         $maxDilaudid = ($medicationData.TotalDilaudid | Measure-Object -Maximum).Maximum
                         $totalDilaudid = ($medicationData.TotalDilaudid | Measure-Object -Sum).Sum
                         $dilaudidDays = ($medicationData | Where-Object { $_.TotalDilaudid -gt 0 }).Count
-                        
+
                         New-UDCard -Title 'Dilaudid Statistics' -Content {
                             New-UDElement -Tag 'div' -Content {
                                 New-UDTypography -Text "Average Daily Dose: $avgDilaudid mg" -Variant h6
@@ -414,14 +414,14 @@
                             }
                         }
                     }
-                    
+
                     New-UDColumn -Size 2 -Content {
                         # Valium Statistics card
                         $avgValium = [math]::Round(($medicationData.TotalValium | Measure-Object -Average).Average, 1)
                         $maxValium = ($medicationData.TotalValium | Measure-Object -Maximum).Maximum
                         $totalValium = ($medicationData.TotalValium | Measure-Object -Sum).Sum
                         $valiumDays = ($medicationData | Where-Object { $_.TotalValium -gt 0 }).Count
-                        
+
                         New-UDCard -Title 'Valium Statistics' -Content {
                             New-UDElement -Tag 'div' -Content {
                                 New-UDTypography -Text "Average Daily Dose: $avgValium mg" -Variant h6
@@ -431,7 +431,7 @@
                             }
                         }
                     }
-                    
+
                     New-UDColumn -Size 2 -Content {
                         # Back Pain Statistics card
                         if ($backPainData.Count -gt 0) {
@@ -439,7 +439,7 @@
                             $maxBackPain = ($backPainData.AvgBackPain | Measure-Object -Maximum).Maximum
                             $minBackPain = ($backPainData.AvgBackPain | Measure-Object -Minimum).Minimum
                             $backPainDays = $backPainData.Count
-                            
+
                             New-UDCard -Title 'Back Pain Statistics' -Content {
                                 New-UDElement -Tag 'div' -Content {
                                     New-UDTypography -Text "Average Back Pain: $avgBackPain" -Variant h6
@@ -457,7 +457,7 @@
                         }
                     }
                 }
-                
+
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
                         # Data table
@@ -467,12 +467,12 @@
                         ) -Sort -Filter -Search
                     }
                 }
-                
+
             } catch {
                 New-UDAlert -Severity error -Text "Error loading entries data: $($_.Exception.Message)"
             }
         } -Id 'pain-data'
-        
+
         New-UDRow -Columns {
             New-UDColumn -Size 12 -Content {
                 New-UDButton -Text 'Refresh Data' -OnClick {

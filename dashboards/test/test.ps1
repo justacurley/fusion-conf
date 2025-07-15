@@ -3,49 +3,49 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
     $UserData = Initialize-UserContext -UserEmail $User
     New-UDContainer -Content {
         New-UDTypography -Text 'Interactive Chart with Toggleable Data Series' -Variant h4 -Align center
-        
+
         New-UDDynamic -Content {
             # Import the GetFusion module for health data processing functions
             Import-Module -Name GetFusion.psm1 -Force
-            
+
             # Clear any cached data to ensure fresh data load
             Clear-CachedData
-            
+
             # Load and process the data using the simplified module functions
-            $EntriesPath = '/home/data/fusion-data/entries/entries.json'
+            $EntriesPath = Join-Path $UserData.UserDataPath 'health-data/entries.json'
             try {
                 # Load entries data once
                 $entries = Get-EntriesData -entriesPath $EntriesPath
-                
+
                 # Use the new Get-HealthMetrics orchestrator function to get all data
                 $healthData = Get-HealthMetrics -Entries $entries -DataPoints @('MaxPain', 'BackPain', 'Sleep', 'ActivityDuration', 'Medications', 'Activities', 'Vitals')
-                
+
                 # Extract the different data types from the results
                 $combinedPainData = $healthData['CombinedHealthData']
                 $allMedications = $healthData['Medications']
                 $allActivities = $healthData['Activities']
                 $allVitals = $healthData['Vitals']
-                
+
                 # Store chart data in cache for use by dynamic chart updates
                 Set-PSUCache -Key 'chartData' -Value $combinedPainData
                 Set-PSUCache -Key 'medicationData' -Value $allMedications
                 Set-PSUCache -Key 'activityData' -Value $allActivities
                 Set-PSUCache -Key 'vitalsData' -Value $allVitals
                 Set-PSUCache -Key 'distinctData' -Value $global:DistinctDataValues
-                
+
                 # Function to update chart based on checkbox states
                 $UpdateChart = {
                     $chartData = Get-PSUCache -Key 'chartData'
-                
+
                     # Get checkbox states
                     $showMaxPain = (Get-UDElement -Id 'show_max_pain').checked
                     $showBackPain = (Get-UDElement -Id 'show_back_pain').checked
                     $showSleep = (Get-UDElement -Id 'show_sleep').checked
                     $showActivityDuration = (Get-UDElement -Id 'show_activity_duration').checked
-                
+
                     # Create datasets array based on selected checkboxes
                     $datasets = @()
-                
+
                     if ($showMaxPain) {
                         $datasets += New-UDChartJSDataset -DataProperty 'MaxPain' -Label 'Max Pain Level' -BackgroundColor '#dc3545' -BorderColor '#dc3545' -AdditionalOptions @{
                             fill        = $false
@@ -56,7 +56,7 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                             yAxisID     = 'y'
                         }
                     }
-                
+
                     if ($showBackPain) {
                         $datasets += New-UDChartJSDataset -DataProperty 'BackPain' -Label 'Average Back Pain' -BackgroundColor '#007bff' -BorderColor '#007bff' -AdditionalOptions @{
                             fill        = $false
@@ -67,7 +67,7 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                             yAxisID     = 'y'
                         }
                     }
-                
+
                     if ($showSleep) {
                         $datasets += New-UDChartJSDataset -DataProperty 'Sleep' -Label 'Sleep Hours' -BackgroundColor '#28a745' -BorderColor '#28a745' -AdditionalOptions @{
                             fill        = $false
@@ -78,7 +78,7 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                             yAxisID     = 'y1'
                         }
                     }
-                
+
                     if ($showActivityDuration) {
                         $datasets += New-UDChartJSDataset -DataProperty 'ActivityDuration' -Label 'Activity Duration (min)' -BackgroundColor '#ffc107' -BorderColor '#ffc107' -AdditionalOptions @{
                             fill        = $false
@@ -89,7 +89,7 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                             yAxisID     = 'y2'
                         }
                     }
-                
+
                     # Only show chart if at least one dataset is selected
                     if ($datasets.Count -gt 0) {
                         # Update the chart element
@@ -173,7 +173,7 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                         }
                     }
                 }
-                
+
                 # Chart Section
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
@@ -263,7 +263,7 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                         }
                     }
                 }
-            
+
                 # Interactive Controls Section
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
@@ -301,7 +301,7 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                         }
                     }
                 }
-            
+
                 # Data Tables Section
                 New-UDRow -Columns {
                     New-UDColumn -Size 12 -Content {
@@ -348,11 +348,11 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                         } -Style @{ marginTop = '15px'; marginBottom = '20px' }
                     }
                 }
-            
+
             } catch {
                 New-UDAlert -Severity error -Text "Error loading health data: $($_.Exception.Message)"
             }
-            
+
             # ...existing code...
         } -Id 'chart-data'
     }
