@@ -97,6 +97,19 @@ function New-PainEntryElement {
         boxShadow       = '0 2px 4px rgba(0,0,0,0.1)'
     }
 }
+# Helper function to reset mood button states and highlight selected
+function Set-MoodButtonState {
+    param(
+        [int]$SelectedMood
+    )
+
+    @(1, 2, 3, 4, 5) | ForEach-Object {
+        $color = if ($_ -eq $SelectedMood) { 'primary' } else { 'default' }
+        $variant = if ($_ -eq $SelectedMood) { 'contained' } else { 'outlined' }
+        Set-UDElement -Id "mood_$_" -Properties @{ color = $color; variant = $variant }
+    }
+}
+
 # Helper function to create activity entry elements (reduces code duplication)
 function New-ActivityEntryElement {
     param(
@@ -158,6 +171,9 @@ function New-ActivityEntryElement {
         border          = '1px solid var(--theme-palette-divider)'
     }
 }
+# Helper function to update the mood element
+
+
 New-UDApp -Content {
     Import-Module UserManagement -Force
     $UserData = Initialize-UserContext -UserEmail $User
@@ -457,214 +473,178 @@ New-UDApp -Content {
             if ($Session:MoodEnabled) {
                 New-UDCard -Title '😊 Mood Tracking' -Content {
                     New-UDPaper -Children {
-                        New-UDGrid -Container -Children {
-                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                New-UDTypography -Text 'How are you feeling?' -Variant subtitle2 -Style @{
-                                    marginBottom = '20px'
-                                    color        = 'var(--theme-palette-primary-main)'
-                                    fontWeight   = '500'
-                                    textAlign    = 'center'
-                                }
+                        New-UDStack -Direction Column -Children {
+                            New-UDTypography -Text 'How are you feeling?' -Variant subtitle2 -Style @{
+                                marginBottom = '20px'
+                                color        = 'var(--theme-palette-primary-main)'
+                                fontWeight   = '500'
+                                textAlign    = 'center'
                             }
 
-                            # Mood face buttons in a row
-                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                New-UDGrid -Container -Spacing 2 -Justify 'center' -Children {
-                                    # Rad (5)
-                                    New-UDGrid -Item -Children {
-                                        New-UDButton -Id 'mood_5' -Text '😃' -Variant outlined -Size large -OnClick {
-                                            $Session:SelectedMood = 5
-                                            Set-UDElement -Id 'mood_display' -Content {
-                                                New-UDTypography -Text 'Feeling: Rad! 😃' -Variant body1 -Style @{
-                                                    color      = 'var(--theme-palette-success-main)'
-                                                    fontWeight = 'bold'
-                                                    textAlign  = 'center'
-                                                }
-                                            }
-                                            # Reset other buttons and highlight selected
-                                            @(1, 2, 3, 4, 5) | ForEach-Object {
-                                                $color = if ($_ -eq 5) { 'primary' } else { 'default' }
-                                                $variant = if ($_ -eq 5) { 'contained' } else { 'outlined' }
-                                                Set-UDElement -Id "mood_$_" -Properties @{ color = $color; variant = $variant }
-                                            }
-                                        } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
-                                        New-UDTypography -Text 'rad' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
+                            New-UDStack -Direction Row -JustifyContent center -Spacing 2 -Children {
+                                # Rad 5
+                                New-UDButton -Id 'mood_5' -Text '😃' -Variant outlined -Size large -OnClick {
+                                    $Session:SelectedMood = 5
+                                    Set-UDElement -Id 'mood_display' -Content {
+                                        New-UDTypography -Text 'Feeling: Rad! 😃' -Variant body1 -Style @{
+                                            color      = 'var(--theme-palette-success-main)'
+                                            fontWeight = 'bold'
+                                            textAlign  = 'center'
+                                        }
                                     }
+                                    # Reset other buttons and highlight selected
+                                    Set-MoodButtonState -SelectedMood 5
+                                } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
+                                New-UDTypography -Text 'rad' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
 
-                                    # Good (4)
-                                    New-UDGrid -Item -Children {
-                                        New-UDButton -Id 'mood_4' -Text '🙂' -Variant outlined -Size large -OnClick {
-                                            $Session:SelectedMood = 4
-                                            Set-UDElement -Id 'mood_display' -Content {
-                                                New-UDTypography -Text 'Feeling: Good 🙂' -Variant body1 -Style @{
-                                                    color      = 'var(--theme-palette-success-main)'
-                                                    fontWeight = 'bold'
-                                                    textAlign  = 'center'
-                                                }
-                                            }
-                                            @(1, 2, 3, 4, 5) | ForEach-Object {
-                                                $color = if ($_ -eq 4) { 'primary' } else { 'default' }
-                                                $variant = if ($_ -eq 4) { 'contained' } else { 'outlined' }
-                                                Set-UDElement -Id "mood_$_" -Properties @{ color = $color; variant = $variant }
-                                            }
-                                        } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
-                                        New-UDTypography -Text 'good' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
+                                # Good (4)
+                                New-UDButton -Id 'mood_4' -Text '🙂' -Variant outlined -Size large -OnClick {
+                                    $Session:SelectedMood = 4
+                                    Set-UDElement -Id 'mood_display' -Content {
+                                        New-UDTypography -Text 'Feeling: Good 🙂' -Variant body1 -Style @{
+                                            color      = 'var(--theme-palette-success-main)'
+                                            fontWeight = 'bold'
+                                            textAlign  = 'center'
+                                        }
                                     }
+                                    Set-MoodButtonState -SelectedMood 4
+                                } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
+                                New-UDTypography -Text 'good' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
 
-                                    # Meh (3)
-                                    New-UDGrid -Item -Children {
-                                        New-UDButton -Id 'mood_3' -Text '😐' -Variant outlined -Size large -OnClick {
-                                            $Session:SelectedMood = 3
-                                            Set-UDElement -Id 'mood_display' -Content {
-                                                New-UDTypography -Text 'Feeling: Meh 😐' -Variant body1 -Style @{
-                                                    color      = 'var(--theme-palette-warning-main)'
-                                                    fontWeight = 'bold'
-                                                    textAlign  = 'center'
-                                                }
-                                            }
-                                            @(1, 2, 3, 4, 5) | ForEach-Object {
-                                                $color = if ($_ -eq 3) { 'primary' } else { 'default' }
-                                                $variant = if ($_ -eq 3) { 'contained' } else { 'outlined' }
-                                                Set-UDElement -Id "mood_$_" -Properties @{ color = $color; variant = $variant }
-                                            }
-                                        } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
-                                        New-UDTypography -Text 'meh' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
+                                # Meh (3)
+                                New-UDButton -Id 'mood_3' -Text '😐' -Variant outlined -Size large -OnClick {
+                                    $Session:SelectedMood = 3
+                                    Set-UDElement -Id 'mood_display' -Content {
+                                        New-UDTypography -Text 'Feeling: Meh 😐' -Variant body1 -Style @{
+                                            color      = 'var(--theme-palette-warning-main)'
+                                            fontWeight = 'bold'
+                                            textAlign  = 'center'
+                                        }
                                     }
+                                    Set-MoodButtonState -SelectedMood 3
+                                } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
+                                New-UDTypography -Text 'meh' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
 
-                                    # Bad (2)
-                                    New-UDGrid -Item -Children {
-                                        New-UDButton -Id 'mood_2' -Text '🙁' -Variant outlined -Size large -OnClick {
-                                            $Session:SelectedMood = 2
-                                            Set-UDElement -Id 'mood_display' -Content {
-                                                New-UDTypography -Text 'Feeling: Bad 🙁' -Variant body1 -Style @{
-                                                    color      = 'var(--theme-palette-error-main)'
-                                                    fontWeight = 'bold'
-                                                    textAlign  = 'center'
-                                                }
-                                            }
-                                            @(1, 2, 3, 4, 5) | ForEach-Object {
-                                                $color = if ($_ -eq 2) { 'primary' } else { 'default' }
-                                                $variant = if ($_ -eq 2) { 'contained' } else { 'outlined' }
-                                                Set-UDElement -Id "mood_$_" -Properties @{ color = $color; variant = $variant }
-                                            }
-                                        } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
-                                        New-UDTypography -Text 'bad' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
+                                # Bad (2)
+                                New-UDButton -Id 'mood_2' -Text '🙁' -Variant outlined -Size large -OnClick {
+                                    $Session:SelectedMood = 2
+                                    Set-UDElement -Id 'mood_display' -Content {
+                                        New-UDTypography -Text 'Feeling: Bad 🙁' -Variant body1 -Style @{
+                                            color      = 'var(--theme-palette-error-main)'
+                                            fontWeight = 'bold'
+                                            textAlign  = 'center'
+                                        }
                                     }
+                                    Set-MoodButtonState -SelectedMood 2
+                                } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
+                                New-UDTypography -Text 'bad' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
 
-                                    # Awful (1)
-                                    New-UDGrid -Item -Children {
-                                        New-UDButton -Id 'mood_1' -Text '😞' -Variant outlined -Size large -OnClick {
-                                            $Session:SelectedMood = 1
-                                            Set-UDElement -Id 'mood_display' -Content {
-                                                New-UDTypography -Text 'Feeling: Awful 😞' -Variant body1 -Style @{
-                                                    color      = 'var(--theme-palette-error-main)'
-                                                    fontWeight = 'bold'
-                                                    textAlign  = 'center'
-                                                }
-                                            }
-                                            @(1, 2, 3, 4, 5) | ForEach-Object {
-                                                $color = if ($_ -eq 1) { 'primary' } else { 'default' }
-                                                $variant = if ($_ -eq 1) { 'contained' } else { 'outlined' }
-                                                Set-UDElement -Id "mood_$_" -Properties @{ color = $color; variant = $variant }
-                                            }
-                                        } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
-                                        New-UDTypography -Text 'awful' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
+                                # Awful (1)
+                                New-UDButton -Id 'mood_1' -Text '😞' -Variant outlined -Size large -OnClick {
+                                    $Session:SelectedMood = 1
+                                    Set-UDElement -Id 'mood_display' -Content {
+                                        New-UDTypography -Text 'Feeling: Awful 😞' -Variant body1 -Style @{
+                                            color      = 'var(--theme-palette-error-main)'
+                                            fontWeight = 'bold'
+                                            textAlign  = 'center'
+                                        }
                                     }
-                                }
-                            }
+                                    Set-MoodButtonState -SelectedMood 1
+                                } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
+                                New-UDTypography -Text 'awful' -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
 
-                            # Display selected mood
-                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                New-UDElement -Id 'mood_display' -Tag 'div' -Content {
-                                    New-UDTypography -Text 'Select your mood above' -Variant body2 -Style @{
-                                        textAlign = 'center'
-                                        color     = 'var(--theme-palette-text-secondary)'
-                                        marginTop = '15px'
-                                    }
-                                }
-                            }
 
-                            # Hidden input to store mood value for form submission
-                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                New-UDTextbox -Id 'mood' -Type 'text' -Value ($Session:SelectedMood ? $Session:SelectedMood : '') -Style @{ display = 'none' }
                             }
                         }
-                    } -Style @{
-                        padding         = '20px'
-                        margin          = '10px 0'
-                        backgroundColor = 'var(--theme-palette-background-paper)'
-                        borderLeft      = '4px solid var(--theme-palette-warning-main)'
-                        borderRadius    = '8px'
-                        border          = '1px solid var(--theme-palette-divider)'
-                    }
+                        # Hidden input to store mood value for form submission
+                        New-UDTextbox -Id 'mood' -Type 'text' -Value ($Session:SelectedMood ? $Session:SelectedMood : '') -Style @{ display = 'none' }
 
-                    New-UDTypography -Text '💡 Track your daily mood to identify patterns and trends' -Variant caption -Style @{
-                        marginTop = '15px'
-                        color     = 'var(--theme-palette-text-secondary)'
-                        fontStyle = 'italic'
-                        textAlign = 'center'
+                        # Display selected mood
+                        New-UDElement -Id 'mood_display' -Tag 'div' -Content {
+                            New-UDTypography -Text 'Select your mood above' -Variant body2 -Style @{
+                                textAlign = 'center'
+                                color     = 'var(--theme-palette-text-secondary)'
+                                marginTop = '15px'
+                            }
+                        }
+                        New-UDTextbox -Id 'mood_note' -Label '💭 Mood Note (Optional)' -Type text -Placeholder 'How are you feeling?' -FullWidth -Multiline -Rows 2
                     }
-                } -Style @{ marginBottom = '20px' }
-            }
-            # Upload an image
-            New-UDGrid -Container -Children {
-                New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                    New-UDUpload -Id 'ImageFile' -Text 'Select Image to Upload' -Accept 'image/*'
+                } -Style @{
+                    padding         = '20px'
+                    margin          = '10px 0'
+                    backgroundColor = 'var(--theme-palette-background-paper)'
+                    borderLeft      = '4px solid var(--theme-palette-warning-main)'
+                    borderRadius    = '8px'
+                    border          = '1px solid var(--theme-palette-divider)'
                 }
-            }
-        } -OnSubmit {
-            Import-Module -Name fusion -Force
-            $FormEvent = $EventData[0]
-            $FormEvent.timestamp = [datetime]::Parse($FormEvent.timestamp).ToString('HHmm')
-            $FormEvent.date = [datetime]::Parse($FormEvent.date).ToString('MMdd')
-            Write-Information ($FormEvent | ConvertTo-Json -Depth 99)
-            $entry = ConvertTo-EntriesFormat -Entry ( $FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
-            # Save the entry to the entries.json file
-            try {
-                $saveResult = Save-ConvertedEntry -ConvertedEntry $entry
-                if ($saveResult) {
-                    Write-Information 'Successfully saved entry to entries.json'
-                    Show-UDToast -Message 'Entry saved successfully!' -MessageColor Green -Duration 3000
+
+                New-UDTypography -Text '💡 Track your daily mood to identify patterns and trends' -Variant caption -Style @{
+                    marginTop = '15px'
+                    color     = 'var(--theme-palette-text-secondary)'
+                    fontStyle = 'italic'
+                    textAlign = 'center'
                 }
-                else {
-                    Write-Warning 'Failed to save entry - function returned false'
-                    Show-UDToast -Message 'Failed to save entry' -MessageColor Red -Duration 5000
-                }
-            }
-            catch {
-                Write-Error "Error saving entry: $($_.Exception.Message)"
-                Write-Error "Stack trace: $($_.ScriptStackTrace)"
-                Show-UDToast -Message "Error saving entry: $($_.Exception.Message)" -MessageColor Red -Duration 5000
-            }
-            if ($EventData.ImageFile) {
-                $imageFile = $EventData.ImageFile
-                $imageFolderPath = '/home/data/fusion-data/img'
-                $imageExt = $imageFile.Name.Split('.')[-1]
-                $imageFileName = "$($EventData.date).$imageExt"
-                $imagePath = Join-Path $imageFolderPath $imageFileName
-                try {
-                    # Save the uploaded image to the specified path
-                    Copy-Item $EventData.ImageFile.FileName $imagePath
-                    Write-Information "Image saved to: $imagePath"
-                    Show-UDToast -Message 'Image uploaded successfully!' -MessageColor Green -Duration 3000
-                }
-                catch {
-                    Write-Error "Error saving image: $($_.Exception.Message)"
-                    Show-UDToast -Message "Error uploading image: $($_.Exception.Message)" -MessageColor Red -Duration 5000
-                }
-            }
-            # Update the cache with the new entry
-            try {
-                Import-Module -Name GetFusion -Force
-                $EntriesPath = '/home/data/fusion-data/entries/entries.json'
-                $Entries = Get-EntriesData -entriesPath $EntriesPath
-                Set-PSUCache -Key 'entriesData' -Value $Entries -AbsoluteExpiration (Get-Date).AddDays(1)
-                Write-Information 'Cache updated with new entries data'
-            }
-            catch {
-                Write-Error "Error updating cache: $($_.Exception.Message)"
-                Show-UDToast -Message "Error updating cache: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+            } -Style @{ marginBottom = '20px' }
+        }
+        # Upload an image
+        New-UDGrid -Container -Children {
+            New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                New-UDUpload -Id 'ImageFile' -Text 'Select Image to Upload' -Accept 'image/*'
             }
         }
+    } -OnSubmit {
+        Import-Module -Name fusion -Force
+        $FormEvent = $EventData[0]
+        $FormEvent.timestamp = [datetime]::Parse($FormEvent.timestamp).ToString('HHmm')
+        $FormEvent.date = [datetime]::Parse($FormEvent.date).ToString('MMdd')
+        Write-Information ($FormEvent | ConvertTo-Json -Depth 99)
+        $entry = ConvertTo-EntriesFormat -Entry ( $FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
+        # Save the entry to the entries.json file
+        try {
+            $saveResult = Save-ConvertedEntry -ConvertedEntry $entry
+            if ($saveResult) {
+                Write-Information 'Successfully saved entry to entries.json'
+                Show-UDToast -Message 'Entry saved successfully!' -MessageColor Green -Duration 3000
+            }
+            else {
+                Write-Warning 'Failed to save entry - function returned false'
+                Show-UDToast -Message 'Failed to save entry' -MessageColor Red -Duration 5000
+            }
+        }
+        catch {
+            Write-Error "Error saving entry: $($_.Exception.Message)"
+            Write-Error "Stack trace: $($_.ScriptStackTrace)"
+            Show-UDToast -Message "Error saving entry: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+        }
+        if ($EventData.ImageFile) {
+            $imageFile = $EventData.ImageFile
+            $imageFolderPath = '/home/data/fusion-data/img'
+            $imageExt = $imageFile.Name.Split('.')[-1]
+            $imageFileName = "$($EventData.date).$imageExt"
+            $imagePath = Join-Path $imageFolderPath $imageFileName
+            try {
+                # Save the uploaded image to the specified path
+                Copy-Item $EventData.ImageFile.FileName $imagePath
+                Write-Information "Image saved to: $imagePath"
+                Show-UDToast -Message 'Image uploaded successfully!' -MessageColor Green -Duration 3000
+            }
+            catch {
+                Write-Error "Error saving image: $($_.Exception.Message)"
+                Show-UDToast -Message "Error uploading image: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+            }
+        }
+        # Update the cache with the new entry
+        try {
+            Import-Module -Name GetFusion -Force
+            $EntriesPath = '/home/data/fusion-data/entries/entries.json'
+            $Entries = Get-EntriesData -entriesPath $EntriesPath
+            Set-PSUCache -Key 'entriesData' -Value $Entries -AbsoluteExpiration (Get-Date).AddDays(1)
+            Write-Information 'Cache updated with new entries data'
+        }
+        catch {
+            Write-Error "Error updating cache: $($_.Exception.Message)"
+            Show-UDToast -Message "Error updating cache: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+        }
     }
+}
 }

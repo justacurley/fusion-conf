@@ -4,14 +4,40 @@
 
 using namespace System.Collections.Generic
 
+class Mood {
+    [int] $MoodLevel = 3
+    [string] $Note = ''
+
+    Mood () {}
+
+    Mood ([int]$MoodLevel, [string]$Note) {
+        if ($MoodLevel -lt 1 -or $MoodLevel -gt 5) {
+            throw "Mood level must be between 1 and 5, received: $MoodLevel"
+        }
+        $this.MoodLevel = $MoodLevel
+        $this.Note = $Note
+    }
+
+    [bool] IsValid() {
+        return $this.MoodLevel -ge 1 -and $this.MoodLevel -le 5
+    }
+
+    [hashtable] ToHashtable() {
+        return @{
+            MoodLevel = $this.MoodLevel
+            Note = $this.Note
+        }
+    }
+}
+
 # Pain location validation - more flexible approach
 class PainLocationValidator {
     static [string[]] $CommonLocations = @(
-        'back', 'rquad', 'lquad', 'quads', 'rhip', 'lhip', 'hips', 
-        'rglute', 'lglute', 'glutes', 'righthip', 'lefthip', 
+        'back', 'rquad', 'lquad', 'quads', 'rhip', 'lhip', 'hips',
+        'rglute', 'lglute', 'glutes', 'righthip', 'lefthip',
         'right_glute', 'left_glute', 'right_hip', 'left_hip'
     )
-    
+
     static [bool] IsValidLocation([string]$location) {
         # Allow any non-empty string for flexibility, but warn if not in common list
         if ([string]::IsNullOrWhiteSpace($location)) {
@@ -19,7 +45,7 @@ class PainLocationValidator {
         }
         return $true
     }
-    
+
     static [string] NormalizeLocation([string]$location) {
         return $location.ToLower().Trim()
     }
@@ -43,11 +69,11 @@ class MedicationValidator : System.Management.Automation.IValidateSetValuesGener
 class MedicationTaken {
     # What properties do you think you need?
     # Try adding 2-3 basic properties here
-    [string] $dosage = '4mg'    
+    [string] $dosage = '4mg'
     [string] $medication = 'dilaudid'
 
     # Valid Medication Names
-    
+
     # Default constructor
     MedicationTaken() {}
 
@@ -70,16 +96,16 @@ class MedicationTaken {
         $MedValidator = [MedicationValidator]::new()
         $ValidMeds = $MedValidator.GetValidValues()
         $ValidDosages = $MedValidator.GetValidDosages($this.medication)
-        
-        return ($ValidMeds -icontains $this.medication) -and 
+
+        return ($ValidMeds -icontains $this.medication) -and
         ($ValidDosages -icontains $this.dosage) -and
         (-not [string]::IsNullOrWhiteSpace($this.medication))
     }
 
     [hashtable] ToHashtable() {
         return @{
-            dosage     = $this.dosage 
-            medication = $this.medication 
+            dosage     = $this.dosage
+            medication = $this.medication
         }
     }
 }
@@ -112,7 +138,7 @@ class PainLocation {
     [double] $pain_level = 0.0
     [string] $location = 'back'
     [string] $note = ''
-    
+
     # Default constructor
     PainLocation() {}
 
@@ -129,13 +155,13 @@ class PainLocation {
         $this.pain_level = $level  # This will enforce the 0-10 range via ValidateRange
         $this.note = $note
     }
-    
+
     # Validation method
     [bool] IsValid() {
-        return $this.pain_level -ge 0.0 -and $this.pain_level -le 10.0 -and 
+        return $this.pain_level -ge 0.0 -and $this.pain_level -le 10.0 -and
                [PainLocationValidator]::IsValidLocation($this.location)
     }
-    
+
     # Convert to hashtable for JSON serialization
     [hashtable] ToHashtable() {
         return @{
@@ -154,7 +180,7 @@ class Vitals {
     Vitals([int]$o2, [string]$bpr) {
         if ($o2 -gt 100 -or $o2 -lt 0) {
             throw "The provided value of o2: $o2, must be between 1-100"
-        } 
+        }
         [int]$systolic, [int]$diastolic = $bpr -split '/'
         if ($systolic -gt 200 -or $systolic -lt 40) {
             throw "The provided systolic value of bpr: $bpr, valid values are between 40-200"
@@ -165,16 +191,16 @@ class Vitals {
         if ($bpr -notmatch '^\d{2,3}/\d{2,3}$' -or $bpr.Split('/').Count -ne 2) {
             throw "Invalid blood pressure format: $bpr. Expected format: XXX/XX (e.g., 120/80)"
         }
-        $this.o2 = $o2 
-        $this.bpr = $bpr 
+        $this.o2 = $o2
+        $this.bpr = $bpr
     }
 
     [bool] IsValid() {
-        $ValidO2 = $this.o2 -le 100 -and $this.o2 -ge 0 
+        $ValidO2 = $this.o2 -le 100 -and $this.o2 -ge 0
         $ValidFormat = $this.bpr -match '^\d{2,3}/\d{2,3}$'
         if ($ValidFormat) {
             [int]$systolic, [int]$diastolic = $this.bpr -split '/'
-            $validRanges = ($systolic -le 200 -and $systolic -ge 40) -and 
+            $validRanges = ($systolic -le 200 -and $systolic -ge 40) -and
             ($diastolic -le 200 -and $diastolic -ge 40)
             return $ValidO2 -and $validRanges
         }
@@ -192,16 +218,17 @@ class HealthEntry {
     # Timestamp for when this entry was created
     [string] $Date = (Get-Date -f 'MMdd')
     [string] $Time = (Get-Date -f 'HHmm')
-    
+
     # Individual health components (nullable - not every entry needs all components)
     [PainLocation[]] $Pain = @()
-    [MedicationTaken[]] $Medication = @()  
+    [MedicationTaken[]] $Medication = @()
     [Activity[]] $Activity = @()
     [Vitals] $Vitals = $null
-    
+    [Mood] $Mood = $null
+
     # Overall notes for this health entry
     [string] $Note = ''
-    
+
     # # Constructors
     # HealthEntry([PainLocation[]] $Pain,[MedicationTaken[]] $Medication,[Activity[]] $Activity,[Vitals] $Vitals,[string] $Note) {
 
@@ -209,26 +236,26 @@ class HealthEntry {
 
     # Constructor with parameters
     HealthEntry() {}
-    
+
     # Validation method - allow empty entries
     [bool] IsValid() {
         # Always return true - allow empty entries
         # Individual components have their own validation
         return $true
     }
-    
-    
-    # Serialization method  
+
+
+    # Serialization method
     [hashtable] ToHashtable() {
         [hashtable]$Output = @{}
-        
+
         # Handle medications - match real-world format
         [hashtable]$Medications = @{}
         [string[]]$MedicationsTaken = @()
-        $this.Medication.ForEach({ 
+        $this.Medication.ForEach({
             $medName = $_.medication
             $dosage = $_.dosage
-            
+
             if ($Medications.ContainsKey($medName)) {
                 # Multiple doses - convert to array
                 if ($Medications[$medName] -is [array]) {
@@ -240,14 +267,14 @@ class HealthEntry {
                 # Single dose - store as string (matches real data format)
                 $Medications[$medName] = $dosage
             }
-            
+
             if ($medName -notin $MedicationsTaken) {
                 $MedicationsTaken += $medName
             }
         })
-        
-        $Output.Add('Medications',$Medications)        
-        
+
+        $Output.Add('Medications',$Medications)
+
         [hashtable]$Activities = @{}
         $this.Activity.ForEach({
             $ActivityName = $_.ActivityName
@@ -257,9 +284,9 @@ class HealthEntry {
             }
             $Activities.Add($ActivityName,$ActivityData)
         })
-        
+
         $Output.Add('Activities',$Activities)
-        
+
         $Pains = @{}
         $this.Pain.ForEach({
             $Location = $_.location  # location is now a string, not enum
@@ -288,8 +315,18 @@ class HealthEntry {
 
         if ($MedicationsTaken.length -gt 0) {
             $Output.Add('medication_taken', ($MedicationsTaken -join ','))
-        } else { 
+        } else {
             $Output.Add('medication_taken','')
+        }
+
+        # Handle mood data
+        if ($this.Mood) {
+            $MoodData = $this.Mood.ToHashtable()
+            $Output.Add('mood_level', $MoodData.MoodLevel)
+            $Output.Add('mood_note', $MoodData.Note)
+        } else {
+            $Output.Add('mood_level', '')
+            $Output.Add('mood_note', '')
         }
 
         return $Output
