@@ -559,7 +559,7 @@ New-UDApp -Content {
 
 
                             }
-                                                        # Display selected mood
+                            # Display selected mood
                             New-UDElement -Id 'mood_display' -Tag 'div' -Content {
                                 New-UDTypography -Text 'Select your mood above' -Variant body2 -Style @{
                                     textAlign = 'center'
@@ -570,12 +570,12 @@ New-UDApp -Content {
                             New-UDTextbox -Id 'mood_note' -Label '💭 Mood Note (Optional)' -Type text -Placeholder 'How are you feeling?' -FullWidth -Multiline -Rows 2
                         }
                     }
-                                                            New-UDTypography -Text '💡 Track your daily mood to identify patterns and trends' -Variant caption -Style @{
-                    marginTop = '15px'
-                    color     = 'var(--theme-palette-text-secondary)'
-                    fontStyle = 'italic'
-                    textAlign = 'center'
-                } #-Style @{ marginBottom = '20px' }
+                    New-UDTypography -Text '💡 Track your daily mood to identify patterns and trends' -Variant caption -Style @{
+                        marginTop = '15px'
+                        color     = 'var(--theme-palette-text-secondary)'
+                        fontStyle = 'italic'
+                        textAlign = 'center'
+                    } #-Style @{ marginBottom = '20px' }
                 } -Style @{
                     padding         = '20px'
                     margin          = '10px 0'
@@ -584,7 +584,7 @@ New-UDApp -Content {
                     borderRadius    = '8px'
                     border          = '1px solid var(--theme-palette-divider)'
                 }
-            } 
+            }
             New-UDGrid -Container -Children {
                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
                     New-UDUpload -Id 'ImageFile' -Text 'Select Image to Upload' -Accept 'image/*'
