@@ -275,41 +275,6 @@ New-UDRow -Columns {
     }
 }
 
-# System Information Section
-New-UDRow -Columns {
-    New-UDColumn -Size 12 -Content {
-        New-UDTypography -Text '🔧 System Information' -Variant h5 -Style @{
-            marginTop    = '40px'
-            marginBottom = '15px'
-            color        = '#1976d2'
-            fontWeight   = 'bold'
-        }
-    }
-}
-
-New-UDRow -Columns {
-    New-UDColumn -Size 4 -Content {
-        New-UDCard -Title '🔧 System Status' -Content {
-            New-UDTypography -Text '✅ All systems operational' -Variant body1 -Style @{ color = '#4caf50'; fontWeight = 'bold' }
-            New-UDTypography -Text "Last updated: $(Get-Date -Format 'yyyy-MM-dd HH:mm')" -Variant body2 -Style @{ color = '#666' }
-        }
-    }
-    New-UDColumn -Size 4 -Content {
-        New-UDCard -Title '📊 Performance' -Content {
-            New-UDTypography -Text 'Response time: < 200ms' -Variant body2
-            New-UDTypography -Text 'Uptime: 99.8%' -Variant body2
-            New-UDTypography -Text 'Active users: 1' -Variant body2
-        }
-    }
-    New-UDColumn -Size 4 -Content {
-        New-UDCard -Title '🔒 Security' -Content {
-            New-UDTypography -Text 'SSL enabled ✅' -Variant body2 -Style @{ color = '#4caf50' }
-            New-UDTypography -Text 'Authentication: Active' -Variant body2
-            New-UDTypography -Text 'Last backup: Today' -Variant body2
-        }
-    }
-}
-
 # Recent Activity Section
 New-UDRow -Columns {
     New-UDColumn -Size 12 -Content {
