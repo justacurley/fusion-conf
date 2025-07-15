@@ -585,65 +585,64 @@ New-UDApp -Content {
                     textAlign = 'center'
                 }
             } -Style @{ marginBottom = '20px' }
-        }
-        # Upload an image
-        New-UDGrid -Container -Children {
-            New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                New-UDUpload -Id 'ImageFile' -Text 'Select Image to Upload' -Accept 'image/*'
+            New-UDGrid -Container -Children {
+                New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                    New-UDUpload -Id 'ImageFile' -Text 'Select Image to Upload' -Accept 'image/*'
+                }
             }
-        }
-    } -OnSubmit {
-        Import-Module -Name fusion -Force
-        $FormEvent = $EventData[0]
-        $FormEvent.timestamp = [datetime]::Parse($FormEvent.timestamp).ToString('HHmm')
-        $FormEvent.date = [datetime]::Parse($FormEvent.date).ToString('MMdd')
-        Write-Information ($FormEvent | ConvertTo-Json -Depth 99)
-        $entry = ConvertTo-EntriesFormat -Entry ( $FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
-        # Save the entry to the entries.json file
-        try {
-            $saveResult = Save-ConvertedEntry -ConvertedEntry $entry
-            if ($saveResult) {
-                Write-Information 'Successfully saved entry to entries.json'
-                Show-UDToast -Message 'Entry saved successfully!' -MessageColor Green -Duration 3000
-            }
-            else {
-                Write-Warning 'Failed to save entry - function returned false'
-                Show-UDToast -Message 'Failed to save entry' -MessageColor Red -Duration 5000
-            }
-        }
-        catch {
-            Write-Error "Error saving entry: $($_.Exception.Message)"
-            Write-Error "Stack trace: $($_.ScriptStackTrace)"
-            Show-UDToast -Message "Error saving entry: $($_.Exception.Message)" -MessageColor Red -Duration 5000
-        }
-        if ($EventData.ImageFile) {
-            $imageFile = $EventData.ImageFile
-            $imageFolderPath = '/home/data/fusion-data/img'
-            $imageExt = $imageFile.Name.Split('.')[-1]
-            $imageFileName = "$($EventData.date).$imageExt"
-            $imagePath = Join-Path $imageFolderPath $imageFileName
+        } -OnSubmit {
+            Import-Module -Name fusion -Force
+            $FormEvent = $EventData[0]
+            $FormEvent.timestamp = [datetime]::Parse($FormEvent.timestamp).ToString('HHmm')
+            $FormEvent.date = [datetime]::Parse($FormEvent.date).ToString('MMdd')
+            Write-Information ($FormEvent | ConvertTo-Json -Depth 99)
+            $entry = ConvertTo-EntriesFormat -Entry ( $FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
+            # Save the entry to the entries.json file
             try {
-                # Save the uploaded image to the specified path
-                Copy-Item $EventData.ImageFile.FileName $imagePath
-                Write-Information "Image saved to: $imagePath"
-                Show-UDToast -Message 'Image uploaded successfully!' -MessageColor Green -Duration 3000
+                $saveResult = Save-ConvertedEntry -ConvertedEntry $entry
+                if ($saveResult) {
+                    Write-Information 'Successfully saved entry to entries.json'
+                    Show-UDToast -Message 'Entry saved successfully!' -MessageColor Green -Duration 3000
+                }
+                else {
+                    Write-Warning 'Failed to save entry - function returned false'
+                    Show-UDToast -Message 'Failed to save entry' -MessageColor Red -Duration 5000
+                }
             }
             catch {
-                Write-Error "Error saving image: $($_.Exception.Message)"
-                Show-UDToast -Message "Error uploading image: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+                Write-Error "Error saving entry: $($_.Exception.Message)"
+                Write-Error "Stack trace: $($_.ScriptStackTrace)"
+                Show-UDToast -Message "Error saving entry: $($_.Exception.Message)" -MessageColor Red -Duration 5000
             }
-        }
-        # Update the cache with the new entry
-        try {
-            Import-Module -Name GetFusion -Force
-            $EntriesPath = '/home/data/fusion-data/entries/entries.json'
-            $Entries = Get-EntriesData -entriesPath $EntriesPath
-            Set-PSUCache -Key 'entriesData' -Value $Entries -AbsoluteExpiration (Get-Date).AddDays(1)
-            Write-Information 'Cache updated with new entries data'
-        }
-        catch {
-            Write-Error "Error updating cache: $($_.Exception.Message)"
-            Show-UDToast -Message "Error updating cache: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+            if ($EventData.ImageFile) {
+                $imageFile = $EventData.ImageFile
+                $imageFolderPath = '/home/data/fusion-data/img'
+                $imageExt = $imageFile.Name.Split('.')[-1]
+                $imageFileName = "$($EventData.date).$imageExt"
+                $imagePath = Join-Path $imageFolderPath $imageFileName
+                try {
+                    # Save the uploaded image to the specified path
+                    Copy-Item $EventData.ImageFile.FileName $imagePath
+                    Write-Information "Image saved to: $imagePath"
+                    Show-UDToast -Message 'Image uploaded successfully!' -MessageColor Green -Duration 3000
+                }
+                catch {
+                    Write-Error "Error saving image: $($_.Exception.Message)"
+                    Show-UDToast -Message "Error uploading image: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+                }
+            }
+            # Update the cache with the new entry
+            try {
+                Import-Module -Name GetFusion -Force
+                $EntriesPath = '/home/data/fusion-data/entries/entries.json'
+                $Entries = Get-EntriesData -entriesPath $EntriesPath
+                Set-PSUCache -Key 'entriesData' -Value $Entries -AbsoluteExpiration (Get-Date).AddDays(1)
+                Write-Information 'Cache updated with new entries data'
+            }
+            catch {
+                Write-Error "Error updating cache: $($_.Exception.Message)"
+                Show-UDToast -Message "Error updating cache: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+            }
         }
     }
 }
