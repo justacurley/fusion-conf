@@ -334,10 +334,11 @@ function Get-CachedEntriesData {
     param(
         [Parameter(Mandatory = $true)]
         [ValidateScript({
-                if (-not (Test-Path (Split-Path $_ -Parent))) {
-                    throw "Parent directory does not exist: $(Split-Path $_ -Parent)"
+                $parentDir = Split-Path $_ -Parent
+                if (-not (Test-Path $parentDir)) {
+                    throw "Parent directory does not exist: $parentDir"
                 }
-                return $true
+                $true
             })]
         [string]$EntriesPath,
 
@@ -367,19 +368,25 @@ function Get-CachedEntriesData {
             Write-Information 'Loading entries from file (cache empty or force reload)'
 
             if (-not (Test-Path $EntriesPath)) {
-                Write-Information "Entries file does not exist, creating empty structure: $EntriesPath"
-                # Create directory if it doesn't exist
-                $parentDir = Split-Path $EntriesPath -Parent
-                if (-not (Test-Path $parentDir)) {
-                    New-Item -Path $parentDir -ItemType Directory -Force | Out-Null
-                }
-                # Create empty entries file
-                @{} | ConvertTo-Json -Depth 1 | Out-File $EntriesPath -Encoding UTF8
-                # Initialize with empty hashtable
+            Write-Information "Entries file does not exist, creating empty structure: $EntriesPath"
+            # Create directory if it doesn't exist
+            $parentDir = Split-Path $EntriesPath -Parent
+            if (-not (Test-Path $parentDir)) {
+                New-Item -Path $parentDir -ItemType Directory -Force | Out-Null
+            }
+            # Create empty entries file
+            @{} | ConvertTo-Json -Depth 1 | Out-File $EntriesPath -Encoding UTF8
+            # Initialize with empty hashtable - ensure it's not null
+            $AllEntries = @{}
+        } else {
+            $content = Get-Content -Path $EntriesPath -Raw
+            if ([string]::IsNullOrWhiteSpace($content)) {
+                # Handle empty file
                 $AllEntries = @{}
             } else {
-                $AllEntries = Get-Content -Path $EntriesPath | ConvertFrom-Json -AsHashtable
+                $AllEntries = $content | ConvertFrom-Json -AsHashtable
             }
+        }
 
             # Update cache for next time (only if PSU cache is available)
             try {
@@ -676,7 +683,8 @@ function New-SampleHealthEntries {
         # Handle zero count case
         if ($Count -eq 0) {
             Write-Information "Count is 0, returning empty hashtable"
-            return @{}
+            $emptyResult = @{}
+            return $emptyResult
         }
 
         $entries = @{}
@@ -704,7 +712,16 @@ function New-SampleHealthEntries {
             }
 
             # Select random entry types (1-3 types per entry)
-            $selectedTypes = @($entryTypes | Get-Random -Count (Get-Random -Minimum 1 -Maximum 4))
+            $typeCount = Get-Random -Minimum 1 -Maximum 4
+            $selectedTypes = $entryTypes | Get-Random -Count $typeCount
+
+            # Ensure entry_types is always an array by using explicit array creation
+            # PowerShell can unwrap single-item arrays, so we force array type
+            if ($typeCount -eq 1) {
+                $selectedTypes = [string[]]@($selectedTypes)
+            } else {
+                $selectedTypes = [string[]]$selectedTypes
+            }
 
             # Build data section based on selected types
             $data = @{}
@@ -767,7 +784,7 @@ function New-SampleHealthEntries {
                 user_email = $UserEmail
                 date = "{0:yyyy-MM-dd}" -f $randomDate
                 time = "{0:D2}:{1:D2}" -f $randomHour, $randomMinute
-                entry_types = $selectedTypes
+                entry_types = [string[]]$selectedTypes  # Explicit string array type
                 data = $data
                 notes = if ((Get-Random -Minimum 1 -Maximum 4) -eq 1) { "Sample general note for entry" } else { "" }
                 created_at = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ss.fffZ")

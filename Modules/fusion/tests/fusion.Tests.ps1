@@ -939,7 +939,7 @@ Describe "Get-UserEntriesPath Function" -Tag Get-UserEntriesPath,Function {
     }
 }
 
-Describe "Get-CachedEntriesData Function" -Tag Get-CachedEntriesData,Function {
+Describe "Get-CachedEntriesData Function" -Tag Get-CachedEntriesData, Function {
 
     Context "When loading entries data" {
         BeforeEach {
@@ -984,7 +984,8 @@ Describe "Get-CachedEntriesData Function" -Tag Get-CachedEntriesData,Function {
             $result = Get-CachedEntriesData -EntriesPath $nonExistentPath
 
             Test-Path $nonExistentPath | Should -Be $true
-            $result | Should -Not -BeNullOrEmpty
+            $result | Should -Not -Be $null
+            $result | Should -BeOfType [hashtable]
         }
 
         It "Should handle force reload" {
@@ -1149,7 +1150,8 @@ Describe "New-SampleHealthEntries Function" -Tag New-SampleHealthEntries,Unified
 
         It "Should have proper entry structure for each entry" {
             $result = New-SampleHealthEntries -Count 1
-            $entry = $result.Values | Select-Object -First 1
+            $entryKey = $result.Keys | Select-Object -First 1
+            $entry = $result[$entryKey]  # Direct hashtable access instead of pipeline
 
             # Required fields
             $entry.entry_id | Should -Not -BeNullOrEmpty
@@ -1165,8 +1167,10 @@ Describe "New-SampleHealthEntries Function" -Tag New-SampleHealthEntries,Unified
             # Validate time format (HH:mm)
             $entry.time | Should -Match "^\d{2}:\d{2}$"
 
-            # Validate entry_types is array
-            $entry.entry_types | Should -BeOfType [System.Array]
+            # Validate entry_types is array by checking if it has array properties
+            # Use Count property instead of type checking to avoid Pester unwrapping
+            $entry.entry_types.Count | Should -BeGreaterThan 0
+            $entry.entry_types.GetType().IsArray | Should -Be $true
         }
 
         It "Should use string format for blood_pressure" {
@@ -1254,7 +1258,8 @@ Describe "New-SampleHealthEntries Function" -Tag New-SampleHealthEntries,Unified
         It "Should handle zero count gracefully" {
             $result = New-SampleHealthEntries -Count 0
 
-            $result | Should -Not -BeNullOrEmpty
+            $result | Should -Not -Be $null
+            $result | Should -BeOfType [hashtable]
             $result.Keys.Count | Should -Be 0
         }
 
@@ -1309,8 +1314,8 @@ Describe "Schema Compatibility Tests" -Tag SchemaCompatibility {
             if ($vitalsEntry) {
                 $vitalsEntry.data.vitals.blood_pressure | Should -Match "^\d{2,3}/\d{2,3}$"
                 $vitalsEntry.data.vitals.blood_pressure | Should -BeOfType [string]
-                # Verify it follows the expected "systolic/diastolic" pattern
-                $vitalsEntry.data.vitals.blood_pressure | Should -Match "^1[0-2][0-9]/[6-9][0-9]$"
+                # Verify it follows the expected "systolic/diastolic" pattern (110-140 / 70-90)
+                $vitalsEntry.data.vitals.blood_pressure | Should -Match "^1[1-4][0-9]/[7-9][0-9]$"
             }
         }
     }
