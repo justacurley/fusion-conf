@@ -1,6 +1,40 @@
 ﻿$HomePage = New-UDApp -Content {
     Import-Module UserManagement -Force
-    $UserData = Initialize-UserContext -UserEmail $User  
+    Import-Module GetFusion -Force
+    $UserData = Initialize-UserContext -UserEmail $User
+
+    # Get actual entries data
+    try {
+        $EntriesPath = Join-Path $UserData.UserDataPath 'health-data/entries.json'
+        $Entries = Get-EntriesData -entriesPath $EntriesPath
+        $TotalEntries = $Entries.Count
+
+        # Calculate mood statistics
+        $MoodEntries = $Entries | Where-Object { $_.mood -and $_.mood -ne '' }
+        $LatestMood = $MoodEntries | Sort-Object date, timestamp -Descending | Select-Object -First 1
+        $AverageMood = if ($MoodEntries.Count -gt 0) {
+            [math]::Round(($MoodEntries | Measure-Object mood -Average).Average, 1)
+        } else { 0 }
+
+        # Pain tracking stats
+        $PainEntries = $Entries | Where-Object { $_.pain_entries -and $_.pain_entries.Count -gt 0 }
+        $RecentPainCount = ($PainEntries | Where-Object {
+            [datetime]::ParseExact($_.date, 'MMdd', $null).AddDays(365) -gt (Get-Date).AddDays(-7)
+        }).Count
+
+        # Activity stats
+        $ActivityEntries = $Entries | Where-Object { $_.activities -and $_.activities.Count -gt 0 }
+        $RecentActivities = ($ActivityEntries | Where-Object {
+            [datetime]::ParseExact($_.date, 'MMdd', $null).AddDays(365) -gt (Get-Date).AddDays(-7)
+        }).Count
+
+    } catch {
+        $TotalEntries = 0
+        $LatestMood = $null
+        $AverageMood = 0
+        $RecentPainCount = 0
+        $RecentActivities = 0
+    }
     # Homepage content for the Health Dashboard
     New-UDContainer -Content {
         # Header Section
@@ -23,29 +57,44 @@
         New-UDRow -Columns {
             New-UDColumn -Size 3 -Content {
                 New-UDCard -Title "📊 Total Entries" -Content {
-                    New-UDTypography -Text "2, 847" -Variant h4 -Style @{ color = "#4caf50"; fontWeight = "bold"; textAlign = "center" }
+                    New-UDTypography -Text "$TotalEntries" -Variant h4 -Style @{ color = "#4caf50"; fontWeight = "bold"; textAlign = "center" }
                     New-UDTypography -Text "Health records tracked" -Variant body2 -Style @{ textAlign = "center"; color = "#666" }
                 } -Style @{ textAlign = "center"; border = "2px solid #4caf50"; borderRadius = "10px" }
-}
-New-UDColumn -Size 3 -Content {
-    New-UDCard -Title '💊 Medications' -Content {
-        New-UDTypography -Text '12' -Variant h4 -Style @{ color = '#ff9800'; fontWeight = 'bold'; textAlign = 'center' }
-        New-UDTypography -Text 'Active prescriptions' -Variant body2 -Style @{ textAlign = 'center'; color = '#666' }
-    } -Style @{ textAlign = 'center'; border = '2px solid #ff9800'; borderRadius = '10px' }
-}
-New-UDColumn -Size 3 -Content {
-    New-UDCard -Title '⚠️ Alerts' -Content {
-        New-UDTypography -Text '3' -Variant h4 -Style @{ color = '#f44336'; fontWeight = 'bold'; textAlign = 'center' }
-        New-UDTypography -Text 'Requires attention' -Variant body2 -Style @{ textAlign = 'center'; color = '#666' }
-    } -Style @{ textAlign = 'center'; border = '2px solid #f44336'; borderRadius = '10px' }
-}
-New-UDColumn -Size 3 -Content {
-    New-UDCard -Title '📈 Trends' -Content {
-        New-UDTypography -Text '↗️' -Variant h4 -Style @{ color = '#2196f3'; fontWeight = 'bold'; textAlign = 'center' }
-        New-UDTypography -Text 'Health improving' -Variant body2 -Style @{ textAlign = 'center'; color = '#666' }
-    } -Style @{ textAlign = 'center'; border = '2px solid #2196f3'; borderRadius = '10px' }
-}
-}
+            }
+            New-UDColumn -Size 3 -Content {
+                $moodColor = switch ($AverageMood) {
+                    { $_ -ge 4 } { "#4caf50" }
+                    { $_ -ge 3 } { "#ff9800" }
+                    default { "#f44336" }
+                }
+                $moodEmoji = switch ([math]::Round($AverageMood)) {
+                    5 { "😃" }
+                    4 { "🙂" }
+                    3 { "😐" }
+                    2 { "🙁" }
+                    1 { "😞" }
+                    default { "❓" }
+                }
+                New-UDCard -Title "� Average Mood" -Content {
+                    New-UDTypography -Text "$moodEmoji $AverageMood" -Variant h4 -Style @{ color = $moodColor; fontWeight = "bold"; textAlign = "center" }
+                    New-UDTypography -Text "Based on $($MoodEntries.Count) entries" -Variant body2 -Style @{ textAlign = "center"; color = "#666" }
+                } -Style @{ textAlign = "center"; border = "2px solid $moodColor"; borderRadius = "10px" }
+            }
+            New-UDColumn -Size 3 -Content {
+                New-UDCard -Title '🏃‍♂️ Activities' -Content {
+                    New-UDTypography -Text "$RecentActivities" -Variant h4 -Style @{ color = '#2196f3'; fontWeight = 'bold'; textAlign = 'center' }
+                    New-UDTypography -Text 'This week' -Variant body2 -Style @{ textAlign = 'center'; color = '#666' }
+                } -Style @{ textAlign = 'center'; border = '2px solid #2196f3'; borderRadius = '10px' }
+            }
+            New-UDColumn -Size 3 -Content {
+                $painColor = if ($RecentPainCount -eq 0) { "#4caf50" } elseif ($RecentPainCount -le 2) { "#ff9800" } else { "#f44336" }
+                $painStatus = if ($RecentPainCount -eq 0) { "No pain reported" } else { "$RecentPainCount pain entries" }
+                New-UDCard -Title '🩹 Pain Tracking' -Content {
+                    New-UDTypography -Text "$RecentPainCount" -Variant h4 -Style @{ color = $painColor; fontWeight = 'bold'; textAlign = 'center' }
+                    New-UDTypography -Text $painStatus -Variant body2 -Style @{ textAlign = 'center'; color = '#666' }
+                } -Style @{ textAlign = 'center'; border = "2px solid $painColor"; borderRadius = '10px' }
+            }
+        }
 
 # Quick Actions Section
 New-UDRow -Columns {
@@ -59,20 +108,86 @@ New-UDRow -Columns {
     }
 }
 
+# Latest Mood Status Section
+if ($LatestMood) {
+    New-UDRow -Columns {
+        New-UDColumn -Size 12 -Content {
+            $moodEmoji = switch ($LatestMood.mood) {
+                5 { "😃" }
+                4 { "🙂" }
+                3 { "😐" }
+                2 { "🙁" }
+                1 { "😞" }
+                default { "❓" }
+            }
+            $moodDesc = switch ($LatestMood.mood) {
+                5 { "Rad" }
+                4 { "Good" }
+                3 { "Meh" }
+                2 { "Bad" }
+                1 { "Awful" }
+                default { "Unknown" }
+            }
+            $moodColor = switch ($LatestMood.mood) {
+                { $_ -ge 4 } { "#4caf50" }
+                { $_ -eq 3 } { "#ff9800" }
+                default { "#f44336" }
+            }
+
+            New-UDCard -Title "😊 Latest Mood Check" -Content {
+                New-UDTypography -Text "$moodEmoji Feeling $moodDesc" -Variant h5 -Style @{
+                    color = $moodColor; fontWeight = 'bold'; textAlign = 'center'; marginBottom = '10px'
+                }
+                if ($LatestMood.mood_note) {
+                    New-UDTypography -Text "`"$($LatestMood.mood_note)`"" -Variant body1 -Style @{
+                        textAlign = 'center'; fontStyle = 'italic'; marginBottom = '10px'
+                    }
+                }
+                $moodDate = [datetime]::ParseExact($LatestMood.date, 'MMdd', $null).AddDays(365)
+                New-UDTypography -Text "Recorded on $($moodDate.ToString('MMM dd, yyyy')) at $($LatestMood.timestamp)" -Variant body2 -Style @{
+                    textAlign = 'center'; color = '#666'
+                }
+            } -Style @{ border = "2px solid $moodColor"; borderRadius = '10px'; marginBottom = '20px' }
+        }
+    }
+}
+
 New-UDRow -Columns {
-    New-UDColumn -Size 4 -Content {
+    New-UDColumn -Size 3 -Content {
         New-UDButton -Text '➕ Add New Entry' -Color primary -Size large -FullWidth -OnClick {
             Invoke-UDRedirect -Url '/entries' -Native
         } -Style @{ marginBottom = '10px'; padding = '15px' }
     }
-    New-UDColumn -Size 4 -Content {
+    New-UDColumn -Size 3 -Content {
         New-UDButton -Text '📊 View Analytics' -Color secondary -Size large -FullWidth -OnClick {
             Invoke-UDRedirect -Url '/charts' -Native
         } -Style @{ marginBottom = '10px'; padding = '15px' }
     }
-    New-UDColumn -Size 4 -Content {
+    New-UDColumn -Size 3 -Content {
         New-UDButton -Text '📅 Timeline View' -Color success -Size large -FullWidth -OnClick {
             Invoke-UDRedirect -Url '/timeline' -Native
+        } -Style @{ marginBottom = '10px'; padding = '15px' }
+    }
+    New-UDColumn -Size 3 -Content {
+        New-UDButton -Text '🎲 Generate Sample Data' -Color warning -Size large -FullWidth -OnClick {
+            try {
+                # Import and run the sample data generator
+                Import-Module -Name "$($PSScriptRoot)/../../Modules/UserManagement/UserManagement.psd1" -Force
+                . "$($PSScriptRoot)/../../Modules/UserManagement/Public/New-SampleHealthEntries.ps1"
+
+                $samplePath = '/home/data/fusion-data/entries/sample-entries.json'
+                $result = New-SampleHealthEntries -Email $User -DaysBack 30 -EntriesPerDay 2 -SaveToFile $samplePath
+
+                if ($result.Success) {
+                    Show-UDToast -Message "✅ Generated $($result.EntriesGenerated) sample entries!" -Duration 5000 -MessageColor Green
+                    # Refresh the page to show new data
+                    Invoke-UDRedirect -Url '/home' -Native
+                } else {
+                    Show-UDToast -Message "❌ Failed to generate sample data: $($result.Message)" -Duration 5000 -MessageColor Red
+                }
+            } catch {
+                Show-UDToast -Message "❌ Error: $($_.Exception.Message)" -Duration 5000 -MessageColor Red
+            }
         } -Style @{ marginBottom = '10px'; padding = '15px' }
     }
 }
@@ -198,7 +313,7 @@ New-UDRow -Columns {
 # Recent Activity Section
 New-UDRow -Columns {
     New-UDColumn -Size 12 -Content {
-        New-UDTypography -Text '📋 Recent Activity' -Variant h5 -Style @{
+        New-UDTypography -Text '📋 Health Summary' -Variant h5 -Style @{
             marginTop    = '40px'
             marginBottom = '15px'
             color        = '#1976d2'
@@ -211,11 +326,23 @@ New-UDRow -Columns {
     New-UDColumn -Size 12 -Content {
         New-UDCard -Content {
             New-UDList -Content {
-                New-UDListItem -Label '🩺 Health check completed' -SubTitle '2 hours ago'
-                New-UDListItem -Label '💊 Medication reminder sent' -SubTitle '4 hours ago'
-                New-UDListItem -Label '📊 Weekly report generated' -SubTitle '1 day ago'
-                New-UDListItem -Label '🔄 Data sync completed' -SubTitle '2 days ago'
-                New-UDListItem -Label '📝 New entry added' -SubTitle '3 days ago'
+                if ($TotalEntries -gt 0) {
+                    New-UDListItem -Label "📊 Total health entries tracked" -SubTitle "$TotalEntries records"
+                    if ($MoodEntries.Count -gt 0) {
+                        New-UDListItem -Label "😊 Mood tracking entries" -SubTitle "$($MoodEntries.Count) mood records (avg: $AverageMood/5)"
+                    }
+                    if ($ActivityEntries.Count -gt 0) {
+                        New-UDListItem -Label "🏃‍♂️ Activity entries recorded" -SubTitle "$($ActivityEntries.Count) activity sessions"
+                    }
+                    if ($PainEntries.Count -gt 0) {
+                        New-UDListItem -Label "🩹 Pain tracking entries" -SubTitle "$($PainEntries.Count) pain reports"
+                    }
+                    New-UDListItem -Label "� Data range coverage" -SubTitle "From $(($Entries | Sort-Object date | Select-Object -First 1).date) to $(($Entries | Sort-Object date | Select-Object -Last 1).date)"
+                } else {
+                    New-UDListItem -Label "� No data yet" -SubTitle "Click 'Generate Sample Data' to get started"
+                    New-UDListItem -Label "🚀 Ready to track" -SubTitle "Add your first health entry using the form"
+                    New-UDListItem -Label "� Analytics available" -SubTitle "Charts and trends will appear as you add data"
+                }
             }
         } -Style @{ marginBottom = '30px' }
     }
