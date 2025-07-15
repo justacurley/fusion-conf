@@ -1,4 +1,7 @@
 using module ../HealthEntryClasses/HealthEntryClasses.psm1
+
+# Legacy global path support for backward compatibility
+# New functions should use the EntriesPath parameter instead
 $Remote = Get-ChildItem Env:HOSTNAME -ErrorAction Ignore
 if ($Remote -and $Remote.Value -like '*us-west-2*') {
     $global:EntriesPath = '/home/data/fusion-data/entries/entries.json'
@@ -247,8 +250,14 @@ function Save-ConvertedEntry {
             })]
         [hashtable]$ConvertedEntry,
 
-        [Parameter(Mandatory = $false)]
-        [string]$EntriesPath = $global:EntriesPath
+        [Parameter(Mandatory = $true)]
+        [ValidateScript({
+                if (-not (Test-Path (Split-Path $_ -Parent))) {
+                    throw "Parent directory does not exist: $(Split-Path $_ -Parent)"
+                }
+                return $true
+            })]
+        [string]$EntriesPath
     )
 
     Write-Information 'Starting Save-ConvertedEntry'
@@ -306,28 +315,34 @@ function Get-CachedEntriesData {
     This function attempts to load entries data from PSU cache first, falling back to file if cache is empty.
     It handles PSCustomObject to hashtable conversion and updates the cache when loading from file.
 
+    .PARAMETER EntriesPath
+    The full path to the user's entries.json file (required for multi-user support)
+
     .PARAMETER CacheKey
     The PSU cache key to use. Defaults to 'entriesData'
-
-    .PARAMETER EntriesPathVariableName
-    The PSU variable name that contains the entries file path. Defaults to 'EntriesPath'
 
     .PARAMETER ForceReload
     If true, bypasses cache and loads directly from file, then updates cache
 
     .EXAMPLE
-    $entries = Get-CachedEntriesData
+    $entries = Get-CachedEntriesData -EntriesPath "/home/alex/data/users/user@example.com/health-data/entries.json"
 
     .EXAMPLE
-    $entries = Get-CachedEntriesData -ForceReload
+    $entries = Get-CachedEntriesData -EntriesPath $userEntriesPath -ForceReload
     #>
     [CmdletBinding()]
     param(
-        [Parameter(Mandatory = $false)]
-        [string]$CacheKey = 'entriesData',
+        [Parameter(Mandatory = $true)]
+        [ValidateScript({
+                if (-not (Test-Path (Split-Path $_ -Parent))) {
+                    throw "Parent directory does not exist: $(Split-Path $_ -Parent)"
+                }
+                return $true
+            })]
+        [string]$EntriesPath,
 
         [Parameter(Mandatory = $false)]
-        [string]$EntriesPathVariableName = 'EntriesPath',
+        [string]$CacheKey = 'entriesData',
 
         [Parameter(Mandatory = $false)]
         [switch]$ForceReload
@@ -351,22 +366,20 @@ function Get-CachedEntriesData {
             # Fallback to loading from file if cache is empty or force reload requested
             Write-Information 'Loading entries from file (cache empty or force reload)'
 
-            try {
-                Import-Module -Name GetFusion -Force
-                $EntriesPath = Get-PSUVariable -Name $EntriesPathVariableName -ValueOnly
-                Write-Information "Got entries path from PSU variable: $EntriesPath"
+            if (-not (Test-Path $EntriesPath)) {
+                Write-Information "Entries file does not exist, creating empty structure: $EntriesPath"
+                # Create directory if it doesn't exist
+                $parentDir = Split-Path $EntriesPath -Parent
+                if (-not (Test-Path $parentDir)) {
+                    New-Item -Path $parentDir -ItemType Directory -Force | Out-Null
+                }
+                # Create empty entries file
+                @{} | ConvertTo-Json -Depth 1 | Out-File $EntriesPath -Encoding UTF8
+                # Initialize with empty hashtable
+                $AllEntries = @{}
+            } else {
+                $AllEntries = Get-Content -Path $EntriesPath | ConvertFrom-Json -AsHashtable
             }
-            catch {
-                # Fallback to global variable if PSU variable not available
-                Write-Information 'PSU variable not available, using global variable'
-                $EntriesPath = $global:EntriesPath
-            }
-
-            if (-not $EntriesPath) {
-                throw 'Could not determine entries file path from PSU variable or global variable'
-            }
-
-            $AllEntries = Get-EntriesData -entriesPath $EntriesPath
 
             # Update cache for next time (only if PSU cache is available)
             try {
@@ -414,7 +427,7 @@ function Remove-TimeEntry {
     The timestamp in HHMM format (e.g., "1430", "0800") to remove from the specified date
 
     .PARAMETER EntriesPath
-    Optional. The path to the entries.json file. If not provided, uses global variable or PSU variable
+    The full path to the user's entries.json file (required for multi-user support)
 
     .PARAMETER CreateBackup
     Optional. If true, creates a backup of the entries file before making changes. Default is true
@@ -423,13 +436,13 @@ function Remove-TimeEntry {
     Optional. If true, updates the PSU cache after successful removal. Default is true
 
     .EXAMPLE
-    Remove-TimeEntry -Date "0701" -Time "1430"
+    Remove-TimeEntry -Date "0701" -Time "1430" -EntriesPath "/home/alex/data/users/user@example.com/health-data/entries.json"
 
     .EXAMPLE
-    Remove-TimeEntry -Date "1225" -Time "0800" -WhatIf
+    Remove-TimeEntry -Date "1225" -Time "0800" -EntriesPath $userEntriesPath -WhatIf
 
     .EXAMPLE
-    Remove-TimeEntry -Date "0615" -Time "2130" -CreateBackup:$false
+    Remove-TimeEntry -Date "0615" -Time "2130" -EntriesPath $userEntriesPath -CreateBackup:$false
 
     .OUTPUTS
     Returns $true if the entry was successfully removed, $false otherwise
@@ -444,7 +457,13 @@ function Remove-TimeEntry {
         [ValidatePattern('^\d{3,4}$')]
         [string]$Time,
 
-        [Parameter(Mandatory = $false)]
+        [Parameter(Mandatory = $true)]
+        [ValidateScript({
+                if (-not (Test-Path (Split-Path $_ -Parent))) {
+                    throw "Parent directory does not exist: $(Split-Path $_ -Parent)"
+                }
+                return $true
+            })]
         [string]$EntriesPath,
 
         [Parameter(Mandatory = $false)]
@@ -457,19 +476,8 @@ function Remove-TimeEntry {
     try {
         Write-Information "Starting Remove-TimeEntry for Date: $Date, Time: $Time"
 
-        # Determine entries file path
-        if (-not $EntriesPath) {
-            try {
-                $EntriesPath = Get-PSUVariable -Name 'EntriesPath' -ValueOnly
-                Write-Information "Got entries path from PSU variable: $EntriesPath"
-            }
-            catch {
-                $EntriesPath = $global:EntriesPath
-                Write-Information "Using global entries path: $EntriesPath"
-            }
-        }
-
-        if (-not $EntriesPath -or -not (Test-Path $EntriesPath)) {
+        # Validate entries file exists
+        if (-not (Test-Path $EntriesPath)) {
             throw "Entries file not found at path: $EntriesPath"
         }
 
@@ -569,3 +577,213 @@ function Remove-TimeEntry {
 }
 
 Export-ModuleMember -Function Remove-TimeEntry
+
+function Get-UserEntriesPath {
+    <#
+    .SYNOPSIS
+    Gets the entries.json file path for a specific user
+
+    .DESCRIPTION
+    Constructs the full path to a user's entries.json file based on their email address.
+    The email is base64 encoded for safe filesystem usage.
+
+    .PARAMETER UserEmail
+    The user's email address
+
+    .PARAMETER BaseDataPath
+    Optional. The base data directory path. Defaults to appropriate path based on environment
+
+    .EXAMPLE
+    $entriesPath = Get-UserEntriesPath -UserEmail "user@example.com"
+
+    .EXAMPLE
+    $entriesPath = Get-UserEntriesPath -UserEmail "alex@domain.com" -BaseDataPath "/custom/data/path"
+
+    .OUTPUTS
+    Returns the full path to the user's entries.json file
+    #>
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $true)]
+        [ValidatePattern('^[^@]+@[^@]+\.[^@]+$')]
+        [string]$UserEmail,
+
+        [Parameter(Mandatory = $false)]
+        [string]$BaseDataPath
+    )
+
+    try {
+        # Determine base data path if not provided
+        if (-not $BaseDataPath) {
+            $Remote = Get-ChildItem Env:HOSTNAME -ErrorAction Ignore
+            if ($Remote -and $Remote.Value -like '*us-west-2*') {
+                $BaseDataPath = '/home/data'
+            }
+            else {
+                $BaseDataPath = '/home/alex/src/fusion-local/data'
+            }
+        }
+
+        # Encode email address for safe filesystem usage
+        $EncodedEmail = [System.Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes($UserEmail))
+
+        # Construct full path
+        $UserEntriesPath = Join-Path $BaseDataPath "users" $EncodedEmail "health-data" "entries.json"
+
+        Write-Information "Generated entries path for user '$UserEmail': $UserEntriesPath"
+        return $UserEntriesPath
+    }
+    catch {
+        Write-Error "Error generating user entries path: $($_.Exception.Message)"
+        throw
+    }
+}
+
+Export-ModuleMember -Function Get-UserEntriesPath
+
+function New-SampleHealthEntries {
+    <#
+    .SYNOPSIS
+    Generates sample health entries using the unified schema format
+
+    .DESCRIPTION
+    Creates sample health entries using the new unified schema with composite keys (yyMMddHHmm),
+    multiple entry types, and structured data sections. Used for testing and development.
+
+    .PARAMETER Count
+    Number of sample entries to generate (default: 5)
+
+    .PARAMETER UserEmail
+    User email for the sample entries (default: "sample.user@example.com")
+
+    .EXAMPLE
+    $samples = New-SampleHealthEntries -Count 10
+
+    .EXAMPLE
+    $samples = New-SampleHealthEntries -Count 3 -UserEmail "test@domain.com"
+    #>
+
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory = $false)]
+        [int]$Count = 5,
+
+        [Parameter(Mandatory = $false)]
+        [string]$UserEmail = "sample.user@example.com"
+    )
+
+    try {
+        # Handle zero count case
+        if ($Count -eq 0) {
+            Write-Information "Count is 0, returning empty hashtable"
+            return @{}
+        }
+
+        $entries = @{}
+        $entryTypes = @("mood", "pain", "vitals", "medication", "activity", "sleep")
+        $painLocations = @("back", "neck", "shoulder", "hip", "knee", "head", "chest", "abdomen")
+        $activities = @("Walking", "Stretching", "Exercise", "Physical Therapy", "Swimming", "Yoga", "Running")
+        $medications = @("tylenol", "dilaudid", "lexapro", "vitaminD", "oxycodone", "valium")
+        $moodNotes = @("Feeling good today", "A bit tired", "Energetic morning", "Relaxed evening", "Productive day", "Need more rest")
+
+        for ($i = 0; $i -lt $Count; $i++) {
+            # Generate random date/time within last 30 days
+            $baseDate = (Get-Date).AddDays(-30)
+            $randomDate = $baseDate.AddDays((Get-Random -Minimum 0 -Maximum 30))
+            $randomHour = Get-Random -Minimum 6 -Maximum 22
+            $randomMinute = Get-Random -Minimum 0 -Maximum 59
+
+            # Create composite key (yyMMddHHmm)
+            $compositeKey = "{0:yy}{0:MM}{0:dd}{1:D2}{2:D2}" -f $randomDate, $randomHour, $randomMinute
+
+            # Ensure unique keys
+            while ($entries.ContainsKey($compositeKey)) {
+                $randomMinute = ($randomMinute + 1) % 60
+                if ($randomMinute -eq 0) { $randomHour = ($randomHour + 1) % 24 }
+                $compositeKey = "{0:yy}{0:MM}{0:dd}{1:D2}{2:D2}" -f $randomDate, $randomHour, $randomMinute
+            }
+
+            # Select random entry types (1-3 types per entry)
+            $selectedTypes = @($entryTypes | Get-Random -Count (Get-Random -Minimum 1 -Maximum 4))
+
+            # Build data section based on selected types
+            $data = @{}
+
+            foreach ($type in $selectedTypes) {
+                switch ($type) {
+                    "mood" {
+                        $data.mood = @{
+                            mood_level = Get-Random -Minimum 1 -Maximum 10
+                            mood_note = $moodNotes | Get-Random
+                        }
+                    }
+                    "pain" {
+                        $data.pain = @{
+                            pain_level = Get-Random -Minimum 0 -Maximum 10
+                            location = $painLocations | Get-Random
+                            pain_note = "Sample pain entry"
+                        }
+                    }
+                    "vitals" {
+                        $systolic = Get-Random -Minimum 110 -Maximum 140
+                        $diastolic = Get-Random -Minimum 70 -Maximum 90
+                        $data.vitals = @{
+                            blood_pressure = "$systolic/$diastolic"
+                            heart_rate = Get-Random -Minimum 60 -Maximum 100
+                            oxygen_saturation = Get-Random -Minimum 95 -Maximum 100
+                            temperature = [math]::Round((Get-Random -Minimum 97.0 -Maximum 99.5), 1)
+                        }
+                    }
+                    "medication" {
+                        $med = $medications | Get-Random
+                        $dosages = @("500mg", "1g", "2mg", "4mg", "5mg", "10mg", "20mg")
+                        $data.medication = @{
+                            name = $med
+                            dosage = $dosages | Get-Random
+                            time_taken = "{0:HH:mm}" -f $randomDate.AddHours($randomHour).AddMinutes($randomMinute)
+                        }
+                    }
+                    "activity" {
+                        $data.activity = @{
+                            type = $activities | Get-Random
+                            duration_minutes = Get-Random -Minimum 5 -Maximum 120
+                            intensity = @("Low", "Medium", "High") | Get-Random
+                            activity_note = "Sample activity"
+                        }
+                    }
+                    "sleep" {
+                        $data.sleep = @{
+                            hours_slept = [math]::Round((Get-Random -Minimum 4.0 -Maximum 10.0), 1)
+                            sleep_quality = Get-Random -Minimum 1 -Maximum 10
+                            sleep_note = "Sleep tracking entry"
+                        }
+                    }
+                }
+            }
+
+            # Create the entry
+            $entry = @{
+                entry_id = $compositeKey
+                user_email = $UserEmail
+                date = "{0:yyyy-MM-dd}" -f $randomDate
+                time = "{0:D2}:{1:D2}" -f $randomHour, $randomMinute
+                entry_types = $selectedTypes
+                data = $data
+                notes = if ((Get-Random -Minimum 1 -Maximum 4) -eq 1) { "Sample general note for entry" } else { "" }
+                created_at = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+                updated_at = (Get-Date).ToString("yyyy-MM-ddTHH:mm:ss.fffZ")
+            }
+
+            $entries[$compositeKey] = $entry
+        }
+
+        Write-Information "Generated $Count sample health entries using unified schema"
+        return $entries
+
+    }
+    catch {
+        Write-Error "Error generating sample health entries: $($_.Exception.Message)"
+        throw
+    }
+}
+Export-ModuleMember -Function New-SampleHealthEntries

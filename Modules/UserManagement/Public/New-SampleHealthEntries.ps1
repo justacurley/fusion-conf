@@ -1,11 +1,19 @@
 function New-SampleHealthEntries {
     <#
     .SYNOPSIS
-    Generates sample health entries data for testing and development purposes.
+    Generates unified sample health entries for testing and development purposes.
 
     .DESCRIPTION
-    Creates realistic sample health data entries including vital signs, medications,
-    pain levels, activities, and mood tracking for a specified number of days.
+    Creates realistic unified health data entries that group multiple health types together
+    (mood, vitals, medication, activity, pain, weight, sleep) using the new composite key
+    format (yyMMddHHmm). This simulates realistic user behavior where multiple health
+    metrics are submitted together rather than as separate individual entries.
+
+    The function creates entries with:
+    - Composite entry_id in yyMMddHHmm format
+    - entry_types array containing 1-4 health types per entry
+    - Unified data object with all health metrics for that submission
+    - Combined notes describing all activities in the entry
 
     .PARAMETER Email
     User's email address to identify the profile
@@ -14,16 +22,25 @@ function New-SampleHealthEntries {
     Number of days back from today to generate data for (default: 30)
 
     .PARAMETER EntriesPerDay
-    Average number of entries to generate per day (default: 2)
+    Average number of unified entries to generate per day (default: 2)
 
     .PARAMETER SaveToFile
-    If specified, saves the data to the provided file path. If not specified, only returns the data.
+    If specified, saves the unified data to the provided file path. If not specified, only returns the data.
 
     .EXAMPLE
     New-SampleHealthEntries -Email "user@example.com" -DaysBack 14 -EntriesPerDay 3
+    Generates 14 days of unified health entries with approximately 3 entries per day
 
     .EXAMPLE
     New-SampleHealthEntries -Email "user@example.com" -SaveToFile "/path/to/entries.json"
+    Generates unified entries and saves to specified file
+
+    .NOTES
+    Schema Changes from Previous Version:
+    - Uses composite entry_id (yyMMddHHmm) instead of auto-incrementing IDs
+    - Groups multiple health types in single entries instead of individual entries
+    - Eliminates metadata duplication by consolidating related submissions
+    - Maintains all existing health type data structures within unified format
 
     #>
     [CmdletBinding()]
@@ -73,9 +90,8 @@ function New-SampleHealthEntries {
         }
 
         $SampleEntries = @()
-        $EntryId = 1
 
-        # Generate entries for each day
+        # Generate unified entries for each time period
         for ($day = $DaysBack; $day -ge 0; $day--) {
             $CurrentDate = (Get-Date).AddDays(-$day)
             $EntriesForDay = Get-Random -Minimum 1 -Maximum ($EntriesPerDay + 2)
@@ -86,116 +102,140 @@ function New-SampleHealthEntries {
                 $Minute = Get-Random -Minimum 0 -Maximum 59
                 $EntryTime = $CurrentDate.Date.AddHours($Hour).AddMinutes($Minute)
 
-                # Generate random entry type
-                $EntryTypes = @('vitals', 'medication', 'activity', 'pain', 'mood', 'weight', 'sleep')
-                $EntryType = $EntryTypes | Get-Random
+                # Generate entry_id in yyMMddHHmm format
+                $EntryId = $EntryTime.ToString('yyMMddHHmm')
 
-                $BaseEntry = @{
-                    id = $EntryId++
-                    timestamp = $EntryTime.ToString('yyyy-MM-ddTHH:mm:ss.fffZ')
+                # Create base unified entry structure
+                $UnifiedEntry = @{
+                    entry_id = $EntryId
+                    user_email = $Email
                     date = $EntryTime.ToString('yyyy-MM-dd')
                     time = $EntryTime.ToString('HH:mm')
-                    type = $EntryType
-                    user_email = $Email
+                    entry_types = @()
+                    data = @{}
+                    notes = ''
                 }
 
-                # Generate specific data based on entry type
-                switch ($EntryType) {
-                    'vitals' {
-                        $BaseEntry['data'] = @{
-                            blood_pressure = @{
-                                systolic = Get-Random -Minimum 110 -Maximum 140
-                                diastolic = Get-Random -Minimum 70 -Maximum 90
+                # Randomly determine which health types to include (1-4 types per entry)
+                $AllTypes = @('mood', 'vitals', 'medication', 'activity', 'pain', 'weight', 'sleep')
+                $NumTypes = Get-Random -Minimum 1 -Maximum 4
+                $SelectedTypes = $AllTypes | Get-Random -Count $NumTypes
+
+                $NoteParts = @()
+
+                foreach ($Type in $SelectedTypes) {
+                    $UnifiedEntry.entry_types += $Type
+
+                    switch ($Type) {
+                        'vitals' {
+                            $Systolic = Get-Random -Minimum 110 -Maximum 140
+                            $Diastolic = Get-Random -Minimum 70 -Maximum 90
+                            $UnifiedEntry.data[$Type] = @{
+                                blood_pressure = "$Systolic/$Diastolic"
+                                heart_rate = Get-Random -Minimum 60 -Maximum 100
+                                oxygen_saturation = Get-Random -Minimum 95 -Maximum 100
+                                temperature = [math]::Round((Get-Random -Minimum 97.0 -Maximum 99.5), 1)
                             }
-                            heart_rate = Get-Random -Minimum 60 -Maximum 100
-                            oxygen_saturation = Get-Random -Minimum 95 -Maximum 100
-                            temperature = [math]::Round((Get-Random -Minimum 97.0 -Maximum 99.5), 1)
+                            $NoteParts += 'Vital signs check'
                         }
-                        $BaseEntry['notes'] = 'Regular vital signs check'
-                    }
 
-                    'medication' {
-                        $Med = $Medications | Get-Random
-                        $BaseEntry['data'] = @{
-                            medication_name = $Med
-                            dosage = switch ($Med) {
-                                'Lisinopril' { '10mg' }
-                                'Metformin' { '500mg' }
-                                'Atorvastatin' { '20mg' }
-                                'Vitamin D' { '1000 IU' }
-                                'Multivitamin' { '1 tablet' }
-                                'Aspirin' { '81mg' }
-                                default { '1 tablet' }
+                        'medication' {
+                            $Med = $Medications | Get-Random
+                            $UnifiedEntry.data[$Type] = @{
+                                medication_name = $Med
+                                dosage = switch ($Med) {
+                                    'Lisinopril' { '10mg' }
+                                    'Metformin' { '500mg' }
+                                    'Atorvastatin' { '20mg' }
+                                    'Vitamin D' { '1000 IU' }
+                                    'Multivitamin' { '1 tablet' }
+                                    'Aspirin' { '81mg' }
+                                    default { '1 tablet' }
+                                }
                             }
-                            taken_at = $EntryTime.ToString('HH:mm')
-                            taken_as_prescribed = $true
+                            $NoteParts += "Took $Med"
                         }
-                        $BaseEntry['notes'] = "Took $Med as scheduled"
-                    }
 
-                    'activity' {
-                        $Activity = $Activities | Get-Random
-                        $BaseEntry['data'] = @{
-                            activity_name = $Activity
-                            duration_minutes = Get-Random -Minimum 15 -Maximum 90
-                            intensity = @('light', 'moderate', 'vigorous') | Get-Random
-                            calories_burned = Get-Random -Minimum 50 -Maximum 400
+                        'activity' {
+                            $Activity = $Activities | Get-Random
+                            $ActivityNotes = @(
+                                'Great workout session',
+                                'Feeling energized after this',
+                                'Good way to start the day',
+                                'Needed this after sitting all day',
+                                'Really enjoyed this activity',
+                                'Challenging but rewarding',
+                                'Perfect weather for this'
+                            )
+                            $UnifiedEntry.data[$Type] = @{
+                                activity_name = $Activity
+                                duration_minutes = Get-Random -Minimum 15 -Maximum 90
+                                note = $ActivityNotes | Get-Random
+                            }
+                            $NoteParts += "$Activity session"
                         }
-                        $BaseEntry['notes'] = "Completed $Activity session"
-                    }
 
-                    'pain' {
-                        $Location = $PainLocations | Get-Random
-                        $BaseEntry['data'] = @{
-                            location = $Location
-                            severity = Get-Random -Minimum 1 -Maximum 10
-                            duration_hours = Get-Random -Minimum 1 -Maximum 8
-                            pain_type = @('sharp', 'dull', 'throbbing', 'burning', 'aching') | Get-Random
+                        'pain' {
+                            $Location = $PainLocations | Get-Random
+                            $PainNotes = @(
+                                'Started gradually this morning',
+                                'Woke up with this pain',
+                                'Got worse during the day',
+                                'Comes and goes throughout the day',
+                                'Sharp stabbing sensation',
+                                'Dull ache that persists',
+                                'Feels tight and stiff'
+                            )
+                            $UnifiedEntry.data[$Type] = @{
+                                location = $Location
+                                severity = Get-Random -Minimum 1 -Maximum 10
+                                note = $PainNotes | Get-Random
+                            }
+                            $NoteParts += "Pain in $Location"
                         }
-                        $BaseEntry['notes'] = "Pain in $Location area"
-                    }
 
-                    'mood' {
-                        # Generate realistic mood data matching your 5-point scale
-                        $MoodLevel = Get-Random -Minimum 1 -Maximum 5
-                        $MoodData = $MoodLevels[$MoodLevel]
-                        $MoodNote = $MoodData.notes | Get-Random
+                        'mood' {
+                            # Generate realistic mood data matching your 5-point scale
+                            $MoodLevel = Get-Random -Minimum 1 -Maximum 5
+                            $MoodData = $MoodLevels[$MoodLevel]
+                            $MoodNote = $MoodData.notes | Get-Random
 
-                        $BaseEntry['data'] = @{
-                            mood_level = $MoodLevel
-                            mood_emoji = $MoodData.emoji
-                            mood_description = $MoodData.description
-                            mood_note = $MoodNote
+                            $UnifiedEntry.data[$Type] = @{
+                                mood_level = $MoodLevel
+                                mood_note = $MoodNote
+                            }
+                            $NoteParts += "Mood: $($MoodData.description) $($MoodData.emoji)"
                         }
-                        $BaseEntry['notes'] = "Mood: $($MoodData.description) $($MoodData.emoji) - $MoodNote"
-                    }
 
-                    'weight' {
-                        $BaseEntry['data'] = @{
-                            weight_lbs = [math]::Round((Get-Random -Minimum 120.0 -Maximum 220.0), 1)
-                            bmi = [math]::Round((Get-Random -Minimum 18.5 -Maximum 32.0), 1)
+                        'weight' {
+                            $WeightLbs = [math]::Round((Get-Random -Minimum 120.0 -Maximum 220.0), 1)
+                            $WeightKg = [math]::Round(($WeightLbs * 0.453592), 1)
+                            $UnifiedEntry.data[$Type] = @{
+                                weight_lbs = $WeightLbs
+                                weight_kg = $WeightKg
+                            }
+                            $NoteParts += 'Weight check'
                         }
-                        $BaseEntry['notes'] = 'Daily weight check'
-                    }
 
-                    'sleep' {
-                        $SleepHours = [math]::Round((Get-Random -Minimum 5.0 -Maximum 10.0), 1)
-                        $BaseEntry['data'] = @{
-                            sleep_hours = $SleepHours
-                            sleep_quality = Get-Random -Minimum 1 -Maximum 10
-                            bedtime = (Get-Date).AddDays(-1).Date.AddHours(22).AddMinutes((Get-Random -Minimum 0 -Maximum 120)).ToString('HH:mm')
-                            wake_time = (Get-Date).Date.AddHours(6).AddMinutes((Get-Random -Minimum 0 -Maximum 120)).ToString('HH:mm')
+                        'sleep' {
+                            $SleepHours = [math]::Round((Get-Random -Minimum 5.0 -Maximum 10.0), 1)
+                            $UnifiedEntry.data[$Type] = @{
+                                sleep_hours = $SleepHours
+                            }
+                            $NoteParts += "Slept $SleepHours hours"
                         }
-                        $BaseEntry['notes'] = "Slept $SleepHours hours"
                     }
                 }
 
-                $SampleEntries += $BaseEntry
+                # Create a meaningful combined note
+                $UnifiedEntry.notes = $NoteParts -join ', '
+
+                $SampleEntries += $UnifiedEntry
             }
         }
 
-        # Sort entries by timestamp (newest first)
-        $SampleEntries = $SampleEntries | Sort-Object timestamp -Descending
+        # Sort entries by entry_id (chronological order)
+        $SampleEntries = $SampleEntries | Sort-Object entry_id
 
         $Response.EntriesGenerated = $SampleEntries.Count
         $Response.SampleData = $SampleEntries
@@ -204,17 +244,28 @@ function New-SampleHealthEntries {
         if ($SaveToFile) {
             $SampleEntries | ConvertTo-Json -Depth 10 | Out-File -FilePath $EntriesPath -Force -ErrorAction Stop
             $Response.FilePath = $EntriesPath
-            $Response.Message = "Successfully generated and saved $($SampleEntries.Count) sample entries to $EntriesPath"
+            $Response.Message = "Successfully generated and saved $($SampleEntries.Count) unified entries to $EntriesPath"
         } else {
-            $Response.Message = "Successfully generated $($SampleEntries.Count) sample entries"
+            $Response.Message = "Successfully generated $($SampleEntries.Count) unified entries"
         }
 
         $Response.Success = $true
 
-        # Display summary
-        $TypeCounts = $SampleEntries | Group-Object type | ForEach-Object { "$($_.Name): $($_.Count)" }
-        Write-Host "✓ Generated $($SampleEntries.Count) sample health entries for $Email" -ForegroundColor Green
-        Write-Host "  Entry types: $($TypeCounts -join ', ')" -ForegroundColor Cyan
+        # Display summary with unified entry statistics
+        $TypeCounts = @{}
+        foreach ($entry in $SampleEntries) {
+            foreach ($type in $entry.entry_types) {
+                if ($TypeCounts.ContainsKey($type)) {
+                    $TypeCounts[$type]++
+                } else {
+                    $TypeCounts[$type] = 1
+                }
+            }
+        }
+
+        $TypeSummary = $TypeCounts.GetEnumerator() | ForEach-Object { "$($_.Key): $($_.Value)" }
+        Write-Host "✓ Generated $($SampleEntries.Count) unified health entries for $Email" -ForegroundColor Green
+        Write-Host "  Health type occurrences: $($TypeSummary -join ', ')" -ForegroundColor Cyan
         Write-Host "  Date range: $((Get-Date).AddDays(-$DaysBack).ToString('yyyy-MM-dd')) to $((Get-Date).ToString('yyyy-MM-dd'))" -ForegroundColor Cyan
 
         if ($SaveToFile) {
