@@ -21,7 +21,7 @@
       "description": "Entry date in YYYY-MM-DD format"
     },
     "time": {
-      "type": "string", 
+      "type": "string",
       "pattern": "^[0-9]{2}:[0-9]{2}$",
       "description": "Entry time in HH:mm format"
     },
@@ -73,7 +73,7 @@
               "description": "Heart rate in beats per minute"
             },
             "oxygen_saturation": {
-              "type": "integer", 
+              "type": "integer",
               "minimum": 70,
               "maximum": 100,
               "description": "Oxygen saturation percentage"

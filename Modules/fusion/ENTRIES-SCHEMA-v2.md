@@ -4,7 +4,7 @@
 The unified health entry schema consolidates multiple health types into single logical submissions using composite keys for unique identification. This eliminates data duplication and provides a more natural data structure that matches how users submit health information.
 
 ## Schema Version: 2.0 (Unified Structure)
-**Implementation Date**: January 14, 2025  
+**Implementation Date**: January 14, 2025
 **Last Updated**: July 15, 2025
 
 ## Entry Structure
@@ -13,7 +13,7 @@ The unified health entry schema consolidates multiple health types into single l
 ```json
 {
   "entry_id": "yyMMddHHmm",
-  "user_email": "user@example.com", 
+  "user_email": "user@example.com",
   "date": "YYYY-MM-DD",
   "time": "HH:mm",
   "entry_types": ["type1", "type2", ...],
@@ -41,7 +41,7 @@ The unified health entry schema consolidates multiple health types into single l
 ```
 **Scale**: 1=Awful, 2=Bad, 3=Meh, 4=Good, 5=Rad
 
-### 2. Vitals  
+### 2. Vitals
 ```json
 {
   "blood_pressure": "120/80",
@@ -63,7 +63,7 @@ The unified health entry schema consolidates multiple health types into single l
 ### 4. Activity
 ```json
 {
-  "activity_name": "string", 
+  "activity_name": "string",
   "duration_minutes": 15-90,
   "note": "string"
 }
@@ -99,7 +99,7 @@ The unified health entry schema consolidates multiple health types into single l
 {
   "entry_id": "2507151430",
   "user_email": "user@example.com",
-  "date": "2025-07-15", 
+  "date": "2025-07-15",
   "time": "14:30",
   "entry_types": ["vitals", "mood", "activity"],
   "data": {
@@ -129,7 +129,7 @@ The unified health entry schema consolidates multiple health types into single l
 - Single metadata set for related health submissions
 - No repeated user_email, date, time across related entries
 
-### 2. Logical Data Grouping  
+### 2. Logical Data Grouping
 - Health data submitted together stays together
 - Matches natural user behavior patterns
 
@@ -194,7 +194,7 @@ The unified health entry schema consolidates multiple health types into single l
 All entries are validated through comprehensive Pester tests covering:
 - Composite key format validation
 - Required field presence
-- Data type constraints  
+- Data type constraints
 - Multi-user isolation
 - Edge cases and error handling
 
