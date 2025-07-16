@@ -1,0 +1,202 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Unified Health Entry Schema v2.0",
+  "description": "Schema for unified health entries with composite keys and multi-type support",
+  "type": "object",
+  "required": ["entry_id", "user_email", "date", "time", "entry_types", "data", "notes"],
+  "properties": {
+    "entry_id": {
+      "type": "string",
+      "pattern": "^[0-9]{10}$",
+      "description": "Composite key in yyMMddHHmm format"
+    },
+    "user_email": {
+      "type": "string",
+      "format": "email",
+      "description": "User's email address"
+    },
+    "date": {
+      "type": "string",
+      "pattern": "^[0-9]{4}-[0-9]{2}-[0-9]{2}$",
+      "description": "Entry date in YYYY-MM-DD format"
+    },
+    "time": {
+      "type": "string", 
+      "pattern": "^[0-9]{2}:[0-9]{2}$",
+      "description": "Entry time in HH:mm format"
+    },
+    "entry_types": {
+      "type": "array",
+      "minItems": 1,
+      "maxItems": 4,
+      "uniqueItems": true,
+      "items": {
+        "type": "string",
+        "enum": ["mood", "vitals", "medication", "activity", "pain", "weight", "sleep"]
+      },
+      "description": "Array of health types included in this entry"
+    },
+    "data": {
+      "type": "object",
+      "description": "Health type specific data",
+      "additionalProperties": false,
+      "properties": {
+        "mood": {
+          "type": "object",
+          "required": ["mood_level", "mood_note"],
+          "properties": {
+            "mood_level": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5,
+              "description": "Mood level: 1=Awful, 2=Bad, 3=Meh, 4=Good, 5=Rad"
+            },
+            "mood_note": {
+              "type": "string",
+              "description": "Personal note about mood"
+            }
+          }
+        },
+        "vitals": {
+          "type": "object",
+          "required": ["blood_pressure", "heart_rate", "oxygen_saturation", "temperature"],
+          "properties": {
+            "blood_pressure": {
+              "type": "string",
+              "pattern": "^[0-9]{2,3}/[0-9]{2,3}$",
+              "description": "Blood pressure in systolic/diastolic format"
+            },
+            "heart_rate": {
+              "type": "integer",
+              "minimum": 40,
+              "maximum": 220,
+              "description": "Heart rate in beats per minute"
+            },
+            "oxygen_saturation": {
+              "type": "integer", 
+              "minimum": 70,
+              "maximum": 100,
+              "description": "Oxygen saturation percentage"
+            },
+            "temperature": {
+              "type": "number",
+              "minimum": 95.0,
+              "maximum": 110.0,
+              "description": "Body temperature in Fahrenheit"
+            }
+          }
+        },
+        "medication": {
+          "type": "object",
+          "required": ["medication_name", "dosage"],
+          "properties": {
+            "medication_name": {
+              "type": "string",
+              "description": "Name of medication taken"
+            },
+            "dosage": {
+              "type": "string",
+              "description": "Dosage amount (e.g., '500mg', '1 tablet')"
+            }
+          }
+        },
+        "activity": {
+          "type": "object",
+          "required": ["activity_name", "duration_minutes", "note"],
+          "properties": {
+            "activity_name": {
+              "type": "string",
+              "description": "Type of physical activity"
+            },
+            "duration_minutes": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 480,
+              "description": "Duration of activity in minutes"
+            },
+            "note": {
+              "type": "string",
+              "description": "Additional notes about the activity"
+            }
+          }
+        },
+        "pain": {
+          "type": "object",
+          "required": ["location", "severity", "note"],
+          "properties": {
+            "location": {
+              "type": "string",
+              "description": "Location/type of pain"
+            },
+            "severity": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 10,
+              "description": "Pain severity on 1-10 scale"
+            },
+            "note": {
+              "type": "string",
+              "description": "Description of pain characteristics"
+            }
+          }
+        },
+        "weight": {
+          "type": "object",
+          "required": ["weight_lbs", "weight_kg"],
+          "properties": {
+            "weight_lbs": {
+              "type": "number",
+              "minimum": 50.0,
+              "maximum": 500.0,
+              "description": "Weight in pounds"
+            },
+            "weight_kg": {
+              "type": "number",
+              "minimum": 20.0,
+              "maximum": 250.0,
+              "description": "Weight in kilograms (auto-calculated)"
+            }
+          }
+        },
+        "sleep": {
+          "type": "object",
+          "required": ["sleep_hours"],
+          "properties": {
+            "sleep_hours": {
+              "type": "number",
+              "minimum": 0.0,
+              "maximum": 24.0,
+              "description": "Hours of sleep"
+            }
+          }
+        }
+      }
+    },
+    "notes": {
+      "type": "string",
+      "description": "Combined notes describing all activities in the entry"
+    }
+  },
+  "examples": [
+    {
+      "entry_id": "2507151430",
+      "user_email": "user@example.com",
+      "date": "2025-07-15",
+      "time": "14:30",
+      "entry_types": ["vitals", "mood"],
+      "data": {
+        "vitals": {
+          "blood_pressure": "125/82",
+          "heart_rate": 75,
+          "oxygen_saturation": 98,
+          "temperature": 98.6
+        },
+        "mood": {
+          "mood_level": 4,
+          "mood_note": "Feeling great today"
+        }
+      },
+      "notes": "Vital signs check, Mood: Good 🙂"
+    }
+  ]
+}

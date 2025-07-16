@@ -1,50 +1,57 @@
 {
-    "EmptyEntry": {
-        "Medications": {},
-        "Pain": {},
-        "Activities": {},
-        "o2": "",
-        "bpr": "",
-        "note": "",
-        "medication_taken": ""
-    },
-    "Medications": {
-        "oxycodone": "5mg",
-        "tylenol1": "1g",
-        "dilaudid4": "4mg",
-        "valium5": "5mg",
-        "valium2": "2.5mg",
-        "journavx": "100mg",
-        "vitaminD5": "500mg",
-        "lexapro20": "20mg",
-        "lexapro10": "10mg",
-        "lexapro2": "2mg",
-        "lexapro1": "1mg"
-    },
-    "MMDD": {
-        "HHMM": {
-            "Medications": {
-                "medication_name": "dosage (e.g., 500mg)"
-            },
-            "Pain": {
-                "location": {
-                    "pain_level": 0,
-                    "note": ""
-                }
-            },
-            "Activities": {
-                "activity_name": {
-                    "duration": 0,
-                    "note": ""
-                }
-            },
+    "schema_version": "1.0 (DEPRECATED)",
+    "status": "SUPERSEDED by entries_schema_v2.json",
+    "migration_date": "2025-01-14",
+    "note": "This legacy schema has been replaced by the unified schema v2.0. See entries_schema_v2.json and ENTRIES-SCHEMA-v2.md for current documentation.",
+    
+    "legacy_structure": {
+        "EmptyEntry": {
+            "Medications": {},
+            "Pain": {},
+            "Activities": {},
             "o2": "",
             "bpr": "",
             "note": "",
             "medication_taken": ""
         },
-        "max_pain_level": 0.0,
-        "Sleep": "HH:MM",
-        "ScarImage": "./path/to/image.png"
+        "Medications": {
+            "oxycodone": "5mg",
+            "tylenol1": "1g",
+            "dilaudid4": "4mg",
+            "valium5": "5mg",
+            "valium2": "2.5mg",
+            "journavx": "100mg",
+            "vitaminD5": "500mg",
+            "lexapro20": "20mg",
+            "lexapro10": "10mg",
+            "lexapro2": "2mg",
+            "lexapro1": "1mg"
+        },
+        "MMDD": {
+            "HHMM": {
+                "Medications": {
+                    "medication_name": "dosage (e.g., 500mg)"
+                },
+                "Pain": {
+                    "location": {
+                        "pain_level": 0,
+                        "note": ""
+                    }
+                },
+                "Activities": {
+                    "activity_name": {
+                        "duration": 0,
+                        "note": ""
+                    }
+                },
+                "o2": "",
+                "bpr": "",
+                "note": "",
+                "medication_taken": ""
+            },
+            "max_pain_level": 0.0,
+            "Sleep": "HH:MM",
+            "ScarImage": "./path/to/image.png"
+        }
     }
 }
