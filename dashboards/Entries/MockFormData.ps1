@@ -9,7 +9,7 @@ $script:MockFormData_Complete = [PSCustomObject]@{
     notes = "Feeling much better today after starting new medication routine"
     sleep = "7:45"
     
-    # Medication checkboxes (based on medications_lookup.json structure)
+    # Medication checkboxes (based on user preferences from Settings)
     med_dilaudid_4mg = $true
     med_dilaudid_2mg = $false
     med_tylenol_1g = $true

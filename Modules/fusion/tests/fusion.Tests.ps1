@@ -6,7 +6,6 @@ BeforeAll {
     # Set up test environment variables to avoid conflicts with production data
     $global:TestEntriesPath = Join-Path $TestDrive "test_entries.json"
     $global:TestSchemaPath = Join-Path $PSScriptRoot "entries_schema.json"
-    $global:TestMedicationsPath = Join-Path $PSScriptRoot "medications_lookup.json"
     $global:TestImagePath = Join-Path $TestDrive "test_img"
 
     # Create test directories

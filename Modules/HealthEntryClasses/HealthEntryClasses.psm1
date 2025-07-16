@@ -51,55 +51,57 @@ class PainLocationValidator {
     }
 }
 
-# Class for Mediation data
+# Class for Medication data - Updated for user-defined medications
 class MedicationValidator : System.Management.Automation.IValidateSetValuesGenerator {
+    # No longer uses medications_lookup.json - accepts any medication name
     [string[]] GetValidValues() {
-        return (Get-Content (Join-Path $PSScriptRoot 'medications_lookup.json') | ConvertFrom-Json -AsHashtable)['Medications'].keys
+        # Return empty array to allow any medication names
+        # This maintains interface compatibility while removing validation constraints
+        return @()
     }
 
     [string[]] GetValidDosages([string]$medication) {
-        $data = (Get-Content (Join-Path $PSScriptRoot 'medications_lookup.json') | ConvertFrom-Json -AsHashtable)
-        if ($data['Medications'].ContainsKey($medication)) {
-            return $data['Medications'][$medication]
-        }
+        # Return empty array to allow any dosage values
+        # Users can now define their own dosages in Settings
         return @()
+    }
+
+    # Static method for basic validation (non-empty strings)
+    static [bool] IsValidMedicationName([string]$name) {
+        return -not [string]::IsNullOrWhiteSpace($name)
+    }
+
+    static [bool] IsValidDosage([string]$dosage) {
+        return -not [string]::IsNullOrWhiteSpace($dosage)
     }
 }
 
 class MedicationTaken {
-    # What properties do you think you need?
-    # Try adding 2-3 basic properties here
-    [string] $dosage = '4mg'
-    [string] $medication = 'dilaudid'
+    [string] $dosage = ''
+    [string] $medication = ''
 
-    # Valid Medication Names
-
-    # Default constructor
-    MedicationTaken() {}
-
-    MedicationTaken([string]$dosage, [string]$medication) {
-        $MedValidator = [MedicationValidator]::new()
-        $ValidMeds = $MedValidator.GetValidValues()
-        if ($ValidMeds -inotcontains $medication) {
-            throw "Must provide valid medication, valid values:`n $($ValidMeds -join "`n")"
-        }
-        $ValidDosages = $MedValidator.GetValidDosages($medication)
-        if ($ValidDosages -inotcontains $dosage) {
-            throw "Must provide valid dosage for $medication, valid values:`n $($ValidDosages -join "`n")"
-        }
-        $this.dosage = $dosage
-        $this.medication = $medication
+    # Default constructor with common medication example
+    MedicationTaken() {
+        $this.dosage = "325mg"
+        $this.medication = "aspirin"
     }
 
-    # Validation method
-    [bool] IsValid() {
-        $MedValidator = [MedicationValidator]::new()
-        $ValidMeds = $MedValidator.GetValidValues()
-        $ValidDosages = $MedValidator.GetValidDosages($this.medication)
+    # Updated constructor - accepts any medication name and dosage
+    MedicationTaken([string]$dosage, [string]$medication) {
+        if (-not [MedicationValidator]::IsValidMedicationName($medication)) {
+            throw "Medication name cannot be empty or null"
+        }
+        if (-not [MedicationValidator]::IsValidDosage($dosage)) {
+            throw "Dosage cannot be empty or null"
+        }
+        $this.dosage = $dosage.Trim()
+        $this.medication = $medication.Trim()
+    }
 
-        return ($ValidMeds -icontains $this.medication) -and
-        ($ValidDosages -icontains $this.dosage) -and
-        (-not [string]::IsNullOrWhiteSpace($this.medication))
+    # Updated validation method - only checks for non-empty values
+    [bool] IsValid() {
+        return [MedicationValidator]::IsValidMedicationName($this.medication) -and
+               [MedicationValidator]::IsValidDosage($this.dosage)
     }
 
     [hashtable] ToHashtable() {

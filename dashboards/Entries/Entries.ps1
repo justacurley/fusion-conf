@@ -260,40 +260,48 @@ New-UDApp -Content {
                 New-UDTransition -Id 'medications_transition' -Content {
                     New-UDGrid -Container -Children {
                         try {
-                            $MedData = Get-Content -Path '/home/data/Repository/fusion-data/entries/medications_lookup.json' | ConvertFrom-Json -AsHashtable
-                            $Dosages = $MedData['Medications']
+                            # Load user-defined medications from preferences instead of lookup file
+                            Import-Module UserManagement -Force
+                            $CurrentUserResult = Get-CurrentUser
+                            
+                            if ($CurrentUserResult.Success -and $CurrentUserResult.Data.Preferences.Medications) {
+                                $UserMedications = $CurrentUserResult.Data.Preferences.Medications
+                                
+                                # Create visual cards for each user-defined medication
+                                foreach ($medication in $UserMedications) {
+                                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -MediumSize 4 -Children {
+                                        New-UDPaper -Children {
+                                            New-UDTypography -Text "💊 $($medication.name.ToUpper())" -Variant subtitle1 -Style @{
+                                                fontWeight   = 'bold'
+                                                marginBottom = '10px'
+                                                color        = 'var(--theme-palette-primary-main)'
+                                                textAlign    = 'center'
+                                            }
 
-                            # Create visual cards for each medication type
-                            foreach ($medType in $Dosages.Keys | Sort-Object) {
-                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -MediumSize 4 -Children {
-                                    New-UDPaper -Children {
-                                        New-UDTypography -Text "💊 $($medType.ToUpper())" -Variant subtitle1 -Style @{
-                                            fontWeight   = 'bold'
-                                            marginBottom = '10px'
-                                            color        = 'var(--theme-palette-primary-main)'
-                                            textAlign    = 'center'
+                                            # Create checkbox for the user's medication with their dosage
+                                            New-UDCheckBox -Id "med_$($medication.name -replace '\W', '_')_$($medication.dosage -replace '\W', '_')" -Label "$($medication.dosage)"
+                                        } -Style @{
+                                            padding         = '15px'
+                                            margin          = '5px'
+                                            backgroundColor = 'var(--theme-palette-background-default)'
+                                            borderLeft      = '4px solid var(--theme-palette-primary-main)'
+                                            borderRadius    = '8px'
+                                            minHeight       = '120px'
+                                            border          = '1px solid var(--theme-palette-divider)'
                                         }
-
-                                        # Create checkboxes for each dosage
-                                        foreach ($dosage in $Dosages[$medType]) {
-                                            New-UDCheckBox -Id "med_$($medType)_$($dosage -replace '\W', '_')" -Label $dosage
-                                        }
-                                    } -Style @{
-                                        padding         = '15px'
-                                        margin          = '5px'
-                                        backgroundColor = 'var(--theme-palette-background-default)'
-                                        borderLeft      = '4px solid var(--theme-palette-primary-main)'
-                                        borderRadius    = '8px'
-                                        minHeight       = '120px'
-                                        border          = '1px solid var(--theme-palette-divider)'
                                     }
+                                }
+                            } else {
+                                # No user medications defined yet
+                                New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                    New-UDAlert -Severity info -Text 'No medications configured. Add your medications in Settings to track them here.'
                                 }
                             }
                         }
                         catch {
-                            Write-Error "Failed to get or parse medication data: $_"
+                            Write-Error "Failed to load user medications: $_"
                             New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                New-UDAlert -Severity error -Text 'Unable to load medication options. Please check the medications lookup file.'
+                                New-UDAlert -Severity error -Text 'Unable to load your medication preferences. Please check your Settings.'
                             }
                         }
                     }

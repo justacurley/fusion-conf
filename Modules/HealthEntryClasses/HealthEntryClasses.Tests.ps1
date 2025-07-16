@@ -8,64 +8,93 @@ Describe 'MedicationValidator Tests' -Tag MedicationValidator, Medication {
         $validator = [MedicationValidator]::new()
     }
 
-    It 'Should return valid medications from JSON' {
+    It 'Should allow any medication names (no longer validates against lookup)' {
         $validMeds = $validator.GetValidValues()
-        $validMeds | Should -Not -BeNullOrEmpty
-        $validMeds | Should -Contain 'dilaudid'
+        $validMeds | Should -Be @()  # Returns empty array - accepts any medication
     }
 
-    It 'Should return valid dosages for dilaudid' {
-        $dosages = $validator.GetValidDosages('dilaudid')
-        $dosages | Should -Not -BeNullOrEmpty
-        $dosages | Should -Contain '4mg'
+    It 'Should allow any dosages (no longer validates against lookup)' {
+        $dosages = $validator.GetValidDosages('any-medication')
+        $dosages | Should -Be @()  # Returns empty array - accepts any dosage
     }
 
-    It 'Should return empty array for invalid medication' {
-        $dosages = $validator.GetValidDosages('nonexistent-med')
-        $dosages | Should -Be @()
+    It 'Should validate medication name is not empty using static method' {
+        [MedicationValidator]::IsValidMedicationName('aspirin') | Should -Be $true
+        [MedicationValidator]::IsValidMedicationName('') | Should -Be $false
+        [MedicationValidator]::IsValidMedicationName($null) | Should -Be $false
+        [MedicationValidator]::IsValidMedicationName('   ') | Should -Be $false
+    }
+
+    It 'Should validate dosage is not empty using static method' {
+        [MedicationValidator]::IsValidDosage('500mg') | Should -Be $true
+        [MedicationValidator]::IsValidDosage('1 tablet') | Should -Be $true
+        [MedicationValidator]::IsValidDosage('') | Should -Be $false
+        [MedicationValidator]::IsValidDosage($null) | Should -Be $false
+        [MedicationValidator]::IsValidDosage('   ') | Should -Be $false
     }
 }
 
 Describe 'MedicationTaken Tests' -Tag MedicationTaken, Medication {
     Context 'Valid Medication Creation' {
-        It 'Should create with valid medication and dosage' {
-            { [MedicationTaken]::new('4mg', 'dilaudid') } | Should -Not -Throw
+        It 'Should create with any valid medication name and dosage' {
+            { [MedicationTaken]::new('500mg', 'aspirin') } | Should -Not -Throw
+            { [MedicationTaken]::new('1 tablet', 'multivitamin') } | Should -Not -Throw
+            { [MedicationTaken]::new('10mg', 'custom-medication') } | Should -Not -Throw
         }
 
-        It 'Should set properties correctly' {
-            $med = [MedicationTaken]::new('4mg', 'dilaudid')
-            $med.medication | Should -Be 'dilaudid'
-            $med.dosage | Should -Be '4mg'
+        It 'Should set properties correctly and trim whitespace' {
+            $med = [MedicationTaken]::new('  500mg  ', '  aspirin  ')
+            $med.medication | Should -Be 'aspirin'
+            $med.dosage | Should -Be '500mg'
         }
 
-        It 'Should validate as valid' {
-            $med = [MedicationTaken]::new('4mg', 'dilaudid')
+        It 'Should validate as valid for any non-empty values' {
+            $med = [MedicationTaken]::new('500mg', 'aspirin')
             $med.IsValid() | Should -Be $true
+            
+            $med2 = [MedicationTaken]::new('1 tablet', 'custom-med')
+            $med2.IsValid() | Should -Be $true
         }
 
         It 'Should convert to hashtable correctly' {
-            $med = [MedicationTaken]::new('4mg', 'dilaudid')
+            $med = [MedicationTaken]::new('500mg', 'aspirin')
             $hashtable = $med.ToHashtable()
-            $hashtable.medication | Should -Be 'dilaudid'
-            $hashtable.dosage | Should -Be '4mg'
+            $hashtable.medication | Should -Be 'aspirin'
+            $hashtable.dosage | Should -Be '500mg'
         }
     }
 
     Context 'Invalid Medication Validation' {
-        It 'Should throw for invalid medication' {
-            { [MedicationTaken]::new('4mg', 'invalid-med') } | Should -Throw '*Must provide valid medication*'
+        It 'Should throw for empty medication name' {
+            { [MedicationTaken]::new('500mg', '') } | Should -Throw
         }
 
-        It 'Should throw for invalid dosage' {
-            { [MedicationTaken]::new('999mg', 'dilaudid') } | Should -Throw '*Must provide valid dosage*'
+        It 'Should throw for null medication name' {
+            { [MedicationTaken]::new('500mg', $null) } | Should -Throw
+        }
+
+        It 'Should throw for whitespace-only medication name' {
+            { [MedicationTaken]::new('500mg', '   ') } | Should -Throw
+        }
+
+        It 'Should throw for empty dosage' {
+            { [MedicationTaken]::new('', 'aspirin') } | Should -Throw
+        }
+
+        It 'Should throw for null dosage' {
+            { [MedicationTaken]::new($null, 'aspirin') } | Should -Throw
+        }
+
+        It 'Should throw for whitespace-only dosage' {
+            { [MedicationTaken]::new('   ', 'aspirin') } | Should -Throw
         }
     }
 
     Context 'Default Constructor' {
         It 'Should create with default values' {
             $med = [MedicationTaken]::new()
-            $med.medication | Should -Be 'dilaudid'
-            $med.dosage | Should -Be '4mg'
+            $med.medication | Should -Be 'aspirin'
+            $med.dosage | Should -Be '325mg'
         }
 
         It 'Should validate default values as valid' {

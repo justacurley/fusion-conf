@@ -30,7 +30,7 @@ CompanyName = 'Health Tracker Project'
 Copyright = '(c) Alex. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'Health entry data model classes for health tracking application. Provides PowerShell classes for pain tracking, medication management, activity logging, vital signs, and comprehensive health entry validation and serialization.'
+Description = 'Health entry data model classes for health tracking application. Provides PowerShell classes for pain tracking, flexible medication management (user-defined), activity logging, vital signs, and comprehensive health entry validation and serialization. Updated for user-defined medications without lookup constraints.'
 
 # Minimum version of the PowerShell engine required by this module
 PowerShellVersion = '7.0'
@@ -87,7 +87,7 @@ AliasesToExport = @()
 # ModuleList = @()
 
 # List of all files packaged with this module
-FileList = @('HealthEntryClasses.psm1', 'medications_lookup.json')
+FileList = @('HealthEntryClasses.psm1')
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
 PrivateData = @{

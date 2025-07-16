@@ -6,13 +6,11 @@ $Remote = Get-ChildItem Env:HOSTNAME -ErrorAction Ignore
 if ($Remote -and $Remote.Value -like '*us-west-2*') {
     $global:EntriesPath = '/home/data/fusion-data/entries/entries.json'
     $global:SchemaPath = Join-Path $PSScriptRoot 'entries_schema.json'
-    $global:MedicationsPath = Join-Path $PSScriptRoot 'medications_lookup.json'
     $global:ImagePath = '/home/data/fusion-data/img'
 }
 else {
     $global:EntriesPath = '/home/alex/src/fusion-conf/fusion-data/entries/entries.json'
     $global:SchemaPath = Join-Path $PSScriptRoot 'entries_schema.json'
-    $global:MedicationsPath = Join-Path $PSScriptRoot 'medications_lookup.json'
     $global:ImagePath = '/home/alex/src/fusion-conf/fusion-data/img'
 }
 
