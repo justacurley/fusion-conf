@@ -51,7 +51,7 @@ Describe 'MedicationTaken Tests' -Tag MedicationTaken, Medication {
         It 'Should validate as valid for any non-empty values' {
             $med = [MedicationTaken]::new('500mg', 'aspirin')
             $med.IsValid() | Should -Be $true
-            
+
             $med2 = [MedicationTaken]::new('1 tablet', 'custom-med')
             $med2.IsValid() | Should -Be $true
         }
@@ -169,26 +169,26 @@ Describe 'Vitals Tests' -Tag Vitals {
             $vital.o2 | Should -Be 95
             $vital.bpr | Should -Be '120/80'
         }
-        
+
         It 'Should validate default values as valid' {
             $vital = [Vitals]::new()
             $vital.IsValid() | Should -Be $true
-        }        
+        }
     }
 
     Context 'Valid Vitals Creation' {
         It 'Should create construct' {
-            { [Vitals]::new(90, '111/90') } | Should -Not -Throw       
+            { [Vitals]::new(90, '111/90') } | Should -Not -Throw
         }
 
         It 'Should assign properties correctly' {
             $vitals = [Vitals]::new(90, '111/90')
-            $vitals.o2 | Should -Be 90 
+            $vitals.o2 | Should -Be 90
             $vitals.o2 | Should -BeOfType [int]
             $vitals.bpr | Should -Be '111/90'
         }
     }
-    
+
     Context 'Oxygen Level Validation' {
         It 'Should throw on invalid o2' {
             { [Vitals]::new(101, '120/80') } | Should -Throw
@@ -200,11 +200,11 @@ Describe 'Vitals Tests' -Tag Vitals {
             { [Vitals]::new(95, '100/1000') } | Should -Throw
         }
     }
-    
+
     Context 'ToHashtable() Validation' {
         It 'Should return a hashtable with valid keys and values' {
             $vitals = [Vitals]::new(90, '111/90')
-            $VitalsHashtable = $vitals.ToHashtable()            
+            $VitalsHashtable = $vitals.ToHashtable()
             $VitalsHashtable | Should -BeOfType [hashtable]
             $VitalsHashtable.Keys | Should -Contain 'o2'
             $VitalsHashtable.Keys | Should -Contain 'bpr'
@@ -216,7 +216,7 @@ Describe 'Vitals Tests' -Tag Vitals {
     Context 'Blood Pressure Validation' {
         It 'Should accept valid BP formats' {
             { [Vitals]::new(95, '120/80') } | Should -Not -Throw
-            { [Vitals]::new(95, '110/70') } | Should -Not -Throw  
+            { [Vitals]::new(95, '110/70') } | Should -Not -Throw
             { [Vitals]::new(95, '140/90') } | Should -Not -Throw
         }
 
@@ -265,12 +265,12 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
             $script:DefaultEntry.Vitals | Should -Be $null
             $script:DefaultEntry.Note | Should -Be ''
         }
-        
+
         It 'Should be valid even when empty' {
             $script:DefaultEntry.IsValid() | Should -BeTrue
         }
     }
-    
+
     Context 'Validation Method' {
         BeforeEach {
             $script:DefaultEntry = [HealthEntry]::new()
@@ -280,13 +280,13 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
             $script:DefaultEntry.Note = 'mock'
             $script:DefaultEntry.IsValid() | Should -BeTrue
         }
-        
+
         It 'Should return true when Pain is present' {
             $script:DefaultEntry.IsValid() | Should -BeTrue
             $script:DefaultEntry.Pain += [PainLocation]::new('back', 1.0, '')
             $script:DefaultEntry.IsValid() | Should -BeTrue
         }
-        
+
         It 'Should return true when Medication is present' {
             $script:DefaultEntry.IsValid() | Should -BeTrue
             $script:DefaultEntry.Medication += [MedicationTaken]::new()
@@ -313,29 +313,29 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
 
         It 'Should return empty structure for default entry' {
             $hash = $script:TestEntry.ToHashtable()
-        
+
             # Should have all expected keys
             $hash.Keys | Should -Contain 'Medications'
-            $hash.Keys | Should -Contain 'Activities' 
+            $hash.Keys | Should -Contain 'Activities'
             $hash.Keys | Should -Contain 'Pain'
             $hash.Keys | Should -Contain 'o2'
             $hash.Keys | Should -Contain 'bpr'
             $hash.Keys | Should -Contain 'medication_taken'
             $hash.Keys | Should -Contain 'note'
-        
+
             # Empty arrays/hashtables for no data
             $hash.Medications | Should -BeOfType [hashtable]
             $hash.Medications.Keys.Count | Should -Be 0
-            $hash.Activities | Should -BeOfType [hashtable] 
+            $hash.Activities | Should -BeOfType [hashtable]
             $hash.Activities.Keys.Count | Should -Be 0
             $hash.Pain | Should -BeOfType [hashtable]
             $hash.Pain.Keys.Count | Should -Be 0
-        
+
             # Empty vitals
             $hash.o2 | Should -Be ''
             $hash.bpr | Should -Be ''
             $hash.medication_taken | Should -Be ''
-            
+
             # Empty note
             $hash.note | Should -Be ''
         }
@@ -343,18 +343,18 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
         It 'Should serialize Pain data correctly' {
             $script:TestEntry.Pain += [PainLocation]::new('back', 7.5, 'Lower back pain')
             $script:TestEntry.Pain += [PainLocation]::new('rquad', 3.0, 'Mild quad pain')
-        
+
             $hash = $script:TestEntry.ToHashtable()
-        
+
             # Should have Pain data
             $hash.Pain.Keys | Should -Contain 'back'
             $hash.Pain.Keys | Should -Contain 'rquad'
-        
+
             # Check back pain structure
             $hash.Pain.back.pain_level | Should -Be 7.5
             $hash.Pain.back.note | Should -Be 'Lower back pain'
-        
-            # Check rquad pain structure  
+
+            # Check rquad pain structure
             $hash.Pain.rquad.pain_level | Should -Be 3.0
             $hash.Pain.rquad.note | Should -Be 'Mild quad pain'
         }
@@ -362,29 +362,29 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
         It 'Should serialize multiple Medications as array' {
             $script:TestEntry.Medication += [MedicationTaken]::new('4mg', 'dilaudid')
             $script:TestEntry.Medication += [MedicationTaken]::new('2mg', 'dilaudid')
-        
+
             $hash = $script:TestEntry.ToHashtable()
-        
+
             # Should have Medications hashtable with dosage array (multiple doses)
             $hash.Medications.Keys | Should -Contain 'dilaudid'
             $hash.Medications.dilaudid | Should -Contain '4mg'
             $hash.Medications.dilaudid | Should -Contain '2mg'
             $hash.Medications.dilaudid.Count | Should -Be 2
-        
+
             # Should have medication_taken summary
             $hash.medication_taken | Should -Be 'dilaudid'
         }
 
         It 'Should serialize single Medication as string' {
             $script:TestEntry.Medication += [MedicationTaken]::new('4mg', 'dilaudid')
-        
+
             $hash = $script:TestEntry.ToHashtable()
-        
+
             # Should have Medications hashtable with single string value
             $hash.Medications.Keys | Should -Contain 'dilaudid'
             $hash.Medications.dilaudid | Should -BeOfType [string]
             $hash.Medications.dilaudid | Should -Be '4mg'
-        
+
             # Should have medication_taken summary
             $hash.medication_taken | Should -Be 'dilaudid'
         }
@@ -392,17 +392,17 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
         It 'Should serialize Activity data correctly' {
             $script:TestEntry.Activity += [Activity]::new('Walking', 30, 'Morning walk')
             $script:TestEntry.Activity += [Activity]::new('Swimming', 45, 'Pool exercise')
-        
+
             $hash = $script:TestEntry.ToHashtable()
-        
+
             # Should have Activities
             $hash.Activities.Keys | Should -Contain 'Walking'
             $hash.Activities.Keys | Should -Contain 'Swimming'
-        
+
             # Check Walking structure
             $hash.Activities.Walking.duration | Should -Be 30
             $hash.Activities.Walking.note | Should -Be 'Morning walk'
-        
+
             # Check Swimming structure
             $hash.Activities.Swimming.duration | Should -Be 45
             $hash.Activities.Swimming.note | Should -Be 'Pool exercise'
@@ -410,9 +410,9 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
 
         It 'Should serialize Vitals data correctly' {
             $script:TestEntry.Vitals = [Vitals]::new(92, '140/90')
-        
+
             $hash = $script:TestEntry.ToHashtable()
-        
+
             # Should have Vitals data directly in hash
             $hash.o2 | Should -Be 92
             $hash.bpr | Should -Be '140/90'
@@ -420,9 +420,9 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
 
         It 'Should include note when present' {
             $script:TestEntry.Note = 'Had a rough day with pain'
-        
+
             $hash = $script:TestEntry.ToHashtable()
-        
+
             $hash.Keys | Should -Contain 'note'
             $hash.note | Should -Be 'Had a rough day with pain'
         }
@@ -434,9 +434,9 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
             $script:TestEntry.Activity += [Activity]::new('Walking', 15, 'Short walk')
             $script:TestEntry.Vitals = [Vitals]::new(94, '130/85')
             $script:TestEntry.Note = 'Complex health entry'
-        
+
             $hash = $script:TestEntry.ToHashtable()
-        
+
             # Verify all components are present
             $hash.Pain.Keys.Count | Should -Be 1
             $hash.Medications.Keys.Count | Should -Be 1
@@ -445,7 +445,7 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
             $hash.bpr | Should -Be '130/85'
             $hash.note | Should -Be 'Complex health entry'
             $hash.medication_taken | Should -Be 'dilaudid'
-        
+
             # Verify structure integrity
             $hash | Should -BeOfType [hashtable]
             $hash.Keys.Count | Should -Be 7  # All expected keys
@@ -454,14 +454,14 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
         It 'Should handle multiple medications of same type' {
             $script:TestEntry.Medication += [MedicationTaken]::new('2mg', 'dilaudid')
             $script:TestEntry.Medication += [MedicationTaken]::new('4mg', 'dilaudid')
-        
+
             $hash = $script:TestEntry.ToHashtable()
-        
+
             # Should create array for multiple dosages
             $hash.Medications.dilaudid | Should -Contain '2mg'
             $hash.Medications.dilaudid | Should -Contain '4mg'
             $hash.Medications.dilaudid.Count | Should -Be 2
-        
+
             # medication_taken should still list it once
             $hash.medication_taken | Should -Be 'dilaudid'
         }
@@ -472,7 +472,7 @@ Describe 'Integration Tests' {
     It 'Should be able to create both classes together' {
         $med = [MedicationTaken]::new('4mg', 'dilaudid')
         $pain = [PainLocation]::new('back', 8.0, 'Lower back pain')
-        
+
         $med.IsValid() | Should -Be $true
         $pain.IsValid() | Should -Be $true
     }
@@ -480,10 +480,10 @@ Describe 'Integration Tests' {
     It 'Should serialize both classes to hashtables for potential JSON export' {
         $med = [MedicationTaken]::new('4mg', 'dilaudid')
         $pain = [PainLocation]::new('back', 8.0, 'Lower back pain')
-        
+
         $medHash = $med.ToHashtable()
         $painHash = $pain.ToHashtable()
-        
+
         $medHash.Keys.Count | Should -Be 2
         $painHash.Keys.Count | Should -Be 2  # Updated: pain_level and note only
     }

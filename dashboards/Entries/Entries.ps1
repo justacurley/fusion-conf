@@ -263,10 +263,10 @@ New-UDApp -Content {
                             # Load user-defined medications from preferences instead of lookup file
                             Import-Module UserManagement -Force
                             $CurrentUserResult = Get-CurrentUser
-                            
+
                             if ($CurrentUserResult.Success -and $CurrentUserResult.Data.Preferences.Medications) {
                                 $UserMedications = $CurrentUserResult.Data.Preferences.Medications
-                                
+
                                 # Create visual cards for each user-defined medication
                                 foreach ($medication in $UserMedications) {
                                     New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -MediumSize 4 -Children {

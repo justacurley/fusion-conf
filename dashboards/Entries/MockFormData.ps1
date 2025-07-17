@@ -8,7 +8,7 @@ $script:MockFormData_Complete = [PSCustomObject]@{
     timestamp = "14:30"
     notes = "Feeling much better today after starting new medication routine"
     sleep = "7:45"
-    
+
     # Medication checkboxes (based on user preferences from Settings)
     med_dilaudid_4mg = $true
     med_dilaudid_2mg = $false
@@ -17,34 +17,34 @@ $script:MockFormData_Complete = [PSCustomObject]@{
     med_valium_5mg = $false
     med_vitaminD_500mg = $true
     med_lexapro_10mg = $false
-    
+
     # Activity fields - Activity #1
     add_activity = $true
     activities_type_1 = "Walking"
     activities_length_1 = "30"
     activities_note_1 = "Morning walk around the neighborhood"
-    
+
     # Activity fields - Additional activities (dynamically added)
     activities_type_456 = "Stretching"
     activities_length_456 = "15"
     activities_note_456 = "Post-walk stretching routine"
-    
+
     # Pain fields - Pain Entry #1
     add_pain = $true
     pain_location_1 = "back"
     pain_level_1 = "4"
     pain_note_1 = "Lower back stiffness in morning"
-    
+
     # Pain fields - Additional pain entry
     pain_location_789 = "right_glute"
     pain_level_789 = "3"
     pain_note_789 = "Mild discomfort when sitting"
-    
+
     # Vitals
     add_vitals = $true
     o2 = "96"
     bpr = "118/76"
-    
+
     # Image file (simulated)
     ImageFile = $null
 }
@@ -55,7 +55,7 @@ $script:MockFormData_Minimal = [PSCustomObject]@{
     timestamp = "08:00"
     notes = ""
     sleep = ""
-    
+
     # No medications selected
     med_dilaudid_4mg = $false
     med_dilaudid_2mg = $false
@@ -64,16 +64,16 @@ $script:MockFormData_Minimal = [PSCustomObject]@{
     med_valium_5mg = $false
     med_vitaminD_500mg = $false
     med_lexapro_10mg = $false
-    
+
     # No activities
     add_activity = $false
-    
+
     # No pain entries
     add_pain = $false
-    
+
     # No vitals
     add_vitals = $false
-    
+
     ImageFile = $null
 }
 
@@ -83,7 +83,7 @@ $script:MockFormData_MedicationsOnly = [PSCustomObject]@{
     timestamp = "22:00"
     notes = "Evening medication routine"
     sleep = "8:30"
-    
+
     # Multiple medications selected
     med_dilaudid_4mg = $true
     med_dilaudid_2mg = $false
@@ -92,16 +92,16 @@ $script:MockFormData_MedicationsOnly = [PSCustomObject]@{
     med_valium_5mg = $true
     med_vitaminD_500mg = $false
     med_lexapro_10mg = $true
-    
+
     # No activities
     add_activity = $false
-    
+
     # No pain entries
     add_pain = $false
-    
+
     # No vitals
     add_vitals = $false
-    
+
     ImageFile = $null
 }
 
@@ -111,7 +111,7 @@ $script:MockFormData_MultipleEntries = [PSCustomObject]@{
     timestamp = "16:45"
     notes = "Physical therapy session today"
     sleep = "6:15"
-    
+
     # Some medications
     med_dilaudid_4mg = $false
     med_dilaudid_2mg = $true
@@ -120,40 +120,40 @@ $script:MockFormData_MultipleEntries = [PSCustomObject]@{
     med_valium_5mg = $false
     med_vitaminD_500mg = $true
     med_lexapro_10mg = $false
-    
+
     # Multiple activities
     add_activity = $true
     activities_type_1 = "Physical Therapy"
     activities_length_1 = "60"
     activities_note_1 = "Focused on core strengthening"
-    
+
     activities_type_234 = "Swimming"
     activities_length_234 = "45"
     activities_note_234 = "Light swimming in therapy pool"
-    
+
     activities_type_567 = "Walking"
     activities_length_567 = "20"
     activities_note_567 = "Cool down walk"
-    
+
     # Multiple pain entries
     add_pain = $true
     pain_location_1 = "back"
     pain_level_1 = "6"
     pain_note_1 = "Increased pain during therapy"
-    
+
     pain_location_345 = "left_glute"
     pain_level_345 = "4"
     pain_note_345 = "Muscle tension"
-    
+
     pain_location_678 = "hips"
     pain_level_678 = "3"
     pain_note_678 = "Mild stiffness"
-    
+
     # Vitals
     add_vitals = $true
     o2 = "94"
     bpr = "125/82"
-    
+
     ImageFile = $null
 }
 
@@ -163,7 +163,7 @@ $script:MockFormData_EdgeCases = [PSCustomObject]@{
     timestamp = "23:59"
     notes = "Late night entry with some unusual readings"
     sleep = "4.25"  # Decimal format
-    
+
     # Only one medication
     med_dilaudid_4mg = $false
     med_dilaudid_2mg = $false
@@ -172,24 +172,24 @@ $script:MockFormData_EdgeCases = [PSCustomObject]@{
     med_valium_5mg = $false
     med_vitaminD_500mg = $false
     med_lexapro_10mg = $false
-    
+
     # Single activity with long duration
     add_activity = $true
     activities_type_1 = "Meditation"
     activities_length_1 = "120"  # 2 hours
     activities_note_1 = "Extended mindfulness session for pain management"
-    
+
     # High pain level
     add_pain = $true
     pain_location_1 = "back"
     pain_level_1 = "8"
     pain_note_1 = "Severe flare-up requiring immediate attention"
-    
+
     # Unusual vitals
     add_vitals = $true
     o2 = "89"  # Lower oxygen
     bpr = "140/95"  # Higher blood pressure
-    
+
     ImageFile = $null
 }
 
@@ -199,7 +199,7 @@ $script:MockFormData_EmptyValues = [PSCustomObject]@{
     timestamp = ""
     notes = $null
     sleep = $null
-    
+
     # No medications
     med_dilaudid_4mg = $false
     med_dilaudid_2mg = $false
@@ -208,24 +208,24 @@ $script:MockFormData_EmptyValues = [PSCustomObject]@{
     med_valium_5mg = $false
     med_vitaminD_500mg = $false
     med_lexapro_10mg = $false
-    
+
     # Activities with empty values
     add_activity = $true
     activities_type_1 = ""
     activities_length_1 = ""
     activities_note_1 = $null
-    
+
     # Pain with missing values
     add_pain = $true
     pain_location_1 = ""
     pain_level_1 = ""
     pain_note_1 = ""
-    
+
     # Empty vitals
     add_vitals = $true
     o2 = ""
     bpr = ""
-    
+
     ImageFile = $null
 }
 
@@ -235,7 +235,7 @@ $script:MockFormData_SleepFormats = [PSCustomObject]@{
     timestamp = "07:30"
     notes = "Testing different sleep formats"
     sleep = "9:15"  # HH:MM format
-    
+
     # Minimal other data
     med_dilaudid_4mg = $false
     med_dilaudid_2mg = $false
@@ -244,27 +244,27 @@ $script:MockFormData_SleepFormats = [PSCustomObject]@{
     med_valium_5mg = $false
     med_vitaminD_500mg = $false
     med_lexapro_10mg = $false
-    
+
     add_activity = $false
     add_pain = $false
     add_vitals = $false
-    
+
     ImageFile = $null
 }
 
 # Helper function to simulate the form processing transformation
 function ConvertTo-ProcessedFormData {
     param([PSCustomObject]$MockFormData)
-    
+
     # Create a copy of the mock data
     $ProcessedData = $MockFormData.PSObject.Copy()
-    
+
     # Apply the same transformations as in the actual form submission
     if ($ProcessedData.date) {
         $ProcessedData.timestamp = [datetime]::Parse($ProcessedData.timestamp).ToString("HHmm")
         $ProcessedData.date = [datetime]::Parse($ProcessedData.date).ToString("MMdd")
     }
-    
+
     return $ProcessedData
 }
 
