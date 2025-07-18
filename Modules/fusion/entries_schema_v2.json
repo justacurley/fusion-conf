@@ -32,7 +32,7 @@
       "uniqueItems": true,
       "items": {
         "type": "string",
-        "enum": ["mood", "vitals", "medication", "activity", "pain", "weight", "sleep"]
+        "enum": ["mood", "vitals", "medications", "activities", "pain", "weight", "sleep"]
       },
       "description": "Array of health types included in this entry"
     },
@@ -86,59 +86,74 @@
             }
           }
         },
-        "medication": {
-          "type": "object",
-          "required": ["medication_name", "dosage"],
-          "properties": {
-            "medication_name": {
-              "type": "string",
-              "description": "Name of medication taken"
-            },
-            "dosage": {
-              "type": "string",
-              "description": "Dosage amount (e.g., '500mg', '1 tablet')"
+        "medications": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "dosage"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of medication taken"
+              },
+              "dosage": {
+                "type": "string",
+                "description": "Dosage amount (e.g., '500mg', '1 tablet')"
+              }
             }
-          }
+          },
+          "description": "Array of medications taken in this entry"
         },
-        "activity": {
-          "type": "object",
-          "required": ["activity_name", "duration_minutes", "note"],
-          "properties": {
-            "activity_name": {
-              "type": "string",
-              "description": "Type of physical activity"
-            },
-            "duration_minutes": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 480,
-              "description": "Duration of activity in minutes"
-            },
-            "note": {
-              "type": "string",
-              "description": "Additional notes about the activity"
+        "activities": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["name", "duration_minutes"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Type of physical activity"
+              },
+              "duration_minutes": {
+                "type": "integer",
+                "minimum": 1,
+                "maximum": 480,
+                "description": "Duration of activity in minutes"
+              },
+              "note": {
+                "type": "string",
+                "description": "Additional notes about the activity"
+              }
             }
-          }
+          },
+          "description": "Array of physical activities performed in this entry"
         },
         "pain": {
-          "type": "object",
-          "required": ["location", "severity", "note"],
-          "properties": {
-            "location": {
-              "type": "string",
-              "description": "Location/type of pain"
-            },
-            "severity": {
-              "type": "integer",
-              "minimum": 1,
-              "maximum": 10,
-              "description": "Pain severity on 1-10 scale"
-            },
-            "note": {
-              "type": "string",
-              "description": "Description of pain characteristics"
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "required": ["location", "severity"],
+            "properties": {
+              "location": {
+                "type": "string",
+                "description": "Location/type of pain"
+              },
+              "severity": {
+                "type": "number",
+                "minimum": 0.0,
+                "maximum": 10.0,
+                "description": "Pain severity on 0-10 scale (decimals allowed)"
+              },
+              "note": {
+                "type": "string",
+                "description": "Description of pain characteristics"
+              }
             }
-          }
+          },
+          "description": "Array of pain locations and severities in this entry"
         },
         "weight": {
           "type": "object",
@@ -174,7 +189,7 @@
     },
     "notes": {
       "type": "string",
-      "description": "Combined notes describing all activities in the entry"
+      "description": "Any other notes for this entry"
     }
   },
   "examples": [
@@ -197,6 +212,50 @@
         }
       },
       "notes": "Vital signs check, Mood: Good 🙂"
+    },
+    {
+      "entry_id": "2507151600",
+      "user_email": "user@example.com",
+      "date": "2025-07-15",
+      "time": "16:00",
+      "entry_types": ["medications", "activities", "pain"],
+      "data": {
+        "medications": [
+          {
+            "name": "dilaudid",
+            "dosage": "4mg"
+          },
+          {
+            "name": "tylenol",
+            "dosage": "1g"
+          }
+        ],
+        "activities": [
+          {
+            "name": "Walking",
+            "duration_minutes": 20,
+            "note": "Slow pace"
+          },
+          {
+            "name": "Standing",
+            "duration_minutes": 10,
+            "note": ""
+          }
+        ],
+        "pain": [
+          {
+            "location": "back",
+            "severity": 3.5,
+            "note": "Lower back ache"
+          },
+          {
+            "location": "rquad",
+            "severity": 2.0,
+            "note": "Slight tension"
+          }
+        ]
+      },
+      "notes": "Multiple medications and activities, back pain continuing"
     }
   ]
 }

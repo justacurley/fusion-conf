@@ -41,7 +41,14 @@
         'Get-DateVitalsData',
         'Get-HealthMetrics',
         'Clear-CachedData',
-        'Get-PSUCachedEntries'
+        'Get-PSUCachedEntries',
+        'Find-DuplicateEntries',
+        'Compare-EntryData',
+        'Compare-Medications',
+        'Compare-PainData',
+        'Compare-Activities',
+        'Compare-Vitals',
+        'Compare-NoteText'
     )    # Cmdlets to export from this module
     CmdletsToExport = @()
 

@@ -51,7 +51,7 @@ PowerShellVersion = '5.1'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-RequiredModules = @('GetFusion')
+# RequiredModules = @()
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -102,8 +102,7 @@ FileList = @(
     'build.ps1',
     'entries_schema.json',
     'entries_schema_v2.json',
-    'ENTRIES-SCHEMA-v2.md',
-    'tests/fusion.Tests.ps1'
+    'Tests/fusion.Tests.ps1'
 )
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.

@@ -1,4 +1,9 @@
-using module '../UserManagement.psm1'
+BeforeAll {
+    # Import the UserProfile class first
+    . (Join-Path $PSScriptRoot "..\Classes\UserProfile.ps1")
+    # Import the module under test
+    Import-Module (Join-Path $PSScriptRoot "..\UserManagement.psm1") -Force
+}
 
 Describe "UserProfile.ValidateUserDataStructure Tests" {
     BeforeAll {

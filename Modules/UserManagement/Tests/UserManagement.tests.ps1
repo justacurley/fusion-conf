@@ -1,8 +1,10 @@
 # UserProfile Class Tests
 # Test file for the UserProfile class functionality
-# Import the module under test
-using module ../UserManagement.psm1
 BeforeAll {
+    # Import the UserProfile class first
+    . (Join-Path $PSScriptRoot "..\Classes\UserProfile.ps1")
+    # Import the module under test
+    Import-Module (Join-Path $PSScriptRoot "..\UserManagement.psm1") -Force
     # Test data setup
     Import-Module (Join-Path $PSScriptRoot "TestHelpers.psm1") -Force
     $script:TestUserData = @{
@@ -1198,7 +1200,9 @@ Describe "Get-UserCacheData" -Tag Get-UserCacheData {
 
             $result = Get-UserCacheData -UserEmail "cached@example.com"
 
-            $result | Should -Be $testCacheData
+            # The function returns a PowerShell object, not JSON string
+            $result.UserEmail | Should -Be "cached@example.com"
+            $result.Name | Should -Be "Cached User"
         }
 
         It "Should handle Get-PSUCache errors gracefully" {
@@ -1295,13 +1299,12 @@ Describe "Cache Functions Integration" {
             # Verify data was stored and retrieved correctly
             $retrievedData | Should -Not -BeNullOrEmpty
 
-            # Parse the JSON and verify content
-            $parsedData = $retrievedData | ConvertFrom-Json
-            $parsedData.UserEmail | Should -Be "integration@example.com"
-            $parsedData.Name | Should -Be "Integration User"
-            $parsedData.Profile.FirstName | Should -Be "Test"
-            $parsedData.Profile.LastName | Should -Be "User"
-            $parsedData.Preferences.Theme | Should -Be "Dark"
+            # Data is already parsed as PowerShell object, no need to ConvertFrom-Json
+            $retrievedData.UserEmail | Should -Be "integration@example.com"
+            $retrievedData.Name | Should -Be "Integration User"
+            $retrievedData.Profile.FirstName | Should -Be "Test"
+            $retrievedData.Profile.LastName | Should -Be "User"
+            $retrievedData.Preferences.Theme | Should -Be "Dark"
         }
 
         It "Should handle cache expiration properly" {

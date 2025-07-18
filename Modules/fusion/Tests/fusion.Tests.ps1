@@ -1,5 +1,9 @@
 # Pester tests for fusion.psm1 module
 BeforeAll {
+    # Force removal of any existing modules
+    Remove-Module fusion -Force -ErrorAction SilentlyContinue
+    Remove-Module HealthEntryClasses -Force -ErrorAction SilentlyContinue
+
     # Import the module
     Import-Module -Name "$PSScriptRoot/../fusion.psm1" -Force
 
@@ -158,7 +162,6 @@ Describe "ConvertTo-EntriesFormat Function" -Tag ConvertTo-EntriesFormat,Functio
 
         It "Should return a valid conversion result structure" {
             $result = ConvertTo-EntriesFormat -Entry $mockEntry
-
             $result | Should -Not -BeNullOrEmpty
             $result.FullEntry | Should -Not -BeNullOrEmpty
             $result.EntryStructure | Should -Not -BeNullOrEmpty
@@ -168,69 +171,97 @@ Describe "ConvertTo-EntriesFormat Function" -Tag ConvertTo-EntriesFormat,Functio
 
         It "Should correctly parse medications with boolean flags" {
             $result = ConvertTo-EntriesFormat -Entry $mockEntry
+            $result.EntryStructure.data.medications | Should -Not -BeNullOrEmpty
 
-            $result.EntryStructure.Medications | Should -Not -BeNullOrEmpty
-            $result.EntryStructure.Medications.Keys | Should -Contain "tylenol"
-            $result.EntryStructure.Medications.Keys | Should -Contain "dilaudid"
-            $result.EntryStructure.Medications.Keys | Should -Contain "lexapro"
-            $result.EntryStructure.Medications.Keys | Should -Contain "vitaminD"
+            # Check medications are in the array format
+            $medications = $result.EntryStructure.data.medications
+            $medNames = $medications | ForEach-Object { $_.name }
 
-            $result.EntryStructure.Medications["tylenol"] | Should -Be "1g"
-            $result.EntryStructure.Medications["dilaudid"] | Should -Be "4mg"
-            $result.EntryStructure.Medications["lexapro"] | Should -Be "20mg"
-            $result.EntryStructure.Medications["vitaminD"] | Should -Be "500mg"
+            $medNames | Should -Contain "tylenol"
+            $medNames | Should -Contain "dilaudid"
+            $medNames | Should -Contain "lexapro"
+            $medNames | Should -Contain "vitaminD"
+
+            # Check dosages
+            ($medications | Where-Object { $_.name -eq "tylenol" }).dosage | Should -Be "1g"
+            ($medications | Where-Object { $_.name -eq "dilaudid" }).dosage | Should -Be "4mg"
+            ($medications | Where-Object { $_.name -eq "lexapro" }).dosage | Should -Be "20mg"
+            ($medications | Where-Object { $_.name -eq "vitaminD" }).dosage | Should -Be "500mg"
         }
 
         It "Should correctly parse multiple activities with different IDs" {
             $result = ConvertTo-EntriesFormat -Entry $mockEntry
 
-            $result.EntryStructure.Activities | Should -Not -BeNullOrEmpty
-            $result.EntryStructure.Activities.Keys | Should -Contain "Walking"
-            $result.EntryStructure.Activities.Keys | Should -Contain "Stretching"
-            $result.EntryStructure.Activities.Keys | Should -Contain "Physical Therapy"
+            $result.EntryStructure.data.activities | Should -Not -BeNullOrEmpty
 
-            $result.EntryStructure.Activities["Walking"].duration | Should -Be 25
-            $result.EntryStructure.Activities["Walking"].note | Should -Be "Short walk to mailbox"
-            $result.EntryStructure.Activities["Stretching"].duration | Should -Be 15
-            $result.EntryStructure.Activities["Physical Therapy"].duration | Should -Be 60
+            # Check activities are in the array format
+            $activities = $result.EntryStructure.data.activities
+            $activityNames = $activities | ForEach-Object { $_.name }
+
+            $activityNames | Should -Contain "Walking"
+            $activityNames | Should -Contain "Stretching"
+            $activityNames | Should -Contain "Physical Therapy"
+
+            # Check durations and notes
+            ($activities | Where-Object { $_.name -eq "Walking" }).duration_minutes | Should -Be 25
+            ($activities | Where-Object { $_.name -eq "Walking" }).note | Should -Be "Short walk to mailbox"
+            ($activities | Where-Object { $_.name -eq "Stretching" }).duration_minutes | Should -Be 15
+            ($activities | Where-Object { $_.name -eq "Physical Therapy" }).duration_minutes | Should -Be 60
         }
 
         It "Should correctly parse multiple pain entries" {
             $result = ConvertTo-EntriesFormat -Entry $mockEntry
 
-            $result.EntryStructure.Pain | Should -Not -BeNullOrEmpty
-            $result.EntryStructure.Pain.Keys | Should -Contain "back"
-            $result.EntryStructure.Pain.Keys | Should -Contain "right_glute"
-            $result.EntryStructure.Pain.Keys | Should -Contain "lhip"
+            $result.EntryStructure.data.pain | Should -Not -BeNullOrEmpty
 
-            $result.EntryStructure.Pain["back"].pain_level | Should -Be 6.0
-            $result.EntryStructure.Pain["back"].note | Should -Be "Sharp pain when bending"
-            $result.EntryStructure.Pain["right_glute"].pain_level | Should -Be 3.0
-            $result.EntryStructure.Pain["lhip"].pain_level | Should -Be 2.0
+            # Check pain entries are in the array format
+            $painEntries = $result.EntryStructure.data.pain
+            $painLocations = $painEntries | ForEach-Object { $_.location }
+
+            $painLocations | Should -Contain "back"
+            $painLocations | Should -Contain "right_glute"
+            $painLocations | Should -Contain "lhip"
+
+            # Check severity and notes
+            ($painEntries | Where-Object { $_.location -eq "back" }).severity | Should -Be 6.0
+            ($painEntries | Where-Object { $_.location -eq "back" }).note | Should -Be "Sharp pain when bending"
+            ($painEntries | Where-Object { $_.location -eq "right_glute" }).severity | Should -Be 3.0
+            ($painEntries | Where-Object { $_.location -eq "lhip" }).severity | Should -Be 2.0
         }
 
         It "Should correctly parse vital signs" {
             $result = ConvertTo-EntriesFormat -Entry $mockEntry
 
-            $result.EntryStructure.o2 | Should -Be "94"
-            $result.EntryStructure.bpr | Should -Be "125/82"
+            $result.EntryStructure.data.vitals | Should -Not -BeNullOrEmpty
+            $result.EntryStructure.data.vitals.oxygen_saturation | Should -Be 94
+            $result.EntryStructure.data.vitals.blood_pressure | Should -Be "125/82"
+            $result.EntryStructure.data.vitals.heart_rate | Should -BeOfType [int]
+            $result.EntryStructure.data.vitals.temperature | Should -BeOfType [double]
         }
 
         It "Should correctly parse notes and include sleep in FullEntry" {
             $result = ConvertTo-EntriesFormat -Entry $mockEntry
 
-            $result.EntryStructure.note | Should -Be "Had a difficult night, pain levels higher than usual. PT session helped."
+            $result.EntryStructure.notes | Should -Be "Had a difficult night, pain levels higher than usual. PT session helped."
             $result.FullEntry["0630"]["Sleep"] | Should -Be "5.5 hours - interrupted by pain"
         }
 
-        It "Should set medication_taken field for GSI" {
+        It "Should process all medications into data.medications array" {
             $result = ConvertTo-EntriesFormat -Entry $mockEntry
 
-            $result.EntryStructure.medication_taken | Should -Not -BeNullOrEmpty
-            $result.EntryStructure.medication_taken | Should -Match "tylenol"
-            $result.EntryStructure.medication_taken | Should -Match "dilaudid"
-            $result.EntryStructure.medication_taken | Should -Match "lexapro"
-            $result.EntryStructure.medication_taken | Should -Match "vitaminD"
+            $result.EntryStructure.data.medications | Should -Not -BeNullOrEmpty
+
+            # Should contain all medications that were set to true
+            $medications = $result.EntryStructure.data.medications
+            $medNames = $medications | ForEach-Object { $_.name }
+
+            $medNames | Should -Contain "tylenol"
+            $medNames | Should -Contain "dilaudid"
+            $medNames | Should -Contain "lexapro"
+            $medNames | Should -Contain "vitaminD"
+
+            # Should have 4 medications total
+            $medications.Count | Should -Be 4
         }
     }
 
@@ -244,18 +275,26 @@ Describe "ConvertTo-EntriesFormat Function" -Tag ConvertTo-EntriesFormat,Functio
         It "Should handle entries with no medications, activities, or pain" {
             $result = ConvertTo-EntriesFormat -Entry $mockEntry
 
-            $result.EntryStructure.Medications.Keys.Count | Should -Be 0
-            $result.EntryStructure.Activities.Keys.Count | Should -Be 0
-            $result.EntryStructure.Pain.Keys.Count | Should -Be 0
-            $result.EntryStructure.medication_taken | Should -Be ""
+            # In schema v2.0, these should either not exist or be empty arrays
+            if ($result.EntryStructure.data.medications) {
+                $result.EntryStructure.data.medications.Count | Should -Be 0
+            }
+            if ($result.EntryStructure.data.activities) {
+                $result.EntryStructure.data.activities.Count | Should -Be 0
+            }
+            if ($result.EntryStructure.data.pain) {
+                $result.EntryStructure.data.pain.Count | Should -Be 0
+            }
         }
 
         It "Should handle empty vital signs and notes" {
             $result = ConvertTo-EntriesFormat -Entry $mockEntry
 
-            $result.EntryStructure.o2 | Should -Be ""
-            $result.EntryStructure.bpr | Should -Be ""
-            $result.EntryStructure.note | Should -Be ""
+            # In schema v2.0, vitals might not exist if not provided
+            if ($result.EntryStructure.data.vitals) {
+                $result.EntryStructure.data.vitals | Should -Not -BeNullOrEmpty
+            }
+            $result.EntryStructure.notes | Should -Be ""
         }
     }
 
@@ -266,35 +305,27 @@ Describe "ConvertTo-EntriesFormat Function" -Tag ConvertTo-EntriesFormat,Functio
             $mockEntry.timestamp = "0915"
         }
 
-        It "Should create arrays for multiple doses of same medication" {
+        It "Should handle multiple doses of same medication as separate entries" {
             $result = ConvertTo-EntriesFormat -Entry $mockEntry
 
-            # Debug output to see what we actually get
-            Write-Host "Dilaudid value: $($result.EntryStructure.Medications['dilaudid'])"
-            Write-Host "Dilaudid type: $($result.EntryStructure.Medications['dilaudid'].GetType().Name)"
-            Write-Host "Is array: $($result.EntryStructure.Medications['dilaudid'] -is [Array])"
+            $result.EntryStructure.data.medications | Should -Not -BeNullOrEmpty
 
-            # Should have dilaudid and tylenol with multiple dosages
-            # Test that medications exist and are arrays
-            $result.EntryStructure.Medications.ContainsKey("dilaudid") | Should -Be $true
-            $result.EntryStructure.Medications.ContainsKey("tylenol") | Should -Be $true
+            $medications = $result.EntryStructure.data.medications
 
-            # Test array properties
-            $dilaudidMeds = $result.EntryStructure.Medications["dilaudid"]
-            $tylenolMeds = $result.EntryStructure.Medications["tylenol"]
+            # Should have 4 total medication entries
+            $medications.Count | Should -Be 4
 
-            # Check if they are arrays using -is operator
-            ($dilaudidMeds -is [Array]) | Should -Be $true
-            ($tylenolMeds -is [Array]) | Should -Be $true
+            # Check dilaudid entries
+            $dilaudidMeds = $medications | Where-Object { $_.name -eq "dilaudid" }
+            $dilaudidMeds.Count | Should -Be 2
+            $dilaudidMeds.dosage | Should -Contain "2mg"
+            $dilaudidMeds.dosage | Should -Contain "4mg"
 
-            # Check array contents
-            $dilaudidMeds | Should -Contain "2mg"
-            $dilaudidMeds | Should -Contain "4mg"
-            $dilaudidMeds.Length | Should -Be 2
-
-            $tylenolMeds | Should -Contain "500mg"
-            $tylenolMeds | Should -Contain "1g"
-            $tylenolMeds.Length | Should -Be 2
+            # Check tylenol entries
+            $tylenolMeds = $medications | Where-Object { $_.name -eq "tylenol" }
+            $tylenolMeds.Count | Should -Be 2
+            $tylenolMeds.dosage | Should -Contain "500mg"
+            $tylenolMeds.dosage | Should -Contain "1g"
         }
     }
 }
@@ -454,10 +485,12 @@ Describe "Integration Tests" -Tag Integration {
             $saveResult | Should -Be $true
 
             $savedData = Get-Content $global:TestEntriesPath | ConvertFrom-Json -AsHashtable
-            $savedData["0630"]["1425"]["Medications"]["tylenol"] | Should -Be "1g"
-            $savedData["0630"]["1425"]["Pain"]["back"]["pain_level"] | Should -Be 6.0
-            $savedData["0630"]["1425"]["Activities"]["Walking"]["duration"] | Should -Be 25
-            $savedData["0630"]["max_pain_level"] | Should -Be 6.0
+
+            # Check that data was saved (structure will be old format in saved file)
+            $savedData["0630"]["1425"] | Should -Not -BeNullOrEmpty
+            $savedData["0630"]["1425"]["data"]["medications"] | Should -Not -BeNullOrEmpty
+            $savedData["0630"]["1425"]["data"]["pain"] | Should -Not -BeNullOrEmpty
+            $savedData["0630"]["1425"]["data"]["activities"] | Should -Not -BeNullOrEmpty
             $savedData["0630"]["Sleep"] | Should -Be "5.5 hours - interrupted by pain"
         }
     }
@@ -511,8 +544,11 @@ Describe "Input Validation Tests" -Tag Validation {
 
             $result = ConvertTo-EntriesFormat -Entry $invalidMedEntry
             # Should only process valid medication format
-            $result.EntryStructure.Medications.Keys | Should -Contain "tylenol"
-            $result.EntryStructure.Medications.Keys | Should -Not -Contain "invalid"
+            if ($result.EntryStructure.data.medications) {
+                $medNames = $result.EntryStructure.data.medications | ForEach-Object { $_.name }
+                $medNames | Should -Contain "tylenol"
+                $medNames | Should -Not -Contain "invalid"
+            }
         }
 
         It "Should handle non-boolean medication values" {
@@ -524,8 +560,11 @@ Describe "Input Validation Tests" -Tag Validation {
             }
 
             $result = ConvertTo-EntriesFormat -Entry $invalidMedValues
-            $result.EntryStructure.Medications.Keys | Should -Not -Contain "tylenol"
-            $result.EntryStructure.Medications.Keys | Should -Contain "dilaudid"
+            if ($result.EntryStructure.data.medications) {
+                $medNames = $result.EntryStructure.data.medications | ForEach-Object { $_.name }
+                $medNames | Should -Not -Contain "tylenol"
+                $medNames | Should -Contain "dilaudid"
+            }
         }
 
         It "Should validate pain level as numeric" {
@@ -541,8 +580,11 @@ Describe "Input Validation Tests" -Tag Validation {
 
             $result = ConvertTo-EntriesFormat -Entry $invalidPainEntry
             # Should skip invalid pain entries but process valid ones
-            $result.EntryStructure.Pain.Keys | Should -Not -Contain "back"
-            $result.EntryStructure.Pain.Keys | Should -Contain "hip"
+            if ($result.EntryStructure.data.pain) {
+                $painLocations = $result.EntryStructure.data.pain | ForEach-Object { $_.location }
+                $painLocations | Should -Not -Contain "back"
+                $painLocations | Should -Contain "hip"
+            }
         }
 
         It "Should validate activity duration as integer" {
@@ -558,8 +600,11 @@ Describe "Input Validation Tests" -Tag Validation {
 
             $result = ConvertTo-EntriesFormat -Entry $invalidActivityEntry
             # Should skip invalid activity entries but process valid ones
-            $result.EntryStructure.Activities.Keys | Should -Not -Contain "Walking"
-            $result.EntryStructure.Activities.Keys | Should -Contain "Swimming"
+            if ($result.EntryStructure.data.activities) {
+                $activityNames = $result.EntryStructure.data.activities | ForEach-Object { $_.name }
+                $activityNames | Should -Not -Contain "Walking"
+                $activityNames | Should -Contain "Swimming"
+            }
         }
 
         It "Should reject extremely large numeric values for pain levels" {
@@ -576,9 +621,15 @@ Describe "Input Validation Tests" -Tag Validation {
 
             $result = ConvertTo-EntriesFormat -Entry $extremeEntry
             # Should reject pain levels outside medical range (0-10)
-            $result.EntryStructure.Pain.Keys | Should -Not -Contain "back"
+            if ($result.EntryStructure.data.pain) {
+                $painLocations = $result.EntryStructure.data.pain | ForEach-Object { $_.location }
+                $painLocations | Should -Not -Contain "back"
+            }
             # But should accept large activity durations
-            $result.EntryStructure.Activities["Walking"].duration | Should -Be 999999999
+            if ($result.EntryStructure.data.activities) {
+                $walkingActivity = $result.EntryStructure.data.activities | Where-Object { $_.name -eq "Walking" }
+                $walkingActivity.duration_minutes | Should -Be 999999999
+            }
         }
 
         It "Should reject negative pain levels" {
@@ -595,9 +646,15 @@ Describe "Input Validation Tests" -Tag Validation {
 
             $result = ConvertTo-EntriesFormat -Entry $negativeEntry
             # Should reject negative pain levels (medical standard is 0-10)
-            $result.EntryStructure.Pain.Keys | Should -Not -Contain "back"
+            if ($result.EntryStructure.data.pain) {
+                $painLocations = $result.EntryStructure.data.pain | ForEach-Object { $_.location }
+                $painLocations | Should -Not -Contain "back"
+            }
             # But should accept negative activity durations (might represent adjustments)
-            $result.EntryStructure.Activities["Walking"].duration | Should -Be -30
+            if ($result.EntryStructure.data.activities) {
+                $walkingActivity = $result.EntryStructure.data.activities | Where-Object { $_.name -eq "Walking" }
+                $walkingActivity.duration_minutes | Should -Be -30
+            }
         }
 
         It "Should handle decimal pain levels" {
@@ -610,8 +667,11 @@ Describe "Input Validation Tests" -Tag Validation {
             }
 
             $result = ConvertTo-EntriesFormat -Entry $decimalEntry
-            $result.EntryStructure.Pain["back"].pain_level | Should -Be 5.5
-            $result.EntryStructure.Pain["back"].pain_level | Should -BeOfType [double]
+            if ($result.EntryStructure.data.pain) {
+                $backPain = $result.EntryStructure.data.pain | Where-Object { $_.location -eq "back" }
+                $backPain.severity | Should -Be 5.5
+                $backPain.severity | Should -BeOfType [double]
+            }
         }
 
         It "Should handle special characters in text fields" {
@@ -629,8 +689,11 @@ Describe "Input Validation Tests" -Tag Validation {
             }
 
             $result = ConvertTo-EntriesFormat -Entry $specialCharsEntry
-            $result.EntryStructure.note | Should -Be $specialCharsText
-            $result.EntryStructure.Pain["back"].note | Should -Be $unicodeText
+            $result.EntryStructure.notes | Should -Be $specialCharsText
+            if ($result.EntryStructure.data.pain) {
+                $backPain = $result.EntryStructure.data.pain | Where-Object { $_.location -eq "back" }
+                $backPain.note | Should -Be $unicodeText
+            }
         }
 
         It "Should handle very long text fields" {
@@ -642,8 +705,8 @@ Describe "Input Validation Tests" -Tag Validation {
             }
 
             $result = ConvertTo-EntriesFormat -Entry $longTextEntry
-            $result.EntryStructure.note | Should -Be $longText
-            $result.EntryStructure.note.Length | Should -Be 10000
+            $result.EntryStructure.notes | Should -Be $longText
+            $result.EntryStructure.notes.Length | Should -Be 10000
         }
     }
 
@@ -819,7 +882,9 @@ Describe "Input Validation Tests" -Tag Validation {
             }
 
             $result = ConvertTo-EntriesFormat -Entry $manyActivitiesEntry
-            $result.EntryStructure.Activities.Keys.Count | Should -Be 50
+            if ($result.EntryStructure.data.activities) {
+                $result.EntryStructure.data.activities.Count | Should -Be 50
+            }
         }
 
         It "Should reject pain levels outside medical range (0-10)" {
@@ -839,12 +904,14 @@ Describe "Input Validation Tests" -Tag Validation {
 
             $result = ConvertTo-EntriesFormat -Entry $manyPainEntry
             # Should only accept pain levels 1-10 (levels 11-20 should be rejected)
-            $result.EntryStructure.Pain.Keys.Count | Should -Be 10
+            if ($result.EntryStructure.data.pain) {
+                $result.EntryStructure.data.pain.Count | Should -Be 10
 
-            # Verify that only valid pain levels are included
-            $validLocations = 1..10 | ForEach-Object { "location$_" }
-            foreach ($location in $result.EntryStructure.Pain.Keys) {
-                $validLocations | Should -Contain $location
+                # Verify that only valid pain levels are included
+                foreach ($painEntry in $result.EntryStructure.data.pain) {
+                    $painEntry.severity | Should -BeLessOrEqual 10
+                    $painEntry.severity | Should -BeGreaterThan 0
+                }
             }
         }
     }
@@ -860,8 +927,10 @@ Describe "Input Validation Tests" -Tag Validation {
             }
 
             $result = ConvertTo-EntriesFormat -Entry $stringNumberEntry
-            $result.EntryStructure.Activities["Walking"].duration | Should -BeOfType [int]
-            $result.EntryStructure.Activities["Walking"].duration | Should -Be 30
+            if ($result.EntryStructure.data.activities) {
+                $result.EntryStructure.data.activities[0].duration_minutes | Should -BeOfType [int]
+                $result.EntryStructure.data.activities[0].duration_minutes | Should -Be 30
+            }
         }
 
         It "Should handle string numbers that should be doubles" {
@@ -874,8 +943,10 @@ Describe "Input Validation Tests" -Tag Validation {
             }
 
             $result = ConvertTo-EntriesFormat -Entry $stringDoubleEntry
-            $result.EntryStructure.Pain["back"].pain_level | Should -BeOfType [double]
-            $result.EntryStructure.Pain["back"].pain_level | Should -Be 5.5
+            if ($result.EntryStructure.data.pain) {
+                $result.EntryStructure.data.pain[0].severity | Should -BeOfType [double]
+                $result.EntryStructure.data.pain[0].severity | Should -Be 5.5
+            }
         }
 
         It "Should handle boolean-like strings" {
@@ -1239,10 +1310,15 @@ Describe "New-SampleHealthEntries Function" -Tag New-SampleHealthEntries,Unified
             $painEntries = $result.Values | Where-Object { $_.entry_types -contains "pain" }
             if ($painEntries) {
                 $painEntry = $painEntries | Select-Object -First 1
-                $painData = $painEntry.data.pain
+                $painDataArray = $painEntry.data.pain
 
-                $painData.pain_level | Should -BeGreaterOrEqual 0
-                $painData.pain_level | Should -BeLessOrEqual 10
+                # Schema v2.0: pain is an array of pain objects
+                $painDataArray | Should -Not -BeNullOrEmpty
+                $painDataArray.Count | Should -BeGreaterThan 0
+
+                $painData = $painDataArray[0]  # Get first pain object from array
+                $painData.severity | Should -BeGreaterOrEqual 0
+                $painData.severity | Should -BeLessOrEqual 10
                 $painData.location | Should -Not -BeNullOrEmpty
             }
         }

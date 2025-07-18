@@ -35,8 +35,8 @@ function New-MedicationSchedule {
     Optional user ID for direct lookup
 
     .PARAMETER MedicationSchedules
-    Array of hashtables defining medication schedules. Each hashtable should contain:
-    - medication_name (required): Name of the medication
+    MedicationSchedules - Array of medication schedule objects with the following structure:
+    - name (required): Name of the medication
     - schedules (required): Array of schedule entries with time, dosage, notes
     - prescribing_doctor: Doctor who prescribed the medication
     - start_date: When to start this medication schedule
@@ -56,7 +56,7 @@ function New-MedicationSchedule {
     # Single medication with multiple daily dosages
     $Schedule = @(
         @{
-            medication_name = "Metformin"
+            name = "Metformin"
             prescribing_doctor = "Dr. Smith"
             start_date = "2025-07-11"
             active = $true
@@ -83,7 +83,7 @@ function New-MedicationSchedule {
     # Multiple medications with complex schedules
     $ComplexSchedule = @(
         @{
-            medication_name = "Lisinopril"
+            name = "Lisinopril"
             prescribing_doctor = "Dr. Johnson"
             start_date = "2025-07-11"
             active = $true
@@ -97,7 +97,7 @@ function New-MedicationSchedule {
             )
         },
         @{
-            medication_name = "Insulin"
+            name = "Insulin"
             prescribing_doctor = "Dr. Williams"
             start_date = "2025-07-11"
             active = $true
@@ -156,16 +156,16 @@ function New-MedicationSchedule {
 
         foreach ($MedSchedule in $MedicationSchedules) {
             # Validate required fields
-            if (-not $MedSchedule.medication_name) {
-                throw "medication_name is required for all medication schedules"
+            if (-not $MedSchedule.name) {
+                throw "name is required for all medication schedules"
             }
             if (-not $MedSchedule.schedules -or $MedSchedule.schedules.Count -eq 0) {
-                throw "schedules array is required and must contain at least one schedule entry for $($MedSchedule.medication_name)"
+                throw "schedules array is required and must contain at least one schedule entry for $($MedSchedule.name)"
             }
 
             # Process each schedule entry for this medication
             $ProcessedMedication = @{
-                medication_name = $MedSchedule.medication_name
+                name = $MedSchedule.name
                 prescribing_doctor = $MedSchedule.prescribing_doctor ?? ''
                 start_date = $MedSchedule.start_date ?? (Get-Date -Format 'yyyy-MM-dd')
                 end_date = $MedSchedule.end_date ?? $null
@@ -177,15 +177,15 @@ function New-MedicationSchedule {
             # Validate and process each time/dosage entry
             foreach ($Schedule in $MedSchedule.schedules) {
                 if (-not $Schedule.time) {
-                    throw "time is required for all schedule entries for $($MedSchedule.medication_name)"
+                    throw "time is required for all schedule entries for $($MedSchedule.name)"
                 }
                 if (-not $Schedule.dosage) {
-                    throw "dosage is required for all schedule entries for $($MedSchedule.medication_name)"
+                    throw "dosage is required for all schedule entries for $($MedSchedule.name)"
                 }
 
                 # Validate time format (basic check for HH:mm)
                 if ($Schedule.time -notmatch '^\d{1,2}:\d{2}$') {
-                    throw "Invalid time format '$($Schedule.time)' for $($MedSchedule.medication_name). Use HH:mm format (e.g., '08:30')"
+                    throw "Invalid time format '$($Schedule.time)' for $($MedSchedule.name). Use HH:mm format (e.g., '08:30')"
                 }
 
                 $ScheduleEntry = @{
@@ -206,7 +206,7 @@ function New-MedicationSchedule {
             $ProcessedMedication.daily_schedules = $ProcessedMedication.daily_schedules | Sort-Object { [DateTime]::ParseExact($_.time, 'H:mm', $null) }
 
             $ProcessedSchedules += $ProcessedMedication
-            $Response.ScheduleCreated += "$($ProcessedMedication.medication_name) ($($ProcessedMedication.total_daily_doses) daily doses)"
+            $Response.ScheduleCreated += "$($ProcessedMedication.name) ($($ProcessedMedication.total_daily_doses) daily doses)"
         }
 
         $Response.TotalDailyDoses = $TotalDoses

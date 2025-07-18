@@ -1,0 +1,29 @@
+# Code coverage files
+coverage.xml
+coverage-report/
+coverage-summary.html
+
+# Test results
+TestResults/
+
+# Temporary files
+*.tmp
+*.temp
+*.log
+test_entries.json
+
+# PowerShell module installation test paths
+temp_entries.json
+test_entries_*.json
+
+# IDE files
+.vscode/settings.json
+.vs/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Build artifacts
+dist/
+publish/
