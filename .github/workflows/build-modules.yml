@@ -79,7 +79,7 @@ jobs:
     - name: Validate Module Structure
       run: |
         MODULE_PATH="fusion-conf/Modules/${{ matrix.module }}"
-
+        echo "$PWD"
         if [ ! -d "$MODULE_PATH" ]; then
           echo "❌ Module directory not found: $MODULE_PATH"
           exit 1
