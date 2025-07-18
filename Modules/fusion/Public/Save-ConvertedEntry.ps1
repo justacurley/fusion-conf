@@ -45,7 +45,7 @@ function Save-ConvertedEntry {
     # Handle new schema format
     if ($ConvertedEntry.ContainsKey('SchemaEntry')) {
         $schemaEntry = $ConvertedEntry.SchemaEntry
-        $entryId = $schemaEntry.entry_id
+        $entryId = [string]$schemaEntry.entry_id  # Ensure it's treated as a string
 
         # Determine save path based on user email if not provided
         if (-not $EntriesPath) {
@@ -55,7 +55,7 @@ function Save-ConvertedEntry {
         # Load existing entries
         $Entries = Get-CachedEntriesData -EntriesPath $EntriesPath
 
-        # Save entry using composite key
+        # Save entry using composite key (ensure key is string)
         $Entries[$entryId] = $schemaEntry
 
         # Save the entries

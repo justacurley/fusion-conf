@@ -76,7 +76,12 @@ function Get-CachedEntriesData {
                 # Handle empty file
                 $AllEntries = @{}
             } else {
-                $AllEntries = $content | ConvertFrom-Json -AsHashtable
+                $tempEntries = $content | ConvertFrom-Json -AsHashtable
+                # Ensure all keys are strings (PowerShell converts numeric keys to integers)
+                $AllEntries = @{}
+                foreach ($key in $tempEntries.Keys) {
+                    $AllEntries[[string]$key] = $tempEntries[$key]
+                }
             }
         }
 
