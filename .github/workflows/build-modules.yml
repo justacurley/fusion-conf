@@ -63,7 +63,7 @@ jobs:
         Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
 
         # Install required modules
-        \$modules = @('Pester', 'PSScriptAnalyzer', 'platyPS')
+        \$modules = @('Pester', 'PSScriptAnalyzer', 'platyPS', 'Universal')
         foreach (\$module in \$modules) {
           try {
             Write-Host \"Installing \$module...\"

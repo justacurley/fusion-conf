@@ -55,6 +55,7 @@ jobs:
         Install-Module -Name Pester -Force -Scope CurrentUser
         Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
         Install-Module -Name platyPS -Force -Scope CurrentUser
+        Install-Module -Name Universal -Force -Scope CurrentUser
         "
 
     - name: Run Module Build and Tests
