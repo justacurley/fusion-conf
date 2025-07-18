@@ -2,7 +2,7 @@ function ConvertTo-EntriesFormat {
     param(
         [Parameter(Mandatory = $true)]
         [pscustomobject]$Entry,
-        
+
         [Parameter(Mandatory = $false)]
         [string]$UserEmail = "user@example.com"
     )
@@ -18,7 +18,7 @@ function ConvertTo-EntriesFormat {
     # Parse dates and create entry_id (yyMMddHHmm format)
     $rawDate = if ($Entry.date) { $Entry.date } else { '' }
     $rawTime = if ($Entry.timestamp) { $Entry.timestamp } else { '' }
-    
+
     if (-not $rawDate -or -not $rawTime) {
         throw 'Date and timestamp are required for schema v2.0'
     }
@@ -29,7 +29,7 @@ function ConvertTo-EntriesFormat {
     $day = $rawDate.Substring(2, 2)
     $hour = $rawTime.Substring(0, 2)
     $minute = $rawTime.Substring(2, 2)
-    
+
     $isoDate = "$year-$month-$day"
     $isoTime = "$hour`:$minute"
     $entryId = $([datetime]::ParseExact($isoDate, "yyyy-MM-dd", $null).ToString("yyMMdd")) + $rawTime
@@ -50,12 +50,12 @@ function ConvertTo-EntriesFormat {
     if ($medProperties.Count -gt 0) {
         $schemaEntry.entry_types += "medications"
         $schemaEntry.data.medications = @()
-        
+
         foreach ($medProp in $medProperties) {
             if ($medProp.Name -match '^med_(.+?)_(.+)$') {
                 $medName = $matches[1]
                 $dosage = $matches[2]
-                
+
                 # Validate dosage format and medication name
                 if ($dosage -match '^\d+(\.\d+)?(mg|g|ml|mcg|iu|units?)$|^\d+(\.\d+)?$' -and $medName -match '^[a-zA-Z][a-zA-Z0-9]*$') {
                     $schemaEntry.data.medications += @{
@@ -77,7 +77,7 @@ function ConvertTo-EntriesFormat {
         if ($painProperties.Count -gt 0) {
             $schemaEntry.entry_types += "pain"
             $schemaEntry.data.pain = @()
-            
+
             foreach ($painProp in $painProperties) {
                 $id = $painProp.Name -replace 'pain_location_', ''
                 $location = $painProp.Value
@@ -88,7 +88,7 @@ function ConvertTo-EntriesFormat {
                     try {
                         $level = [double]$Entry.PSObject.Properties[$levelProp].Value
                         $note = if ($Entry.PSObject.Properties[$noteProp]) { $Entry.PSObject.Properties[$noteProp].Value } else { "" }
-                        
+
                         # Validate pain level is within medical range (0-10)
                         if ($level -ge 0.0 -and $level -le 10.0) {
                             $schemaEntry.data.pain += @{
@@ -116,7 +116,7 @@ function ConvertTo-EntriesFormat {
         if ($activityProperties.Count -gt 0) {
             $schemaEntry.entry_types += "activities"
             $schemaEntry.data.activities = @()
-            
+
             foreach ($activityProp in $activityProperties) {
                 $id = $activityProp.Name -replace 'activities_type_', ''
                 $activityType = $activityProp.Value
@@ -166,7 +166,7 @@ function ConvertTo-EntriesFormat {
     if ($Entry.mood) {
         $moodLevel = [int]$Entry.mood
         $moodNote = if ($Entry.mood_note) { $Entry.mood_note } else { "" }
-        
+
         # Validate mood level is in range (1-5 as per schema)
         if ($moodLevel -ge 1 -and $moodLevel -le 5) {
             $schemaEntry.entry_types += "mood"
@@ -185,7 +185,7 @@ function ConvertTo-EntriesFormat {
         if ($Entry.sleep -match '(\d+\.?\d*)') {
             $sleepHours = [double]$matches[1]
         }
-        
+
         if ($sleepHours -ge 0.0 -and $sleepHours -le 24.0) {
             $schemaEntry.entry_types += "sleep"
             $schemaEntry.data.sleep = @{

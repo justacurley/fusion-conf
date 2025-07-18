@@ -1,0 +1,270 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, develop, local/dev ]
+  pull_request:
+    branches: [ main, develop ]
+  workflow_dispatch:
+
+env:
+  POWERSHELL_TELEMETRY_OPTOUT: 1
+
+jobs:
+  build-and-test:
+    name: Build and Test PowerShell Modules
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        module: [
+          'UserManagement',
+          'fusion',
+          'GetFusion',
+          'HealthEntryClasses'
+        ]
+      fail-fast: false
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup PowerShell
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+
+    - name: Install PowerShell
+      run: |
+        # Update package lists
+        sudo apt-get update
+
+        # Install PowerShell
+        wget -q https://github.com/PowerShell/PowerShell/releases/download/v7.4.0/powershell_7.4.0-1.deb_amd64.deb
+        sudo dpkg -i powershell_7.4.0-1.deb_amd64.deb
+        sudo apt-get install -f
+
+        # Verify installation
+        pwsh --version
+
+    - name: Install Required PowerShell Modules
+      run: |
+        pwsh -Command "
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+        Install-Module -Name Pester -Force -Scope CurrentUser
+        Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
+        Install-Module -Name platyPS -Force -Scope CurrentUser
+        "
+
+    - name: Run Module Build and Tests
+      run: |
+        cd fusion-conf/Modules/${{ matrix.module }}
+
+        # Check if build.ps1 exists
+        if [ ! -f "build.ps1" ]; then
+          echo "Error: build.ps1 not found in ${{ matrix.module }} module"
+          exit 1
+        fi
+
+        # Make build script executable
+        chmod +x build.ps1
+
+        # Run the build script with All task
+        pwsh -File ./build.ps1 -Task All
+      env:
+        MODULE_NAME: ${{ matrix.module }}
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.module }}
+        path: |
+          fusion-conf/Modules/${{ matrix.module }}/Tests/TestResults.xml
+          fusion-conf/Modules/${{ matrix.module }}/Tests/Coverage.xml
+          fusion-conf/Modules/${{ matrix.module }}/Tests/CoverageReport.html
+        retention-days: 30
+
+    - name: Upload Module Artifacts
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: module-${{ matrix.module }}
+        path: |
+          fusion-conf/Modules/${{ matrix.module }}/*.psd1
+          fusion-conf/Modules/${{ matrix.module }}/*.psm1
+          fusion-conf/Modules/${{ matrix.module }}/Public/
+          fusion-conf/Modules/${{ matrix.module }}/Private/
+        retention-days: 30
+
+  code-quality:
+    name: Code Quality Analysis
+    runs-on: ubuntu-latest
+    needs: build-and-test
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install PowerShell
+      run: |
+        sudo apt-get update
+        wget -q https://github.com/PowerShell/PowerShell/releases/download/v7.4.0/powershell_7.4.0-1.deb_amd64.deb
+        sudo dpkg -i powershell_7.4.0-1.deb_amd64.deb
+        sudo apt-get install -f
+
+    - name: Install PSScriptAnalyzer
+      run: |
+        pwsh -Command "
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+        Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
+        "
+
+    - name: Run PSScriptAnalyzer
+      run: |
+        pwsh -Command "
+        \$modules = @('UserManagement', 'fusion', 'GetFusion', 'HealthEntryClasses')
+        \$allResults = @()
+
+        foreach (\$module in \$modules) {
+          \$modulePath = \"fusion-conf/Modules/\$module\"
+          if (Test-Path \$modulePath) {
+            Write-Host \"Analyzing module: \$module\"
+            \$results = Invoke-ScriptAnalyzer -Path \$modulePath -Recurse -Severity @('Error', 'Warning') -EnableExit
+            \$allResults += \$results
+          }
+        }
+
+        if (\$allResults.Count -gt 0) {
+          \$allResults | Format-Table -AutoSize
+          Write-Host \"Found \$(\$allResults.Count) issues\"
+          exit 1
+        } else {
+          Write-Host \"No code quality issues found\"
+        }
+        "
+
+  integration-tests:
+    name: Integration Tests
+    runs-on: ubuntu-latest
+    needs: build-and-test
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install PowerShell
+      run: |
+        sudo apt-get update
+        wget -q https://github.com/PowerShell/PowerShell/releases/download/v7.4.0/powershell_7.4.0-1.deb_amd64.deb
+        sudo dpkg -i powershell_7.4.0-1.deb_amd64.deb
+        sudo apt-get install -f
+
+    - name: Install Required Modules
+      run: |
+        pwsh -Command "
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+        Install-Module -Name Pester -Force -Scope CurrentUser
+        "
+
+    - name: Run Integration Tests
+      run: |
+        pwsh -Command "
+        # Import all modules
+        \$modules = @('UserManagement', 'fusion', 'GetFusion', 'HealthEntryClasses')
+
+        foreach (\$module in \$modules) {
+          \$modulePath = \"fusion-conf/Modules/\$module/\$module.psm1\"
+          if (Test-Path \$modulePath) {
+            Write-Host \"Importing module: \$module\"
+            Import-Module \$modulePath -Force
+          }
+        }
+
+        # Run integration tests if they exist
+        if (Test-Path 'fusion-conf/Tests/Integration') {
+          Invoke-Pester -Path 'fusion-conf/Tests/Integration' -Output Detailed
+        } else {
+          Write-Host 'No integration tests found'
+        }
+        "
+
+  publish-artifacts:
+    name: Publish Release Artifacts
+    runs-on: ubuntu-latest
+    needs: [build-and-test, code-quality]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Download All Artifacts
+      uses: actions/download-artifact@v4
+      with:
+        path: ./artifacts
+
+    - name: Create Release Package
+      run: |
+        mkdir -p release-package
+
+        # Copy all module artifacts
+        for module in UserManagement fusion GetFusion HealthEntryClasses; do
+          if [ -d "artifacts/module-$module" ]; then
+            cp -r "artifacts/module-$module" "release-package/$module"
+          fi
+        done
+
+        # Create a zip archive
+        cd release-package
+        zip -r ../fusion-modules-$(date +%Y%m%d-%H%M%S).zip .
+        cd ..
+
+    - name: Upload Release Package
+      uses: actions/upload-artifact@v4
+      with:
+        name: fusion-modules-release
+        path: fusion-modules-*.zip
+        retention-days: 90
+
+  summary:
+    name: Build Summary
+    runs-on: ubuntu-latest
+    needs: [build-and-test, code-quality]
+    if: always()
+
+    steps:
+    - name: Generate Summary
+      run: |
+        echo "## Build Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Module Build Status" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        modules=("UserManagement" "fusion" "GetFusion" "HealthEntryClasses")
+
+        for module in "${modules[@]}"; do
+          if [ "${{ needs.build-and-test.result }}" == "success" ]; then
+            echo "✅ $module - Build and Tests Passed" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ $module - Build or Tests Failed" >> $GITHUB_STEP_SUMMARY
+          fi
+        done
+
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Code Quality" >> $GITHUB_STEP_SUMMARY
+
+        if [ "${{ needs.code-quality.result }}" == "success" ]; then
+          echo "✅ Code Quality Analysis Passed" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "❌ Code Quality Issues Found" >> $GITHUB_STEP_SUMMARY
+        fi
+
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Workflow Information" >> $GITHUB_STEP_SUMMARY
+        echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Run ID:** ${{ github.run_id }}" >> $GITHUB_STEP_SUMMARY

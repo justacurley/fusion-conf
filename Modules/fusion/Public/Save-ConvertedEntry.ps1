@@ -11,7 +11,7 @@ function Save-ConvertedEntry {
                     }
                     return $true
                 }
-                
+
                 # Check for legacy format (backward compatibility)
                 $hasDate = $_.ContainsKey('Date') -or $_.ContainsKey('date')
                 $hasTimestamp = $_.ContainsKey('Timestamp') -or $_.ContainsKey('timestamp')
@@ -46,26 +46,26 @@ function Save-ConvertedEntry {
     if ($ConvertedEntry.ContainsKey('SchemaEntry')) {
         $schemaEntry = $ConvertedEntry.SchemaEntry
         $entryId = $schemaEntry.entry_id
-        
+
         # Determine save path based on user email if not provided
         if (-not $EntriesPath) {
             $EntriesPath = Get-UserEntriesPath -UserEmail $schemaEntry.user_email
         }
-        
+
         # Load existing entries
         $Entries = Get-CachedEntriesData -EntriesPath $EntriesPath
-        
+
         # Save entry using composite key
         $Entries[$entryId] = $schemaEntry
-        
+
         # Save the entries
         Write-Information "Saving new schema entry to $EntriesPath"
         $Entries | ConvertTo-Json -Depth 99 -Compress | Out-File $EntriesPath -Encoding UTF8
-        
+
         Write-Information 'New schema entry saved successfully'
         return $true
     }
-    
+
     # Legacy format handling (backward compatibility)
     if (-not $EntriesPath) {
         throw 'EntriesPath is required for legacy format entries'

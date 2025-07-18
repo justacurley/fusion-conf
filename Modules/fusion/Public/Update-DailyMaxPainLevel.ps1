@@ -13,7 +13,7 @@ function Update-DailyMaxPainLevel {
 
     # Handle new schema format (composite keys)
     $dateEntries = $Entries.Keys | Where-Object { $_ -match "^\d{2}$([datetime]::ParseExact($Date, 'MMdd', $null).ToString('MMdd'))\d{4}$" }
-    
+
     if ($dateEntries) {
         foreach ($entryId in $dateEntries) {
             $entry = $Entries[$entryId]
@@ -37,7 +37,7 @@ function Update-DailyMaxPainLevel {
             }
         }
     }
-    
+
     # Handle legacy format (backward compatibility)
     if ($Entries.ContainsKey($Date)) {
         foreach ($timestamp in $Entries[$Date].Keys) {
