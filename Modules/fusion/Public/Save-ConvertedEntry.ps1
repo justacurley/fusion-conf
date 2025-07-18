@@ -3,12 +3,21 @@ function Save-ConvertedEntry {
     param(
         [Parameter(Mandatory = $true)]
         [ValidateScript({
-                # Check for both possible key names (Date/Timestamp or date/timestamp)
+                # Check for new schema format
+                if ($_.ContainsKey('SchemaEntry')) {
+                    $schemaEntry = $_.SchemaEntry
+                    if (-not $schemaEntry.entry_id -or -not $schemaEntry.user_email) {
+                        throw 'SchemaEntry must contain entry_id and user_email properties'
+                    }
+                    return $true
+                }
+                
+                # Check for legacy format (backward compatibility)
                 $hasDate = $_.ContainsKey('Date') -or $_.ContainsKey('date')
                 $hasTimestamp = $_.ContainsKey('Timestamp') -or $_.ContainsKey('timestamp')
 
                 if (-not $hasDate -or -not $hasTimestamp) {
-                    throw 'ConvertedEntry must contain Date/date and Timestamp/timestamp properties'
+                    throw 'ConvertedEntry must contain Date/date and Timestamp/timestamp properties or SchemaEntry'
                 }
 
                 $dateValue = if ($_.ContainsKey('Date')) { $_.Date } else { $_.date }
@@ -21,9 +30,9 @@ function Save-ConvertedEntry {
             })]
         [hashtable]$ConvertedEntry,
 
-        [Parameter(Mandatory = $true)]
+        [Parameter(Mandatory = $false)]
         [ValidateScript({
-                if (-not (Test-Path (Split-Path $_ -Parent))) {
+                if ($_ -and -not (Test-Path (Split-Path $_ -Parent))) {
                     throw "Parent directory does not exist: $(Split-Path $_ -Parent)"
                 }
                 return $true
@@ -32,6 +41,35 @@ function Save-ConvertedEntry {
     )
 
     Write-Information 'Starting Save-ConvertedEntry'
+
+    # Handle new schema format
+    if ($ConvertedEntry.ContainsKey('SchemaEntry')) {
+        $schemaEntry = $ConvertedEntry.SchemaEntry
+        $entryId = $schemaEntry.entry_id
+        
+        # Determine save path based on user email if not provided
+        if (-not $EntriesPath) {
+            $EntriesPath = Get-UserEntriesPath -UserEmail $schemaEntry.user_email
+        }
+        
+        # Load existing entries
+        $Entries = Get-CachedEntriesData -EntriesPath $EntriesPath
+        
+        # Save entry using composite key
+        $Entries[$entryId] = $schemaEntry
+        
+        # Save the entries
+        Write-Information "Saving new schema entry to $EntriesPath"
+        $Entries | ConvertTo-Json -Depth 99 -Compress | Out-File $EntriesPath -Encoding UTF8
+        
+        Write-Information 'New schema entry saved successfully'
+        return $true
+    }
+    
+    # Legacy format handling (backward compatibility)
+    if (-not $EntriesPath) {
+        throw 'EntriesPath is required for legacy format entries'
+    }
 
     # Load existing entries
     $Entries = @{}

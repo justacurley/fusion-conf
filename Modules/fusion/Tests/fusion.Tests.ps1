@@ -161,20 +161,26 @@ Describe "ConvertTo-EntriesFormat Function" -Tag ConvertTo-EntriesFormat,Functio
         }
 
         It "Should return a valid conversion result structure" {
-            $result = ConvertTo-EntriesFormat -Entry $mockEntry
+            $result = ConvertTo-EntriesFormat -Entry $mockEntry -UserEmail "test@example.com"
             $result | Should -Not -BeNullOrEmpty
-            $result.FullEntry | Should -Not -BeNullOrEmpty
-            $result.EntryStructure | Should -Not -BeNullOrEmpty
+            $result.SchemaEntry | Should -Not -BeNullOrEmpty
             $result.Date | Should -Be "0630"
             $result.Timestamp | Should -Be "1425"
+            $result.EntryId | Should -Match "^\d{10}$"
+            $result.SchemaEntry.entry_id | Should -Be $result.EntryId
+            $result.SchemaEntry.user_email | Should -Not -BeNullOrEmpty
+            $result.SchemaEntry.date | Should -Match "^\d{4}-\d{2}-\d{2}$"
+            $result.SchemaEntry.time | Should -Match "^\d{2}:\d{2}$"
+            $result.SchemaEntry.entry_types | Should -Not -BeNullOrEmpty
+            $result.SchemaEntry.data | Should -Not -BeNullOrEmpty
         }
 
         It "Should correctly parse medications with boolean flags" {
-            $result = ConvertTo-EntriesFormat -Entry $mockEntry
-            $result.EntryStructure.data.medications | Should -Not -BeNullOrEmpty
+            $result = ConvertTo-EntriesFormat -Entry $mockEntry -UserEmail "test@example.com"
+            $result.SchemaEntry.data.medications | Should -Not -BeNullOrEmpty
 
             # Check medications are in the array format
-            $medications = $result.EntryStructure.data.medications
+            $medications = $result.SchemaEntry.data.medications
             $medNames = $medications | ForEach-Object { $_.name }
 
             $medNames | Should -Contain "tylenol"
@@ -190,12 +196,12 @@ Describe "ConvertTo-EntriesFormat Function" -Tag ConvertTo-EntriesFormat,Functio
         }
 
         It "Should correctly parse multiple activities with different IDs" {
-            $result = ConvertTo-EntriesFormat -Entry $mockEntry
+            $result = ConvertTo-EntriesFormat -Entry $mockEntry -UserEmail "test@example.com"
 
-            $result.EntryStructure.data.activities | Should -Not -BeNullOrEmpty
+            $result.SchemaEntry.data.activities | Should -Not -BeNullOrEmpty
 
             # Check activities are in the array format
-            $activities = $result.EntryStructure.data.activities
+            $activities = $result.SchemaEntry.data.activities
             $activityNames = $activities | ForEach-Object { $_.name }
 
             $activityNames | Should -Contain "Walking"
@@ -210,12 +216,12 @@ Describe "ConvertTo-EntriesFormat Function" -Tag ConvertTo-EntriesFormat,Functio
         }
 
         It "Should correctly parse multiple pain entries" {
-            $result = ConvertTo-EntriesFormat -Entry $mockEntry
+            $result = ConvertTo-EntriesFormat -Entry $mockEntry -UserEmail "test@example.com"
 
-            $result.EntryStructure.data.pain | Should -Not -BeNullOrEmpty
+            $result.SchemaEntry.data.pain | Should -Not -BeNullOrEmpty
 
             # Check pain entries are in the array format
-            $painEntries = $result.EntryStructure.data.pain
+            $painEntries = $result.SchemaEntry.data.pain
             $painLocations = $painEntries | ForEach-Object { $_.location }
 
             $painLocations | Should -Contain "back"
@@ -230,29 +236,30 @@ Describe "ConvertTo-EntriesFormat Function" -Tag ConvertTo-EntriesFormat,Functio
         }
 
         It "Should correctly parse vital signs" {
-            $result = ConvertTo-EntriesFormat -Entry $mockEntry
+            $result = ConvertTo-EntriesFormat -Entry $mockEntry -UserEmail "test@example.com"
 
-            $result.EntryStructure.data.vitals | Should -Not -BeNullOrEmpty
-            $result.EntryStructure.data.vitals.oxygen_saturation | Should -Be 94
-            $result.EntryStructure.data.vitals.blood_pressure | Should -Be "125/82"
-            $result.EntryStructure.data.vitals.heart_rate | Should -BeOfType [int]
-            $result.EntryStructure.data.vitals.temperature | Should -BeOfType [double]
+            $result.SchemaEntry.data.vitals | Should -Not -BeNullOrEmpty
+            $result.SchemaEntry.data.vitals.oxygen_saturation | Should -Be 94
+            $result.SchemaEntry.data.vitals.blood_pressure | Should -Be "125/82"
+            $result.SchemaEntry.data.vitals.heart_rate | Should -BeOfType [int]
+            $result.SchemaEntry.data.vitals.temperature | Should -BeOfType [double]
         }
 
-        It "Should correctly parse notes and include sleep in FullEntry" {
-            $result = ConvertTo-EntriesFormat -Entry $mockEntry
+        It "Should correctly parse notes and include sleep in SchemaEntry" {
+            $result = ConvertTo-EntriesFormat -Entry $mockEntry -UserEmail "test@example.com"
 
-            $result.EntryStructure.notes | Should -Be "Had a difficult night, pain levels higher than usual. PT session helped."
-            $result.FullEntry["0630"]["Sleep"] | Should -Be "5.5 hours - interrupted by pain"
+            $result.SchemaEntry.notes | Should -Be "Had a difficult night, pain levels higher than usual. PT session helped."
+            $result.SchemaEntry.data.sleep | Should -Not -BeNullOrEmpty
+            $result.SchemaEntry.data.sleep.sleep_hours | Should -Be 5.5
         }
 
         It "Should process all medications into data.medications array" {
-            $result = ConvertTo-EntriesFormat -Entry $mockEntry
+            $result = ConvertTo-EntriesFormat -Entry $mockEntry -UserEmail "test@example.com"
 
-            $result.EntryStructure.data.medications | Should -Not -BeNullOrEmpty
+            $result.SchemaEntry.data.medications | Should -Not -BeNullOrEmpty
 
             # Should contain all medications that were set to true
-            $medications = $result.EntryStructure.data.medications
+            $medications = $result.SchemaEntry.data.medications
             $medNames = $medications | ForEach-Object { $_.name }
 
             $medNames | Should -Contain "tylenol"
@@ -273,28 +280,28 @@ Describe "ConvertTo-EntriesFormat Function" -Tag ConvertTo-EntriesFormat,Functio
         }
 
         It "Should handle entries with no medications, activities, or pain" {
-            $result = ConvertTo-EntriesFormat -Entry $mockEntry
+            $result = ConvertTo-EntriesFormat -Entry $mockEntry -UserEmail "test@example.com"
 
             # In schema v2.0, these should either not exist or be empty arrays
-            if ($result.EntryStructure.data.medications) {
-                $result.EntryStructure.data.medications.Count | Should -Be 0
+            if ($result.SchemaEntry.data.medications) {
+                $result.SchemaEntry.data.medications.Count | Should -Be 0
             }
-            if ($result.EntryStructure.data.activities) {
-                $result.EntryStructure.data.activities.Count | Should -Be 0
+            if ($result.SchemaEntry.data.activities) {
+                $result.SchemaEntry.data.activities.Count | Should -Be 0
             }
-            if ($result.EntryStructure.data.pain) {
-                $result.EntryStructure.data.pain.Count | Should -Be 0
+            if ($result.SchemaEntry.data.pain) {
+                $result.SchemaEntry.data.pain.Count | Should -Be 0
             }
         }
 
         It "Should handle empty vital signs and notes" {
-            $result = ConvertTo-EntriesFormat -Entry $mockEntry
+            $result = ConvertTo-EntriesFormat -Entry $mockEntry -UserEmail "test@example.com"
 
             # In schema v2.0, vitals might not exist if not provided
-            if ($result.EntryStructure.data.vitals) {
-                $result.EntryStructure.data.vitals | Should -Not -BeNullOrEmpty
+            if ($result.SchemaEntry.data.vitals) {
+                $result.SchemaEntry.data.vitals | Should -Not -BeNullOrEmpty
             }
-            $result.EntryStructure.notes | Should -Be ""
+            $result.SchemaEntry.notes | Should -Be ""
         }
     }
 
@@ -306,11 +313,11 @@ Describe "ConvertTo-EntriesFormat Function" -Tag ConvertTo-EntriesFormat,Functio
         }
 
         It "Should handle multiple doses of same medication as separate entries" {
-            $result = ConvertTo-EntriesFormat -Entry $mockEntry
+            $result = ConvertTo-EntriesFormat -Entry $mockEntry -UserEmail "test@example.com"
 
-            $result.EntryStructure.data.medications | Should -Not -BeNullOrEmpty
+            $result.SchemaEntry.data.medications | Should -Not -BeNullOrEmpty
 
-            $medications = $result.EntryStructure.data.medications
+            $medications = $result.SchemaEntry.data.medications
 
             # Should have 4 total medication entries
             $medications.Count | Should -Be 4
@@ -387,81 +394,101 @@ Describe "Save-ConvertedEntry Function" -Tag Save-ConvertedEntry,Function {
                 Remove-Item $global:TestEntriesPath -Force
             }
 
-            # Create a converted entry structure
+            # Create a converted entry structure using new schema
             $script:testConvertedEntry = @{
                 Date = "0630"
                 Timestamp = "1425"
-                EntryStructure = @{
-                    "Medications" = @{
-                        "tylenol" = "1g"
-                        "dilaudid" = "4mg"
-                    }
-                    "Pain" = @{
-                        "back" = @{ "pain_level" = 6.0; "note" = "Sharp pain" }
-                    }
-                    "Activities" = @{
-                        "Walking" = @{ "duration" = 25; "note" = "Short walk" }
-                    }
-                    "o2" = "94"
-                    "bpr" = "125/82"
-                    "note" = "Test entry"
-                    "medication_taken" = "tylenol,dilaudid"
-                }
-                FullEntry = @{
-                    "0630" = @{
-                        "1425" = @{
-                            # EntryStructure content would be here
+                EntryId = "2507140630"
+                SchemaEntry = @{
+                    entry_id = "2507140630"
+                    user_email = "test@example.com"
+                    date = "2025-07-14"
+                    time = "14:25"
+                    entry_types = @("medications", "pain", "activities", "vitals")
+                    data = @{
+                        medications = @(
+                            @{ name = "tylenol"; dosage = "1g" }
+                            @{ name = "dilaudid"; dosage = "4mg" }
+                        )
+                        pain = @(
+                            @{ location = "back"; severity = 6.0; note = "Sharp pain" }
+                        )
+                        activities = @(
+                            @{ name = "Walking"; duration_minutes = 25; note = "Short walk" }
+                        )
+                        vitals = @{
+                            oxygen_saturation = 94
+                            blood_pressure = "125/82"
+                            heart_rate = 72
+                            temperature = 98.6
                         }
-                        "Sleep" = "8 hours"
                     }
+                    notes = "Test entry"
                 }
             }
         }
 
         It "Should save entry to new file when file doesn't exist" {
-            $result = Save-ConvertedEntry -ConvertedEntry $script:testConvertedEntry -EntriesPath $global:TestEntriesPath
+            # Create test directory structure
+            $testUserPath = Join-Path $TestDrive "test_user_entries.json"
+            $script:testConvertedEntry.SchemaEntry.user_email = "test@example.com"
+
+            $result = Save-ConvertedEntry -ConvertedEntry $script:testConvertedEntry -EntriesPath $testUserPath
 
             $result | Should -Be $true
-            Test-Path $global:TestEntriesPath | Should -Be $true
+            Test-Path $testUserPath | Should -Be $true
 
-            $savedData = Get-Content $global:TestEntriesPath | ConvertFrom-Json -AsHashtable
-            $savedData["0630"]["1425"]["Medications"]["tylenol"] | Should -Be "1g"
-            $savedData["0630"]["Sleep"] | Should -Be "8 hours"
+            $savedData = Get-Content $testUserPath | ConvertFrom-Json -AsHashtable
+            $savedData["2507140630"] | Should -Not -BeNullOrEmpty
+            $savedData["2507140630"].entry_id | Should -Be "2507140630"
+            $savedData["2507140630"].data.medications[0].name | Should -Be "tylenol"
+            $savedData["2507140630"].data.medications[0].dosage | Should -Be "1g"
         }
 
         It "Should append to existing entries file" {
-            # Create initial entry
+            # Create test directory structure
+            $testUserPath = Join-Path $TestDrive "test_user_entries2.json"
+
+            # Create initial entry in new schema format
             $initialEntries = @{
-                "0629" = @{
-                    "1200" = @{
-                        "Medications" = @{ "lexapro" = "20mg" }
-                        "Pain" = @{}
-                        "Activities" = @{}
-                        "o2" = ""
-                        "bpr" = ""
-                        "note" = "Initial entry"
-                        "medication_taken" = "lexapro"
+                "2507140900" = @{
+                    entry_id = "2507140900"
+                    user_email = "test@example.com"
+                    date = "2025-07-14"
+                    time = "09:00"
+                    entry_types = @("medications")
+                    data = @{
+                        medications = @(
+                            @{ name = "lexapro"; dosage = "20mg" }
+                        )
                     }
-                    "max_pain_level" = 0.0
+                    notes = "Initial entry"
                 }
             }
-            $initialEntries | ConvertTo-Json -Depth 99 | Out-File $global:TestEntriesPath -Encoding UTF8
+            $initialEntries | ConvertTo-Json -Depth 99 | Out-File $testUserPath -Encoding UTF8
 
             # Save new entry
-            $result = Save-ConvertedEntry -ConvertedEntry $script:testConvertedEntry -EntriesPath $global:TestEntriesPath
+            $result = Save-ConvertedEntry -ConvertedEntry $script:testConvertedEntry -EntriesPath $testUserPath
 
             $result | Should -Be $true
 
-            $savedData = Get-Content $global:TestEntriesPath | ConvertFrom-Json -AsHashtable
-            $savedData["0629"]["1200"]["Medications"]["lexapro"] | Should -Be "20mg"  # Original entry preserved
-            $savedData["0630"]["1425"]["Medications"]["tylenol"] | Should -Be "1g"   # New entry added
+            $savedData = Get-Content $testUserPath | ConvertFrom-Json -AsHashtable
+            $savedData["2507140900"] | Should -Not -BeNullOrEmpty  # Original entry preserved
+            $savedData["2507140900"].data.medications[0].name | Should -Be "lexapro"
+            $savedData["2507140630"] | Should -Not -BeNullOrEmpty  # New entry added
+            $savedData["2507140630"].data.medications[0].name | Should -Be "tylenol"
         }
 
-        It "Should update daily max pain level" {
-            $result = Save-ConvertedEntry -ConvertedEntry $script:testConvertedEntry -EntriesPath $global:TestEntriesPath
+        It "Should save entry with new schema format" {
+            $testUserPath = Join-Path $TestDrive "schema_test_entries.json"
 
-            $savedData = Get-Content $global:TestEntriesPath | ConvertFrom-Json -AsHashtable
-            $savedData["0630"]["max_pain_level"] | Should -Be 6.0
+            $result = Save-ConvertedEntry -ConvertedEntry $script:testConvertedEntry -EntriesPath $testUserPath
+
+            $result | Should -Be $true
+
+            $savedData = Get-Content $testUserPath | ConvertFrom-Json -AsHashtable
+            $savedData["2507140630"] | Should -Not -BeNullOrEmpty
+            $savedData["2507140630"].data.pain[0].severity | Should -Be 6.0
         }
     }
 }
@@ -476,22 +503,27 @@ Describe "Integration Tests" -Tag Integration {
             $formData.timestamp = "1425"
 
             # Convert form data
-            $convertedEntry = ConvertTo-EntriesFormat -Entry $formData
+            $convertedEntry = ConvertTo-EntriesFormat -Entry $formData -UserEmail "integration.test@example.com"
+
+            # Create test path for integration test
+            $testIntegrationPath = Join-Path $TestDrive "integration_test_entries.json"
 
             # Save the entry
-            $saveResult = Save-ConvertedEntry -ConvertedEntry $convertedEntry -EntriesPath $global:TestEntriesPath
+            $saveResult = Save-ConvertedEntry -ConvertedEntry $convertedEntry -EntriesPath $testIntegrationPath
 
             # Verify the complete workflow
             $saveResult | Should -Be $true
 
-            $savedData = Get-Content $global:TestEntriesPath | ConvertFrom-Json -AsHashtable
+            $savedData = Get-Content $testIntegrationPath | ConvertFrom-Json -AsHashtable
 
-            # Check that data was saved (structure will be old format in saved file)
-            $savedData["0630"]["1425"] | Should -Not -BeNullOrEmpty
-            $savedData["0630"]["1425"]["data"]["medications"] | Should -Not -BeNullOrEmpty
-            $savedData["0630"]["1425"]["data"]["pain"] | Should -Not -BeNullOrEmpty
-            $savedData["0630"]["1425"]["data"]["activities"] | Should -Not -BeNullOrEmpty
-            $savedData["0630"]["Sleep"] | Should -Be "5.5 hours - interrupted by pain"
+            # Check that data was saved using new schema format
+            $entryId = $convertedEntry.EntryId
+            $savedData[$entryId] | Should -Not -BeNullOrEmpty
+            $savedData[$entryId].data.medications | Should -Not -BeNullOrEmpty
+            $savedData[$entryId].data.pain | Should -Not -BeNullOrEmpty
+            $savedData[$entryId].data.activities | Should -Not -BeNullOrEmpty
+            $savedData[$entryId].data.sleep | Should -Not -BeNullOrEmpty
+            $savedData[$entryId].data.sleep.sleep_hours | Should -Be 5.5
         }
     }
 }
@@ -504,12 +536,8 @@ Describe "Input Validation Tests" -Tag Validation {
         }
 
         It "Should handle non-PSCustomObject input gracefully" {
-            # PowerShell automatically converts strings to PSCustomObject, so this should not throw
-            # but will result in empty/default values
-            $result = ConvertTo-EntriesFormat -Entry "not an object"
-            $result | Should -Not -BeNullOrEmpty
-            $result.Date | Should -Be ""
-            $result.Timestamp | Should -Be ""
+            # With schema v2.0, we now require valid date/timestamp, so this should throw
+            { ConvertTo-EntriesFormat -Entry "not an object" -UserEmail "test@example.com" } | Should -Throw
         }
 
         It "Should handle Entry with missing required fields gracefully" {
@@ -518,20 +546,19 @@ Describe "Input Validation Tests" -Tag Validation {
                 notes = "Test note"
             }
 
-            # Should not throw, but should handle gracefully
-            { ConvertTo-EntriesFormat -Entry $incompleteEntry } | Should -Not -Throw
+            # With schema v2.0, missing date/timestamp should throw an error
+            { ConvertTo-EntriesFormat -Entry $incompleteEntry -UserEmail "test@example.com" } | Should -Throw
         }
 
         It "Should handle Entry with null/empty date and timestamp" {
             $entryWithNulls = [PSCustomObject]@{
                 date = $null
                 timestamp = ""
-                notes = "Test"
+                notes = "Test note"
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $entryWithNulls
-            $result.Date | Should -Be ""
-            $result.Timestamp | Should -Be ""
+            # With schema v2.0, null/empty date and timestamp should throw an error
+            { ConvertTo-EntriesFormat -Entry $entryWithNulls -UserEmail "test@example.com" } | Should -Throw
         }
 
         It "Should validate medication property format" {
@@ -542,10 +569,10 @@ Describe "Input Validation Tests" -Tag Validation {
                 med_tylenol_1g = $true      # Should match pattern
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $invalidMedEntry
+            $result = ConvertTo-EntriesFormat -Entry $invalidMedEntry -UserEmail "test@example.com"
             # Should only process valid medication format
-            if ($result.EntryStructure.data.medications) {
-                $medNames = $result.EntryStructure.data.medications | ForEach-Object { $_.name }
+            if ($result.SchemaEntry.data.medications) {
+                $medNames = $result.SchemaEntry.data.medications | ForEach-Object { $_.name }
                 $medNames | Should -Contain "tylenol"
                 $medNames | Should -Not -Contain "invalid"
             }
@@ -559,9 +586,9 @@ Describe "Input Validation Tests" -Tag Validation {
                 med_dilaudid_4mg = $true          # Should be processed
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $invalidMedValues
-            if ($result.EntryStructure.data.medications) {
-                $medNames = $result.EntryStructure.data.medications | ForEach-Object { $_.name }
+            $result = ConvertTo-EntriesFormat -Entry $invalidMedValues -UserEmail "test@example.com"
+            if ($result.SchemaEntry.data.medications) {
+                $medNames = $result.SchemaEntry.data.medications | ForEach-Object { $_.name }
                 $medNames | Should -Not -Contain "tylenol"
                 $medNames | Should -Contain "dilaudid"
             }
@@ -578,13 +605,8 @@ Describe "Input Validation Tests" -Tag Validation {
                 pain_level_2 = "5"             # Valid
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $invalidPainEntry
-            # Should skip invalid pain entries but process valid ones
-            if ($result.EntryStructure.data.pain) {
-                $painLocations = $result.EntryStructure.data.pain | ForEach-Object { $_.location }
-                $painLocations | Should -Not -Contain "back"
-                $painLocations | Should -Contain "hip"
-            }
+            # With schema v2.0, invalid pain levels should throw an exception
+            { ConvertTo-EntriesFormat -Entry $invalidPainEntry -UserEmail "test@example.com" } | Should -Throw
         }
 
         It "Should validate activity duration as integer" {
@@ -598,13 +620,8 @@ Describe "Input Validation Tests" -Tag Validation {
                 activities_length_2 = "30"            # Valid
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $invalidActivityEntry
-            # Should skip invalid activity entries but process valid ones
-            if ($result.EntryStructure.data.activities) {
-                $activityNames = $result.EntryStructure.data.activities | ForEach-Object { $_.name }
-                $activityNames | Should -Not -Contain "Walking"
-                $activityNames | Should -Contain "Swimming"
-            }
+            # With schema v2.0, invalid activity durations should throw an exception
+            { ConvertTo-EntriesFormat -Entry $invalidActivityEntry -UserEmail "test@example.com" } | Should -Throw
         }
 
         It "Should reject extremely large numeric values for pain levels" {
@@ -619,15 +636,15 @@ Describe "Input Validation Tests" -Tag Validation {
                 activities_length_1 = "999999999"  # Very large duration - should be accepted
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $extremeEntry
+            $result = ConvertTo-EntriesFormat -Entry $extremeEntry -UserEmail "test@example.com"
             # Should reject pain levels outside medical range (0-10)
-            if ($result.EntryStructure.data.pain) {
-                $painLocations = $result.EntryStructure.data.pain | ForEach-Object { $_.location }
+            if ($result.SchemaEntry.data.pain) {
+                $painLocations = $result.SchemaEntry.data.pain | ForEach-Object { $_.location }
                 $painLocations | Should -Not -Contain "back"
             }
             # But should accept large activity durations
-            if ($result.EntryStructure.data.activities) {
-                $walkingActivity = $result.EntryStructure.data.activities | Where-Object { $_.name -eq "Walking" }
+            if ($result.SchemaEntry.data.activities) {
+                $walkingActivity = $result.SchemaEntry.data.activities | Where-Object { $_.name -eq "Walking" }
                 $walkingActivity.duration_minutes | Should -Be 999999999
             }
         }
@@ -644,15 +661,15 @@ Describe "Input Validation Tests" -Tag Validation {
                 activities_length_1 = "-30"  # Negative duration - should be accepted
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $negativeEntry
+            $result = ConvertTo-EntriesFormat -Entry $negativeEntry -UserEmail "test@example.com"
             # Should reject negative pain levels (medical standard is 0-10)
-            if ($result.EntryStructure.data.pain) {
-                $painLocations = $result.EntryStructure.data.pain | ForEach-Object { $_.location }
+            if ($result.SchemaEntry.data.pain) {
+                $painLocations = $result.SchemaEntry.data.pain | ForEach-Object { $_.location }
                 $painLocations | Should -Not -Contain "back"
             }
             # But should accept negative activity durations (might represent adjustments)
-            if ($result.EntryStructure.data.activities) {
-                $walkingActivity = $result.EntryStructure.data.activities | Where-Object { $_.name -eq "Walking" }
+            if ($result.SchemaEntry.data.activities) {
+                $walkingActivity = $result.SchemaEntry.data.activities | Where-Object { $_.name -eq "Walking" }
                 $walkingActivity.duration_minutes | Should -Be -30
             }
         }
@@ -666,9 +683,9 @@ Describe "Input Validation Tests" -Tag Validation {
                 pain_level_1 = "5.5"  # Decimal pain level
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $decimalEntry
-            if ($result.EntryStructure.data.pain) {
-                $backPain = $result.EntryStructure.data.pain | Where-Object { $_.location -eq "back" }
+            $result = ConvertTo-EntriesFormat -Entry $decimalEntry -UserEmail "test@example.com"
+            if ($result.SchemaEntry.data.pain) {
+                $backPain = $result.SchemaEntry.data.pain | Where-Object { $_.location -eq "back" }
                 $backPain.severity | Should -Be 5.5
                 $backPain.severity | Should -BeOfType [double]
             }
@@ -688,10 +705,10 @@ Describe "Input Validation Tests" -Tag Validation {
                 pain_note_1 = $unicodeText
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $specialCharsEntry
-            $result.EntryStructure.notes | Should -Be $specialCharsText
-            if ($result.EntryStructure.data.pain) {
-                $backPain = $result.EntryStructure.data.pain | Where-Object { $_.location -eq "back" }
+            $result = ConvertTo-EntriesFormat -Entry $specialCharsEntry -UserEmail "test@example.com"
+            $result.SchemaEntry.notes | Should -Be $specialCharsText
+            if ($result.SchemaEntry.data.pain) {
+                $backPain = $result.SchemaEntry.data.pain | Where-Object { $_.location -eq "back" }
                 $backPain.note | Should -Be $unicodeText
             }
         }
@@ -704,9 +721,9 @@ Describe "Input Validation Tests" -Tag Validation {
                 notes = $longText
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $longTextEntry
-            $result.EntryStructure.notes | Should -Be $longText
-            $result.EntryStructure.notes.Length | Should -Be 10000
+            $result = ConvertTo-EntriesFormat -Entry $longTextEntry -UserEmail "test@example.com"
+            $result.SchemaEntry.notes | Should -Be $longText
+            $result.SchemaEntry.notes.Length | Should -Be 10000
         }
     }
 
@@ -770,7 +787,7 @@ Describe "Input Validation Tests" -Tag Validation {
 
         It "Should handle ConvertedEntry missing required properties" {
             $incompleteEntry = @{
-                # Missing Date, Timestamp, EntryStructure
+                # Missing Date, Timestamp, SchemaEntry
             }
 
             # Should handle gracefully or throw appropriate error
@@ -781,7 +798,7 @@ Describe "Input Validation Tests" -Tag Validation {
             $validEntry = @{
                 Date = "0630"
                 Timestamp = "1200"
-                EntryStructure = @{
+                SchemaEntry = @{
                     Medications = @{}
                     Pain = @{}
                     Activities = @{}
@@ -797,12 +814,19 @@ Describe "Input Validation Tests" -Tag Validation {
             $validEntry = @{
                 Date = "0630"
                 Timestamp = "1200"
-                EntryStructure = @{
-                    Medications = @{}
-                    Pain = @{}
-                    Activities = @{}
+                EntryId = "2507140630"
+                SchemaEntry = @{
+                    entry_id = "2507140630"
+                    user_email = "test@example.com"
+                    date = "2025-07-14"
+                    time = "06:30"
+                    entry_types = @("medications")
+                    data = @{
+                        medications = @(
+                            @{ name = "tylenol"; dosage = "500mg" }
+                        )
+                    }
                 }
-                FullEntry = @{}
             }
 
             $specialPath = Join-Path $TestDrive "test entries with spaces & symbols!@#.json"
@@ -819,7 +843,7 @@ Describe "Input Validation Tests" -Tag Validation {
             $validEntry = @{
                 Date = "0630"
                 Timestamp = "1200"
-                EntryStructure = @{
+                SchemaEntry = @{
                     Medications = @{}
                     Pain = @{}
                     Activities = @{}
@@ -840,7 +864,7 @@ Describe "Input Validation Tests" -Tag Validation {
                 notes = "Midnight entry"
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $midnightEntry
+            $result = ConvertTo-EntriesFormat -Entry $midnightEntry -UserEmail "test@example.com"
             $result.Timestamp | Should -Be "0000"
         }
 
@@ -851,19 +875,19 @@ Describe "Input Validation Tests" -Tag Validation {
                 notes = "End of day entry"
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $endOfDayEntry
+            $result = ConvertTo-EntriesFormat -Entry $endOfDayEntry -UserEmail "test@example.com"
             $result.Timestamp | Should -Be "2359"
         }
 
         It "Should handle leap year date formats" {
             $leapYearEntry = [PSCustomObject]@{
-                date = "0229"  # Feb 29 (leap year)
+                date = "0229"  # Feb 29 (leap year) - but 2025 is not a leap year
                 timestamp = "1200"
                 notes = "Leap year test"
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $leapYearEntry
-            $result.Date | Should -Be "0229"
+            # Since 2025 is not a leap year, this should throw an error
+            { ConvertTo-EntriesFormat -Entry $leapYearEntry -UserEmail "test@example.com" } | Should -Throw
         }
 
         It "Should handle maximum number of activities" {
@@ -881,9 +905,9 @@ Describe "Input Validation Tests" -Tag Validation {
                 $manyActivitiesEntry | Add-Member -NotePropertyName "activities_note_$i" -NotePropertyValue "Note $i"
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $manyActivitiesEntry
-            if ($result.EntryStructure.data.activities) {
-                $result.EntryStructure.data.activities.Count | Should -Be 50
+            $result = ConvertTo-EntriesFormat -Entry $manyActivitiesEntry -UserEmail "test@example.com"
+            if ($result.SchemaEntry.data.activities) {
+                $result.SchemaEntry.data.activities.Count | Should -Be 50
             }
         }
 
@@ -902,13 +926,13 @@ Describe "Input Validation Tests" -Tag Validation {
                 $manyPainEntry | Add-Member -NotePropertyName "pain_note_$i" -NotePropertyValue "Pain note $i"
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $manyPainEntry
+            $result = ConvertTo-EntriesFormat -Entry $manyPainEntry -UserEmail "test@example.com"
             # Should only accept pain levels 1-10 (levels 11-20 should be rejected)
-            if ($result.EntryStructure.data.pain) {
-                $result.EntryStructure.data.pain.Count | Should -Be 10
+            if ($result.SchemaEntry.data.pain) {
+                $result.SchemaEntry.data.pain.Count | Should -Be 10
 
                 # Verify that only valid pain levels are included
-                foreach ($painEntry in $result.EntryStructure.data.pain) {
+                foreach ($painEntry in $result.SchemaEntry.data.pain) {
                     $painEntry.severity | Should -BeLessOrEqual 10
                     $painEntry.severity | Should -BeGreaterThan 0
                 }
@@ -926,10 +950,10 @@ Describe "Input Validation Tests" -Tag Validation {
                 activities_length_1 = "30"  # String that should become int
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $stringNumberEntry
-            if ($result.EntryStructure.data.activities) {
-                $result.EntryStructure.data.activities[0].duration_minutes | Should -BeOfType [int]
-                $result.EntryStructure.data.activities[0].duration_minutes | Should -Be 30
+            $result = ConvertTo-EntriesFormat -Entry $stringNumberEntry -UserEmail "test@example.com"
+            if ($result.SchemaEntry.data.activities) {
+                $result.SchemaEntry.data.activities[0].duration_minutes | Should -BeOfType [int]
+                $result.SchemaEntry.data.activities[0].duration_minutes | Should -Be 30
             }
         }
 
@@ -942,10 +966,10 @@ Describe "Input Validation Tests" -Tag Validation {
                 pain_level_1 = "5.5"  # String that should become double
             }
 
-            $result = ConvertTo-EntriesFormat -Entry $stringDoubleEntry
-            if ($result.EntryStructure.data.pain) {
-                $result.EntryStructure.data.pain[0].severity | Should -BeOfType [double]
-                $result.EntryStructure.data.pain[0].severity | Should -Be 5.5
+            $result = ConvertTo-EntriesFormat -Entry $stringDoubleEntry -UserEmail "test@example.com"
+            if ($result.SchemaEntry.data.pain) {
+                $result.SchemaEntry.data.pain[0].severity | Should -BeOfType [double]
+                $result.SchemaEntry.data.pain[0].severity | Should -Be 5.5
             }
         }
 
@@ -958,7 +982,7 @@ Describe "Input Validation Tests" -Tag Validation {
             }
 
             # Should handle gracefully
-            { ConvertTo-EntriesFormat -Entry $booleanStringEntry } | Should -Not -Throw
+            { ConvertTo-EntriesFormat -Entry $booleanStringEntry -UserEmail "test@example.com" } | Should -Not -Throw
         }
     }
 }
