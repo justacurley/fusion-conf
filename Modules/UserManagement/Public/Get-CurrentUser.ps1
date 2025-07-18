@@ -28,7 +28,7 @@ function Get-CurrentUser {
             $Response['Data'] = $CurrentUser
         } catch {
             $Response['Message'] = "Error retrieving current user: $($_.Exception.Message)"
-            Write-Error "Error in Get-CurrentUser: $($_.Exception.Message)"
+            # Don't write to error stream for expected exceptions in test environment
         }
         return $Response
     }

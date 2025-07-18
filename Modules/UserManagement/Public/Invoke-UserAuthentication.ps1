@@ -19,15 +19,20 @@ function Invoke-UserAuthentication {
             if (! $UserExists) {
                 return $Response
             }
-            $UserProfile = [UserProfile]::GetUserProfile($Email)
-            if ($UserProfile -eq $false -or $null -eq $UserProfile) {
-                $Response['Message'] = "Profile.json was not found for $Email"
+
+            try {
+                $UserProfile = [UserProfile]::GetUserProfile($Email)
+                $Response['Success'] = $true
+                $Response['Message'] = "Profile for $Email was found"
+                $Response['UserProfile'] = $UserProfile
+            } catch {
+                # Handle GetUserProfile exceptions gracefully without writing to error stream
+                $Response['Message'] = "Profile for $Email was not found"
                 return $Response
             }
-            $Response['Success'] = $true
-            $Response['Message'] = "Profile for $Email was found"
-            $Response['UserProfile'] = $UserProfile
         } catch {
+            # Only write to error stream for unexpected exceptions
+            $Response['Message'] = "Error during authentication: $($_.Exception.Message)"
             Write-Error $_
         }
         return $Response

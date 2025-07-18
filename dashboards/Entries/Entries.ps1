@@ -177,7 +177,6 @@ function New-ActivityEntryElement {
 New-UDApp -Content {
     Import-Module UserManagement -Force
     $UserData = Initialize-UserContext -UserEmail $User
-    Write-Information ($UserData.Preferences.tracking.pain.locations.name.location)
     $Session:Pain = $UserData.Preferences.tracking.pain
     $Session:PreferredPainLocations = $Session:Pain.enabled ? $Session:Pain.locations.name.location : @()
     $Session:Mood = $UserData.Preferences.tracking.mood
