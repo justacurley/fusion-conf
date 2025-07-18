@@ -59,6 +59,8 @@ jobs:
 
     - name: Run Module Build and Tests
       run: |
+        echo "$PWD"
+        ls -las
         cd fusion-conf/Modules/${{ matrix.module }}
 
         # Check if build.ps1 exists
