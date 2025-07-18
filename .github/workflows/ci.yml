@@ -61,7 +61,7 @@ jobs:
       run: |
         echo "$PWD"
         ls -las
-        cd fusion-conf/Modules/${{ matrix.module }}
+        cd Modules/${{ matrix.module }}
 
         # Check if build.ps1 exists
         if [ ! -f "build.ps1" ]; then
@@ -83,9 +83,9 @@ jobs:
       with:
         name: test-results-${{ matrix.module }}
         path: |
-          fusion-conf/Modules/${{ matrix.module }}/Tests/TestResults.xml
-          fusion-conf/Modules/${{ matrix.module }}/Tests/Coverage.xml
-          fusion-conf/Modules/${{ matrix.module }}/Tests/CoverageReport.html
+          Modules/${{ matrix.module }}/Tests/TestResults.xml
+          Modules/${{ matrix.module }}/Tests/Coverage.xml
+          Modules/${{ matrix.module }}/Tests/CoverageReport.html
         retention-days: 30
 
     - name: Upload Module Artifacts
@@ -94,10 +94,10 @@ jobs:
       with:
         name: module-${{ matrix.module }}
         path: |
-          fusion-conf/Modules/${{ matrix.module }}/*.psd1
-          fusion-conf/Modules/${{ matrix.module }}/*.psm1
-          fusion-conf/Modules/${{ matrix.module }}/Public/
-          fusion-conf/Modules/${{ matrix.module }}/Private/
+          Modules/${{ matrix.module }}/*.psd1
+          Modules/${{ matrix.module }}/*.psm1
+          Modules/${{ matrix.module }}/Public/
+          Modules/${{ matrix.module }}/Private/
         retention-days: 30
 
   code-quality:
@@ -130,7 +130,7 @@ jobs:
         \$allResults = @()
 
         foreach (\$module in \$modules) {
-          \$modulePath = \"fusion-conf/Modules/\$module\"
+          \$modulePath = \"Modules/\$module\"
           if (Test-Path \$modulePath) {
             Write-Host \"Analyzing module: \$module\"
             \$results = Invoke-ScriptAnalyzer -Path \$modulePath -Recurse -Severity @('Error', 'Warning') -EnableExit
@@ -178,7 +178,7 @@ jobs:
         \$modules = @('UserManagement', 'fusion', 'GetFusion', 'HealthEntryClasses')
 
         foreach (\$module in \$modules) {
-          \$modulePath = \"fusion-conf/Modules/\$module/\$module.psm1\"
+          \$modulePath = \"Modules/\$module/\$module.psm1\"
           if (Test-Path \$modulePath) {
             Write-Host \"Importing module: \$module\"
             Import-Module \$modulePath -Force
@@ -186,8 +186,8 @@ jobs:
         }
 
         # Run integration tests if they exist
-        if (Test-Path 'fusion-conf/Tests/Integration') {
-          Invoke-Pester -Path 'fusion-conf/Tests/Integration' -Output Detailed
+        if (Test-Path 'Tests/Integration') {
+          Invoke-Pester -Path 'Tests/Integration' -Output Detailed
         } else {
           Write-Host 'No integration tests found'
         }

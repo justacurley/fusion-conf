@@ -78,7 +78,7 @@ jobs:
 
     - name: Validate Module Structure
       run: |
-        MODULE_PATH="fusion-conf/Modules/${{ matrix.module }}"
+        MODULE_PATH="Modules/${{ matrix.module }}"
         echo "$PWD"
         if [ ! -d "$MODULE_PATH" ]; then
           echo "❌ Module directory not found: $MODULE_PATH"
@@ -94,7 +94,7 @@ jobs:
 
     - name: Run Build Script - Test
       run: |
-        cd fusion-conf/Modules/${{ matrix.module }}
+        cd Modules/${{ matrix.module }}
         chmod +x build.ps1
 
         echo "🧪 Running tests for ${{ matrix.module }}..."
@@ -104,7 +104,7 @@ jobs:
 
     - name: Run Build Script - Validate
       run: |
-        cd fusion-conf/Modules/${{ matrix.module }}
+        cd Modules/${{ matrix.module }}
 
         echo "🔍 Validating module manifest for ${{ matrix.module }}..."
         pwsh -File ./build.ps1 -Task Validate
@@ -114,7 +114,7 @@ jobs:
     - name: Run Build Script - Coverage (if supported)
       continue-on-error: true
       run: |
-        cd fusion-conf/Modules/${{ matrix.module }}
+        cd Modules/${{ matrix.module }}
 
         echo "📊 Running code coverage for ${{ matrix.module }}..."
         pwsh -File ./build.ps1 -Task TestWithCoverage
@@ -127,15 +127,15 @@ jobs:
       with:
         name: test-results-${{ matrix.module }}
         path: |
-          fusion-conf/Modules/${{ matrix.module }}/Tests/TestResults*.xml
-          fusion-conf/Modules/${{ matrix.module }}/Tests/Coverage*.xml
-          fusion-conf/Modules/${{ matrix.module }}/Tests/*.html
+          Modules/${{ matrix.module }}/Tests/TestResults*.xml
+          Modules/${{ matrix.module }}/Tests/Coverage*.xml
+          Modules/${{ matrix.module }}/Tests/*.html
         retention-days: 7
 
     - name: Create Module Package
       if: success()
       run: |
-        cd fusion-conf/Modules/${{ matrix.module }}
+        cd Modules/${{ matrix.module }}
 
         # Create a clean package directory
         mkdir -p package/${{ matrix.module }}
@@ -170,7 +170,7 @@ jobs:
       if: success()
       with:
         name: module-package-${{ matrix.module }}
-        path: fusion-conf/Modules/${{ matrix.module }}/package/
+        path: Modules/${{ matrix.module }}/package/
         retention-days: 30
 
   build-summary:
