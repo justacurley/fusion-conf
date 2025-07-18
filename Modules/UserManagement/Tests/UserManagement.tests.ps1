@@ -236,8 +236,9 @@ Describe "UserProfile Class" -Tag class {
         It "Should serialize profile to JSON (now uses base64 folder)" {
             # Setup test environment
             $testPath = Initialize-TestEnvironment
+            [UserProfile]::BaseProfilePath = $testPath
             $expectedBase64Name = $testProfile.GetEmailBase64()
-            $expectedProfilePath = "/home/data/users/$expectedBase64Name/profile.json"
+            $expectedProfilePath = "$testPath/$expectedBase64Name/profile.json"
 
             # Mock file operations
             Mock Out-File { return $null } -ModuleName UserManagement
@@ -268,7 +269,7 @@ Describe "UserProfile Class" -Tag class {
 
             # Mock Out-File so it doesn't try to write to disk
             Mock Out-File { } -ModuleName UserManagement
-            Mock Join-Path { return "/home/data/users/test/profile.json" } -ModuleName UserManagement
+            Mock Join-Path { return "$testPath/test/profile.json" } -ModuleName UserManagement
 
             $testProfile.SaveUserProfile()
 
@@ -432,8 +433,9 @@ Describe "UserProfile Class" -Tag class {
         It "Should save user profile to base64-named directory" {
             # Setup test environment
             $testPath = Initialize-TestEnvironment
+            [UserProfile]::BaseProfilePath = $testPath
             $expectedBase64Name = $testProfile.GetEmailBase64()
-            $expectedProfilePath = "/home/data/users/$expectedBase64Name/profile.json"
+            $expectedProfilePath = "$testPath/$expectedBase64Name/profile.json"
 
             # Mock file operations
             Mock Out-File { return $null } -ModuleName UserManagement
@@ -460,6 +462,10 @@ Describe "UserProfile Class" -Tag class {
         }
 
         It "Should find user by base64 folder name first" {
+            # Setup test environment
+            $testPath = Initialize-TestEnvironment
+            [UserProfile]::BaseProfilePath = $testPath
+
             $testProfileContent = @{
                 Email = $testEmail
                 FirstName = "Test"
@@ -494,6 +500,10 @@ Describe "UserProfile Class" -Tag class {
                 ProfileId = $testGuidFolder
             }
 
+            # Setup test environment
+            $testPath = Initialize-TestEnvironment
+            [UserProfile]::BaseProfilePath = $testPath
+
             # Mock base64 path not found, but GUID path found
             Mock Test-Path {
                 param($Path)
@@ -502,7 +512,7 @@ Describe "UserProfile Class" -Tag class {
 
             Mock Get-ChildItem {
                 return @(
-                    @{ FullName = "/home/data/users/$testGuidFolder/profile.json" }
+                    @{ FullName = "$testPath/$testGuidFolder/profile.json" }
                 )
             } -ModuleName UserManagement
 
@@ -511,7 +521,7 @@ Describe "UserProfile Class" -Tag class {
             } -ModuleName UserManagement
 
             Mock Split-Path {
-                return "/home/data/users/$testGuidFolder"
+                return "$testPath/$testGuidFolder"
             } -ModuleName UserManagement
 
             $result = [UserProfile]::GetUserProfilePath($testEmail)
@@ -768,10 +778,14 @@ Describe "Module-Level Function Tests" -Tag functions {
         }
 
         It "Should fail when user profile is not found" {
+            # Setup test environment
+            $testPath = Initialize-TestEnvironment
+            [UserProfile]::BaseProfilePath = $testPath
+
             # Mock Get-ChildItem to return no profile files
             Mock Get-ChildItem {
                 return @()
-            } -ParameterFilter { $Path -eq '/home/data/users/' -and $Recurse -and $File -eq 'profile.json' } -ModuleName UserManagement
+            } -ParameterFilter { $Path -eq $testPath -and $Recurse -and $File -eq 'profile.json' } -ModuleName UserManagement
 
             InModuleScope UserManagement {
                 $global:User = "nonexistent@example.com"
@@ -784,6 +798,10 @@ Describe "Module-Level Function Tests" -Tag functions {
         }
 
         It "Should fail when PSU identity no longer exists" {
+            # Setup test environment
+            $testPath = Initialize-TestEnvironment
+            [UserProfile]::BaseProfilePath = $testPath
+
             # This test verifies behavior when profile loading fails (which could be due to deleted PSU identity)
             InModuleScope UserManagement {
                 $global:User = "testuser@example.com"
@@ -791,7 +809,7 @@ Describe "Module-Level Function Tests" -Tag functions {
                 # Mock Get-ChildItem to return no profiles (simulating profile not found)
                 Mock Get-ChildItem {
                     return @()
-                } -ParameterFilter { $Path -eq '/home/data/users/' -and $Recurse -and $File -eq 'profile.json' }
+                } -ParameterFilter { $Path -eq $testPath -and $Recurse -and $File -eq 'profile.json' }
 
                 $result = Test-UserSession
 
@@ -802,13 +820,17 @@ Describe "Module-Level Function Tests" -Tag functions {
         }
 
         It "Should handle errors gracefully during profile loading" {
+            # Setup test environment
+            $testPath = Initialize-TestEnvironment
+            [UserProfile]::BaseProfilePath = $testPath
+
             InModuleScope UserManagement {
                 $global:User = "testuser@example.com"
 
                 # Mock Get-ChildItem to throw an error during the profile loading process
                 Mock Get-ChildItem {
                     throw "Simulated file system error"
-                } -ParameterFilter { $Path -eq '/home/data/users/' -and $Recurse -and $File -eq 'profile.json' }
+                } -ParameterFilter { $Path -eq $testPath -and $Recurse -and $File -eq 'profile.json' }
 
                 $result = Test-UserSession
 
@@ -820,8 +842,12 @@ Describe "Module-Level Function Tests" -Tag functions {
         }
 
         It "Should verify function structure and error handling" {
+            # Setup test environment
+            $testPath = Initialize-TestEnvironment
+            [UserProfile]::BaseProfilePath = $testPath
+
             # Create a test profile file for successful test
-            $testProfileDir = "/tmp/test_users/12345678-1234-1234-1234-123456789012"
+            $testProfileDir = "$testPath/12345678-1234-1234-1234-123456789012"
             $testProfileFile = "$testProfileDir/profile.json"
 
             try {
@@ -838,7 +864,7 @@ Describe "Module-Level Function Tests" -Tag functions {
                             FullName = $testProfileFile
                         }
                     )
-                } -ParameterFilter { $Path -eq '/home/data/users/' -and $Recurse -and $File -eq 'profile.json' } -ModuleName UserManagement
+                } -ParameterFilter { $Path -eq $testPath -and $Recurse -and $File -eq 'profile.json' } -ModuleName UserManagement
 
                 # Mock PSU identity check to succeed
                 Mock Get-PSUIdentity {

@@ -14,7 +14,7 @@ function New-MockUserData {
         [int]$Count = 1,
         [string]$EmailDomain = "example.com"
     )
-    
+
     $users = @()
     for ($i = 1; $i -le $Count; $i++) {
         $users += @{
@@ -25,7 +25,7 @@ function New-MockUserData {
             Password = "SecurePass$i!"
         }
     }
-    
+
     if ($Count -eq 1) {
         return $users[0]
     }
@@ -35,7 +35,7 @@ function New-MockUserData {
 # Helper function to cleanup test data
 function Remove-TestData {
     param([string]$Path = $script:TestConfig.TestDataPath)
-    
+
     if (Test-Path $Path) {
         Remove-Item $Path -Recurse -Force -ErrorAction SilentlyContinue
     }
@@ -49,16 +49,24 @@ function Initialize-TestEnvironment {
     return $testPath
 }
 
+# Helper function to setup UserProfile test environment with proper base path
+function Initialize-UserProfileTestEnvironment {
+    $testPath = Initialize-TestEnvironment
+    # Set the static BaseProfilePath to the test directory
+    [UserProfile]::BaseProfilePath = $testPath
+    return $testPath
+}
+
 # Helper function to convert string to SecureString
 function New-SecureString {
     param(
         [Parameter(Mandatory)]
         [string]$PlainText
     )
-    
+
     return $PlainText | ConvertTo-SecureString -AsPlainText -Force
 }
 
 # Export helper functions for use in test files
-Export-ModuleMember -Function New-MockUserData, Remove-TestData, Initialize-TestEnvironment, New-SecureString
+Export-ModuleMember -Function New-MockUserData, Remove-TestData, Initialize-TestEnvironment, Initialize-UserProfileTestEnvironment, New-SecureString
 Export-ModuleMember -Variable TestConfig

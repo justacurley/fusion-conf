@@ -2,7 +2,16 @@ using namespace System.Collections.Generic
 
 class UserProfile {
     # Static class variable for base profile path - shared across all instances
+    # Base path for user profiles - configurable for testing
     static [string]$BaseProfilePath = '/home/data/users'
+
+    # Static method to get configurable base profile path
+    static [string] GetBaseProfilePath() {
+        if ($env:FUSION_USER_DATA_PATH) {
+            return $env:FUSION_USER_DATA_PATH
+        }
+        return [UserProfile]::BaseProfilePath
+    }
 
     [ValidateNotNullOrEmpty()]
     [string]$Email
@@ -95,7 +104,7 @@ class UserProfile {
     }
 
     [string] CreateUserDirectory() {
-        $ProfilesPath = [UserProfile]::BaseProfilePath
+        $ProfilesPath = [UserProfile]::GetBaseProfilePath()
         try {
             if ($null -ne ($this.GetPSUIdentity($this.Email))) {
                 $FolderName = $this.GetEmailBase64()
@@ -118,7 +127,7 @@ class UserProfile {
     [string] SaveUserProfile() {
         try {
             $FolderName = $this.GetEmailBase64()
-            $UserPath = Join-Path ([UserProfile]::BaseProfilePath) $FolderName
+            $UserPath = Join-Path ([UserProfile]::GetBaseProfilePath()) $FolderName
             $PreferencesPath = Join-Path $UserPath preferences.json
             $EntriesPath = Join-Path $UserPath 'health-data/entries.json'
             $UserSettingsPath = Join-Path $UserPath profile.json
@@ -137,7 +146,7 @@ class UserProfile {
 
     static [hashtable] GetUserProfilePath([string]$Email, [string]$UserId) {
         try {
-            $UserPath = [UserProfile]::BaseProfilePath
+            $UserPath = [UserProfile]::GetBaseProfilePath()
             if ( -not [string]::IsNullOrEmpty($UserId)) {
                 # UserId-based lookup (for backwards compatibility or direct folder access)
                 $FullUserPath = Join-Path $UserPath $UserId
@@ -245,7 +254,7 @@ class UserProfile {
             $UserData = [UserProfile]::GetUserProfilePath($Email, $UserId)
             if ($UserData.Count -eq 0) {
                 # Check if user directory exists but profile.json is missing
-                $UserPath = [UserProfile]::BaseProfilePath
+                $UserPath = [UserProfile]::GetBaseProfilePath()
                 if (-not [string]::IsNullOrEmpty($UserId)) {
                     $FullUserPath = Join-Path $UserPath $UserId
                     if (Test-Path $FullUserPath) {
