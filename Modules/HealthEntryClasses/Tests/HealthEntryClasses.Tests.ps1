@@ -322,8 +322,12 @@ Describe 'Vitals Tests' -Tag Vitals {
             $VitalsHashtable | Should -BeOfType [hashtable]
             $VitalsHashtable.Keys | Should -Contain 'oxygen_saturation'
             $VitalsHashtable.Keys | Should -Contain 'blood_pressure'
+            $VitalsHashtable.Keys | Should -Contain 'heart_rate'
+            $VitalsHashtable.Keys | Should -Contain 'temperature'
             $VitalsHashtable['oxygen_saturation'] | Should -Be 90
             $VitalsHashtable['blood_pressure'] | Should -Be '111/90'
+            $VitalsHashtable['heart_rate'] | Should -Be 70  # Default value
+            $VitalsHashtable['temperature'] | Should -Be 98.6  # Default value
         }
     }
 
@@ -540,69 +544,75 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
             $script:DefaultEntry.Note | Should -Be ''
         }
 
-        It 'Should be valid even when empty' {
-            $script:DefaultEntry.IsValid() | Should -BeTrue
+        It 'Should be valid when user email and data are present' {
+            $entry = [HealthEntry]::new("test@example.com")
+            $entry.Mood = [Mood]::new(3, "Test mood")
+            $entry.UpdateEntryTypes()
+            $entry.IsValid() | Should -BeTrue
         }
     }
 
     Context 'Validation Method' {
         BeforeEach {
-            $script:DefaultEntry = [HealthEntry]::new()
+            $script:TestEntry = [HealthEntry]::new("test@example.com")
         }
-        It 'Should return true when Note is present' {
-            $script:DefaultEntry.IsValid() | Should -BeTrue
-            $script:DefaultEntry.Note = 'mock'
-            $script:DefaultEntry.IsValid() | Should -BeTrue
+        It 'Should return true when Note is present and entry has data' {
+            $script:TestEntry.Note = 'mock'
+            $script:TestEntry.Mood = [Mood]::new(3, "Test")
+            $script:TestEntry.UpdateEntryTypes()
+            $script:TestEntry.IsValid() | Should -BeTrue
         }
 
         It 'Should return true when Pain is present' {
-            $script:DefaultEntry.IsValid() | Should -BeTrue
-            $script:DefaultEntry.Pain += [PainLocation]::new('back', 1.0, '')
-            $script:DefaultEntry.IsValid() | Should -BeTrue
+            $script:TestEntry.Pain += [PainLocation]::new('back', 1.0, '')
+            $script:TestEntry.UpdateEntryTypes()
+            $script:TestEntry.IsValid() | Should -BeTrue
         }
 
         It 'Should return true when Medication is present' {
-            $script:DefaultEntry.IsValid() | Should -BeTrue
-            $script:DefaultEntry.Medication += [MedicationTaken]::new()
-            $script:DefaultEntry.IsValid() | Should -BeTrue
+            $script:TestEntry.Medication += [MedicationTaken]::new()
+            $script:TestEntry.UpdateEntryTypes()
+            $script:TestEntry.IsValid() | Should -BeTrue
         }
 
         It 'Should return true when Activity is present' {
-            $script:DefaultEntry.IsValid() | Should -BeTrue
-            $script:DefaultEntry.Activity += [Activity]::new()
-            $script:DefaultEntry.IsValid() | Should -BeTrue
+            $script:TestEntry.Activity += [Activity]::new()
+            $script:TestEntry.UpdateEntryTypes()
+            $script:TestEntry.IsValid() | Should -BeTrue
         }
 
         It 'Should return true when Vitals is present' {
-            $script:DefaultEntry.IsValid() | Should -BeTrue
-            $script:DefaultEntry.Vitals = [Vitals]::new()
-            $script:DefaultEntry.IsValid() | Should -BeTrue
+            $script:TestEntry.Vitals = [Vitals]::new()
+            $script:TestEntry.UpdateEntryTypes()
+            $script:TestEntry.IsValid() | Should -BeTrue
         }
     }
 
     Context 'ToHashtable Method' {
         BeforeEach {
-            $script:TestEntry = [HealthEntry]::new()
+            $script:TestEntry = [HealthEntry]::new("test@example.com")
         }
 
-        It 'Should return empty structure for default entry' {
+        It 'Should return schema v2.0 structure for entry with minimal data' {
+            $script:TestEntry.Mood = [Mood]::new(3, "Test")
             $hash = $script:TestEntry.ToHashtable()
 
             # Should have all expected keys for schema v2.0
-            $hash.Keys | Should -Contain 'data'
+            $hash.Keys | Should -Contain 'entry_id'
+            $hash.Keys | Should -Contain 'user_email'
             $hash.Keys | Should -Contain 'date'
             $hash.Keys | Should -Contain 'time'
+            $hash.Keys | Should -Contain 'entry_types'
+            $hash.Keys | Should -Contain 'data'
             $hash.Keys | Should -Contain 'notes'
 
-            # Empty data section for no data
-            $hash.data | Should -BeOfType [hashtable]
-            $hash.data.Keys.Count | Should -Be 0
-
-            # Should have date and time
+            # Should have correct values
+            $hash.user_email | Should -Be 'test@example.com'
+            $hash.entry_id | Should -Match '^\d{10}$'
             $hash.date | Should -Match '^\d{4}-\d{2}-\d{2}$'
             $hash.time | Should -Match '^\d{2}:\d{2}$'
-
-            # Empty notes
+            $hash.entry_types | Should -Contain 'mood'
+            $hash.data.mood.mood_level | Should -Be 3
             $hash.notes | Should -Be ''
         }
 
@@ -738,7 +748,7 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
 
             # Verify structure integrity
             $hash | Should -BeOfType [hashtable]
-            $hash.Keys.Count | Should -Be 4  # date, time, data, notes
+            $hash.Keys.Count | Should -Be 7  # entry_id, user_email, date, time, entry_types, data, notes
         }
 
         It 'Should handle multiple medications of same type' {
@@ -791,6 +801,310 @@ Describe 'HealthEntry Tests' -Tag HealthEntry {
             $hash.data.Keys | Should -Contain 'mood'
             $hash.data.mood.mood_level | Should -Be 4
             $hash.data.mood.mood_note | Should -Be 'Good day'
+        }
+    }
+
+    Context 'FromHashtable Static Method Tests' {
+        It 'Should create HealthEntry from minimal hashtable' {
+            $data = @{
+                entry_id = '2507171430'
+                user_email = 'test@example.com'
+                date = '2025-07-17'
+                time = '14:30'
+                entry_types = @('mood')
+                data = @{
+                    mood = @{
+                        mood_level = 4
+                        mood_note = 'Good day'
+                    }
+                }
+                notes = 'Test entry'
+            }
+
+            $entry = [HealthEntry]::FromHashtable($data)
+
+            $entry.EntryId | Should -Be '2507171430'
+            $entry.UserEmail | Should -Be 'test@example.com'
+            $entry.Date | Should -Be '2025-07-17'
+            $entry.Time | Should -Be '14:30'
+            $entry.EntryTypes | Should -Contain 'mood'
+            $entry.Note | Should -Be 'Test entry'
+            $entry.Mood.MoodLevel | Should -Be 4
+            $entry.Mood.Note | Should -Be 'Good day'
+        }
+
+        It 'Should handle empty hashtable gracefully' {
+            $data = @{}
+            $entry = [HealthEntry]::FromHashtable($data)
+            $entry.GetType().Name | Should -Be 'HealthEntry'
+            $entry.EntryId | Should -BeNullOrEmpty
+            $entry.UserEmail | Should -BeNullOrEmpty
+        }
+
+        It 'Should reconstruct complex entry with all data types' {
+            $data = @{
+                entry_id = '2507171445'
+                user_email = 'complex@test.com'
+                date = '2025-07-17'
+                time = '14:45'
+                entry_types = @('mood', 'vitals', 'medications', 'activities', 'pain', 'weight', 'sleep')
+                data = @{
+                    mood = @{
+                        mood_level = 3
+                        mood_note = 'Average day'
+                    }
+                    vitals = @{
+                        oxygen_saturation = 95
+                        blood_pressure = '120/80'
+                        heart_rate = 72
+                        temperature = 98.6
+                    }
+                    medications = @(
+                        @{ name = 'aspirin'; dosage = '325mg' },
+                        @{ name = 'vitamins'; dosage = '1 tablet' }
+                    )
+                    activities = @(
+                        @{ name = 'Walking'; duration_minutes = 30; note = 'Morning walk' },
+                        @{ name = 'Swimming'; duration_minutes = 45; note = 'Pool exercise' }
+                    )
+                    pain = @(
+                        @{ location = 'back'; severity = 6.5; note = 'Lower back' },
+                        @{ location = 'knee'; severity = 3.0; note = 'Right knee' }
+                    )
+                    weight = @{
+                        weight_lbs = 175.0
+                        weight_kg = 79.4
+                    }
+                    sleep = @{
+                        sleep_hours = 7.5
+                    }
+                }
+                notes = 'Complex test entry'
+            }
+
+            $entry = [HealthEntry]::FromHashtable($data)
+
+            # Verify all components were reconstructed correctly
+            $entry.Mood.MoodLevel | Should -Be 3
+            $entry.Mood.Note | Should -Be 'Average day'
+
+            $entry.Vitals.o2 | Should -Be 95
+            $entry.Vitals.bpr | Should -Be '120/80'
+            $entry.Vitals.heart_rate | Should -Be 72
+            $entry.Vitals.temperature | Should -Be 98.6
+
+            $entry.Medication.Count | Should -Be 2
+            $entry.Medication[0].medication | Should -Be 'aspirin'
+            $entry.Medication[0].dosage | Should -Be '325mg'
+            $entry.Medication[1].medication | Should -Be 'vitamins'
+            $entry.Medication[1].dosage | Should -Be '1 tablet'
+
+            $entry.Activity.Count | Should -Be 2
+            $entry.Activity[0].ActivityName | Should -Be 'Walking'
+            $entry.Activity[0].ActivityDuration | Should -Be 30
+            $entry.Activity[0].Note | Should -Be 'Morning walk'
+
+            $entry.Pain.Count | Should -Be 2
+            $entry.Pain[0].location | Should -Be 'back'
+            $entry.Pain[0].pain_level | Should -Be 6.5
+            $entry.Pain[0].note | Should -Be 'Lower back'
+
+            $entry.Weight.weight_lbs | Should -Be 175.0
+            $entry.Weight.weight_kg | Should -Be 79.4
+
+            $entry.Sleep.sleep_hours | Should -Be 7.5
+        }
+
+        It 'Should handle missing data section' {
+            $data = @{
+                entry_id = '2507171500'
+                user_email = 'minimal@test.com'
+                date = '2025-07-17'
+                time = '15:00'
+                entry_types = @()
+                notes = 'No data'
+            }
+
+            $entry = [HealthEntry]::FromHashtable($data)
+            $entry.EntryId | Should -Be '2507171500'
+            $entry.UserEmail | Should -Be 'minimal@test.com'
+            $entry.Mood | Should -Be $null
+            $entry.Vitals | Should -Be $null
+            $entry.Medication.Count | Should -Be 0
+        }
+
+        It 'Should handle activities without notes' {
+            $data = @{
+                entry_id = '2507171515'
+                user_email = 'activity@test.com'
+                date = '2025-07-17'
+                time = '15:15'
+                entry_types = @('activities')
+                data = @{
+                    activities = @(
+                        @{ name = 'Running'; duration_minutes = 20 }
+                    )
+                }
+                notes = ''
+            }
+
+            $entry = [HealthEntry]::FromHashtable($data)
+            $entry.Activity.Count | Should -Be 1
+            $entry.Activity[0].ActivityName | Should -Be 'Running'
+            $entry.Activity[0].ActivityDuration | Should -Be 20
+            $entry.Activity[0].Note | Should -Be ''
+        }
+
+        It 'Should handle pain without notes' {
+            $data = @{
+                entry_id = '2507171530'
+                user_email = 'pain@test.com'
+                date = '2025-07-17'
+                time = '15:30'
+                entry_types = @('pain')
+                data = @{
+                    pain = @(
+                        @{ location = 'shoulder'; severity = 4.0 }
+                    )
+                }
+                notes = ''
+            }
+
+            $entry = [HealthEntry]::FromHashtable($data)
+            $entry.Pain.Count | Should -Be 1
+            $entry.Pain[0].location | Should -Be 'shoulder'
+            $entry.Pain[0].pain_level | Should -Be 4.0
+            $entry.Pain[0].note | Should -Be ''
+        }
+
+        It 'Should round-trip correctly with ToHashtable' {
+            # Create original entry
+            $original = [HealthEntry]::new('roundtrip@test.com')
+            $original.Mood = [Mood]::new(4, 'Happy')
+            $original.Vitals = [Vitals]::new(96, '125/85', 75, 98.7)
+            $original.Medication += [MedicationTaken]::new('500mg', 'ibuprofen')
+            $original.Activity += [Activity]::new('Cycling', 60, 'Bike ride')
+            $original.Pain += [PainLocation]::new('wrist', 2.5, 'Minor pain')
+            $original.Weight = [Weight]::new(160.0, 72.6)
+            $original.Sleep = [Sleep]::new(8.0)
+            $original.Note = 'Round-trip test'
+
+            # Convert to hashtable and back
+            $hashtable = $original.ToHashtable()
+            $reconstructed = [HealthEntry]::FromHashtable($hashtable)
+
+            # Verify all data survived the round trip
+            $reconstructed.UserEmail | Should -Be 'roundtrip@test.com'
+            $reconstructed.Mood.MoodLevel | Should -Be 4
+            $reconstructed.Mood.Note | Should -Be 'Happy'
+            $reconstructed.Vitals.o2 | Should -Be 96
+            $reconstructed.Vitals.bpr | Should -Be '125/85'
+            $reconstructed.Medication[0].medication | Should -Be 'ibuprofen'
+            $reconstructed.Medication[0].dosage | Should -Be '500mg'
+            $reconstructed.Activity[0].ActivityName | Should -Be 'Cycling'
+            $reconstructed.Pain[0].location | Should -Be 'wrist'
+            $reconstructed.Weight.weight_lbs | Should -Be 160.0
+            $reconstructed.Sleep.sleep_hours | Should -Be 8.0
+            $reconstructed.Note | Should -Be 'Round-trip test'
+        }
+    }
+
+    Context 'ValidateSchemaV2 Method Tests' {
+        BeforeEach {
+            $script:TestEntry = [HealthEntry]::new('validation@test.com')
+            $script:TestEntry.Mood = [Mood]::new(3, 'Test')
+            $script:TestEntry.UpdateEntryTypes()
+        }
+
+        It 'Should validate correct entry_id format (yyMMddHHmm)' {
+            $script:TestEntry.EntryId = '2507171600'
+            $script:TestEntry.ValidateSchemaV2() | Should -Be $true
+
+            $script:TestEntry.EntryId = '0101010101'
+            $script:TestEntry.ValidateSchemaV2() | Should -Be $true
+        }
+
+        It 'Should reject invalid entry_id formats' {
+            # Too short
+            $script:TestEntry.EntryId = '250717160'
+            $script:TestEntry.ValidateSchemaV2() | Should -Be $false
+
+            # Too long
+            $script:TestEntry.EntryId = '25071716000'
+            $script:TestEntry.ValidateSchemaV2() | Should -Be $false
+
+            # Contains letters
+            $script:TestEntry.EntryId = '250717160A'
+            $script:TestEntry.ValidateSchemaV2() | Should -Be $false
+
+            # Contains special characters
+            $script:TestEntry.EntryId = '2507171-60'
+            $script:TestEntry.ValidateSchemaV2() | Should -Be $false
+
+            # Empty string
+            $script:TestEntry.EntryId = ''
+            $script:TestEntry.ValidateSchemaV2() | Should -Be $false
+        }
+
+        It 'Should validate correct entry_types' {
+            $validTypes = @('mood', 'vitals', 'medications', 'activities', 'pain', 'weight', 'sleep')
+
+            foreach ($type in $validTypes) {
+                $script:TestEntry.EntryTypes = @($type)
+                $script:TestEntry.ValidateSchemaV2() | Should -Be $true
+            }
+        }
+
+        It 'Should reject invalid entry_types' {
+            $script:TestEntry.EntryTypes = @('invalid_type')
+            $script:TestEntry.ValidateSchemaV2() | Should -Be $false
+
+            $script:TestEntry.EntryTypes = @('mood', 'invalid_type')
+            $script:TestEntry.ValidateSchemaV2() | Should -Be $false
+
+            $script:TestEntry.EntryTypes = @('MOOD')  # Case sensitive
+            $script:TestEntry.ValidateSchemaV2() | Should -Be $false
+        }
+
+        It 'Should handle empty entry_types array' {
+            $script:TestEntry.EntryTypes = @()
+            $script:TestEntry.ValidateSchemaV2() | Should -Be $false  # Should fail IsValid() check
+        }
+
+        It 'Should validate multiple valid entry_types' {
+            $script:TestEntry.EntryTypes = @('mood', 'vitals', 'medications')
+            $script:TestEntry.ValidateSchemaV2() | Should -Be $true
+
+            $script:TestEntry.EntryTypes = @('activities', 'pain', 'weight', 'sleep')
+            $script:TestEntry.ValidateSchemaV2() | Should -Be $true
+        }
+
+        It 'Should call IsValid() as part of validation' {
+            # Create entry that will fail IsValid() due to missing user email
+            $invalidEntry = [HealthEntry]::new('')
+            $invalidEntry.EntryId = '2507171630'
+            $invalidEntry.EntryTypes = @('mood')
+
+            $invalidEntry.ValidateSchemaV2() | Should -Be $false
+        }
+
+        It 'Should handle exceptions gracefully' {
+            # Force an exception by setting EntryId to null
+            $script:TestEntry.EntryId = $null
+            $result = $script:TestEntry.ValidateSchemaV2()
+            $result | Should -Be $false
+        }
+
+        It 'Should validate complete schema v2.0 compliant entry' {
+            $script:TestEntry.EntryId = '2507171645'
+            $script:TestEntry.UserEmail = 'complete@test.com'
+            $script:TestEntry.Date = '2025-07-17'
+            $script:TestEntry.Time = '16:45'
+            $script:TestEntry.EntryTypes = @('mood', 'vitals')
+            $script:TestEntry.Mood = [Mood]::new(4, 'Good')
+            $script:TestEntry.Vitals = [Vitals]::new(95, '120/80')
+
+            $script:TestEntry.ValidateSchemaV2() | Should -Be $true
         }
     }
 }

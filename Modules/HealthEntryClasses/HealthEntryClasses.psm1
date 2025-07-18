@@ -319,9 +319,12 @@ class Sleep {
 }
 
 class HealthEntry {
-    # Timestamp for when this entry was created
-    [string] $Date = (Get-Date -f 'MMdd')
-    [string] $Time = (Get-Date -f 'HHmm')
+    # Schema v2.0 fields
+    [string] $EntryId = ''
+    [string] $UserEmail = ''
+    [string] $Date = ''
+    [string] $Time = ''
+    [string[]] $EntryTypes = @()
 
     # Individual health components (nullable - not every entry needs all components)
     [PainLocation[]] $Pain = @()
@@ -335,33 +338,106 @@ class HealthEntry {
     # Overall notes for this health entry
     [string] $Note = ''
 
-    # # Constructors
-    # HealthEntry([PainLocation[]] $Pain,[MedicationTaken[]] $Medication,[Activity[]] $Activity,[Vitals] $Vitals,[string] $Note) {
+    # Default constructor
+    HealthEntry() {
+        $this.InitializeDefaults()
+    }
 
-    # }
+    # Constructor with user email
+    HealthEntry([string]$UserEmail) {
+        $this.UserEmail = $UserEmail
+        $this.InitializeDefaults()
+    }
 
-    # Constructor with parameters
-    HealthEntry() {}
+    # Initialize default values
+    [void] InitializeDefaults() {
+        $now = Get-Date
+        $this.Date = $now.ToString('yyyy-MM-dd')
+        $this.Time = $now.ToString('HH:mm')
+        $this.EntryId = $now.ToString('yyMMddHHmm')
+        $this.EntryTypes = @()
+        # Don't call UpdateEntryTypes here - it should be called when data is added
+    }
 
-    # Validation method - allow empty entries
+    # Validation method - Schema v2.0 compliance
     [bool] IsValid() {
-        # Always return true - allow empty entries
-        # Individual components have their own validation
+        # Check required fields
+        if ([string]::IsNullOrWhiteSpace($this.EntryId) -or $this.EntryId.Length -ne 10) {
+            return $false
+        }
+        if ([string]::IsNullOrWhiteSpace($this.UserEmail) -or $this.UserEmail -notmatch '^[^@]+@[^@]+\.[^@]+$') {
+            return $false
+        }
+        if ([string]::IsNullOrWhiteSpace($this.Date) -or $this.Date -notmatch '^\d{4}-\d{2}-\d{2}$') {
+            return $false
+        }
+        if ([string]::IsNullOrWhiteSpace($this.Time) -or $this.Time -notmatch '^\d{2}:\d{2}$') {
+            return $false
+        }
+        if ($this.EntryTypes.Count -eq 0) {
+            return $false
+        }
+
+        # Validate individual components if present
+        if ($this.Vitals -and -not $this.Vitals.IsValid()) { return $false }
+        if ($this.Mood -and -not $this.Mood.IsValid()) { return $false }
+        if ($this.Weight -and -not $this.Weight.IsValid()) { return $false }
+        if ($this.Sleep -and -not $this.Sleep.IsValid()) { return $false }
+
+        # Validate arrays
+        foreach ($pain in $this.Pain) {
+            if (-not $pain.IsValid()) { return $false }
+        }
+        foreach ($med in $this.Medication) {
+            if (-not $med.IsValid()) { return $false }
+        }
+        foreach ($activity in $this.Activity) {
+            if (-not $activity.IsValid()) { return $false }
+        }
+
         return $true
+    }
+
+    # Automatically determine entry types based on populated data
+    [void] UpdateEntryTypes() {
+        $this.EntryTypes = @()
+
+        if ($this.Mood) { $this.EntryTypes += 'mood' }
+        if ($this.Vitals) { $this.EntryTypes += 'vitals' }
+        if ($this.Medication.Count -gt 0) { $this.EntryTypes += 'medications' }
+        if ($this.Activity.Count -gt 0) { $this.EntryTypes += 'activities' }
+        if ($this.Pain.Count -gt 0) { $this.EntryTypes += 'pain' }
+        if ($this.Weight) { $this.EntryTypes += 'weight' }
+        if ($this.Sleep) { $this.EntryTypes += 'sleep' }
     }
 
 
     # Serialization method - Schema v2.0 format
     [hashtable] ToHashtable() {
+        # Update entry types before serialization
+        $this.UpdateEntryTypes()
+
         [hashtable]$Output = @{}
 
-        # Basic entry metadata
-        $now = Get-Date
-        $Output.Add('date', $now.ToString('yyyy-MM-dd'))
-        $Output.Add('time', $now.ToString('HH:mm'))
+        # Required fields per schema v2.0
+        $Output.Add('entry_id', $this.EntryId)
+        $Output.Add('user_email', $this.UserEmail)
+        $Output.Add('date', $this.Date)
+        $Output.Add('time', $this.Time)
+        $Output.Add('entry_types', [array]$this.EntryTypes)
 
         # Build data section based on what's present
         [hashtable]$Data = @{}
+
+        # Handle mood
+        if ($this.Mood) {
+            $Data.Add('mood', $this.Mood.ToHashtable())
+        }
+
+        # Handle vitals
+        if ($this.Vitals) {
+            $Data.Add('vitals', $this.Vitals.ToHashtable())
+        }
 
         # Handle medications as array
         if ($this.Medication.Count -gt 0) {
@@ -390,16 +466,6 @@ class HealthEntry {
             $Data.Add('pain', [array]$PainArray)
         }
 
-        # Handle vitals
-        if ($this.Vitals) {
-            $Data.Add('vitals', $this.Vitals.ToHashtable())
-        }
-
-        # Handle mood
-        if ($this.Mood) {
-            $Data.Add('mood', $this.Mood.ToHashtable())
-        }
-
         # Handle weight
         if ($this.Weight) {
             $Data.Add('weight', $this.Weight.ToHashtable())
@@ -412,14 +478,115 @@ class HealthEntry {
 
         $Output.Add('data', $Data)
 
-        # Add notes field
-        if (-not [string]::IsNullOrEmpty($this.Note)) {
-            $Output.Add('notes', $this.Note)
-        } else {
-            $Output.Add('notes', '')
-        }
+        # Add notes field (required per schema)
+        $Output.Add('notes', $this.Note)
 
         return $Output
+    }
+
+    # Static method to create HealthEntry from schema v2.0 JSON
+    static [HealthEntry] FromHashtable([hashtable]$data) {
+        # Create entry without calling InitializeDefaults() to avoid auto-generating fields
+        $entry = [HealthEntry]::new()
+        $entry.EntryId = ''  # Reset the auto-generated EntryId
+        $entry.Date = ''     # Reset the auto-generated Date
+        $entry.Time = ''     # Reset the auto-generated Time
+
+        # Set required fields
+        if ($data.ContainsKey('entry_id')) { $entry.EntryId = $data.entry_id }
+        if ($data.ContainsKey('user_email')) { $entry.UserEmail = $data.user_email }
+        if ($data.ContainsKey('date')) { $entry.Date = $data.date }
+        if ($data.ContainsKey('time')) { $entry.Time = $data.time }
+        if ($data.ContainsKey('entry_types')) { $entry.EntryTypes = $data.entry_types }
+        if ($data.ContainsKey('notes')) { $entry.Note = $data.notes }
+
+        # Process data section
+        if ($data.ContainsKey('data') -and $data.data) {
+            $entryData = $data.data
+
+            # Handle mood
+            if ($entryData.ContainsKey('mood')) {
+                $moodData = $entryData.mood
+                $entry.Mood = [Mood]::new($moodData.mood_level, $moodData.mood_note)
+            }
+
+            # Handle vitals
+            if ($entryData.ContainsKey('vitals')) {
+                $vitalsData = $entryData.vitals
+                $entry.Vitals = [Vitals]::new(
+                    $vitalsData.oxygen_saturation,
+                    $vitalsData.blood_pressure,
+                    $vitalsData.heart_rate,
+                    $vitalsData.temperature
+                )
+            }
+
+            # Handle medications
+            if ($entryData.ContainsKey('medications')) {
+                $entry.Medication = @()
+                foreach ($med in $entryData.medications) {
+                    $entry.Medication += [MedicationTaken]::new($med.dosage, $med.name)
+                }
+            }
+
+            # Handle activities
+            if ($entryData.ContainsKey('activities')) {
+                $entry.Activity = @()
+                foreach ($act in $entryData.activities) {
+                    $actNote = if ($act.ContainsKey('note')) { $act.note } else { '' }
+                    $entry.Activity += [Activity]::new($act.name, $act.duration_minutes, $actNote)
+                }
+            }
+
+            # Handle pain
+            if ($entryData.ContainsKey('pain')) {
+                $entry.Pain = @()
+                foreach ($pain in $entryData.pain) {
+                    $painNote = if ($pain.ContainsKey('note')) { $pain.note } else { '' }
+                    $entry.Pain += [PainLocation]::new($pain.location, $pain.severity, $painNote)
+                }
+            }
+
+            # Handle weight
+            if ($entryData.ContainsKey('weight')) {
+                $weightData = $entryData.weight
+                $entry.Weight = [Weight]::new($weightData.weight_lbs, $weightData.weight_kg)
+            }
+
+            # Handle sleep
+            if ($entryData.ContainsKey('sleep')) {
+                $sleepData = $entryData.sleep
+                $entry.Sleep = [Sleep]::new($sleepData.sleep_hours)
+            }
+        }
+
+        return $entry
+    }
+
+    # Helper method to validate schema v2.0 compliance
+    [bool] ValidateSchemaV2() {
+        try {
+            # Check entry_id format (yyMMddHHmm)
+            if ([string]::IsNullOrEmpty($this.EntryId) -or $this.EntryId -notmatch '^\d{10}$') {
+                Write-Warning "Invalid entry_id format: $($this.EntryId). Expected yyMMddHHmm format."
+                return $false
+            }
+
+            # Check entry_types are valid
+            $validTypes = @('mood', 'vitals', 'medications', 'activities', 'pain', 'weight', 'sleep')
+            foreach ($type in $this.EntryTypes) {
+                if ($type -cnotin $validTypes) {  # Use -cnotin for case-sensitive comparison
+                    Write-Warning "Invalid entry_type: $type. Valid types are: $($validTypes -join ', ')"
+                    return $false
+                }
+            }
+
+            return $this.IsValid()
+        }
+        catch {
+            Write-Warning "Schema validation error: $($_.Exception.Message)"
+            return $false
+        }
     }
 }
 # Export the class
