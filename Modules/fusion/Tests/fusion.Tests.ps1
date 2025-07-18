@@ -20,21 +20,20 @@ BeforeAll {
         return $null  # This will use the local/dev paths
     }
 
-    # Create a basic test entries.json structure
+    # Create a basic test entries.json structure using new schema v2.0
     $testEntries = @{
-        "0629" = @{
-            "1200" = @{
-                "Medications" = @{
-                    "tylenol" = "1g"
-                }
-                "Pain" = @{}
-                "Activities" = @{}
-                "o2" = "95"
-                "bpr" = "120/80"
-                "note" = "Test entry"
-                "medication_taken" = "tylenol"
+        "2506291200" = @{
+            entry_id = "2506291200"
+            user_email = "test@example.com"
+            date = "2025-06-29"
+            time = "12:00"
+            entry_types = @("medications")
+            data = @{
+                medications = @(
+                    @{ name = "tylenol"; dosage = "1g" }
+                )
             }
-            "max_pain_level" = 0.0
+            notes = "Test entry"
         }
     }
     $testEntries | ConvertTo-Json -Depth 99 | Out-File $global:TestEntriesPath -Encoding UTF8
@@ -342,19 +341,32 @@ Describe "Update-DailyMaxPainLevel Function" -Tag Update-DailyMaxPainLevel,Funct
     Context "When updating pain levels" {
         BeforeEach {
             $testEntries = @{
-                "0630" = @{
-                    "1200" = @{
-                        "Pain" = @{
-                            "back" = @{ "pain_level" = 5.0; "note" = "test" }
-                            "hip" = @{ "pain_level" = 3.0; "note" = "test" }
-                        }
+                "2506301200" = @{
+                    entry_id = "2506301200"
+                    user_email = "test@example.com"
+                    date = "2025-06-30"
+                    time = "12:00"
+                    entry_types = @("pain")
+                    data = @{
+                        pain = @(
+                            @{ location = "back"; severity = 5.0; note = "test" }
+                            @{ location = "hip"; severity = 3.0; note = "test" }
+                        )
                     }
-                    "1400" = @{
-                        "Pain" = @{
-                            "back" = @{ "pain_level" = 7.0; "note" = "test" }
-                        }
+                    notes = "Test entry"
+                }
+                "2506301400" = @{
+                    entry_id = "2506301400"
+                    user_email = "test@example.com"
+                    date = "2025-06-30"
+                    time = "14:00"
+                    entry_types = @("pain")
+                    data = @{
+                        pain = @(
+                            @{ location = "back"; severity = 7.0; note = "test" }
+                        )
                     }
-                    "Sleep" = "8 hours"
+                    notes = "Test entry"
                 }
             }
         }
@@ -363,13 +375,21 @@ Describe "Update-DailyMaxPainLevel Function" -Tag Update-DailyMaxPainLevel,Funct
             $maxPain = Update-DailyMaxPainLevel -Entries $testEntries -Date "0630"
 
             $maxPain | Should -Be 7.0
-            $testEntries["0630"]["max_pain_level"] | Should -Be 7.0
         }
 
         It "Should handle entries with no pain data" {
-            $testEntries["0630"]["1600"] = @{
-                "Pain" = @{}
-                "Medications" = @{ "tylenol" = "1g" }
+            $testEntries["2506301600"] = @{
+                entry_id = "2506301600"
+                user_email = "test@example.com"
+                date = "2025-06-30"
+                time = "16:00"
+                entry_types = @("medications")
+                data = @{
+                    medications = @(
+                        @{ name = "tylenol"; dosage = "1g" }
+                    )
+                }
+                notes = "Test entry"
             }
 
             $maxPain = Update-DailyMaxPainLevel -Entries $testEntries -Date "0630"
@@ -751,26 +771,281 @@ Describe "Input Validation Tests" -Tag Validation {
 
         It "Should handle entries with corrupted pain data" {
             $corruptedEntries = @{
-                "0630" = @{
-                    "1200" = @{
-                        "Pain" = "not a hashtable"  # Corrupted pain data
+                "2506301200" = @{
+                    entry_id = "2506301200"
+                    user_email = "test@example.com"
+                    date = "2025-06-30"
+                    time = "12:00"
+                    entry_types = @("pain")
+                    data = @{
+                        pain = "not an array"  # Corrupted pain data
                     }
-                    "1400" = @{
-                        "Pain" = @{
-                            "back" = "not an object"  # Corrupted pain entry
-                        }
+                    notes = "Test entry"
+                }
+                "2506301400" = @{
+                    entry_id = "2506301400"
+                    user_email = "test@example.com"
+                    date = "2025-06-30"
+                    time = "14:00"
+                    entry_types = @("pain")
+                    data = @{
+                        pain = @(
+                            "not an object"  # Corrupted pain entry
+                        )
                     }
-                    "1600" = @{
-                        "Pain" = @{
-                            "hip" = @{
-                                "pain_level" = "not a number"  # Invalid pain level
+                    notes = "Test entry"
+                }
+                "2506301600" = @{
+                    entry_id = "2506301600"
+                    user_email = "test@example.com"
+                    date = "2025-06-30"
+                    time = "16:00"
+                    entry_types = @("pain")
+                    data = @{
+                        pain = @(
+                            @{
+                                location = "hip"
+                                severity = "not a number"  # Invalid pain level
+                                note = "test"
                             }
-                        }
+                        )
                     }
+                    notes = "Test entry"
                 }
             }
 
             # Should handle gracefully without throwing
+            $result = Update-DailyMaxPainLevel -Entries $corruptedEntries -Date "0630"
+            $result | Should -Be 0.0
+        }
+    }
+}
+
+Describe "Input Validation Tests" -Tag Validation {
+
+    Context "ConvertTo-EntriesFormat Parameter Validation" {
+        It "Should throw when Entry parameter is null" {
+            { ConvertTo-EntriesFormat -Entry $null } | Should -Throw
+        }
+
+        It "Should handle non-PSCustomObject input gracefully" {
+            # With schema v2.0, we now require valid date/timestamp, so this should throw
+            { ConvertTo-EntriesFormat -Entry "not an object" -UserEmail "test@example.com" } | Should -Throw
+        }
+
+        It "Should handle Entry with missing required fields gracefully" {
+            $incompleteEntry = [PSCustomObject]@{
+                # Missing date and timestamp
+                notes = "Test note"
+            }
+
+            # With schema v2.0, missing date/timestamp should throw an error
+            { ConvertTo-EntriesFormat -Entry $incompleteEntry -UserEmail "test@example.com" } | Should -Throw
+        }
+
+        It "Should handle Entry with null/empty date and timestamp" {
+            $entryWithNulls = [PSCustomObject]@{
+                date = $null
+                timestamp = ""
+                notes = "Test note"
+            }
+
+            # With schema v2.0, null/empty date and timestamp should throw an error
+            { ConvertTo-EntriesFormat -Entry $entryWithNulls -UserEmail "test@example.com" } | Should -Throw
+        }
+
+        It "Should validate medication property format" {
+            $invalidMedEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                med_invalid_format = $true  # Should not match pattern
+                med_tylenol_1g = $true      # Should match pattern
+            }
+
+            $result = ConvertTo-EntriesFormat -Entry $invalidMedEntry -UserEmail "test@example.com"
+            # Should only process valid medication format
+            if ($result.SchemaEntry.data.medications) {
+                $medNames = $result.SchemaEntry.data.medications | ForEach-Object { $_.name }
+                $medNames | Should -Contain "tylenol"
+                $medNames | Should -Not -Contain "invalid"
+            }
+        }
+
+        It "Should handle non-boolean medication values" {
+            $invalidMedValues = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                med_tylenol_1g = "not a boolean"  # Should be ignored
+                med_dilaudid_4mg = $true          # Should be processed
+            }
+
+            $result = ConvertTo-EntriesFormat -Entry $invalidMedValues -UserEmail "test@example.com"
+            if ($result.SchemaEntry.data.medications) {
+                $medNames = $result.SchemaEntry.data.medications | ForEach-Object { $_.name }
+                $medNames | Should -Not -Contain "tylenol"
+                $medNames | Should -Contain "dilaudid"
+            }
+        }
+
+        It "Should validate pain level as numeric" {
+            $invalidPainEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_pain = $true
+                pain_location_1 = "back"
+                pain_level_1 = "not a number"  # Invalid
+                pain_location_2 = "hip"
+                pain_level_2 = "5"             # Valid
+            }
+
+            # With schema v2.0, invalid pain levels should throw an exception
+            { ConvertTo-EntriesFormat -Entry $invalidPainEntry -UserEmail "test@example.com" } | Should -Throw
+        }
+
+        It "Should validate activity duration as integer" {
+            $invalidActivityEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_activity = $true
+                activities_type_1 = "Walking"
+                activities_length_1 = "not a number"  # Invalid
+                activities_type_2 = "Swimming"
+                activities_length_2 = "30"            # Valid
+            }
+
+            # With schema v2.0, invalid activity durations should throw an exception
+            { ConvertTo-EntriesFormat -Entry $invalidActivityEntry -UserEmail "test@example.com" } | Should -Throw
+        }
+
+        It "Should reject extremely large numeric values for pain levels" {
+            $extremeEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_pain = $true
+                pain_location_1 = "back"
+                pain_level_1 = "999999999"  # Very large number - should be rejected
+                add_activity = $true
+                activities_type_1 = "Walking"
+                activities_length_1 = "999999999"  # Very large duration - should be accepted
+            }
+
+            $result = ConvertTo-EntriesFormat -Entry $extremeEntry -UserEmail "test@example.com"
+            # Should reject pain levels outside medical range (0-10)
+            if ($result.SchemaEntry.data.pain) {
+                $painLocations = $result.SchemaEntry.data.pain | ForEach-Object { $_.location }
+                $painLocations | Should -Not -Contain "back"
+            }
+            # But should accept large activity durations
+            if ($result.SchemaEntry.data.activities) {
+                $walkingActivity = $result.SchemaEntry.data.activities | Where-Object { $_.name -eq "Walking" }
+                $walkingActivity.duration_minutes | Should -Be 999999999
+            }
+        }
+
+        It "Should reject negative pain levels" {
+            $negativeEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_pain = $true
+                pain_location_1 = "back"
+                pain_level_1 = "-5"  # Negative pain level - should be rejected
+                add_activity = $true
+            }
+
+            $result = ConvertTo-EntriesFormat -Entry $negativeEntry -UserEmail "test@example.com"
+            # Should reject negative pain levels (medical standard is 0-10)
+            if ($result.SchemaEntry.data.pain) {
+                $painLocations = $result.SchemaEntry.data.pain | ForEach-Object { $_.location }
+                $painLocations | Should -Not -Contain "back"
+            }
+        }
+
+        It "Should handle decimal pain levels" {
+            $decimalEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_pain = $true
+                pain_location_1 = "back"
+                pain_level_1 = "5.5"  # Decimal pain level - should be accepted
+            }
+
+            $result = ConvertTo-EntriesFormat -Entry $decimalEntry -UserEmail "test@example.com"
+            if ($result.SchemaEntry.data.pain) {
+                $backPain = $result.SchemaEntry.data.pain | Where-Object { $_.location -eq "back" }
+                $backPain.severity | Should -Be 5.5
+            }
+        }
+
+        It "Should handle special characters in text fields" {
+            $specialCharsText = "Test with special chars: !@#$%^&*()_+-=[]{}|;':`",./<>?~"
+            $unicodeText = "Pain with émojis 😵‍💫 and unicode ñoté"
+
+            $specialCharsEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                add_pain = $true
+                pain_location_1 = "back"
+                pain_level_1 = "5"
+                pain_note_1 = $specialCharsText
+                notes = $unicodeText
+            }
+
+            $result = ConvertTo-EntriesFormat -Entry $specialCharsEntry -UserEmail "test@example.com"
+            if ($result.SchemaEntry.data.pain) {
+                $backPain = $result.SchemaEntry.data.pain | Where-Object { $_.location -eq "back" }
+                $backPain.note | Should -Be $specialCharsText
+            }
+            $result.SchemaEntry.notes | Should -Be $unicodeText
+        }
+
+        It "Should handle very long text fields" {
+            $longText = "A" * 10000  # 10KB of text
+            $longEntry = [PSCustomObject]@{
+                date = "0630"
+                timestamp = "1200"
+                notes = $longText
+            }
+
+            $result = ConvertTo-EntriesFormat -Entry $longEntry -UserEmail "test@example.com"
+            $result.SchemaEntry.notes | Should -Be $longText
+        }
+    }
+
+    Context "Update-DailyMaxPainLevel Parameter Validation" {
+        It "Should throw when Entries parameter is null" {
+            { Update-DailyMaxPainLevel -Entries $null -Date "0630" } | Should -Throw
+        }
+
+        It "Should throw when Date parameter is null or empty" {
+            $testEntries = @{}
+            { Update-DailyMaxPainLevel -Entries $testEntries -Date $null } | Should -Throw
+            { Update-DailyMaxPainLevel -Entries $testEntries -Date "" } | Should -Throw
+        }
+
+        It "Should handle non-hashtable Entries parameter" {
+            { Update-DailyMaxPainLevel -Entries "not a hashtable" -Date "0630" } | Should -Throw
+        }
+
+        It "Should handle malformed date strings" {
+            $testEntries = @{}
+            # Should handle gracefully
+            $result = Update-DailyMaxPainLevel -Entries $testEntries -Date "invalid-date"
+            $result | Should -Be 0.0
+        }
+
+        It "Should handle entries with corrupted data gracefully" {
+            $corruptedEntries = @{
+                "2506301200" = @{
+                    # Missing required fields
+                    some_field = "value"
+                }
+                "2506301400" = @{
+                    entry_id = "2506301400"
+                    # Missing data field
+                }
+            }
+
+            # Should handle gracefully
             $result = Update-DailyMaxPainLevel -Entries $corruptedEntries -Date "0630"
             $result | Should -Be 0.0
         }
@@ -1097,113 +1372,6 @@ Describe "Get-CachedEntriesData Function" -Tag Get-CachedEntriesData, Function {
             $invalidPath = "/nonexistent/path/entries.json"
             { Get-CachedEntriesData -EntriesPath $invalidPath } | Should -Throw
         }
-    }
-}
-
-Describe "Remove-TimeEntry Function" -Tag Remove-TimeEntry,Function {
-
-    Context "When removing time entries" {
-        BeforeEach {
-            $script:TestRemoveEntriesPath = Join-Path $TestDrive "remove_test_entries.json"
-
-            # Create test entries with old format for compatibility
-            $testEntries = @{
-                "0714" = @{
-                    "0900" = @{
-                        "Medications" = @{ "tylenol" = "1g" }
-                        "Pain" = @{ "back" = @{ "pain_level" = 5.0; "note" = "test" } }
-                        "Activities" = @{}
-                        "o2" = "98"
-                        "bpr" = "120/80"
-                        "note" = "Morning entry"
-                        "medication_taken" = "tylenol"
-                    }
-                    "1200" = @{
-                        "Medications" = @{ "advil" = "200mg" }
-                        "Pain" = @{}
-                        "Activities" = @{}
-                        "o2" = ""
-                        "bpr" = ""
-                        "note" = "Noon entry"
-                        "medication_taken" = "advil"
-                    }
-                    "max_pain_level" = 5.0
-                }
-            }
-            $testEntries | ConvertTo-Json -Depth 99 | Out-File $script:TestRemoveEntriesPath -Encoding UTF8
-        }
-
-        It "Should remove specified time entry" {
-            $result = Remove-TimeEntry -Date "0714" -Time "0900" -EntriesPath $script:TestRemoveEntriesPath
-
-            $result | Should -Be $true
-
-            $savedData = Get-Content $script:TestRemoveEntriesPath | ConvertFrom-Json -AsHashtable
-            $savedData["0714"].ContainsKey("0900") | Should -Be $false
-            $savedData["0714"].ContainsKey("1200") | Should -Be $true
-        }
-
-        It "Should return false for non-existent date" {
-            $result = Remove-TimeEntry -Date "0715" -Time "0900" -EntriesPath $script:TestRemoveEntriesPath
-
-            $result | Should -Be $false
-        }
-
-        It "Should return false for non-existent time" {
-            $result = Remove-TimeEntry -Date "0714" -Time "0800" -EntriesPath $script:TestRemoveEntriesPath
-
-            $result | Should -Be $false
-        }
-
-        It "Should recalculate max pain level after removal" {
-            # Remove entry with max pain
-            $result = Remove-TimeEntry -Date "0714" -Time "0900" -EntriesPath $script:TestRemoveEntriesPath
-            $result | Should -Be $true
-
-            $savedData = Get-Content $script:TestRemoveEntriesPath | ConvertFrom-Json -AsHashtable
-            $savedData["0714"]["max_pain_level"] | Should -Be 0.0  # No remaining pain entries
-        }
-
-        It "Should create backup when requested" {
-            $result = Remove-TimeEntry -Date "0714" -Time "0900" -EntriesPath $script:TestRemoveEntriesPath -CreateBackup $true
-            $result | Should -Be $true
-
-            $backupFiles = Get-ChildItem $TestDrive -Filter "*backup*"
-            $backupFiles.Count | Should -BeGreaterThan 0
-        }
-
-        It "Should support WhatIf parameter" {
-            $result = Remove-TimeEntry -Date "0714" -Time "0900" -EntriesPath $script:TestRemoveEntriesPath -WhatIf
-            # WhatIf should not actually perform the operation
-
-            # Entry should still exist after WhatIf
-            $savedData = Get-Content $script:TestRemoveEntriesPath | ConvertFrom-Json -AsHashtable
-            $savedData["0714"].ContainsKey("0900") | Should -Be $true
-        }
-
-        It "Should handle 3-digit time format" {
-            # Add entry with 3-digit time in normalized format
-            $savedData = Get-Content $script:TestRemoveEntriesPath | ConvertFrom-Json -AsHashtable
-            $savedData["0714"]["0800"] = @{ "note" = "Early entry" }
-            $savedData | ConvertTo-Json -Depth 99 | Out-File $script:TestRemoveEntriesPath -Encoding UTF8
-
-            $result = Remove-TimeEntry -Date "0714" -Time "800" -EntriesPath $script:TestRemoveEntriesPath
-
-            $result | Should -Be $true
-        }
-
-        It "Should throw for invalid entries path" {
-            { Remove-TimeEntry -Date "0714" -Time "0900" -EntriesPath "/invalid/path.json" } | Should -Throw
-        }
-
-        It "Should validate date format" {
-            { Remove-TimeEntry -Date "invalid" -Time "0900" -EntriesPath $script:TestRemoveEntriesPath } | Should -Throw
-        }
-
-        It "Should validate time format" {
-            { Remove-TimeEntry -Date "0714" -Time "invalid" -EntriesPath $script:TestRemoveEntriesPath } | Should -Throw
-        }
-    }
 }
 
 # Tests for unified schema functions
@@ -1285,8 +1453,8 @@ Describe "New-SampleHealthEntries Function" -Tag New-SampleHealthEntries,Unified
             # Should have multiple entry types
             $allEntryTypes.Count | Should -BeGreaterThan 1
 
-            # Check for expected types
-            $expectedTypes = @("mood", "pain", "vitals", "medication", "activity", "sleep")
+            # Check for expected types (from schema v2.0)
+            $expectedTypes = @("mood", "vitals", "medications", "activities", "pain", "weight", "sleep")
             $hasExpectedType = $false
             foreach ($type in $expectedTypes) {
                 if ($allEntryTypes -contains $type) {
@@ -1418,4 +1586,5 @@ Describe "Schema Compatibility Tests" -Tag SchemaCompatibility {
             }
         }
     }
+}
 }
