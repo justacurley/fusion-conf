@@ -609,6 +609,8 @@ New-UDApp -Content {
             $currentUserEmail = if ($User) { $User } else { "unknown@example.com" }
 
             $entry = ConvertTo-EntriesFormat -Entry ( $FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json) -UserEmail $currentUserEmail
+            Write-Information "entry value"
+            Write-Information ($entry | ConvertTo-Json -Depth 99)
             # Save the entry to the entries.json file
             try {
                 $saveResult = Save-ConvertedEntry -ConvertedEntry $entry -EntriesPath $Session:UserEntriesPath
