@@ -53,7 +53,11 @@ function Save-ConvertedEntry {
         }
 
         # Load existing entries
-        $Entries = Get-CachedEntriesData -EntriesPath $EntriesPath
+        if (-not $Session:UserData) {
+            $Entries = Get-CachedEntriesData -EntriesPath $EntriesPath
+        } else {
+            $Session:UserData['Entries']
+        }
 
         # Save entry using composite key (ensure key is string)
         $Entries[$entryId] = $schemaEntry
