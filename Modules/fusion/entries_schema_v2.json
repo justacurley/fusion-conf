@@ -27,8 +27,6 @@
     },
     "entry_types": {
       "type": "array",
-      "minItems": 1,
-      "maxItems": 4,
       "uniqueItems": true,
       "items": {
         "type": "string",
@@ -88,7 +86,6 @@
         },
         "medications": {
           "type": "array",
-          "minItems": 1,
           "items": {
             "type": "object",
             "required": ["name", "dosage"],
@@ -107,7 +104,6 @@
         },
         "activities": {
           "type": "array",
-          "minItems": 1,
           "items": {
             "type": "object",
             "required": ["name", "duration_minutes"],
@@ -132,7 +128,6 @@
         },
         "pain": {
           "type": "array",
-          "minItems": 1,
           "items": {
             "type": "object",
             "required": ["location", "severity"],
