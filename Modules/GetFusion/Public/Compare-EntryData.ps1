@@ -28,11 +28,24 @@ function Compare-EntryData {
     # Compare each data type that exists in both entries
     foreach ($entryType in $commonTypes) {
         switch ($entryType) {
-            "medication" {
-                if ($Entry1.data.medication -and $Entry2.data.medication) {
+            "medications" {
+                if ($Entry1.data.medications -and $Entry2.data.medications) {
                     $medWeight = 15
                     $totalWeight += $medWeight
-                    $medSimilarity = Compare-Medications -Med1 $Entry1.data.medication -Med2 $Entry2.data.medication
+                    # Compare medications arrays
+                    $medSimilarity = 0
+                    if ($Entry1.data.medications.Count -eq $Entry2.data.medications.Count) {
+                        $matchCount = 0
+                        foreach ($med1 in $Entry1.data.medications) {
+                            foreach ($med2 in $Entry2.data.medications) {
+                                if ((Compare-Medications -Med1 $med1 -Med2 $med2) -gt 0.8) {
+                                    $matchCount++
+                                    break
+                                }
+                            }
+                        }
+                        $medSimilarity = $matchCount / $Entry1.data.medications.Count
+                    }
                     $matchingWeight += $medSimilarity * $medWeight
                     if ($medSimilarity -eq 1.0) { $reasons += "Medications match exactly" }
                 }
@@ -41,16 +54,42 @@ function Compare-EntryData {
                 if ($Entry1.data.pain -and $Entry2.data.pain) {
                     $painWeight = 15
                     $totalWeight += $painWeight
-                    $painSimilarity = Compare-PainData -Pain1 $Entry1.data.pain -Pain2 $Entry2.data.pain
+                    # Compare pain arrays
+                    $painSimilarity = 0
+                    if ($Entry1.data.pain.Count -eq $Entry2.data.pain.Count) {
+                        $matchCount = 0
+                        foreach ($pain1 in $Entry1.data.pain) {
+                            foreach ($pain2 in $Entry2.data.pain) {
+                                if ((Compare-PainData -Pain1 $pain1 -Pain2 $pain2) -gt 0.8) {
+                                    $matchCount++
+                                    break
+                                }
+                            }
+                        }
+                        $painSimilarity = $matchCount / $Entry1.data.pain.Count
+                    }
                     $matchingWeight += $painSimilarity * $painWeight
                     if ($painSimilarity -eq 1.0) { $reasons += "Pain data matches exactly" }
                 }
             }
-            "activity" {
-                if ($Entry1.data.activity -and $Entry2.data.activity) {
+            "activities" {
+                if ($Entry1.data.activities -and $Entry2.data.activities) {
                     $actWeight = 15
                     $totalWeight += $actWeight
-                    $actSimilarity = Compare-Activities -Act1 $Entry1.data.activity -Act2 $Entry2.data.activity
+                    # Compare activities arrays
+                    $actSimilarity = 0
+                    if ($Entry1.data.activities.Count -eq $Entry2.data.activities.Count) {
+                        $matchCount = 0
+                        foreach ($act1 in $Entry1.data.activities) {
+                            foreach ($act2 in $Entry2.data.activities) {
+                                if ((Compare-Activities -Act1 $act1 -Act2 $act2) -gt 0.8) {
+                                    $matchCount++
+                                    break
+                                }
+                            }
+                        }
+                        $actSimilarity = $matchCount / $Entry1.data.activities.Count
+                    }
                     $matchingWeight += $actSimilarity * $actWeight
                     if ($actSimilarity -eq 1.0) { $reasons += "Activities match exactly" }
                 }

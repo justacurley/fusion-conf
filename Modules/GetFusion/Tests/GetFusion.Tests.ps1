@@ -857,34 +857,37 @@ Describe "Schema v2.0 Compatibility Tests" {
         }
     }
 
-    Context "When converting between schema formats" {
-        It "Should handle schema v2.0 to old format conversion for testing" {
+    Context "When working with schema v2.0 format" {
+        It "Should handle schema v2.0 format correctly" {
             $schemaV2Entry = @{
                 entry_id = "2407171430"
                 user_email = "test@example.com"
                 date = "2024-07-17"
                 time = "14:30"
-                entry_types = @("pain", "medication")
+                entry_types = @("pain", "medications")
                 data = @{
-                    pain = @{
-                        location = "back"
-                        severity = 6
-                        note = "lower back pain"
-                    }
-                    medication = @{
-                        medication_name = "tylenol"
-                        dosage = "1g"
-                    }
+                    pain = @(
+                        @{
+                            location = "back"
+                            severity = 6
+                            note = "lower back pain"
+                        }
+                    )
+                    medications = @(
+                        @{
+                            name = "tylenol"
+                            dosage = "1g"
+                        }
+                    )
                 }
                 notes = "test entry"
             }
 
-            # The test setup converts schema v2.0 to old format
-            # Verify the conversion logic works correctly
-            $schemaV2Entry.data.pain.severity | Should -Be 6
-            $schemaV2Entry.data.medication.medication_name | Should -Be "tylenol"
+            # Verify the schema v2.0 format works correctly
+            $schemaV2Entry.data.pain[0].severity | Should -Be 6
+            $schemaV2Entry.data.medications[0].name | Should -Be "tylenol"
             $schemaV2Entry.entry_types | Should -Contain "pain"
-            $schemaV2Entry.entry_types | Should -Contain "medication"
+            $schemaV2Entry.entry_types | Should -Contain "medications"
         }
     }
 }
@@ -901,17 +904,21 @@ Describe "Find-DuplicateEntries Function" {
                 user_email = "test@example.com"
                 date = "2024-07-01"
                 time = "08:00"
-                entry_types = @("pain", "medication")
+                entry_types = @("pain", "medications")
                 data = @{
-                    pain = @{
-                        location = "back"
-                        severity = 5.0
-                        note = ""
-                    }
-                    medication = @{
-                        medication_name = "tylenol"
-                        dosage = "1g"
-                    }
+                    pain = @(
+                        @{
+                            location = "back"
+                            severity = 5.0
+                            note = ""
+                        }
+                    )
+                    medications = @(
+                        @{
+                            name = "tylenol"
+                            dosage = "1g"
+                        }
+                    )
                 }
                 notes = "morning routine"
             }
@@ -921,17 +928,21 @@ Describe "Find-DuplicateEntries Function" {
                 user_email = "test@example.com"
                 date = "2024-07-01"
                 time = "09:00"
-                entry_types = @("pain", "medication")
+                entry_types = @("pain", "medications")
                 data = @{
-                    pain = @{
-                        location = "back"
-                        severity = 5.0
-                        note = ""
-                    }
-                    medication = @{
-                        medication_name = "tylenol"
-                        dosage = "1g"
-                    }
+                    pain = @(
+                        @{
+                            location = "back"
+                            severity = 5.0
+                            note = ""
+                        }
+                    )
+                    medications = @(
+                        @{
+                            name = "tylenol"
+                            dosage = "1g"
+                        }
+                    )
                 }
                 notes = "morning routine"
             }
@@ -963,13 +974,15 @@ Describe "Find-DuplicateEntries Function" {
                 user_email = "test@example.com"
                 date = "2024-07-01"
                 time = "14:00"
-                entry_types = @("activity")
+                entry_types = @("activities")
                 data = @{
-                    activity = @{
-                        activity_name = "stretching"
-                        duration_minutes = 15
-                        note = ""
-                    }
+                    activities = @(
+                        @{
+                            name = "stretching"
+                            duration_minutes = 15
+                            note = ""
+                        }
+                    )
                 }
                 notes = "afternoon entry"
             }
@@ -1048,22 +1061,28 @@ Describe "Compare-EntryData Function" {
                 user_email = "test@example.com"
                 date = "2024-07-26"
                 time = "14:00"
-                entry_types = @("pain", "medication", "activity")
+                entry_types = @("pain", "medications", "activities")
                 data = @{
-                    pain = @{
-                        location = "back"
-                        severity = 4.0
-                        note = ""
-                    }
-                    medication = @{
-                        medication_name = "tylenol"
-                        dosage = "1g"
-                    }
-                    activity = @{
-                        activity_name = "walking"
-                        duration_minutes = 30
-                        note = "short walk"
-                    }
+                    pain = @(
+                        @{
+                            location = "back"
+                            severity = 4.0
+                            note = ""
+                        }
+                    )
+                    medications = @(
+                        @{
+                            name = "tylenol"
+                            dosage = "1g"
+                        }
+                    )
+                    activities = @(
+                        @{
+                            name = "walking"
+                            duration_minutes = 30
+                            note = "short walk"
+                        }
+                    )
                 }
                 notes = "test note"
             }
@@ -1073,22 +1092,28 @@ Describe "Compare-EntryData Function" {
                 user_email = "test@example.com"
                 date = "2024-07-26"
                 time = "15:00"
-                entry_types = @("pain", "medication", "activity")
+                entry_types = @("pain", "medications", "activities")
                 data = @{
-                    pain = @{
-                        location = "back"
-                        severity = 4.0
-                        note = ""
-                    }
-                    medication = @{
-                        medication_name = "tylenol"
-                        dosage = "1g"
-                    }
-                    activity = @{
-                        activity_name = "walking"
-                        duration_minutes = 30
-                        note = "short walk"
-                    }
+                    pain = @(
+                        @{
+                            location = "back"
+                            severity = 4.0
+                            note = ""
+                        }
+                    )
+                    medications = @(
+                        @{
+                            name = "tylenol"
+                            dosage = "1g"
+                        }
+                    )
+                    activities = @(
+                        @{
+                            name = "walking"
+                            duration_minutes = 30
+                            note = "short walk"
+                        }
+                    )
                 }
                 notes = "test note"
             }
@@ -1098,17 +1123,21 @@ Describe "Compare-EntryData Function" {
                 user_email = "test@example.com"
                 date = "2024-07-26"
                 time = "16:00"
-                entry_types = @("pain", "medication")
+                entry_types = @("pain", "medications")
                 data = @{
-                    pain = @{
-                        location = "knee"
-                        severity = 6.0
-                        note = ""
-                    }
-                    medication = @{
-                        medication_name = "dilaudid"
-                        dosage = "4mg"
-                    }
+                    pain = @(
+                        @{
+                            location = "knee"
+                            severity = 6.0
+                            note = ""
+                        }
+                    )
+                    medications = @(
+                        @{
+                            name = "dilaudid"
+                            dosage = "4mg"
+                        }
+                    )
                 }
                 notes = "different note"
             }
@@ -1180,7 +1209,7 @@ Describe "Compare-Medications Function" {
         }
 
         It "Should return 0.0 for one null and one valid medication" {
-            $med1 = @{ "medication_name" = "tylenol"; "dosage" = "1g" }
+            $med1 = @{ "name" = "tylenol"; "dosage" = "1g" }
             $result = Compare-Medications -Med1 $med1 -Med2 $null
             $result | Should -Be 0.0
         }

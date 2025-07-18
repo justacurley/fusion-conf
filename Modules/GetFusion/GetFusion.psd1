@@ -3,7 +3,7 @@
     RootModule = 'GetFusion.psm1'
 
     # Version number of this module
-    ModuleVersion = '1.0.0'
+    ModuleVersion = '2.0.0'
 
     # Supported PSEditions
     CompatiblePSEditions = @('Desktop', 'Core')
@@ -21,7 +21,7 @@
     Copyright = '(c) 2024 Fusion Health Dashboard. All rights reserved.'
 
     # Description of the functionality provided by this module
-    Description = 'PowerShell module for processing health data from unified entries schema v2.0. Provides functions for parsing sleep data, calculating pain metrics, and extracting comprehensive health statistics for dashboard visualization. Updated to work exclusively with the new unified schema format.'
+    Description = 'PowerShell module for processing health data from unified entries schema v2.0. Provides functions for parsing sleep data, calculating pain metrics, and extracting comprehensive health statistics for dashboard visualization. Fully supports the new unified schema format with array-based data structures for medications, activities, and pain entries.'
 
     # Minimum version of the PowerShell engine required by this module
     PowerShellVersion = '7.0'
@@ -74,7 +74,7 @@
             IconUri = ''
 
             # Release notes of this module
-            ReleaseNotes = 'Initial release with health data processing functions for PowerShell Universal dashboards.'
+            ReleaseNotes = 'Version 2.0.0: Updated to fully support unified entries schema v2.0 with array-based data structures for medications, activities, and pain entries. All comparison and data extraction functions now handle the new schema format correctly.'
         }
     }
 }

@@ -40,8 +40,19 @@ function Get-HealthMetrics {
                 # Find max pain severity for the day
                 $painEntries = $dateEntries | Where-Object { $_.entry_types -contains "pain" }
                 if ($painEntries) {
-                    $maxPain = ($painEntries | ForEach-Object { $_.data.pain.severity } | Measure-Object -Maximum).Maximum
-                    $baseObject = Set-CombinedData -combinedData $baseObject -name 'MaxPain' -data $maxPain
+                    $maxPain = 0
+                    foreach ($entry in $painEntries) {
+                        if ($entry.data.pain) {
+                            foreach ($painItem in $entry.data.pain) {
+                                if ($painItem.severity -gt $maxPain) {
+                                    $maxPain = $painItem.severity
+                                }
+                            }
+                        }
+                    }
+                    if ($maxPain -gt 0) {
+                        $baseObject = Set-CombinedData -combinedData $baseObject -name 'MaxPain' -data $maxPain
+                    }
                 }
             }
 
@@ -100,16 +111,19 @@ function Get-HealthMetrics {
             $painEntries = $Entries | Where-Object { $_.date -eq $date -and $_.entry_types -contains "pain" }
             foreach ($entry in $painEntries) {
                 if ($entry.data.pain) {
-                    $painWithContext = [PSCustomObject]@{
-                        Date      = $entry.date
-                        Timestamp = $entry.time
-                        EntryId   = $entry.entry_id
-                        Location  = $entry.data.pain.location
-                        Severity  = $entry.data.pain.severity
-                        Note      = $entry.data.pain.note
-                        Notes     = $entry.notes
+                    # Handle pain as array in schema v2.0
+                    foreach ($painItem in $entry.data.pain) {
+                        $painWithContext = [PSCustomObject]@{
+                            Date      = $entry.date
+                            Timestamp = $entry.time
+                            EntryId   = $entry.entry_id
+                            Location  = $painItem.location
+                            Severity  = $painItem.severity
+                            Note      = $painItem.note
+                            Notes     = $entry.notes
+                        }
+                        $results['Pain'] += $painWithContext
                     }
-                    $results['Pain'] += $painWithContext
                 }
             }
         }
