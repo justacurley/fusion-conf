@@ -32,7 +32,7 @@ function ConvertTo-EntriesFormat {
 
     $isoDate = "$year-$month-$day"
     $isoTime = "$hour`:$minute"
-    $entryId = $([datetime]::ParseExact($isoDate, "yyyy-MM-dd", $null).ToString("yyMMdd")) + $rawTime
+    $entryId = [string]($([datetime]::ParseExact($isoDate, "yyyy-MM-dd", $null).ToString("yyMMdd")) + $rawTime)
 
     # Initialize the new schema structure
     $schemaEntry = @{
