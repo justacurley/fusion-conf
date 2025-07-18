@@ -176,10 +176,11 @@ function New-ActivityEntryElement {
 
 New-UDApp -Content {
     Import-Module UserManagement -Force
-    $UserData = Initialize-UserContext -UserEmail $User
-    $Session:Pain = $UserData.Preferences.tracking.pain
+    $Session:UserData = Initialize-UserContext -UserEmail $User
+    $Session:UserEntriesPath = (Join-Path $Session:UserData.UserDataPath 'health-data/entries.json')
+    $Session:Pain = $Session:UserData.Preferences.tracking.pain
     $Session:PreferredPainLocations = $Session:Pain.enabled ? $Session:Pain.locations.name.location : @()
-    $Session:Mood = $UserData.Preferences.tracking.mood
+    $Session:Mood = $Session:UserData.Preferences.tracking.mood
     $Session:MoodEnabled = $Session:Mood.enabled ? $true : $false
     $Session:MoodScaleType = $Session:Mood.scale_type ? $Session:Mood.scale_type : "numeric_5"
     New-UDContainer -Children {
@@ -603,10 +604,14 @@ New-UDApp -Content {
             $FormEvent.timestamp = [datetime]::Parse($FormEvent.timestamp).ToString('HHmm')
             $FormEvent.date = [datetime]::Parse($FormEvent.date).ToString('MMdd')
             Write-Information ($FormEvent | ConvertTo-Json -Depth 99)
-            $entry = ConvertTo-EntriesFormat -Entry ( $FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json)
+
+            # Get user email from session context
+            $currentUserEmail = if ($User) { $User } else { "unknown@example.com" }
+
+            $entry = ConvertTo-EntriesFormat -Entry ( $FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json) -UserEmail $currentUserEmail
             # Save the entry to the entries.json file
             try {
-                $saveResult = Save-ConvertedEntry -ConvertedEntry $entry
+                $saveResult = Save-ConvertedEntry -ConvertedEntry $entry -EntriesPath $Session:UserEntriesPath
                 if ($saveResult) {
                     Write-Information 'Successfully saved entry to entries.json'
                     Show-UDToast -Message 'Entry saved successfully!' -MessageColor Green -Duration 3000
@@ -623,11 +628,20 @@ New-UDApp -Content {
             }
             if ($EventData.ImageFile) {
                 $imageFile = $EventData.ImageFile
-                $imageFolderPath = '/home/data/fusion-data/img'
+                # Use configurable path for image storage
+                $imageFolderPath = if ($env:FUSION_DATA_PATH) {
+                    Join-Path $env:FUSION_DATA_PATH 'img'
+                } else {
+                    '/home/data/fusion-data/img'
+                }
                 $imageExt = $imageFile.Name.Split('.')[-1]
                 $imageFileName = "$($EventData.date).$imageExt"
                 $imagePath = Join-Path $imageFolderPath $imageFileName
                 try {
+                    # Ensure the directory exists
+                    if (-not (Test-Path $imageFolderPath)) {
+                        New-Item -ItemType Directory -Path $imageFolderPath -Force
+                    }
                     # Save the uploaded image to the specified path
                     Copy-Item $EventData.ImageFile.FileName $imagePath
                     Write-Information "Image saved to: $imagePath"
@@ -641,14 +655,29 @@ New-UDApp -Content {
             # Update the cache with the new entry
             try {
                 Import-Module -Name GetFusion -Force
-                $EntriesPath = '/home/data/fusion-data/entries/entries.json'
-                $Entries = Get-EntriesData -entriesPath $EntriesPath
-                Set-PSUCache -Key 'entriesData' -Value $Entries -AbsoluteExpiration (Get-Date).AddDays(1)
-                Write-Information 'Cache updated with new entries data'
+                # Check if the central entries file exists and is in schema v2 format
+                if (Test-Path $Session:UserEntriesPath) {
+                    try {
+                        $Entries = Get-EntriesData -entriesPath $Session:UserEntriesPath
+                        Set-PSUCache -Key 'entriesData' -Value $Entries -AbsoluteExpiration (Get-Date).AddDays(1)
+                        Write-Information 'Cache updated with new entries data'
+                    }
+                    catch {
+                        Write-Warning "Central entries file exists but not in schema v2 format: $($_.Exception.Message)"
+                        # Clear the cache if the file is in wrong format
+                        Remove-PSUCache -Key 'entriesData'
+                        Write-Information 'Cache cleared due to schema format mismatch'
+                    }
+                }
+                else {
+                    Write-Information "Central entries file not found at: $Session:UserEntriesPath - entries are stored per user"
+                    # Clear the cache since there's no central file
+                    Remove-PSUCache -Key 'entriesData'
+                }
             }
             catch {
                 Write-Error "Error updating cache: $($_.Exception.Message)"
-                Show-UDToast -Message "Error updating cache: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+                Show-UDToast -Message "Warning: Cache update failed, but entry was saved" -MessageColor Orange -Duration 3000
             }
         }
     }
