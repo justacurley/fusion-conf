@@ -603,6 +603,8 @@ New-UDApp -Content {
             $FormEvent = $EventData[0]
             $FormEvent.timestamp = [datetime]::Parse($FormEvent.timestamp).ToString('HHmm')
             $FormEvent.date = [datetime]::Parse($FormEvent.date).ToString('MMdd')
+            Write-Information ($FormEvent.GetType().FullName)
+            Write-Information $Session:SelectedMood
             Write-Information ($FormEvent | ConvertTo-Json -Depth 99)
 
             # Get user email from session context
