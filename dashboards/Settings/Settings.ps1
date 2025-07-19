@@ -3,14 +3,14 @@
         [Parameter(Mandatory = $true)]
         [string]$Preference,
         [Parameter(Mandatory = $true)]
-        [PSCustomObject]$JsonPreferences        
+        [PSCustomObject]$JsonPreferences
     )
-    
+
     try {
         # Split the preference path by dots
         $pathParts = $Preference -split '\.'
         $current = $JsonPreferences
-        
+
         # Navigate through each part of the path
         foreach ($part in $pathParts) {
             if ($current -is [PSCustomObject]) {
@@ -68,7 +68,7 @@
                 }
             }
         }
-        
+
         return @{
             success = $true
             message = "Preference '$Preference' found"
@@ -332,7 +332,18 @@ $SettingsPage = New-UDApp -Content {
 
                     New-UDGrid -Container -Children {
                         New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                            New-UDSelect -Id 'pain_locations' -Label 'Pain Locations' -Multiple -FullWidth -Option {
+                            # Get existing pain locations from preferences
+                            $existingPainLocations = @()
+                            $painLocationsResult = gpf 'tracking.pain.locations'
+                            if ($painLocationsResult.success -and $painLocationsResult.data) {
+                                $existingPainLocations = $painLocationsResult.data | ForEach-Object {
+                                    if ($_.name -and $_.name.location) {
+                                        $_.name.location
+                                    }
+                                }
+                            }
+
+                            New-UDSelect -Id 'pain_locations' -Label 'Pain Locations' -Multiple -FullWidth -Checkbox -DefaultValue $existingPainLocations -Option {
                                 New-UDSelectOption -Name 'Lower Back' -Value 'lower_back'
                                 New-UDSelectOption -Name 'Upper Back' -Value 'upper_back'
                                 New-UDSelectOption -Name 'Neck' -Value 'neck'
