@@ -736,7 +736,9 @@ class UserProfile {
                     $Result.PreferencesSet += "Added activity: $($activityEntry.name)"
                 }
             }
+            Write-Information "AWMC DEBUG"
             Write-Information ($Preferences["tracking"].Keys)
+            Write-Information "AWMC deDEBUG"
             # Save preferences to file
             $Preferences | ConvertTo-Json -Depth 10 | Out-File -FilePath $PreferencesPath -Force -ErrorAction Stop
 
