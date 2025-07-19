@@ -736,7 +736,7 @@ class UserProfile {
                     $Result.PreferencesSet += "Added activity: $($activityEntry.name)"
                 }
             }
-            Write-Information ($Preferences.tracking.Keys)
+            Write-Information ($Preferences["tracking"].Keys)
             # Save preferences to file
             $Preferences | ConvertTo-Json -Depth 10 | Out-File -FilePath $PreferencesPath -Force -ErrorAction Stop
 
