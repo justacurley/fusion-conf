@@ -93,7 +93,7 @@ $SettingsPage = New-UDApp -Content {
         Invoke-UDRedirect -Url /login -Native
     } else {
     #   Write-Information ($Session:UserData | Select U*, P* | ConvertTo-Json -Depth 99)
-        Write-Information ($Session:UserData.Preferences | Convertto-json -depth 99)
+        # Write-Information ($Session:UserData.Preferences | Convertto-json -depth 99)
       $PSDefaultParameterValues["gpf:JsonPreferences"] = $Session:UserData.Preferences
     #   Show-UDToast -Message (gpf 'tracking.vitals.heart_rate.enabled' | Convertto-Json) -Duration 10000 -Persistent
     }

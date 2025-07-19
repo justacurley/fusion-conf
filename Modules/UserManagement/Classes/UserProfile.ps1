@@ -638,6 +638,7 @@ class UserProfile {
                         scale_type = $PreferenceData.mood_scale ?? 'numeric_5'  # numeric_5, descriptive, custom
                         frequency = $PreferenceData.mood_frequency ?? 'daily'
                     }
+
                     # Steps Tracking
                     steps = @{
                         enabled = [bool]($PreferenceData.track_steps ?? $false)
@@ -645,6 +646,7 @@ class UserProfile {
                         alerts_enabled = [bool]($PreferenceData.step_alerts ?? $false)
                         device = $PreferenceData.steps_device ?? ''
                     }
+
                 }
 
                 # Notification Preferences
@@ -670,7 +672,6 @@ class UserProfile {
                     show_trends = [bool]($PreferenceData.show_trends ?? $true)
                     compact_view = [bool]($PreferenceData.compact_view ?? $false)
                 }
-
 
                 # Metadata
                 meta = @{
@@ -735,7 +736,7 @@ class UserProfile {
                     $Result.PreferencesSet += "Added activity: $($activityEntry.name)"
                 }
             }
-
+            Write-Information ($Preferences.tracking.Keys)
             # Save preferences to file
             $Preferences | ConvertTo-Json -Depth 10 | Out-File -FilePath $PreferencesPath -Force -ErrorAction Stop
 
