@@ -1,4 +1,5 @@
-﻿# Helper function to create pain entry elements (reduces code duplication)
+﻿$DebugPreference = 'Continue'
+# Helper function to create pain entry elements (reduces code duplication)
 function New-PainEntryElement {
     param(
         [int]$EntryNumber,
