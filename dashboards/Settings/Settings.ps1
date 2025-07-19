@@ -1,10 +1,100 @@
-﻿$SettingsPage = New-UDApp -Content {
+﻿function gpf {
+    param(
+        [Parameter(Mandatory = $true)]
+        [string]$Preference,
+        [Parameter(Mandatory = $true)]
+        [PSCustomObject]$JsonPreferences        
+    )
+    
+    try {
+        # Split the preference path by dots
+        $pathParts = $Preference -split '\.'
+        $current = $JsonPreferences
+        
+        # Navigate through each part of the path
+        foreach ($part in $pathParts) {
+            if ($current -is [PSCustomObject]) {
+                if ($current.PSObject.Properties.Name -contains $part) {
+                    $current = $current.$part
+                }
+                else {
+                    return @{
+                        success = $false
+                        message = "Preference path '$Preference' not found - missing key '$part'"
+                        data    = $null
+                    }
+                }
+            }
+            elseif ($current -is [hashtable]) {
+                if ($current.ContainsKey($part)) {
+                    $current = $current[$part]
+                }
+                else {
+                    return @{
+                        success = $false
+                        message = "Preference path '$Preference' not found - missing key '$part'"
+                        data    = $null
+                    }
+                }
+            }
+            elseif ($current -is [array]) {
+                # Handle array index access
+                if ($part -match '^\d+$') {
+                    $index = [int]$part
+                    if ($index -ge 0 -and $index -lt $current.Count) {
+                        $current = $current[$index]
+                    }
+                    else {
+                        return @{
+                            success = $false
+                            message = "Preference path '$Preference' not found - array index '$part' out of bounds"
+                            data    = $null
+                        }
+                    }
+                }
+                else {
+                    return @{
+                        success = $false
+                        message = "Preference path '$Preference' not found - cannot access property '$part' on array"
+                        data    = $null
+                    }
+                }
+            }
+            else {
+                return @{
+                    success = $false
+                    message = "Preference path '$Preference' not found - cannot navigate further from '$part'"
+                    data    = $null
+                }
+            }
+        }
+        
+        return @{
+            success = $true
+            message = "Preference '$Preference' found"
+            data    = $current
+        }
+    }
+    catch {
+        return @{
+            success = $false
+            message = "Error accessing preference '$Preference': $($_.Exception.Message)"
+            data    = $null
+        }
+    }
+}
+
+$SettingsPage = New-UDApp -Content {
     Import-Module UserManagement -Force
-    $UserData = Initialize-UserContext -UserEmail $User
-    if (!$UserData) {
+    $Session:UserData = Initialize-UserContext -UserEmail $User
+    if (!$Session:UserData) {
         sleep 6
         Show-UDToast -Message "Redirecting to login page." -MessageColor Green -Duration 1000
         Invoke-UDRedirect -Url /login -Native
+    } else {
+      Write-Information ($Session:UserData | Select U*, P* | ConvertTo-Json -Depth 99)
+      $PSDefaultParameterValues["gpf:JsonPreferences"] = $Session:UserData.Preferences
+      Show-UDToast -Message (gpf 'tracking.vitals.heart_rate.enabled' | Convertto-Json) -Duration 10000 -Persistent
     }
     # Add custom CSS for settings form styling
     New-UDElement -Tag 'style' -Content {
@@ -127,15 +217,15 @@
                                 New-UDSelectOption -Name 'Central Time' -Value 'America/Chicago'
                                 New-UDSelectOption -Name 'Mountain Time' -Value 'America/Denver'
                                 New-UDSelectOption -Name 'Pacific Time' -Value 'America/Los_Angeles'
-                            } -DefaultValue 'America/Denver'
+                            } -DefaultValue ((($r=gpf 'profile.timezone').success) ? $r.data : 'UTC')
                             New-UDSelect -Id 'temperature_unit' -Label '🌡️ Temperature Unit' -FullWidth -Option {
                                 New-UDSelectOption -Name 'Fahrenheit' -Value 'fahrenheit'
                                 New-UDSelectOption -Name 'Celsius' -Value 'celsius'
-                            } -DefaultValue 'fahrenheit'
+                            } -DefaultValue ((($r=gpf 'profile.units.temperature').success) ? $r.data : 'fahrenheit')
                             New-UDSelect -Id 'weight_unit' -Label '⚖️ Weight Unit' -FullWidth -Option {
                                 New-UDSelectOption -Name 'Pounds' -Value 'pounds'
                                 New-UDSelectOption -Name 'Kilograms' -Value 'kilograms'
-                            } -DefaultValue 'pounds'
+                            } -DefaultValue ((($r=gpf 'profile.units.weight').success) ? $r.data : 'pounds')
                     } -Direction Column
                 }
 
@@ -148,33 +238,33 @@
                     New-UDElement -Tag 'div' -Attributes @{ class = 'tracking-toggle' } -Content {
                         New-UDGrid -Container -Children {
                             New-UDStack -Id 'optional_tracks' -Children {
-                                New-UDCheckbox -Id 'track_weight' -Label '⚖️ Track Weight (Daily)'
-                                New-UDCheckbox -Id 'track_sleep' -Label '😴 Track Sleep (Daily)'
-                                New-UDCheckbox -Id 'track_temperature' -Label '🌡️ Track Temperature (As Needed)'
+                                New-UDCheckbox -Id 'track_weight' -Label '⚖️ Track Weight (Daily)' -Checked ((($r=gpf 'tracking.vitals.weight.enabled').success) ? $r.data : $false)
+                                New-UDCheckbox -Id 'track_sleep' -Label '😴 Track Sleep (Daily)' -Checked ((($r=gpf 'tracking.sleep.enabled').success) ? $r.data : $false)
+                                New-UDCheckbox -Id 'track_temperature' -Label '🌡️ Track Temperature (As Needed)' -Checked ((($r=gpf 'tracking.vitals.weight.enabled').success) ? $r.data : $false)
                                 New-UDCheckbox -Id 'track_blood_pressure' -Label '🩸 Track Blood Pressure (As Needed)' -OnChange {
                                     $Session:track_blood_pressure = (Get-UDElement -Id 'track_blood_pressure').Checked
                                     Sync-UDElement -Id 'tracking_devices'
-                                }
+                                } -Checked ((($r=gpf 'tracking.vitals.blood_pressure.enabled').success) ? $r.data : $false)
                                 New-UDCheckbox -Id 'track_oxygen' -Label '🫁 Track Oxygen Saturation (As Needed)' -OnChange {
                                     $Session:track_oxygen = (Get-UDElement -Id 'track_oxygen').Checked
                                     Sync-UDElement -Id 'tracking_devices'
-                                }
+                                } -Checked ((($r=gpf 'tracking.vitals.oxygen_saturation.enabled').success) ? $r.data : $false)
                             } -Direction Column -Divider {New-UDDivider -Variant 'inset'}
                             New-UDStack -Id 'optional_tracks' -Children {
                                 New-UDCheckbox -Id 'track_heart_rate' -Label '💗 Track Heart Rate (As Needed)' -OnChange {
                                     $Session:track_heart_rate = (Get-UDElement -Id 'track_heart_rate').Checked
                                     Sync-UDElement -Id 'tracking_devices'
-                                }
+                                } -Checked ((($r=gpf 'tracking.vitals.heart_rate.enabled').success) ? $r.data : $false)
                                 New-UDCheckbox -Id 'track_glucose' -Label '🩸 Track Blood Glucose (As Needed)' -OnChange {
                                     $Session:track_glucose = (Get-UDElement -Id 'track_glucose').Checked
                                     Sync-UDElement -Id 'tracking_devices'
-                                }
-                                New-UDCheckbox -Id 'track_mood' -Label '😊 Track Mood (As Needed)'
+                                } -Checked ((($r=gpf 'tracking.vitals.blood_glucose.enabled').success) ? $r.data : $false)
+                                New-UDCheckbox -Id 'track_mood' -Label '😊 Track Mood (As Needed)' -Checked ((($r=gpf 'tracking.mood.enabled').success) ? $r.data : $false)
                                 New-UDCheckbox -Id 'track_steps' -Label '👟 Track Steps (Daily)' -OnChange {
                                     $Session:track_steps = (Get-UDElement -Id 'track_steps').Checked
                                     Sync-UDElement -Id 'tracking_devices'
-                                }
-                                New-UDCheckbox -Id 'track_activities' -Label '🏃 Track Activities & Exercise'
+                                } -Checked ((($r=gpf 'tracking.steps.enabled').success) ? $r.data : $false)
+                                New-UDCheckbox -Id 'track_activities' -Label '🏃 Track Activities & Exercise' -Checked ((($r=gpf 'tracking.vitals.activities.enabled').success) ? $r.data : $false)
                             } -Direction Column -Divider {New-UDDivider -Variant 'inset'}
                         }
                     }
