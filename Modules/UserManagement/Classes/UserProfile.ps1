@@ -638,6 +638,13 @@ class UserProfile {
                         scale_type = $PreferenceData.mood_scale ?? 'numeric_5'  # numeric_5, descriptive, custom
                         frequency = $PreferenceData.mood_frequency ?? 'daily'
                     }
+                    # Steps Tracking
+                    steps = @{
+                        enabled = [bool]($PreferenceData.track_steps ?? $false)
+                        daily_goal = $PreferenceData.daily_step_goal ?? 10000
+                        alerts_enabled = [bool]($PreferenceData.step_alerts ?? $false)
+                        device = $PreferenceData.steps_device ?? ''
+                    }
                 }
 
                 # Notification Preferences
@@ -664,13 +671,6 @@ class UserProfile {
                     compact_view = [bool]($PreferenceData.compact_view ?? $false)
                 }
 
-                # Steps Tracking
-                steps = @{
-                    enabled = [bool]($PreferenceData.track_steps ?? $false)
-                    daily_goal = $PreferenceData.daily_step_goal ?? 10000
-                    alerts_enabled = [bool]($PreferenceData.step_alerts ?? $false)
-                    device = $PreferenceData.steps_device ?? ''
-                }
 
                 # Metadata
                 meta = @{
