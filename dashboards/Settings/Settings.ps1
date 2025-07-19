@@ -265,7 +265,7 @@ $SettingsPage = New-UDApp -Content {
                                     $Session:track_steps = (Get-UDElement -Id 'track_steps').Checked
                                     Sync-UDElement -Id 'tracking_devices'
                                 } -Checked ((($r=gpf 'tracking.steps.enabled').success) ? $r.data : $false)
-                                New-UDCheckbox -Id 'track_activities' -Label '🏃 Track Activities & Exercise' -Checked ((($r=gpf 'tracking.vitals.activities.enabled').success) ? $r.data : $false)
+                                New-UDCheckbox -Id 'track_activities' -Label '🏃 Track Activities & Exercise' -Checked ((($r=gpf 'tracking.activities.enabled').success) ? $r.data : $false)
                             } -Direction Column -Divider {New-UDDivider -Variant 'inset'}
                         }
                     }
