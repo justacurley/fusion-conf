@@ -93,6 +93,7 @@ $SettingsPage = New-UDApp -Content {
         Invoke-UDRedirect -Url /login -Native
     } else {
     #   Write-Information ($Session:UserData | Select U*, P* | ConvertTo-Json -Depth 99)
+        Write-Information ($Session:UserData.Preferences | Convertto-json -depth 99)
       $PSDefaultParameterValues["gpf:JsonPreferences"] = $Session:UserData.Preferences
     #   Show-UDToast -Message (gpf 'tracking.vitals.heart_rate.enabled' | Convertto-Json) -Duration 10000 -Persistent
     }
@@ -279,6 +280,7 @@ $SettingsPage = New-UDApp -Content {
                         # Get existing medications from preferences
                         $existingMedications = @()
                         $medicationsResult = gpf 'tracking.medications.medications_list'
+                        Show-UDToast -Message ($medicationsResult | Convertto-json -depth 3) -Persistent
                         if ($medicationsResult.success -and $medicationsResult.data) {
                             $existingMedications = $medicationsResult.data | Where-Object { $_.name -and $_.dosage }
                         }
@@ -519,7 +521,17 @@ $SettingsPage = New-UDApp -Content {
                 }
 
                 # Call New-UserHealthPreferences with collected data
-                $PreferencesResult = New-UserHealthPreferences -Email $User -Timezone $FormData.timezone -TemperatureUnit $FormData.temperature_unit -WeightUnit $FormData.weight_unit -TrackBloodPressure:($FormData.track_blood_pressure -eq $true) -TrackOxygen:($FormData.track_oxygen -eq $true) -TrackHeartRate:($FormData.track_heart_rate -eq $true) -TrackTemperature:($FormData.track_temperature -eq $true) -TrackWeight:($FormData.track_weight -eq $true) -TrackGlucose:($FormData.track_glucose -eq $true) -TrackMedications:$true -TrackPain:$true -TrackActivities:($FormData.track_activities -eq $true) -TrackSleep:($FormData.track_sleep -eq $true) -TrackMood:($FormData.track_mood -eq $true) -TrackSteps:($FormData.track_steps -eq $true) -BloodPressureDevice $FormData.blood_pressure_device -OxygenSaturationDevice $FormData.oxygen_saturation_device -BloodGlucoseDevice $FormData.blood_glucose_device -HeartRateDevice $FormData.heart_rate_device -StepsDevice $FormData.steps_device -Medications $Medications -PainLocations $PainLocations -Activities $Activities
+                $PreferencesResult = New-UserHealthPreferences -Email $User -Timezone $FormData.timezone -TemperatureUnit $FormData.temperature_unit `
+                    -Medications $Medications -PainLocations $PainLocations -Activities $Activities `
+                    -WeightUnit $FormData.weight_unit -TrackBloodPressure:($FormData.track_blood_pressure -eq $true) `
+                    -TrackOxygen:($FormData.track_oxygen -eq $true) -TrackHeartRate:($FormData.track_heart_rate -eq $true) `
+                    -TrackTemperature:($FormData.track_temperature -eq $true) -TrackWeight:($FormData.track_weight -eq $true) `
+                    -TrackGlucose:($FormData.track_glucose -eq $true) -TrackMedications:$true -TrackPain:$true `
+                    -TrackActivities:($FormData.track_activities -eq $true) -TrackSleep:($FormData.track_sleep -eq $true) `
+                    -TrackMood:($FormData.track_mood -eq $true) -TrackSteps:($FormData.track_steps -eq $true) `
+                    -BloodPressureDevice $FormData.blood_pressure_device -OxygenSaturationDevice $FormData.oxygen_saturation_device `
+                    -BloodGlucoseDevice $FormData.blood_glucose_device -HeartRateDevice $FormData.heart_rate_device `
+                    -StepsDevice $FormData.steps_device 
 
                 if ($PreferencesResult.Success) {
                     Show-UDToast -Message 'Health tracking settings saved successfully!' -Duration 3000 -BackgroundColor '#4caf50'
