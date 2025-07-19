@@ -182,6 +182,7 @@ New-UDApp -Content {
     $Session:PreferredPainLocations = $Session:Pain.enabled ? $Session:Pain.locations.name.location : @()
     $Session:Mood = $Session:UserData.Preferences.tracking.mood
     $Session:MoodEnabled = $Session:Mood.enabled ? $true : $false
+    $Session:SelectedMood = ''
     $Session:MoodScaleType = $Session:Mood.scale_type ? $Session:Mood.scale_type : "numeric_5"
     New-UDContainer -Children {
         New-UDPaper -Children {
@@ -603,8 +604,7 @@ New-UDApp -Content {
             $FormEvent = $EventData[0]
             $FormEvent.timestamp = [datetime]::Parse($FormEvent.timestamp).ToString('HHmm')
             $FormEvent.date = [datetime]::Parse($FormEvent.date).ToString('MMdd')
-            Write-Information ($FormEvent.GetType().FullName)
-            Write-Information $Session:SelectedMood
+            $FormEvent.mood = $Session:SelectedMood
             Write-Information ($FormEvent | ConvertTo-Json -Depth 99)
 
             # Get user email from session context
