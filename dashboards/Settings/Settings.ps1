@@ -324,7 +324,7 @@
                 $Medications = @()
                 $PSKeys.Where({$_ -match "^med_name_"}).ForEach({
                     $dosage = $_ -replace 'name','dosage'
-                    if ($dosage -in $PSKeys) {
+                    if ($dosage -in $PSKeys -and ( -not [string]::IsNullOrEmpty($FormData.$dosage))) {
                         $Medications += @{
                             name = $FormData.$_
                             dosage = $FormData.$dosage
