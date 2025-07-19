@@ -265,8 +265,8 @@ New-UDApp -Content {
                             Import-Module UserManagement -Force
                             $CurrentUserResult = Get-CurrentUser
 
-                            if ($CurrentUserResult.Success -and $CurrentUserResult.Data.Preferences.Medications) {
-                                $UserMedications = $CurrentUserResult.Data.Preferences.Medications
+                            if ($CurrentUserResult.Success -and $CurrentUserResult.Data.Preferences.Tracking.Medications) {
+                                $UserMedications = $CurrentUserResult.Data.Preferences.Tracking.Medications.medications_list
 
                                 # Create visual cards for each user-defined medication
                                 foreach ($medication in $UserMedications) {
