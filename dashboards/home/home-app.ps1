@@ -1,12 +1,11 @@
 ﻿$HomePage = New-UDApp -Content {
     Import-Module UserManagement -Force
     Import-Module GetFusion -Force
-    $UserData = Initialize-UserContext -UserEmail $User
 
     # Get actual entries data
     try {
-        $EntriesPath = Join-Path $UserData.UserDataPath 'health-data/entries.json'
-        $Entries = Get-EntriesData -entriesPath $EntriesPath
+        $UserData = Initialize-UserContext -UpdateCache $true
+        $Entries = $UserData.Entries
         $TotalEntries = $Entries.Count
 
         # Calculate mood statistics
