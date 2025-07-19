@@ -443,7 +443,30 @@ $SettingsPage = New-UDApp -Content {
                         New-UDTypography -Text 'Configure your medical devices for tracking (optional)' -Style @{ class = 'section-description' }
 
                         New-UDGrid -Container -Children {
-                            if ($Session:track_blood_pressure) {
+                            # Check current checkbox states using Get-UDElement
+                            $trackBloodPressure = $false
+                            $trackOxygen = $false
+                            $trackGlucose = $false
+                            $trackHeartRate = $false
+                            $trackSteps = $false
+
+                            try {
+                                $trackBloodPressure = (Get-UDElement -Id 'track_blood_pressure').Checked
+                                $trackOxygen = (Get-UDElement -Id 'track_oxygen').Checked
+                                $trackGlucose = (Get-UDElement -Id 'track_glucose').Checked
+                                $trackHeartRate = (Get-UDElement -Id 'track_heart_rate').Checked
+                                $trackSteps = (Get-UDElement -Id 'track_steps').Checked
+                            }
+                            catch {
+                                # Fallback to preferences if Get-UDElement fails
+                                $trackBloodPressure = ((($r=gpf 'tracking.vitals.blood_pressure.enabled').success) ? $r.data : $false)
+                                $trackOxygen = ((($r=gpf 'tracking.vitals.oxygen_saturation.enabled').success) ? $r.data : $false)
+                                $trackGlucose = ((($r=gpf 'tracking.vitals.blood_glucose.enabled').success) ? $r.data : $false)
+                                $trackHeartRate = ((($r=gpf 'tracking.vitals.heart_rate.enabled').success) ? $r.data : $false)
+                                $trackSteps = ((($r=gpf 'tracking.steps.enabled').success) ? $r.data : $false)
+                            }
+
+                            if ($trackBloodPressure) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                                     $bloodPressureDevice = ""
                                     $bpDeviceResult = gpf 'tracking.vitals.blood_pressure.device'
@@ -453,7 +476,7 @@ $SettingsPage = New-UDApp -Content {
                                     New-UDTextbox -Id 'blood_pressure_device' -Label 'Blood Pressure Monitor' -Placeholder 'e.g., Omron BP742N' -FullWidth -Value $bloodPressureDevice
                                 }
                             }
-                            if ($Session:track_oxygen) {
+                            if ($trackOxygen) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                                     $oxygenDevice = ""
                                     $oxygenDeviceResult = gpf 'tracking.vitals.oxygen_saturation.device'
@@ -463,7 +486,7 @@ $SettingsPage = New-UDApp -Content {
                                     New-UDTextbox -Id 'oxygen_saturation_device' -Label 'Pulse Oximeter' -Placeholder 'e.g., Zacurate Pro Series 500DL' -FullWidth -Value $oxygenDevice
                                 }
                             }
-                            if ($Session:track_glucose) {
+                            if ($trackGlucose) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                                     $glucoseDevice = ""
                                     $glucoseDeviceResult = gpf 'tracking.vitals.blood_glucose.device'
@@ -473,7 +496,7 @@ $SettingsPage = New-UDApp -Content {
                                     New-UDTextbox -Id 'blood_glucose_device' -Label 'Blood Glucose Meter' -Placeholder 'e.g., FreeStyle Lite' -FullWidth -Value $glucoseDevice
                                 }
                             }
-                            if ($Session:track_heart_rate) {
+                            if ($trackHeartRate) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                                     $heartRateDevice = ""
                                     $heartRateDeviceResult = gpf 'tracking.vitals.heart_rate.device'
@@ -483,7 +506,7 @@ $SettingsPage = New-UDApp -Content {
                                     New-UDTextbox -Id 'heart_rate_device' -Label 'Heart Rate Monitor' -Placeholder 'e.g., Polar H10, Apple Watch, Fitbit' -FullWidth -Value $heartRateDevice
                                 }
                             }
-                            if ($Session:track_steps) {
+                            if ($trackSteps) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                                     $stepsDevice = ""
                                     $stepsDeviceResult = gpf 'steps.device'
