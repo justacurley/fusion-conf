@@ -317,21 +317,20 @@
             try {
                 Import-Module UserManagement -Force
                 $FormData = $EventData[0]
-
+                $PSKeys = ( $FormData | Get-Member -MemberType NoteProperty ).Name
                 Write-Information "Settings form data received: $($FormData | ConvertTo-Json -Depth 3)"
 
                 # Collect medications (dynamic entries)
                 $Medications = @()
-                for ($i = 1; $i -le 10; $i++) {
-                    # Check up to 10 medication entries
-                    $medName = $FormData["med_name_$i"]
-                    if (-not [string]::IsNullOrEmpty($medName)) {
+                $PSKeys.Where({$_ -match "^med_name_"}).ForEach({
+                    $dosage = $_ -replace 'name','dosage'
+                    if ($dosage -in $PSKeys) {
                         $Medications += @{
-                            name   = $medName
-                            dosage = $FormData["med_dosage_$i"]
+                            name = $FormData.$_
+                            dosage = $FormData.$dosage
                         }
-                    }
-                }
+                    } else { Show-UDToast -Message "Missing dosage for $_" -Duration 5000 -BackgroundColor '#f44336' }
+                })
 
                 # Collect pain locations (multi-select)
                 $PainLocations = @()
