@@ -276,16 +276,61 @@ $SettingsPage = New-UDApp -Content {
                     New-UDTypography -Text 'Add medications you are currently taking' -Style @{ class = 'section-description' }
 
                     New-UDElement -Id 'medications-container' -Tag 'div' -Content {
-                        # Initial medication entry
-                        New-UDElement -Tag 'div' -Attributes @{ class = 'medication-item' } -Content {
-                            New-UDGrid -Container -Children {
-                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                                    New-UDTextbox -Id 'med_name_1' -Label 'Medication Name' -FullWidth
-                                }
-                                New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                                    New-UDTextbox -Id 'med_dosage_1' -Label 'Dosage (e.g., 10mg)' -FullWidth
+                        # Get existing medications from preferences
+                        $existingMedications = @()
+                        $medicationsResult = gpf 'tracking.medications.medications_list'
+                        if ($medicationsResult.success -and $medicationsResult.data) {
+                            $existingMedications = $medicationsResult.data | Where-Object { $_.name -and $_.dosage }
+                        }
+
+                        # If no existing medications, create one empty entry
+                        if ($existingMedications.Count -eq 0) {
+                            New-UDElement -Tag 'div' -Attributes @{ class = 'medication-item' } -Content {
+                                New-UDGrid -Container -Children {
+                                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
+                                        New-UDTextbox -Id 'med_name_1' -Label 'Medication Name' -FullWidth
+                                    }
+                                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
+                                        New-UDTextbox -Id 'med_dosage_1' -Label 'Dosage (e.g., 10mg)' -FullWidth
+                                    }
                                 }
                             }
+                            # Initialize counter for adding new meds
+                            $Session:MedicationCounter = 2
+                        }
+                        else {
+                            # Create entries for existing medications
+                            for ($i = 0; $i -lt $existingMedications.Count; $i++) {
+                                $medIndex = $i + 1
+                                $med = $existingMedications[$i]
+
+                                New-UDElement -Id "medication-item-$medIndex" -Tag 'div' -Attributes @{ class = 'medication-item' } -Content {
+                                    New-UDGrid -Container -Children {
+                                        New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
+                                            New-UDTextbox -Id "med_name_$medIndex" -Label 'Medication Name' -FullWidth -Value $med.name
+                                        }
+                                        New-UDGrid -Item -ExtraSmallSize 10 -SmallSize 5 -Children {
+                                            New-UDTextbox -Id "med_dosage_$medIndex" -Label 'Dosage (e.g., 10mg)' -FullWidth -Value $med.dosage
+                                        }
+                                        if ($i -gt 0) {  # Don't show remove button for first medication
+                                            New-UDGrid -Item -ExtraSmallSize 2 -SmallSize 2 -Children {
+                                                New-UDButton -Text '🗑️' -Color secondary -Size small -OnClick {
+                                                    $currentMedIndex = $medIndex  # Capture in local scope
+                                                    try {
+                                                        Show-UDToast -Message "Removing Medication #$currentMedIndex" -Duration 2000
+                                                        Clear-UDElement -Id "medication-item-$currentMedIndex"
+                                                    }
+                                                    catch {
+                                                        Show-UDToast -Message "Error removing medication: $($_.Exception.Message)" -Duration 3000 -BackgroundColor red
+                                                    }
+                                                } -Style @{ class = 'remove-btn' }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            # Set counter for adding new medications
+                            $Session:MedicationCounter = $existingMedications.Count + 1
                         }
                     }
 
