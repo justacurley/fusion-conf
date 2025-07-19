@@ -445,27 +445,52 @@ $SettingsPage = New-UDApp -Content {
                         New-UDGrid -Container -Children {
                             if ($Session:track_blood_pressure) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                                    New-UDTextbox -Id 'blood_pressure_device' -Label 'Blood Pressure Monitor' -Placeholder 'e.g., Omron BP742N' -FullWidth
+                                    $bloodPressureDevice = ""
+                                    $bpDeviceResult = gpf 'tracking.vitals.blood_pressure.device'
+                                    if ($bpDeviceResult.success -and $bpDeviceResult.data) {
+                                        $bloodPressureDevice = $bpDeviceResult.data
+                                    }
+                                    New-UDTextbox -Id 'blood_pressure_device' -Label 'Blood Pressure Monitor' -Placeholder 'e.g., Omron BP742N' -FullWidth -Value $bloodPressureDevice
                                 }
                             }
                             if ($Session:track_oxygen) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                                    New-UDTextbox -Id 'oxygen_saturation_device' -Label 'Pulse Oximeter' -Placeholder 'e.g., Zacurate Pro Series 500DL' -FullWidth
+                                    $oxygenDevice = ""
+                                    $oxygenDeviceResult = gpf 'tracking.vitals.oxygen_saturation.device'
+                                    if ($oxygenDeviceResult.success -and $oxygenDeviceResult.data) {
+                                        $oxygenDevice = $oxygenDeviceResult.data
+                                    }
+                                    New-UDTextbox -Id 'oxygen_saturation_device' -Label 'Pulse Oximeter' -Placeholder 'e.g., Zacurate Pro Series 500DL' -FullWidth -Value $oxygenDevice
                                 }
                             }
                             if ($Session:track_glucose) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                                    New-UDTextbox -Id 'blood_glucose_device' -Label 'Blood Glucose Meter' -Placeholder 'e.g., FreeStyle Lite' -FullWidth
+                                    $glucoseDevice = ""
+                                    $glucoseDeviceResult = gpf 'tracking.vitals.blood_glucose.device'
+                                    if ($glucoseDeviceResult.success -and $glucoseDeviceResult.data) {
+                                        $glucoseDevice = $glucoseDeviceResult.data
+                                    }
+                                    New-UDTextbox -Id 'blood_glucose_device' -Label 'Blood Glucose Meter' -Placeholder 'e.g., FreeStyle Lite' -FullWidth -Value $glucoseDevice
                                 }
                             }
                             if ($Session:track_heart_rate) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                                    New-UDTextbox -Id 'heart_rate_device' -Label 'Heart Rate Monitor' -Placeholder 'e.g., Polar H10, Apple Watch, Fitbit' -FullWidth
+                                    $heartRateDevice = ""
+                                    $heartRateDeviceResult = gpf 'tracking.vitals.heart_rate.device'
+                                    if ($heartRateDeviceResult.success -and $heartRateDeviceResult.data) {
+                                        $heartRateDevice = $heartRateDeviceResult.data
+                                    }
+                                    New-UDTextbox -Id 'heart_rate_device' -Label 'Heart Rate Monitor' -Placeholder 'e.g., Polar H10, Apple Watch, Fitbit' -FullWidth -Value $heartRateDevice
                                 }
                             }
                             if ($Session:track_steps) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
-                                    New-UDTextbox -Id 'steps_device' -Label 'Step Counter / Fitness Tracker' -Placeholder 'e.g., Fitbit Charge 5, Apple Watch, Garmin' -FullWidth
+                                    $stepsDevice = ""
+                                    $stepsDeviceResult = gpf 'steps.device'
+                                    if ($stepsDeviceResult.success -and $stepsDeviceResult.data) {
+                                        $stepsDevice = $stepsDeviceResult.data
+                                    }
+                                    New-UDTextbox -Id 'steps_device' -Label 'Step Counter / Fitness Tracker' -Placeholder 'e.g., Fitbit Charge 5, Apple Watch, Garmin' -FullWidth -Value $stepsDevice
                                 }
                             }
                         }
