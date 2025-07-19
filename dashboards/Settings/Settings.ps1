@@ -280,7 +280,6 @@ $SettingsPage = New-UDApp -Content {
                         # Get existing medications from preferences
                         $existingMedications = @()
                         $medicationsResult = gpf 'tracking.medications.medications_list'
-                        Show-UDToast -Message ($medicationsResult | Convertto-json -depth 3) -Persistent
                         if ($medicationsResult.success -and $medicationsResult.data) {
                             $existingMedications = $medicationsResult.data | Where-Object { $_.name -and $_.dosage }
                         }
