@@ -539,6 +539,7 @@ class UserProfile {
 
             $UserPath = $UserData['UserDataPath']
             $PreferencesPath = Join-Path $UserPath 'preferences.json'
+            $PreferencesDEBUG = Join-PAth $UserPAth 'debug.json'
             $Result.PreferencesPath = $PreferencesPath
 
             # Create comprehensive preferences structure
@@ -741,6 +742,7 @@ class UserProfile {
             Write-Information "AWMC deDEBUG"
             # Save preferences to file
             $Preferences | ConvertTo-Json -Depth 10 | Out-File -FilePath $PreferencesPath -Force -ErrorAction Stop
+            $Preferences | ConvertTo-Json -Depth 10 | Out-File -FilePath $PreferencesDEBUG -Force -ErrorAction Stop
 
             $Result.Success = $true
             $Result.Message = "Successfully configured user preferences with $($Result.PreferencesSet.Count) custom items"
