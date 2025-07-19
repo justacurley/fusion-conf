@@ -329,7 +329,7 @@
                             name = $FormData.$_
                             dosage = $FormData.$dosage
                         }
-                    } else { Show-UDToast -Message "Missing dosage for $_" -Duration 5000 -BackgroundColor '#f44336' }
+                    } else { Show-UDToast -Message "Missing dosage for $($FormData.$_)" -Duration 5000 -BackgroundColor '#f44336' }
                 })
 
                 # Collect pain locations (multi-select)
