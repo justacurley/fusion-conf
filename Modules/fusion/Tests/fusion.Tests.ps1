@@ -1087,8 +1087,6 @@ Describe "Input Validation Tests" -Tag Validation {
 
         It "Should handle entries path with special characters" {
             $validEntry = @{
-                Date = "0630"
-                Timestamp = "1200"
                 EntryId = "2507140630"
                 SchemaEntry = @{
                     entry_id = "2507140630"

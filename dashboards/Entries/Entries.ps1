@@ -292,7 +292,8 @@ New-UDApp -Content {
                                         }
                                     }
                                 }
-                            } else {
+                            }
+                            else {
                                 # No user medications defined yet
                                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
                                     New-UDAlert -Severity info -Text 'No medications configured. Add your medications in Settings to track them here.'
@@ -605,17 +606,15 @@ New-UDApp -Content {
             $FormEvent.timestamp = [datetime]::Parse($FormEvent.timestamp).ToString('HHmm')
             $FormEvent.date = [datetime]::Parse($FormEvent.date).ToString('MMdd')
             $FormEvent.mood = $Session:SelectedMood
+            Write-Information "Form input"
             Write-Information ($FormEvent | ConvertTo-Json -Depth 99)
 
-            # Get user email from session context
-            $currentUserEmail = if ($User) { $User } else { "unknown@example.com" }
-
-            $entry = ConvertTo-EntriesFormat -Entry ( $FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json) -UserEmail $currentUserEmail
-            Write-Information "entry value"
-            Write-Information ($entry | ConvertTo-Json -Depth 99)
+            $Entry = ConvertTo-EntriesFormat -Entry ( $FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json) -UserEmail $User
+            Write-Information "From input converted"
+            Write-Information ($Entry | ConvertTo-Json -Depth 99)
             # Save the entry to the entries.json file
             try {
-                $saveResult = Save-ConvertedEntry -ConvertedEntry $entry -EntriesPath $Session:UserEntriesPath
+                $saveResult = Save-ConvertedEntry -ConvertedEntry $Entry -EntriesPath $Session:UserEntriesPath
                 if ($saveResult) {
                     Write-Information 'Successfully saved entry to entries.json'
                     Show-UDToast -Message 'Entry saved successfully!' -MessageColor Green -Duration 3000
@@ -635,7 +634,8 @@ New-UDApp -Content {
                 # Use configurable path for image storage
                 $imageFolderPath = if ($env:FUSION_DATA_PATH) {
                     Join-Path $env:FUSION_DATA_PATH 'img'
-                } else {
+                }
+                else {
                     '/home/data/fusion-data/img'
                 }
                 $imageExt = $imageFile.Name.Split('.')[-1]
