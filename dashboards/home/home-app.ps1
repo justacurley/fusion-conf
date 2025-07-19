@@ -4,7 +4,7 @@
 
     # Get actual entries data
     try {
-        $UserData = Initialize-UserContext -UpdateCache $true
+        $UserData = Initialize-UserContext -UserEmail $User -UpdateCache $true
         $Entries = $UserData.Entries
         $TotalEntries = $Entries.Count
 
