@@ -531,11 +531,12 @@ $SettingsPage = New-UDApp -Content {
                     -TrackMood:($FormData.track_mood -eq $true) -TrackSteps:($FormData.track_steps -eq $true) `
                     -BloodPressureDevice $FormData.blood_pressure_device -OxygenSaturationDevice $FormData.oxygen_saturation_device `
                     -BloodGlucoseDevice $FormData.blood_glucose_device -HeartRateDevice $FormData.heart_rate_device `
-                    -StepsDevice $FormData.steps_device 
+                    -StepsDevice $FormData.steps_device
 
                 if ($PreferencesResult.Success) {
                     Show-UDToast -Message 'Health tracking settings saved successfully!' -Duration 3000 -BackgroundColor '#4caf50'
                     Write-Information "Preferences saved successfully: $($PreferencesResult.Message)"
+                    Write-Information ($PreferencesResult | Convertto-Json -depth 99)
                 }
                 else {
                     Show-UDToast -Message "Error saving settings: $($PreferencesResult.Message)" -Duration 5000 -BackgroundColor '#f44336'
