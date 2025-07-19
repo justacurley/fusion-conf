@@ -373,7 +373,19 @@ $SettingsPage = New-UDApp -Content {
 
                     New-UDGrid -Container -Children {
                         New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                            New-UDTextbox -Id 'activities_list' -Label 'Activities (comma-separated)' -Placeholder 'e.g., Walking, Physical Therapy, Swimming, Stretching, Yoga' -Multiline -Rows 3 -FullWidth
+                            # Get existing activities from preferences
+                            $existingActivities = ""
+                            $activitiesResult = gpf 'tracking.activities.activities_list'
+                            if ($activitiesResult.success -and $activitiesResult.data) {
+                                $activityNames = $activitiesResult.data | ForEach-Object {
+                                    if ($_.name) {
+                                        $_.name
+                                    }
+                                } | Where-Object { -not [string]::IsNullOrEmpty($_) }
+                                $existingActivities = $activityNames -join ', '
+                            }
+
+                            New-UDTextbox -Id 'activities_list' -Label 'Activities (comma-separated)' -Placeholder 'e.g., Walking, Physical Therapy, Swimming, Stretching, Yoga' -Multiline -Rows 3 -FullWidth -Value $existingActivities
                         }
                     }
                 }
