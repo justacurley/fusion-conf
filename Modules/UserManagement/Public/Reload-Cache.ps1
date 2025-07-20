@@ -14,11 +14,14 @@ function Reload-Cache {
         try {
             # Ensure the UserManagement module is imported
             if (-not (Get-Module UserManagement)) {
+                Write-Information "Importing UserManagement module again"
                 Import-Module UserManagement -Force
             }
             $UserFile = [UserProfile]::GetUserProfile($UserEmail)
+            Write-Information "Got user file"
             $CacheKey = "UserContext_$($UserEmail)"
             Remove-PSUCache -Key $CacheKey
+            Write-Information "Removed $CacheKey"
             Set-UserCacheData -UserData $UserFile
             Show-UDToast -Message 'User data reloaded from cache' -MessageColor green -Duration 3000
         }
