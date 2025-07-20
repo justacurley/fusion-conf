@@ -201,10 +201,10 @@ $SettingsPage = New-UDApp -Content {
                 }
                 New-UDButton -Id 'reload_cache' -Text "Reload Data" -OnClick {
                     try {
-                        Reload-Cache -UserEmail $User
+                        Reload-Cache -UserEmail $User -Verbose
                     } catch {
 
-                        Write-Information ($_.Exception.StackTrace | Convertto-json -depth 99)
+                        Write-Information ($_.Exception | Convertto-json -depth 99)
                     }
                 }
             }
