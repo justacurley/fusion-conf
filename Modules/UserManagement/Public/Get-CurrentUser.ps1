@@ -14,21 +14,34 @@ function Get-CurrentUser {
             }
 
             # First check if we have a valid session
-            $SessionCheck = Test-UserSession
-            if (-not $SessionCheck.Success) {
-                $Response['Message'] = "No valid user session found: $($SessionCheck.Message)"
-                return $Response
+            if ( -not (Test-UserSession).Success) {
+                throw "No valid user session found"
             }
 
-            # Use the data from Test-UserSession since it already validates and extracts everything
-            $CurrentUser = $SessionCheck.Data
+            $AllUserData = [UserProfile]::GetUserProfile($User)
+            $UserProfile = $AllUserData.Profile
 
+            # All validations passed - return session data based on PSU User and loaded profile
             $Response['Success'] = $true
-            $Response['Message'] = 'Current user retrieved successfully'
-            $Response['Data'] = $CurrentUser
+            $Response['Message'] = 'Valid user session found via dynamic profile loading'
+            $Response['Data'] = @{
+                PSUUser         = $User
+                PSUUserRoles    = if (Get-Variable Roles -ErrorAction SilentlyContinue) { $Roles } else { @() }
+                UserEmail       = $UserProfile.Email
+                UserProfileId   = $UserProfile.ProfileId
+                PSUProfileId    = $UserProfile.PSUProfileId
+                UserFirstName   = $UserProfile.FirstName
+                UserLastName    = $UserProfile.LastName
+                UserTimezone    = $UserProfile.Timezone
+                CreatedOn       = $UserProfile.CreatedOn
+                TOSAccepted     = $UserProfile.TOSAccepted
+                IsAuthenticated = $true
+                Preferences     = $AllUserData.Preferences
+                UserDataPath    = $AllUserData.UserDataPath
+                Entries         = $AllUserData.Entries
+            }
         } catch {
             $Response['Message'] = "Error retrieving current user: $($_.Exception.Message)"
-            # Don't write to error stream for expected exceptions in test environment
         }
         return $Response
     }

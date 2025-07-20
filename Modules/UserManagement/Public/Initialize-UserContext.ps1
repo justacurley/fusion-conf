@@ -8,7 +8,7 @@ function Initialize-UserContext {
     )
     end {
         # Check if user is authenticated
-        if ([string]::IsNullOrEmpty($UserEmail)) {
+        if ([string]::IsNullOrEmpty($UserEmail) -or (-not (Test-UserSession).Success)) {
             if (-not $SuppressToast) {
                 Show-UDToast -Message 'No user session found. Please log in.' -MessageColor red -Duration 5000
             }
