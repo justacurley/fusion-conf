@@ -95,7 +95,7 @@ $SettingsPage = New-UDApp -Content {
     #   Write-Information ($Session:UserData | Select U*, P* | ConvertTo-Json -Depth 99)
         # Write-Information ($Session:UserData.Preferences | Convertto-json -depth 99)
       $PSDefaultParameterValues["gpf:JsonPreferences"] = $Session:UserData.Preferences
-    #   Show-UDToast -Message (gpf 'tracking.vitals.heart_rate.enabled' | Convertto-Json) -Duration 10000 -Persistent
+      Show-UDToast -Message (gpf 'tracking.vitals.heart_rate.device' | Convertto-Json) -Duration 10000 -Persistent
     }
     # Add custom CSS for settings form styling
     New-UDElement -Tag 'style' -Content {
@@ -459,17 +459,17 @@ $SettingsPage = New-UDApp -Content {
                             }
                             catch {
                                 # Fallback to preferences if Get-UDElement fails
-                                $trackBloodPressure = ((($r=gpf 'tracking.vitals.blood_pressure.enabled').success) ? $r.data : $false)
-                                $trackOxygen = ((($r=gpf 'tracking.vitals.oxygen_saturation.enabled').success) ? $r.data : $false)
-                                $trackGlucose = ((($r=gpf 'tracking.vitals.blood_glucose.enabled').success) ? $r.data : $false)
-                                $trackHeartRate = ((($r=gpf 'tracking.vitals.heart_rate.enabled').success) ? $r.data : $false)
-                                $trackSteps = ((($r=gpf 'tracking.steps.enabled').success) ? $r.data : $false)
+                                $trackBloodPressure = ((($r=gpf 'tracking.vitals.blood_pressure.enabled' $Session:UserData.Preferences).success) ? $r.data : $false)
+                                $trackOxygen = ((($r=gpf 'tracking.vitals.oxygen_saturation.enabled' $Session:UserData.Preferences).success) ? $r.data : $false)
+                                $trackGlucose = ((($r=gpf 'tracking.vitals.blood_glucose.enabled' $Session:UserData.Preferences).success) ? $r.data : $false)
+                                $trackHeartRate = ((($r=gpf 'tracking.vitals.heart_rate.enabled' $Session:UserData.Preferences).success) ? $r.data : $false)
+                                $trackSteps = ((($r=gpf 'tracking.steps.enabled' $Session:UserData.Preferences).success) ? $r.data : $false)
                             }
 
                             if ($trackBloodPressure) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                                     $bloodPressureDevice = ""
-                                    $bpDeviceResult = gpf 'tracking.vitals.blood_pressure.device'
+                                    $bpDeviceResult = gpf 'tracking.vitals.blood_pressure.device' $Session:UserData.Preferences
                                     if ($bpDeviceResult.success -and $bpDeviceResult.data) {
                                         $bloodPressureDevice = $bpDeviceResult.data
                                     }
@@ -479,7 +479,7 @@ $SettingsPage = New-UDApp -Content {
                             if ($trackOxygen) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                                     $oxygenDevice = ""
-                                    $oxygenDeviceResult = gpf 'tracking.vitals.oxygen_saturation.device'
+                                    $oxygenDeviceResult = gpf 'tracking.vitals.oxygen_saturation.device' $Session:UserData.Preferences
                                     if ($oxygenDeviceResult.success -and $oxygenDeviceResult.data) {
                                         $oxygenDevice = $oxygenDeviceResult.data
                                     }
@@ -489,7 +489,7 @@ $SettingsPage = New-UDApp -Content {
                             if ($trackGlucose) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                                     $glucoseDevice = ""
-                                    $glucoseDeviceResult = gpf 'tracking.vitals.blood_glucose.device'
+                                    $glucoseDeviceResult = gpf 'tracking.vitals.blood_glucose.device' $Session:UserData.Preferences
                                     if ($glucoseDeviceResult.success -and $glucoseDeviceResult.data) {
                                         $glucoseDevice = $glucoseDeviceResult.data
                                     }
@@ -499,7 +499,7 @@ $SettingsPage = New-UDApp -Content {
                             if ($trackHeartRate) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                                     $heartRateDevice = ""
-                                    $heartRateDeviceResult = gpf 'tracking.vitals.heart_rate.device'
+                                    $heartRateDeviceResult = gpf 'tracking.vitals.heart_rate.device' $Session:UserData.Preferences
                                     if ($heartRateDeviceResult.success -and $heartRateDeviceResult.data) {
                                         $heartRateDevice = $heartRateDeviceResult.data
                                     }
@@ -509,7 +509,7 @@ $SettingsPage = New-UDApp -Content {
                             if ($trackSteps) {
                                 New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
                                     $stepsDevice = ""
-                                    $stepsDeviceResult = gpf 'steps.device'
+                                    $stepsDeviceResult = gpf 'tracking.steps.device' $Session:UserData.Preferences
                                     if ($stepsDeviceResult.success -and $stepsDeviceResult.data) {
                                         $stepsDevice = $stepsDeviceResult.data
                                     }
