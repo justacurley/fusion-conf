@@ -18,11 +18,11 @@ function Reload-Cache {
                 Import-Module UserManagement -Force
             }
             $UserData = Get-CurrentUser
-            Write-Information "Got user file: $($UserData.Keys)"
+            Write-Information "Got user file: $($UserData.Data.Keys)"
             $CacheKey = "UserContext_$($UserEmail)"
             Remove-PSUCache -Key $CacheKey
             Write-Information "Removed $CacheKey"
-            Set-UserCacheData -UserData $UserData
+            Set-UserCacheData -UserData $UserData.Data
             Show-UDToast -Message 'User data reloaded from cache' -MessageColor green -Duration 3000
         }
         catch {
