@@ -8,8 +8,6 @@ function Get-UserCacheData {
         try {
             $CacheKey = "UserContext_$UserEmail"
             $CacheJson = Get-PSUCache -Key $CacheKey -ErrorAction Stop
-            Write-Information "Raw cache data: $CacheJson"
-            Write-Information "Cache data type: $($CacheJson.GetType())"
 
             if (-not $CacheJson) {
                 Write-Warning "No cache data found for key: $CacheKey"
