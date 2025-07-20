@@ -202,7 +202,7 @@ $SettingsPage = New-UDApp -Content {
                 }
                 New-UDButton -Id 'reload_cache' -Text "Reload Data" -OnClick {
                     Reload-Cache -UserEmail $User
-                    New-UDHtml -Markup '"window.location.reload();">'
+                    Invoke-UDRedirect -Url /Settings/Home -Native
                 }
             }
         } -Style @{ padding = '20px'; marginBottom = '30px'; backgroundColor = 'var(--theme-palette-background-paper)' }
