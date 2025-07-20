@@ -203,8 +203,8 @@ $SettingsPage = New-UDApp -Content {
                     try {
                         Reload-Cache -UserEmail $User
                     } catch {
-                        Write-PSUError -ErrorRecord $_
-                        throw $_
+
+                        Write-Information ($_.Exception.StackTrace | Convertto-json -depth 99)
                     }
                 }
             }
