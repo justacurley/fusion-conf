@@ -18,7 +18,7 @@ function Reload-Cache {
                 Import-Module UserManagement -Force
             }
             $UserData = Get-CurrentUser
-            Write-Information "Got user file"
+            Write-Information "Got user file: $($UserData.Keys)"
             $CacheKey = "UserContext_$($UserEmail)"
             Remove-PSUCache -Key $CacheKey
             Write-Information "Removed $CacheKey"
