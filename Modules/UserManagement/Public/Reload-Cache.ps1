@@ -23,6 +23,7 @@ function Reload-Cache {
             Show-UDToast -Message 'User data reloaded from cache' -MessageColor green -Duration 3000
         }
         catch {
+            Show-UDToast -Message 'Failed to reload cache' -MessageColor red -Duration 3000
             throw $_
         }
     }
