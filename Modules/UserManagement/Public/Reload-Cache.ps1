@@ -20,6 +20,7 @@ function Reload-Cache {
             $CacheKey = "UserContext_$($UserEmail)"
             Remove-PSUCache -Key $CacheKey
             Set-UserCacheData -UserData $UserFile
+            Show-UDToast -Message 'User data reloaded from cache' -MessageColor green -Duration 3000
         }
         catch {
             throw $_

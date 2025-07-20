@@ -199,6 +199,9 @@ $SettingsPage = New-UDApp -Content {
                     color        = 'var(--theme-palette-text-secondary)'
                     fontStyle    = 'italic'
                 }
+                New-UDButton -Id 'reload_cache' -Text "Reload Data" -OnClick {
+                    Reload-Cache -UserEmail $User
+                }
             }
         } -Style @{ padding = '20px'; marginBottom = '30px'; backgroundColor = 'var(--theme-palette-background-paper)' }
         New-UDForm -Id 'settings-form' -Children {
