@@ -24,19 +24,19 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
 
                 # Function to update chart based on checkbox states
                 $UpdateChart = {
-                    $Session:ChartData = $Session:CombinedPainData
+                    $chartData = $Session:CombinedPainData
 
                     # Get checkbox states
-                    $Session:ShowMaxPain = (Get-UDElement -Id 'show_max_pain').checked
-                    $Session:ShowBackPain = (Get-UDElement -Id 'show_back_pain').checked
-                    $Session:ShowSleep = (Get-UDElement -Id 'show_sleep').checked
-                    $Session:ShowActivityDuration = (Get-UDElement -Id 'show_activity_duration').checked
+                    $showMaxPain = (Get-UDElement -Id 'show_max_pain').checked
+                    $showBackPain = (Get-UDElement -Id 'show_back_pain').checked
+                    $showSleep = (Get-UDElement -Id 'show_sleep').checked
+                    $showActivityDuration = (Get-UDElement -Id 'show_activity_duration').checked
 
                     # Create datasets array based on selected checkboxes
-                    $Session:Datasets = @()
+                    $datasets = @()
 
-                    if ($Session:ShowMaxPain) {
-                        $Session:Datasets += New-UDChartJSDataset -DataProperty 'MaxPain' -Label 'Max Pain Level' -BackgroundColor '#dc3545' -BorderColor '#dc3545' -AdditionalOptions @{
+                    if ($showMaxPain) {
+                        $datasets += New-UDChartJSDataset -DataProperty 'MaxPain' -Label 'Max Pain Level' -BackgroundColor '#dc3545' -BorderColor '#dc3545' -AdditionalOptions @{
                             fill        = $false
                             tension     = 0.1
                             pointRadius = 4
@@ -46,8 +46,8 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                         }
                     }
 
-                    if ($Session:ShowBackPain) {
-                        $Session:Datasets += New-UDChartJSDataset -DataProperty 'BackPain' -Label 'Average Back Pain' -BackgroundColor '#007bff' -BorderColor '#007bff' -AdditionalOptions @{
+                    if ($showBackPain) {
+                        $datasets += New-UDChartJSDataset -DataProperty 'BackPain' -Label 'Average Back Pain' -BackgroundColor '#007bff' -BorderColor '#007bff' -AdditionalOptions @{
                             fill        = $false
                             tension     = 0.1
                             pointRadius = 4
@@ -57,8 +57,8 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                         }
                     }
 
-                    if ($Session:ShowSleep) {
-                        $Session:Datasets += New-UDChartJSDataset -DataProperty 'Sleep' -Label 'Sleep Hours' -BackgroundColor '#28a745' -BorderColor '#28a745' -AdditionalOptions @{
+                    if ($showSleep) {
+                        $datasets += New-UDChartJSDataset -DataProperty 'Sleep' -Label 'Sleep Hours' -BackgroundColor '#28a745' -BorderColor '#28a745' -AdditionalOptions @{
                             fill        = $false
                             tension     = 0.1
                             pointRadius = 4
@@ -68,8 +68,8 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                         }
                     }
 
-                    if ($Session:ShowActivityDuration) {
-                        $Session:Datasets += New-UDChartJSDataset -DataProperty 'ActivityDuration' -Label 'Activity Duration (min)' -BackgroundColor '#ffc107' -BorderColor '#ffc107' -AdditionalOptions @{
+                    if ($showActivityDuration) {
+                        $datasets += New-UDChartJSDataset -DataProperty 'ActivityDuration' -Label 'Activity Duration (min)' -BackgroundColor '#ffc107' -BorderColor '#ffc107' -AdditionalOptions @{
                             fill        = $false
                             tension     = 0.1
                             pointRadius = 4
@@ -80,10 +80,10 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                     }
 
                     # Only show chart if at least one dataset is selected
-                    if ($Session:Datasets.Count -gt 0) {
+                    if ($datasets.Count -gt 0) {
                         # Update the chart element
                         Set-UDElement -Id 'dynamic_chart' -Content {
-                            New-UDChartJS -Type 'line' -Data $Session:ChartData -Dataset $Session:Datasets -LabelProperty 'Date' -Options @{
+                            New-UDChartJS -Type 'line' -Data $chartData -Dataset $datasets -LabelProperty 'Date' -Options @{
                                 responsive  = $true
                                 plugins     = @{
                                     title  = @{
