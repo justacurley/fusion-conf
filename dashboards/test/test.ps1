@@ -14,36 +14,29 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                 $Session:Entries = $Session:UserData.Entries
 
                 # Use the new Get-HealthMetrics orchestrator function to get all data
-                $healthData = Get-HealthMetrics -Entries $Session:Entries -DataPoints @('MaxPain', 'BackPain', 'Sleep', 'ActivityDuration', 'Medications', 'Activities', 'Vitals')
+                $Session:HealthData = Get-HealthMetrics -Entries $Session:Entries -DataPoints @('MaxPain', 'BackPain', 'Sleep', 'ActivityDuration', 'Medications', 'Activities', 'Vitals')
 
                 # Extract the different data types from the results
-                $combinedPainData = $healthData['CombinedHealthData']
-                $allMedications = $healthData['Medications']
-                $allActivities = $healthData['Activities']
-                $allVitals = $healthData['Vitals']
-
-                # Store chart data in cache for use by dynamic chart updates
-                Set-PSUCache -Key 'chartData' -Value $combinedPainData
-                Set-PSUCache -Key 'medicationData' -Value $allMedications
-                Set-PSUCache -Key 'activityData' -Value $allActivities
-                Set-PSUCache -Key 'vitalsData' -Value $allVitals
-                Set-PSUCache -Key 'distinctData' -Value $global:DistinctDataValues
+                $Session:CombinedPainData = $Session:HealthData['CombinedHealthData']
+                $Session:AllMedications = $Session:HealthData['Medications']
+                $Session:AllActivities = $Session:HealthData['Activities']
+                $Session:AllVitals = $Session:HealthData['Vitals']
 
                 # Function to update chart based on checkbox states
                 $UpdateChart = {
-                    $chartData = Get-PSUCache -Key 'chartData'
+                    $Session:ChartData = $Session:CombinedPainData
 
                     # Get checkbox states
-                    $showMaxPain = (Get-UDElement -Id 'show_max_pain').checked
-                    $showBackPain = (Get-UDElement -Id 'show_back_pain').checked
-                    $showSleep = (Get-UDElement -Id 'show_sleep').checked
-                    $showActivityDuration = (Get-UDElement -Id 'show_activity_duration').checked
+                    $Session:ShowMaxPain = (Get-UDElement -Id 'show_max_pain').checked
+                    $Session:ShowBackPain = (Get-UDElement -Id 'show_back_pain').checked
+                    $Session:ShowSleep = (Get-UDElement -Id 'show_sleep').checked
+                    $Session:ShowActivityDuration = (Get-UDElement -Id 'show_activity_duration').checked
 
                     # Create datasets array based on selected checkboxes
-                    $datasets = @()
+                    $Session:Datasets = @()
 
-                    if ($showMaxPain) {
-                        $datasets += New-UDChartJSDataset -DataProperty 'MaxPain' -Label 'Max Pain Level' -BackgroundColor '#dc3545' -BorderColor '#dc3545' -AdditionalOptions @{
+                    if ($Session:ShowMaxPain) {
+                        $Session:Datasets += New-UDChartJSDataset -DataProperty 'MaxPain' -Label 'Max Pain Level' -BackgroundColor '#dc3545' -BorderColor '#dc3545' -AdditionalOptions @{
                             fill        = $false
                             tension     = 0.1
                             pointRadius = 4
@@ -53,8 +46,8 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                         }
                     }
 
-                    if ($showBackPain) {
-                        $datasets += New-UDChartJSDataset -DataProperty 'BackPain' -Label 'Average Back Pain' -BackgroundColor '#007bff' -BorderColor '#007bff' -AdditionalOptions @{
+                    if ($Session:ShowBackPain) {
+                        $Session:Datasets += New-UDChartJSDataset -DataProperty 'BackPain' -Label 'Average Back Pain' -BackgroundColor '#007bff' -BorderColor '#007bff' -AdditionalOptions @{
                             fill        = $false
                             tension     = 0.1
                             pointRadius = 4
@@ -64,8 +57,8 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                         }
                     }
 
-                    if ($showSleep) {
-                        $datasets += New-UDChartJSDataset -DataProperty 'Sleep' -Label 'Sleep Hours' -BackgroundColor '#28a745' -BorderColor '#28a745' -AdditionalOptions @{
+                    if ($Session:ShowSleep) {
+                        $Session:Datasets += New-UDChartJSDataset -DataProperty 'Sleep' -Label 'Sleep Hours' -BackgroundColor '#28a745' -BorderColor '#28a745' -AdditionalOptions @{
                             fill        = $false
                             tension     = 0.1
                             pointRadius = 4
@@ -75,8 +68,8 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                         }
                     }
 
-                    if ($showActivityDuration) {
-                        $datasets += New-UDChartJSDataset -DataProperty 'ActivityDuration' -Label 'Activity Duration (min)' -BackgroundColor '#ffc107' -BorderColor '#ffc107' -AdditionalOptions @{
+                    if ($Session:ShowActivityDuration) {
+                        $Session:Datasets += New-UDChartJSDataset -DataProperty 'ActivityDuration' -Label 'Activity Duration (min)' -BackgroundColor '#ffc107' -BorderColor '#ffc107' -AdditionalOptions @{
                             fill        = $false
                             tension     = 0.1
                             pointRadius = 4
@@ -87,10 +80,10 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                     }
 
                     # Only show chart if at least one dataset is selected
-                    if ($datasets.Count -gt 0) {
+                    if ($Session:Datasets.Count -gt 0) {
                         # Update the chart element
                         Set-UDElement -Id 'dynamic_chart' -Content {
-                            New-UDChartJS -Type 'line' -Data $chartData -Dataset $datasets -LabelProperty 'Date' -Options @{
+                            New-UDChartJS -Type 'line' -Data $Session:ChartData -Dataset $Session:Datasets -LabelProperty 'Date' -Options @{
                                 responsive  = $true
                                 plugins     = @{
                                     title  = @{
@@ -176,7 +169,7 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                         # Chart container
                         New-UDElement -Id 'dynamic_chart' -Tag 'div' -Content {
                             # Initial chart with Max Pain only (default)
-                            New-UDChartJS -Type 'line' -Data $combinedPainData -Dataset @(
+                            New-UDChartJS -Type 'line' -Data $Session:CombinedPainData -Dataset @(
                                 New-UDChartJSDataset -DataProperty 'MaxPain' -Label 'Max Pain Level' -BackgroundColor '#dc3545' -BorderColor '#dc3545' -AdditionalOptions @{
                                     fill        = $false
                                     tension     = 0.1
@@ -304,8 +297,8 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                         New-UDCard -Title '📋 Recent Data Entries' -Content {
                             New-UDTabs -Tabs {
                                 New-UDTab -Text '💊 Recent Medications' -Content {
-                                    if ($allMedications.Count -gt 0) {
-                                        New-UDTable -Data ($allMedications | Select-Object -Last 10) -Columns @(
+                                    if ($Session:AllMedications.Count -gt 0) {
+                                        New-UDTable -Data ($Session:AllMedications | Select-Object -Last 10) -Columns @(
                                             New-UDTableColumn -Property 'Date' -Title 'Date'
                                             New-UDTableColumn -Property 'Timestamp' -Title 'Time'
                                             New-UDTableColumn -Property 'Medication' -Title 'Medication'
@@ -316,8 +309,8 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                                     }
                                 }
                                 New-UDTab -Text '🏃 Recent Activities' -Content {
-                                    if ($allActivities.Count -gt 0) {
-                                        New-UDTable -Data ($allActivities | Select-Object -Last 10) -Columns @(
+                                    if ($Session:AllActivities.Count -gt 0) {
+                                        New-UDTable -Data ($Session:AllActivities | Select-Object -Last 10) -Columns @(
                                             New-UDTableColumn -Property 'Date' -Title 'Date'
                                             New-UDTableColumn -Property 'Timestamp' -Title 'Time'
                                             New-UDTableColumn -Property 'Activity' -Title 'Activity'
@@ -329,8 +322,8 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
                                     }
                                 }
                                 New-UDTab -Text '🩺 Recent Vitals' -Content {
-                                    if ($allVitals.Count -gt 0) {
-                                        New-UDTable -Data ($allVitals | Select-Object -Last 10) -Columns @(
+                                    if ($Session:AllVitals.Count -gt 0) {
+                                        New-UDTable -Data ($Session:AllVitals | Select-Object -Last 10) -Columns @(
                                             New-UDTableColumn -Property 'Date' -Title 'Date'
                                             New-UDTableColumn -Property 'Timestamp' -Title 'Time'
                                             New-UDTableColumn -Property 'VitalType' -Title 'Vital Type'
