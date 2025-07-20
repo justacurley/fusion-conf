@@ -11,7 +11,7 @@ function Save-ConvertedEntry {
                     } else {
                         return $true
                     }
-                }
+                } else { throw "Missing entry" }
             })]
         [hashtable]$ConvertedEntry,
 
@@ -23,6 +23,7 @@ function Save-ConvertedEntry {
                 return $true
             })]
         [string]$EntriesPath,
+
         [parameter(Mandatory = $false)]
         [object[]]$CachedEntries
     )
@@ -56,50 +57,4 @@ function Save-ConvertedEntry {
         Write-Information 'New schema entry saved successfully'
         return $true
     }
-
-    # Legacy format handling (backward compatibility)
-    # if (-not $EntriesPath) {
-    #     throw 'EntriesPath is required for legacy format entries'
-    # }
-
-    # # Load existing entries
-    # $Entries = @{}
-    # if (Test-Path $EntriesPath) {
-    #     $Entries = Get-Content -Path $EntriesPath | ConvertFrom-Json -AsHashtable
-    # }
-
-    # # Extract date and timestamp from the converted entry (handle both naming conventions)
-    # $Date = if ($ConvertedEntry.ContainsKey('Date')) { $ConvertedEntry.Date } else { $ConvertedEntry.date }
-    # $Timestamp = if ($ConvertedEntry.ContainsKey('Timestamp')) { $ConvertedEntry.Timestamp } else { $ConvertedEntry.timestamp }
-    # $EntryStructure = $ConvertedEntry.EntryStructure
-
-    # Write-Information "Saving entry for Date: $Date, Timestamp: $Timestamp"
-
-    # # Add to entries structure
-    # if (-not $Entries.ContainsKey($Date)) {
-    #     $Entries[$Date] = @{}
-    # }
-
-    # $Entries[$Date][$Timestamp] = $EntryStructure
-
-    # # Add all date-level fields from FullEntry if present
-    # if ($ConvertedEntry.FullEntry[$Date]) {
-    #     $dateLevelFields = @('Sleep', 'ScarImage')  # Could be expanded
-    #     foreach ($field in $dateLevelFields) {
-    #         if ($ConvertedEntry.FullEntry[$Date].ContainsKey($field)) {
-    #             $Entries[$Date][$field] = $ConvertedEntry.FullEntry[$Date][$field]
-    #         }
-    #     }
-    # }
-
-    # # Update the daily max pain level
-    # Write-Information "Updating daily max pain level for $Date"
-    # $null = Update-DailyMaxPainLevel -Entries $Entries -Date $Date
-
-    # # Save the entries
-    # Write-Information "Saving entries to $EntriesPath"
-    # $Entries | ConvertTo-Json -Depth 99 -Compress | Out-File $EntriesPath -Encoding UTF8
-
-    # Write-Information 'Entry saved successfully'
-    # return $true
 }

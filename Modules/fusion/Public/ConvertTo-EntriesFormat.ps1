@@ -1,29 +1,23 @@
 function ConvertTo-EntriesFormat {
     param(
-        [Parameter(Mandatory = $true)]
-        [pscustomobject]$Entry,
+        [Parameter(Mandatory)]
+        [ValidateScript({
+            if (-not $Entry.date -or -not $Entry.timestamp) {
+                throw "Entry is missing date or timestamp"
+            }
+        })]
+        [PSCustomObject]$Entry,
 
-        [Parameter(Mandatory = $false)]
-        [string]$UserEmail = "user@example.com"
+        [Parameter(Mandatory)]
+        [string]$UserEmail
     )
 
-    # Validate input type
-    if ($Entry -isnot [PSCustomObject]) {
-        throw 'Entry parameter must be a PSCustomObject'
-    }
-
-    # Convert to new unified schema v2.0 format
-    Write-Host 'Converting entry to unified schema v2.0 format...'
+    Write-Information 'Converting entry to unified schema v2.0 format...'
 
     # Parse dates and create entry_id (yyMMddHHmm format)
-    $rawDate = if ($Entry.date) { $Entry.date } else { '' }
-    $rawTime = if ($Entry.timestamp) { $Entry.timestamp } else { '' }
+    $rawDate = $Entry.date
+    $rawTime = $Entry.timestamp
 
-    if (-not $rawDate -or -not $rawTime) {
-        throw 'Date and timestamp are required for schema v2.0'
-    }
-
-    # Convert MMDD to YYYY-MM-DD and HHMM to HH:mm
     $year = [datetime]::Now.Year
     $month = $rawDate.Substring(0, 2)
     $day = $rawDate.Substring(2, 2)
@@ -34,8 +28,7 @@ function ConvertTo-EntriesFormat {
     $isoTime = "$hour`:$minute"
     $entryId = [string]($([datetime]::ParseExact($isoDate, "yyyy-MM-dd", $null).ToString("yyMMdd")) + $rawTime)
 
-    # Initialize the new schema structure
-    $schemaEntry = @{
+    $NewEntry = @{
         entry_id = $entryId
         user_email = $UserEmail
         date = $isoDate
@@ -48,8 +41,8 @@ function ConvertTo-EntriesFormat {
     # Process medications
     $medProperties = $Entry.PSObject.Properties | Where-Object { $_.Name -like 'med_*' -and ($_.Value -eq $true -or $_.Value -eq 'true') }
     if ($medProperties.Count -gt 0) {
-        $schemaEntry.entry_types += "medications"
-        $schemaEntry.data.medications = @()
+        $NewEntry.entry_types += "medications"
+        $NewEntry.data.medications = @()
 
         foreach ($medProp in $medProperties) {
             if ($medProp.Name -match '^med_(.+?)_(.+)$') {
@@ -58,7 +51,7 @@ function ConvertTo-EntriesFormat {
 
                 # Validate dosage format and medication name
                 if ($dosage -match '^\d+(\.\d+)?(mg|g|ml|mcg|iu|units?)$|^\d+(\.\d+)?$' -and $medName -match '^[a-zA-Z][a-zA-Z0-9]*$') {
-                    $schemaEntry.data.medications += @{
+                    $NewEntry.data.medications += @{
                         name = $medName
                         dosage = $dosage
                     }
@@ -75,8 +68,8 @@ function ConvertTo-EntriesFormat {
     if ($shouldProcessPain) {
         $painProperties = $Entry.PSObject.Properties | Where-Object { $_.Name -like 'pain_location_*' }
         if ($painProperties.Count -gt 0) {
-            $schemaEntry.entry_types += "pain"
-            $schemaEntry.data.pain = @()
+            $NewEntry.entry_types += "pain"
+            $NewEntry.data.pain = @()
 
             foreach ($painProp in $painProperties) {
                 $id = $painProp.Name -replace 'pain_location_', ''
@@ -91,7 +84,7 @@ function ConvertTo-EntriesFormat {
 
                         # Validate pain level is within medical range (0-10)
                         if ($level -ge 0.0 -and $level -le 10.0) {
-                            $schemaEntry.data.pain += @{
+                            $NewEntry.data.pain += @{
                                 location = $location
                                 severity = $level
                                 note = $note
@@ -114,8 +107,8 @@ function ConvertTo-EntriesFormat {
     if ($shouldProcessActivity) {
         $activityProperties = $Entry.PSObject.Properties | Where-Object { $_.Name -like 'activities_type_*' }
         if ($activityProperties.Count -gt 0) {
-            $schemaEntry.entry_types += "activities"
-            $schemaEntry.data.activities = @()
+            $NewEntry.entry_types += "activities"
+            $NewEntry.data.activities = @()
 
             foreach ($activityProp in $activityProperties) {
                 $id = $activityProp.Name -replace 'activities_type_', ''
@@ -130,7 +123,7 @@ function ConvertTo-EntriesFormat {
 
                         # Validate duration is reasonable (1-480 minutes as per schema)
                         if ($duration -ge 1 -and $duration -le 480) {
-                            $schemaEntry.data.activities += @{
+                            $NewEntry.data.activities += @{
                                 name = $activityType
                                 duration_minutes = $duration
                                 note = $note
@@ -147,19 +140,19 @@ function ConvertTo-EntriesFormat {
 
     # Process vitals using Vitals class
     if ($Entry.o2 -or $Entry.bpr) {
-        $schemaEntry.entry_types += "vitals"
-        $schemaEntry.data.vitals = @{
+        $NewEntry.entry_types += "vitals"
+        $NewEntry.data.vitals = @{
             oxygen_saturation = if ($Entry.o2) { [int]$Entry.o2 } else { 95 }
             blood_pressure = if ($Entry.bpr) { $Entry.bpr } else { "120/80" }
             heart_rate = if ($Entry.heart_rate) { [int]$Entry.heart_rate } else { 72 }
             temperature = if ($Entry.temperature) { [double]$Entry.temperature } else { 98.6 }
         }
-        Write-Information "Added vitals: o2=$($schemaEntry.data.vitals.oxygen_saturation) bpr=$($schemaEntry.data.vitals.blood_pressure)"
+        Write-Information "Added vitals: o2=$($NewEntry.data.vitals.oxygen_saturation) bpr=$($NewEntry.data.vitals.blood_pressure)"
     }
 
     # Set notes
     if ($Entry.notes) {
-        $schemaEntry.notes = $Entry.notes
+        $NewEntry.notes = $Entry.notes
     }
 
     # Process mood
@@ -169,8 +162,8 @@ function ConvertTo-EntriesFormat {
 
         # Validate mood level is in range (1-5 as per schema)
         if ($moodLevel -ge 1 -and $moodLevel -le 5) {
-            $schemaEntry.entry_types += "mood"
-            $schemaEntry.data.mood = @{
+            $NewEntry.entry_types += "mood"
+            $NewEntry.data.mood = @{
                 mood_level = $moodLevel
                 mood_note = $moodNote
             }
@@ -187,8 +180,8 @@ function ConvertTo-EntriesFormat {
         }
 
         if ($sleepHours -ge 0.0 -and $sleepHours -le 24.0) {
-            $schemaEntry.entry_types += "sleep"
-            $schemaEntry.data.sleep = @{
+            $NewEntry.entry_types += "sleep"
+            $NewEntry.data.sleep = @{
                 sleep_hours = $sleepHours
             }
             Write-Information "Added sleep: $sleepHours hours"
@@ -197,7 +190,7 @@ function ConvertTo-EntriesFormat {
 
     # Return the new schema format
     return @{
-        SchemaEntry = $schemaEntry
+        SchemaEntry = $NewEntry
         Date = $rawDate
         Timestamp = $rawTime
         EntryId = $entryId
