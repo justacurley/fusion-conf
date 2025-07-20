@@ -1,6 +1,6 @@
 $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
     Import-Module UserManagement -Force
-    $UserData = Initialize-UserContext -UserEmail $User
+    $Session:UserData = Initialize-UserContext -UserEmail $User
     New-UDContainer -Content {
         New-UDTypography -Text 'Interactive Chart with Toggleable Data Series' -Variant h4 -Align center
 
@@ -8,17 +8,13 @@ $Dashboard = New-UDDashboard -Title 'Simple Interactive Chart' -Content {
             # Import the GetFusion module for health data processing functions
             Import-Module -Name GetFusion.psm1 -Force
 
-            # Clear any cached data to ensure fresh data load
-            Clear-CachedData
-
             # Load and process the data using the simplified module functions
-            $EntriesPath = Join-Path $UserData.UserDataPath 'health-data/entries.json'
             try {
                 # Load entries data once
-                $entries = Get-EntriesData -entriesPath $EntriesPath
+                $Session:Entries = $Session:UserData.Entries
 
                 # Use the new Get-HealthMetrics orchestrator function to get all data
-                $healthData = Get-HealthMetrics -Entries $entries -DataPoints @('MaxPain', 'BackPain', 'Sleep', 'ActivityDuration', 'Medications', 'Activities', 'Vitals')
+                $healthData = Get-HealthMetrics -Entries $Session:Entries -DataPoints @('MaxPain', 'BackPain', 'Sleep', 'ActivityDuration', 'Medications', 'Activities', 'Vitals')
 
                 # Extract the different data types from the results
                 $combinedPainData = $healthData['CombinedHealthData']
