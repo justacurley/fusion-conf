@@ -202,7 +202,10 @@ $SettingsPage = New-UDApp -Content {
                 New-UDButton -Id 'reload_cache' -Text "Reload Data" -OnClick {
                     try {
                         Reload-Cache -UserEmail $User
-                    } catch { throw $_ }
+                    } catch {
+                        Write-PSUError -ErrorRecord $_
+                        throw $_
+                    }
                 }
             }
         } -Style @{ padding = '20px'; marginBottom = '30px'; backgroundColor = 'var(--theme-palette-background-paper)' }
