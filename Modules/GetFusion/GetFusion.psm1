@@ -20,7 +20,7 @@ foreach ($Function in $PublicFunctions) {
 
 # Export all Public functions (formerly private functions are now public)
 Export-ModuleMember -Function @(
-    'Get-SleepHours',
+    'Get-SleepChartData',
     'Get-AverageBackPain',
     'Get-TotalActivityDuration',
     'Convert-DateToDisplay',

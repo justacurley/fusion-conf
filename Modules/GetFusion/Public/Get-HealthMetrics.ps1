@@ -28,7 +28,7 @@ function Get-HealthMetrics {
 
     foreach ($date in $dates) {
         # Handle combined health data (MaxPain, BackPain, Sleep, ActivityDuration)
-        if ($DataPoints -contains 'MaxPain' -or $DataPoints -contains 'BackPain' -or $DataPoints -contains 'Sleep' -or $DataPoints -contains 'ActivityDuration') {
+        if ($DataPoints -contains 'MaxPain' -or $DataPoints -contains 'BackPain' -or $DataPoints -contains 'ActivityDuration') {
             $baseObject = [PSCustomObject]@{
                 Date = $date
             }
@@ -63,14 +63,7 @@ function Get-HealthMetrics {
                 }
             }
 
-            if ($DataPoints -contains 'Sleep') {
-                # Find sleep entries for the day
-                $sleepEntries = $dateEntries | Where-Object { $_.entry_types -contains "sleep" }
-                if ($sleepEntries) {
-                    $totalSleep = ($sleepEntries | ForEach-Object { $_.data.sleep.sleep_hours } | Measure-Object -Sum).Sum
-                    $baseObject = Set-CombinedData -combinedData $baseObject -name 'Sleep' -data $totalSleep
-                }
-            }
+
 
             if ($DataPoints -contains 'ActivityDuration') {
                 # Calculate total activity duration for the day - updated for schema v2.0
@@ -160,6 +153,12 @@ function Get-HealthMetrics {
                     $results['Mood'] += $moodWithContext
                 }
             }
+        }
+    }
+    if ($DataPoints -contains 'Sleep') {
+        # Find sleep entries for the day
+        if ($sleepEntries = Get-SleepChartData -Entries $Entries) {
+            $results['Sleep'] = $sleepEntries
         }
     }
 

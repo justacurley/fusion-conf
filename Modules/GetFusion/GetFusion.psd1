@@ -28,7 +28,7 @@
 
     # Functions to export from this module
     FunctionsToExport = @(
-        'Get-SleepHours',
+        'Get-SleepChartData',
         'Get-AverageBackPain',
         'Get-TotalActivityDuration',
         'Convert-DateToDisplay',
