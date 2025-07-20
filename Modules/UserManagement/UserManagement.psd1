@@ -74,7 +74,6 @@ FunctionsToExport = @(
     'Invoke-UserAuthentication',
     'Test-UserSession',
     'Get-CurrentUser',
-    'Clear-UserSession',
     'Initialize-UserContext',
     'New-UserHealthPreferences',
     'New-MedicationSchedule',
