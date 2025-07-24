@@ -1,6 +1,4 @@
 ﻿$Dashboard = New-UDDashboard -Title 'Pain Level Analysis' -Content {
-    Import-Module UserManagement -Force
-    $UserData = Initialize-UserContext -UserEmail $User
     New-UDContainer -Content {
         New-UDTypography -Text 'Max Daily Pain Level Tracker' -Variant h4 -Align center
 
@@ -9,12 +7,14 @@
             try {
                 # Import GetFusion module for v2 schema support
                 Import-Module GetFusion -Force
+                Import-Module UserManagement -Force
+                $UserData = Initialize-UserContext -UserEmail $User
 
                 $entries = $UserData.Entries
 
                 # Use GetFusion to extract health metrics from v2 schema
-                $healthMetrics = Get-HealthMetrics -Entries $entries -DataPoints @('MaxPain', 'BackPain', 'Sleep', 'ActivityDuration', 'Medications')
-
+                $healthMetrics = Get-HealthMetrics -Entries $entries -DataPoints @('MaxPain', 'BackPain', 'Sleep', 'ActivityDuration')
+                Write-Information $healthMetrics
                 # Transform data for charts
                 $painData = $healthMetrics.CombinedHealthData | Where-Object { $null -ne $_.MaxPain } | ForEach-Object {
                     [PSCustomObject]@{
