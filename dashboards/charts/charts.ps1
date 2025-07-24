@@ -14,7 +14,7 @@
 
                 # Use GetFusion to extract health metrics from v2 schema
                 $healthMetrics = Get-HealthMetrics -Entries $entries -DataPoints @('MaxPain', 'BackPain', 'Sleep', 'ActivityDuration')
-                Write-Information ($healthMetrics | Convertto-json)
+
                 # Transform data for charts
                 $painData = $healthMetrics.CombinedHealthData | Where-Object { $null -ne $_.MaxPain } | ForEach-Object {
                     [PSCustomObject]@{
