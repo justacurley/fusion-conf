@@ -26,11 +26,11 @@ function Get-HealthMetrics {
         $results['CombinedHealthData'] = @()
     }
 
-    $baseObject = [PSCustomObject]@{
-        Date = $date
-    }
 
     foreach ($date in $dates) {
+        $baseObject = [PSCustomObject]@{
+            Date = $date
+        }
         # Handle combined health data (MaxPain, BackPain, Sleep, ActivityDuration)
         if ('CombinedHealthData' -in $Results.Keys) {
 
