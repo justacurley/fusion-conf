@@ -22,19 +22,25 @@ function Get-HealthMetrics {
     if ($DataPoints -contains 'Pain') { $results['Pain'] = @() }
     if ($DataPoints -contains 'Weight') { $results['Weight'] = @() }
     if ($DataPoints -contains 'Mood') { $results['Mood'] = @() }
-    if ($DataPoints -contains 'MaxPain' -or $DataPoints -contains 'BackPain' -or $DataPoints -contains 'Sleep' -or $DataPoints -contains 'ActivityDuration') {
+    if ($DataPoints -contains 'MaxPain' -or $DataPoints -contains 'BackPain' -or $DataPoints -contains 'Sleep' -or $DataPoints -contains 'ActivityDuration' -or $DataPoints -contains 'Sleep') {
         $results['CombinedHealthData'] = @()
+    }
+
+    $baseObject = [PSCustomObject]@{
+        Date = $date
     }
 
     foreach ($date in $dates) {
         # Handle combined health data (MaxPain, BackPain, Sleep, ActivityDuration)
-        if ($DataPoints -contains 'MaxPain' -or $DataPoints -contains 'BackPain' -or $DataPoints -contains 'ActivityDuration') {
-            $baseObject = [PSCustomObject]@{
-                Date = $date
-            }
+        if ('CombinedHealthData' -in $Results.Keys) {
 
             # Get entries for this date
             $dateEntries = $Entries | Where-Object { $_.date -eq $date }
+
+            if ($DataPoints -contains 'Sleep') {
+                $SleepEntry = $dateEntries | Where-Object {$_.entry_types -contains 'sleep'}
+                $baseObject = Set-CombinedData -combinedData $baseObject -Name 'Sleep' -Data $SleepEntry.data.sleep.sleep_duration
+            }
 
             if ($DataPoints -contains 'MaxPain') {
                 # Find max pain severity for the day
@@ -62,8 +68,6 @@ function Get-HealthMetrics {
                     $baseObject = Set-CombinedData -combinedData $baseObject -name 'BackPain' -data $avgBackPain
                 }
             }
-
-
 
             if ($DataPoints -contains 'ActivityDuration') {
                 # Calculate total activity duration for the day - updated for schema v2.0
@@ -155,12 +159,7 @@ function Get-HealthMetrics {
             }
         }
     }
-    if ($DataPoints -contains 'Sleep') {
-        # Find sleep entries for the day
-        if ($sleepEntries = Get-SleepChartData -Entries $Entries) {
-            $results['Sleep'] = $sleepEntries
-        }
-    }
+
 
     return $results
 }
