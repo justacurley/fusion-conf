@@ -144,8 +144,8 @@ New-UDApp -Content {
                                             New-UDNivoChart -Calendar -Data $calendarData -From $fromDate -To $toDate `
                                                 -Height 400 -Width 1200 -MarginTop 50 -MarginRight 130 -MarginBottom 50 `
                                                 -MarginLeft 60 -MonthSpacing 10 -DaySpacing 5 -OnClick {
+                                                    Write-Information ($EventData | out-string)
                                                 $clickedData = $EventData | ConvertFrom-Json
-                                                Write-Information $clickedData
                                                 if ($clickedData.day) {
                                                     $entryCount = $clickedData.value
                                                     $clickedDate = [datetime]::Parse($clickedData.day).ToString('MMMM dd, yyyy')
