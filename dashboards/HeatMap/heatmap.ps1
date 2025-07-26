@@ -144,14 +144,13 @@ New-UDApp -Content {
                                             New-UDNivoChart -Calendar -Data $calendarData -From $fromDate -To $toDate `
                                                 -Height 400 -Width 1200 -MarginTop 50 -MarginRight 130 -MarginBottom 50 `
                                                 -MarginLeft 60 -MonthSpacing 10 -DaySpacing 5 -OnClick {
-                                                    Write-Information ($EventData | out-string)
-                                                $clickedData = $EventData | ConvertFrom-Json
-                                                if ($clickedData.day) {
-                                                    $entryCount = $clickedData.value
-                                                    $clickedDate = [datetime]::Parse($clickedData.day).ToString('MMMM dd, yyyy')
-                                                    Show-UDToast -Message "📅 $clickedDate - $entryCount entries" -MessageColor Blue -Duration 3000
+                                                    # EventData is already a PowerShell object, not JSON
+                                                    if ($EventData.day) {
+                                                        $entryCount = $EventData.value
+                                                        $clickedDate = [datetime]::Parse($EventData.day).ToString('MMMM dd, yyyy')
+                                                        Show-UDToast -Message "📅 $clickedDate - $entryCount entries" -MessageColor Blue -Duration 3000
+                                                    }
                                                 }
-                                            }
                                         }
                                         else {
                                             New-UDAlert -Severity info -Text "No data available. Create some health entries to view the heatmap."
