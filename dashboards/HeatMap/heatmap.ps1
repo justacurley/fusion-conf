@@ -146,9 +146,151 @@ New-UDApp -Content {
                                                 -MarginLeft 60 -MonthSpacing 10 -DaySpacing 5 -OnClick {
                                                     # EventData is already a PowerShell object, not JSON
                                                     if ($EventData.day) {
+                                                        $selectedDate = $EventData.day
                                                         $entryCount = $EventData.value
                                                         $clickedDate = [datetime]::Parse($EventData.day).ToString('MMMM dd, yyyy')
-                                                        Show-UDToast -Message "📅 $clickedDate - $entryCount entries" -MessageColor Blue -Duration 3000
+
+                                                        # Load entries for the selected day
+                                                        Import-Module UserManagement -Force
+                                                        $UserData = Initialize-UserContext -UserEmail $User
+
+                                                        if (Test-Path $UserData.EntriesPath) {
+                                                            $AllEntries = Get-Content $UserData.EntriesPath -Raw | ConvertFrom-Json
+                                                            $DayEntries = $AllEntries | Where-Object { $_.date -eq $selectedDate } | Sort-Object time
+
+                                                            # Create modal content
+                                                            $modalContent = New-UDGrid -Container -Children {
+                                                                # Header with date and count
+                                                                New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                                                    New-UDTypography -Text "📅 $clickedDate" -Variant h5 -Style @{
+                                                                        textAlign = 'center'
+                                                                        marginBottom = '10px'
+                                                                        color = '#1976d2'
+                                                                        fontWeight = 'bold'
+                                                                    }
+                                                                    New-UDTypography -Text "$entryCount health entries recorded" -Variant subtitle1 -Style @{
+                                                                        textAlign = 'center'
+                                                                        marginBottom = '20px'
+                                                                        color = '#666'
+                                                                    }
+                                                                }
+
+                                                                # Entry cards
+                                                                foreach ($entry in $DayEntries) {
+                                                                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                                                        # Create entry type badges
+                                                                        $entryTypeBadges = $entry.entry_types | ForEach-Object {
+                                                                            $badgeColor = switch ($_) {
+                                                                                'mood' { 'success' }
+                                                                                'vitals' { 'primary' }
+                                                                                'medications' { 'warning' }
+                                                                                'activities' { 'info' }
+                                                                                'pain' { 'error' }
+                                                                                'weight' { 'secondary' }
+                                                                                'sleep' { 'default' }
+                                                                                default { 'default' }
+                                                                            }
+                                                                            New-UDChip -Label $_ -Color $badgeColor -Size small
+                                                                        }
+
+                                                                        New-UDCard -Content {
+                                                                            New-UDGrid -Container -Children {
+                                                                                New-UDGrid -Item -ExtraSmallSize 6 -Children {
+                                                                                    New-UDTypography -Text "� $($entry.time)" -Variant h6 -Style @{
+                                                                                        color = '#1976d2'
+                                                                                        fontWeight = '600'
+                                                                                    }
+                                                                                }
+                                                                                New-UDGrid -Item -ExtraSmallSize 6 -Children {
+                                                                                    New-UDTypography -Text "ID: $($entry.entry_id)" -Variant caption -Style @{
+                                                                                        textAlign = 'right'
+                                                                                        color = '#666'
+                                                                                        fontFamily = 'monospace'
+                                                                                    }
+                                                                                }
+                                                                                New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                                                                    New-UDGrid -Container -Spacing 1 -Children {
+                                                                                        $entryTypeBadges
+                                                                                    }
+                                                                                } -Style @{ margin = '10px 0' }
+
+                                                                                # Show data summary
+                                                                                if ($entry.data) {
+                                                                                    $dataItems = @()
+                                                                                    if ($entry.data.mood) {
+                                                                                        $moodText = switch ($entry.data.mood.mood_level) {
+                                                                                            1 { "😞 Awful" }
+                                                                                            2 { "🙁 Bad" }
+                                                                                            3 { "😐 Meh" }
+                                                                                            4 { "🙂 Good" }
+                                                                                            5 { "😃 Rad" }
+                                                                                            default { "😐 Unknown" }
+                                                                                        }
+                                                                                        $dataItems += "Mood: $moodText"
+                                                                                    }
+                                                                                    if ($entry.data.medications -and $entry.data.medications.Count -gt 0) {
+                                                                                        $medCount = $entry.data.medications.Count
+                                                                                        $dataItems += "💊 $medCount medication(s)"
+                                                                                    }
+                                                                                    if ($entry.data.activities -and $entry.data.activities.Count -gt 0) {
+                                                                                        $activityCount = $entry.data.activities.Count
+                                                                                        $totalMinutes = ($entry.data.activities | Measure-Object duration_minutes -Sum).Sum
+                                                                                        $dataItems += "🏃 $activityCount activities ($totalMinutes min)"
+                                                                                    }
+                                                                                    if ($entry.data.pain -and $entry.data.pain.Count -gt 0) {
+                                                                                        $maxPain = ($entry.data.pain | Measure-Object severity -Maximum).Maximum
+                                                                                        $painCount = $entry.data.pain.Count
+                                                                                        $dataItems += "🩹 $painCount pain locations (max: $maxPain/10)"
+                                                                                    }
+                                                                                    if ($entry.data.vitals) {
+                                                                                        $dataItems += "💓 Vitals recorded"
+                                                                                    }
+                                                                                    if ($entry.data.weight) {
+                                                                                        $dataItems += "⚖️ Weight: $($entry.data.weight.weight_lbs) lbs"
+                                                                                    }
+                                                                                    if ($entry.data.sleep) {
+                                                                                        $dataItems += "😴 Sleep: $($entry.data.sleep.sleep_hours) hours"
+                                                                                    }
+
+                                                                                    if ($dataItems.Count -gt 0) {
+                                                                                        New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                                                                            New-UDList -Children {
+                                                                                                foreach ($item in $dataItems) {
+                                                                                                    New-UDListItem -Label $item
+                                                                                                }
+                                                                                            }
+                                                                                        }
+                                                                                    }
+                                                                                }
+
+                                                                                # Show notes if present
+                                                                                if (-not [string]::IsNullOrWhiteSpace($entry.notes)) {
+                                                                                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                                                                        New-UDTypography -Text "📝 Notes: $($entry.notes)" -Variant body2 -Style @{
+                                                                                            fontStyle = 'italic'
+                                                                                            color = '#666'
+                                                                                            marginTop = '10px'
+                                                                                        }
+                                                                                    }
+                                                                                }
+                                                                            }
+                                                                        } -Style @{
+                                                                            marginBottom = '15px'
+                                                                            borderLeft = '4px solid #1976d2'
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+
+                                                            # Show modal
+                                                            Show-UDModal -Content {
+                                                                $modalContent
+                                                            } -Header { New-UDTypography -Text "Health Entries Details" -Variant h4 } -Footer {
+                                                                New-UDButton -Text "Close" -OnClick { Hide-UDModal }
+                                                            } -FullWidth -MaxWidth 'md'
+                                                        } else {
+                                                            Show-UDToast -Message "⚠️ Could not load entries for this date" -MessageColor Orange -Duration 3000
+                                                        }
                                                     }
                                                 }
                                         }
