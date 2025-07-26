@@ -50,8 +50,7 @@ New-UDApp -Content {
                                 return
                             }
 
-                            $fromDate = [datetime]::Parse($fromDateValue)
-                            $toDate = [datetime]::Parse($toDateValue)
+
 
                             if ($fromDate -gt $toDate) {
                                 Show-UDToast -Message "⚠️ From date must be before to date" -MessageColor Orange -Duration 4000
@@ -82,7 +81,9 @@ New-UDApp -Content {
                                 }
                                 return
                             }
-
+                            $FromTo = $AllEntries | Measure-Object -Property Date -Maximum -Minimum
+                            $FromDate = [datetime]::Parse($FromTo.Minimum)
+                            $ToDate = [datetime]::Parse($FromTo.Maximum)
                             # Create a hashtable to count entries per day
                             $dailyCounts = @{}
 
