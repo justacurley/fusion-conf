@@ -145,6 +145,7 @@ New-UDApp -Content {
                                                 -Height 400 -Width 1200 -MarginTop 50 -MarginRight 130 -MarginBottom 50 `
                                                 -MarginLeft 60 -MonthSpacing 10 -DaySpacing 5 -OnClick {
                                                 $clickedData = $EventData | ConvertFrom-Json
+                                                Write-Information $clickedData
                                                 if ($clickedData.day) {
                                                     $entryCount = $clickedData.value
                                                     $clickedDate = [datetime]::Parse($clickedData.day).ToString('MMMM dd, yyyy')
