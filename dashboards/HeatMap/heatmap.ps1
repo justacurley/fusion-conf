@@ -141,7 +141,9 @@ New-UDApp -Content {
                                                 fontStyle = 'italic'
                                             }
 
-                                            New-UDNivoChart -Calendar -Data $calendarData -From $fromDate -To $toDate -Height 400 -Width 1200 -MarginTop 50 -MarginRight 130 -MarginBottom 50 -MarginLeft 60 -OnClick {
+                                            New-UDNivoChart -Calendar -Data $calendarData -From $fromDate -To $toDate `
+                                                -Height 400 -Width 1200 -MarginTop 50 -MarginRight 130 -MarginBottom 50 `
+                                                -MarginLeft 60 -MonthSpacing 1 -DaySpacing 1 -OnClick {
                                                 $clickedData = $EventData | ConvertFrom-Json
                                                 if ($clickedData.day) {
                                                     $entryCount = $clickedData.value
