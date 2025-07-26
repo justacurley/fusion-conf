@@ -34,10 +34,16 @@ New-UDApp -Content {
                             # Load user's entries
                             Import-Module UserManagement -Force
                             $UserData = Initialize-UserContext -UserEmail $User
+
+                            # Ensure EntriesPath is available
+                            if (-not $UserData.EntriesPath -and $UserData.UserDataPath) {
+                                $UserData | Add-Member -MemberType NoteProperty -Name 'EntriesPath' -Value (Join-Path $UserData.UserDataPath 'health-data/entries.json') -Force
+                            }
+
                             $AllEntries = if ($UserData.Entries) {
                                 $UserData.Entries
                             }
-                            elseif (Test-Path $UserData.EntriesPath) {
+                            elseif ($UserData.EntriesPath -and (Test-Path $UserData.EntriesPath)) {
                                 Get-Content $UserData.EntriesPath -Raw | ConvertFrom-Json
                             }
                             else {
@@ -154,7 +160,12 @@ New-UDApp -Content {
                                                         Import-Module UserManagement -Force
                                                         $UserData = Initialize-UserContext -UserEmail $User
 
-                                                        if (Test-Path $UserData.EntriesPath) {
+                                                        # Ensure EntriesPath is available
+                                                        if (-not $UserData.EntriesPath -and $UserData.UserDataPath) {
+                                                            $UserData | Add-Member -MemberType NoteProperty -Name 'EntriesPath' -Value (Join-Path $UserData.UserDataPath 'health-data/entries.json') -Force
+                                                        }
+
+                                                        if ($UserData.EntriesPath -and (Test-Path $UserData.EntriesPath)) {
                                                             $AllEntries = Get-Content $UserData.EntriesPath -Raw | ConvertFrom-Json
                                                             $DayEntries = $AllEntries | Where-Object { $_.date -eq $selectedDate } | Sort-Object time
 

@@ -46,8 +46,13 @@
                                 Import-Module UserManagement -Force
                                 $UserData = Initialize-UserContext -UserEmail $User
 
+                                # Ensure EntriesPath is available
+                                if (-not $UserData.EntriesPath -and $UserData.UserDataPath) {
+                                    $UserData | Add-Member -MemberType NoteProperty -Name 'EntriesPath' -Value (Join-Path $UserData.UserDataPath 'health-data/entries.json') -Force
+                                }
+
                                 # Load user's v2 entries
-                                if (Test-Path $UserData.EntriesPath) {
+                                if ($UserData.EntriesPath -and (Test-Path $UserData.EntriesPath)) {
                                     $AllEntries = Get-Content $UserData.EntriesPath -Raw | ConvertFrom-Json
 
                                     # Filter entries for the selected date
@@ -137,6 +142,12 @@
                                                                         # Load current entries
                                                                         Import-Module UserManagement -Force
                                                                         $UserData = Initialize-UserContext -UserEmail $User
+
+                                                                        # Ensure EntriesPath is available
+                                                                        if (-not $UserData.EntriesPath -and $UserData.UserDataPath) {
+                                                                            $UserData | Add-Member -MemberType NoteProperty -Name 'EntriesPath' -Value (Join-Path $UserData.UserDataPath 'health-data/entries.json') -Force
+                                                                        }
+
                                                                         $AllEntries = Get-Content $UserData.EntriesPath -Raw | ConvertFrom-Json
 
                                                                         # Find and update the specific entry
@@ -191,6 +202,12 @@
                                                                                             # Create backup first
                                                                                             Import-Module UserManagement -Force
                                                                                             $UserData = Initialize-UserContext -UserEmail $User
+
+                                                                                            # Ensure EntriesPath is available
+                                                                                            if (-not $UserData.EntriesPath -and $UserData.UserDataPath) {
+                                                                                                $UserData | Add-Member -MemberType NoteProperty -Name 'EntriesPath' -Value (Join-Path $UserData.UserDataPath 'health-data/entries.json') -Force
+                                                                                            }
+
                                                                                             $AllEntries = Get-Content $UserData.EntriesPath -Raw | ConvertFrom-Json
 
                                                                                             # Create backup file
