@@ -15,7 +15,7 @@ New-UDApp -Content {
                 }
             }
             New-UDGrid -Container -Children {
-                New-UDTypography -Text 'Visual overview of your health tracking activity by day in 2025 - darker colors indicate more entries' -Variant subtitle1 -Style @{
+                New-UDTypography -Text 'Visual overview of your complete health tracking activity - darker colors indicate more entries' -Variant subtitle1 -Style @{
                     textAlign    = 'center'
                     marginBottom = '20px'
                     marginTop    = '8px'
@@ -25,45 +25,19 @@ New-UDApp -Content {
             }
         } -Style @{ padding = '20px'; marginBottom = '20px'; backgroundColor = '#f8f9fa' }
 
-        # Date Range Selection
-        New-UDCard -Title '📅 Date Range' -Content {
+        # Auto-Generate Heatmap
+        New-UDCard -Title '� Your Health Activity Overview' -Content {
             New-UDGrid -Container -Children {
-                New-UDGrid -Item -ExtraSmallSize 4 -Children {
-                    # Default to start of current year (2025)
-                    $DefaultFromDate = (Get-Date -Year 2025 -Month 1 -Day 1).ToString('yyyy-MM-dd')
-                    New-UDTextbox -Id 'fromDate' -Label 'From Date' -Type 'date' -FullWidth -Value $DefaultFromDate
-                }
-                New-UDGrid -Item -ExtraSmallSize 4 -Children {
-                    # Default to today
-                    $DefaultToDate = (Get-Date).ToString('yyyy-MM-dd')
-                    New-UDTextbox -Id 'toDate' -Label 'To Date' -Type 'date' -FullWidth -Value $DefaultToDate
-                }
-                New-UDGrid -Item -ExtraSmallSize 4 -Children {
-                    New-UDButton -Text '📊 Generate Heatmap' -Color primary -FullWidth -OnClick {
+                New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                    New-UDButton -Text '� Generate Activity Heatmap' -Color primary -FullWidth -Size large -OnClick {
                         try {
-                            # Get date range
-                            $fromDateValue = (Get-UDElement -Id 'fromDate').value
-                            $toDateValue = (Get-UDElement -Id 'toDate').value
-
-                            if ([string]::IsNullOrWhiteSpace($fromDateValue) -or [string]::IsNullOrWhiteSpace($toDateValue)) {
-                                Show-UDToast -Message "⚠️ Please select both from and to dates" -MessageColor Orange -Duration 4000
-                                return
-                            }
-
-
-
-                            if ($fromDate -gt $toDate) {
-                                Show-UDToast -Message "⚠️ From date must be before to date" -MessageColor Orange -Duration 4000
-                                return
-                            }
-
                             # Load user's entries
                             Import-Module UserManagement -Force
                             $UserData = Initialize-UserContext -UserEmail $User
                             $AllEntries = if ($UserData.Entries) {
                                 $UserData.Entries
                             }
-                            elseif (Test-PAth $UserData.EntriesPath) {
+                            elseif (Test-Path $UserData.EntriesPath) {
                                 Get-Content $UserData.EntriesPath -Raw | ConvertFrom-Json
                             }
                             else {
@@ -75,15 +49,18 @@ New-UDApp -Content {
                             }
 
                             if (-not $AllEntries -or $AllEntries.Count -eq 0) {
-                                Show-UDToast -Message "⚠️ No entries found in the date range" -MessageColor Orange -Duration 4000
+                                Show-UDToast -Message "⚠️ No entries found" -MessageColor Orange -Duration 4000
                                 Set-UDElement -Id 'heatmapContainer' -Content {
-                                    New-UDAlert -Severity info -Text "No health entries found in the selected date range."
+                                    New-UDAlert -Severity info -Text "No health entries found. Please create some entries to view the heatmap."
                                 }
                                 return
                             }
+
+                            # Automatically determine date range from data
                             $FromTo = $AllEntries | Measure-Object -Property Date -Maximum -Minimum
-                            $FromDate = [datetime]::Parse($FromTo.Minimum)
-                            $ToDate = [datetime]::Parse($FromTo.Maximum)
+                            $fromDate = [datetime]::Parse($FromTo.Minimum)
+                            $toDate = [datetime]::Parse($FromTo.Maximum)
+
                             # Create a hashtable to count entries per day
                             $dailyCounts = @{}
 
@@ -91,17 +68,13 @@ New-UDApp -Content {
                             foreach ($entry in $AllEntries) {
                                 try {
                                     $entryDate = [datetime]::Parse($entry.date)
+                                    $dateKey = $entryDate.ToString('yyyy-MM-dd')
 
-                                    # Only include entries within the selected date range
-                                    if ($entryDate -ge $fromDate -and $entryDate -le $toDate) {
-                                        $dateKey = $entryDate.ToString('yyyy-MM-dd')
-
-                                        if ($dailyCounts.ContainsKey($dateKey)) {
-                                            $dailyCounts[$dateKey]++
-                                        }
-                                        else {
-                                            $dailyCounts[$dateKey] = 1
-                                        }
+                                    if ($dailyCounts.ContainsKey($dateKey)) {
+                                        $dailyCounts[$dateKey]++
+                                    }
+                                    else {
+                                        $dailyCounts[$dateKey] = 1
                                     }
                                 }
                                 catch {
@@ -160,6 +133,14 @@ New-UDApp -Content {
                                     # Calendar heatmap
                                     New-UDGrid -Item -ExtraSmallSize 12 -Children {
                                         if ($calendarData.Count -gt 0) {
+                                            # Add date range info
+                                            New-UDTypography -Text "📅 Showing data from $($fromDate.ToString('MMMM dd, yyyy')) to $($toDate.ToString('MMMM dd, yyyy'))" -Variant body2 -Style @{
+                                                textAlign = 'center'
+                                                marginBottom = '15px'
+                                                color = '#666'
+                                                fontStyle = 'italic'
+                                            }
+
                                             New-UDNivoChart -Calendar -Data $calendarData -From $fromDate -To $toDate -Height 400 -Width 1200 -MarginTop 50 -MarginRight 130 -MarginBottom 50 -MarginLeft 60 -OnClick {
                                                 $clickedData = $EventData | ConvertFrom-Json
                                                 if ($clickedData.day) {
@@ -170,7 +151,7 @@ New-UDApp -Content {
                                             }
                                         }
                                         else {
-                                            New-UDAlert -Severity info -Text "No data available for the selected date range. Try selecting a different range or create some health entries."
+                                            New-UDAlert -Severity info -Text "No data available. Create some health entries to view the heatmap."
                                         }
                                     }
 
@@ -190,7 +171,7 @@ New-UDApp -Content {
                                 }
                             }
 
-                            Show-UDToast -Message "📊 Heatmap generated successfully! Found $totalEntries entries across $activeDays days." -MessageColor Green -Duration 4000
+                            Show-UDToast -Message "📊 Heatmap generated successfully! Found $totalEntries entries across $activeDays days from $($fromDate.ToString('MMM yyyy')) to $($toDate.ToString('MMM yyyy'))." -MessageColor Green -Duration 5000
 
                         }
                         catch {
@@ -201,7 +182,7 @@ New-UDApp -Content {
                 }
             }
 
-            New-UDTypography -Text '💡 Default view shows 2025 activity. You can customize the date range above for other periods.' -Variant caption -Style @{
+            New-UDTypography -Text '💡 Click the button above to automatically generate your complete health activity heatmap' -Variant caption -Style @{
                 marginTop = '15px'
                 color     = '#666'
                 fontStyle = 'italic'
@@ -212,7 +193,7 @@ New-UDApp -Content {
         # Heatmap Container
         New-UDElement -Id 'heatmapContainer' -Tag 'div' -Content {
             New-UDCard -Content {
-                New-UDTypography -Text '👆 Select date range and click "Generate Heatmap" to view your health tracking activity' -Variant body1 -Style @{
+                New-UDTypography -Text '👆 Click "Generate Activity Heatmap" to view your complete health tracking activity' -Variant body1 -Style @{
                     textAlign = 'center'
                     color     = '#999'
                     margin    = '40px 0'
@@ -224,11 +205,11 @@ New-UDApp -Content {
         # Help Section
         New-UDCard -Title 'ℹ️ About the Health Activity Heatmap' -Content {
             New-UDList -Children {
-                New-UDListItem -Label '📊 The heatmap shows your health tracking consistency over time'
+                New-UDListItem -Label '📊 The heatmap automatically shows your complete health tracking history'
                 New-UDListItem -Label '🔥 Darker red colors indicate days with more health entries'
                 New-UDListItem -Label '📅 Click on any day in the heatmap to see the exact number of entries'
                 New-UDListItem -Label '📈 Use the statistics cards to understand your tracking patterns'
-                New-UDListItem -Label '⏰ Default view shows 2025 year-to-date, but you can customize the date range'
+                New-UDListItem -Label '🤖 Fully automated - no date selection needed, shows all your data'
                 New-UDListItem -Label '🎯 Aim for consistent daily tracking to maintain good health visibility'
                 New-UDListItem -Label '💡 Gaps in the heatmap might indicate days you could improve your tracking'
                 New-UDListItem -Label '🏆 Regular patterns show good health monitoring habits'
