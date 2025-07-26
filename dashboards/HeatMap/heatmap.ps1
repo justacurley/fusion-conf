@@ -61,16 +61,19 @@ New-UDApp -Content {
                             # Load user's entries
                             Import-Module UserManagement -Force
                             $UserData = Initialize-UserContext -UserEmail $User
-
-                            if (-not (Test-Path $UserData.EntriesPath)) {
+                            $AllEntries = if ($UserData.Entries) {
+                                $UserData.Entries
+                            }
+                            elseif (Test-PAth $UserData.EntriesPath) {
+                                Get-Content $UserData.EntriesPath -Raw | ConvertFrom-Json
+                            }
+                            else {
                                 Show-UDToast -Message "⚠️ No entries file found. Create some health entries first." -MessageColor Orange -Duration 4000
                                 Set-UDElement -Id 'heatmapContainer' -Content {
                                     New-UDAlert -Severity warning -Text "No health entries found. Please create some entries to view the heatmap."
                                 }
                                 return
                             }
-
-                            $AllEntries = Get-Content $UserData.EntriesPath -Raw | ConvertFrom-Json
 
                             if (-not $AllEntries -or $AllEntries.Count -eq 0) {
                                 Show-UDToast -Message "⚠️ No entries found in the date range" -MessageColor Orange -Duration 4000
@@ -94,11 +97,13 @@ New-UDApp -Content {
 
                                         if ($dailyCounts.ContainsKey($dateKey)) {
                                             $dailyCounts[$dateKey]++
-                                        } else {
+                                        }
+                                        else {
                                             $dailyCounts[$dateKey] = 1
                                         }
                                     }
-                                } catch {
+                                }
+                                catch {
                                     Write-Warning "Could not parse date for entry: $($entry.date)"
                                 }
                             }
@@ -107,7 +112,7 @@ New-UDApp -Content {
                             $calendarData = @()
                             foreach ($dateKey in $dailyCounts.Keys) {
                                 $calendarData += @{
-                                    day = $dateKey
+                                    day   = $dateKey
                                     value = $dailyCounts[$dateKey]
                                 }
                             }
@@ -162,7 +167,8 @@ New-UDApp -Content {
                                                     Show-UDToast -Message "📅 $clickedDate - $entryCount entries" -MessageColor Blue -Duration 3000
                                                 }
                                             }
-                                        } else {
+                                        }
+                                        else {
                                             New-UDAlert -Severity info -Text "No data available for the selected date range. Try selecting a different range or create some health entries."
                                         }
                                     }
@@ -185,7 +191,8 @@ New-UDApp -Content {
 
                             Show-UDToast -Message "📊 Heatmap generated successfully! Found $totalEntries entries across $activeDays days." -MessageColor Green -Duration 4000
 
-                        } catch {
+                        }
+                        catch {
                             Show-UDToast -Message "❌ Error generating heatmap: $($_.Exception.Message)" -MessageColor Red -Duration 6000
                             Write-Error "Error generating heatmap: $($_.Exception.Message)"
                         }
