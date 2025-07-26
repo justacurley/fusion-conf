@@ -15,7 +15,7 @@ New-UDApp -Content {
                 }
             }
             New-UDGrid -Container -Children {
-                New-UDTypography -Text 'Visual overview of your health tracking activity by day - darker colors indicate more entries' -Variant subtitle1 -Style @{
+                New-UDTypography -Text 'Visual overview of your health tracking activity by day in 2025 - darker colors indicate more entries' -Variant subtitle1 -Style @{
                     textAlign    = 'center'
                     marginBottom = '20px'
                     marginTop    = '8px'
@@ -29,8 +29,8 @@ New-UDApp -Content {
         New-UDCard -Title '📅 Date Range' -Content {
             New-UDGrid -Container -Children {
                 New-UDGrid -Item -ExtraSmallSize 4 -Children {
-                    # Default to last year
-                    $DefaultFromDate = (Get-Date).AddDays(-365).ToString('yyyy-MM-dd')
+                    # Default to start of current year (2025)
+                    $DefaultFromDate = (Get-Date -Year 2025 -Month 1 -Day 1).ToString('yyyy-MM-dd')
                     New-UDTextbox -Id 'fromDate' -Label 'From Date' -Type 'date' -FullWidth -Value $DefaultFromDate
                 }
                 New-UDGrid -Item -ExtraSmallSize 4 -Children {
@@ -200,7 +200,7 @@ New-UDApp -Content {
                 }
             }
 
-            New-UDTypography -Text '💡 Select a date range above to generate your health activity heatmap' -Variant caption -Style @{
+            New-UDTypography -Text '💡 Default view shows 2025 activity. You can customize the date range above for other periods.' -Variant caption -Style @{
                 marginTop = '15px'
                 color     = '#666'
                 fontStyle = 'italic'
@@ -227,7 +227,7 @@ New-UDApp -Content {
                 New-UDListItem -Label '🔥 Darker red colors indicate days with more health entries'
                 New-UDListItem -Label '📅 Click on any day in the heatmap to see the exact number of entries'
                 New-UDListItem -Label '📈 Use the statistics cards to understand your tracking patterns'
-                New-UDListItem -Label '⏰ Default view shows the last year, but you can customize the date range'
+                New-UDListItem -Label '⏰ Default view shows 2025 year-to-date, but you can customize the date range'
                 New-UDListItem -Label '🎯 Aim for consistent daily tracking to maintain good health visibility'
                 New-UDListItem -Label '💡 Gaps in the heatmap might indicate days you could improve your tracking'
                 New-UDListItem -Label '🏆 Regular patterns show good health monitoring habits'
