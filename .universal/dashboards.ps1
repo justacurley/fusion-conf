@@ -1,12 +1,13 @@
-﻿New-PSUApp -Name "ActivityTimeline" -FilePath "dashboards/ActivityTimeline/ActivityTimeline.ps1" -BaseUrl "/activitytimeline" -Authenticated -Role @('Administrator', 'User') -AutoDeploy 
-New-PSUApp -Name "charts" -FilePath "dashboards/charts/charts.ps1" -BaseUrl "/charts" -Environment "PowerShell 7" -Authenticated -Role @('Administrator', 'User') -AutoDeploy -Description "charts" 
-New-PSUApp -Name "entries" -FilePath "dashboards/Entries/Entries.ps1" -BaseUrl "/entries" -Environment "PowerShell 7" -Authenticated -Role @('Administrator', 'User') -AutoDeploy -Description "Add or update entries" 
-New-PSUApp -Name "gallery" -FilePath "dashboards/gallery/gallery.ps1" -BaseUrl "/gallery" -Authenticated -Role @('Administrator', 'User') -AutoDeploy -Description "Gallery of incision healing" 
-New-PSUApp -Name "HealthTimeline" -FilePath "dashboards/timeline/timeline.ps1" -BaseUrl "/healthtimeline" -Environment "PowerShell 7" -Authenticated -Role @('Administrator', 'User') -AutoDeploy 
-New-PSUApp -Name "HomePage" -FilePath "dashboards/home/home-app.ps1" -BaseUrl "/home" -Environment "PowerShell 7" -Authenticated -Role @('Administrator', 'User') -AutoDeploy -Description "Health Dashboard Homepage with Navigation" 
-New-PSUApp -Name "Registration" -FilePath "dashboards/Registration/Registration.ps1" -BaseUrl "/register" -Environment "Integrated" -AutoDeploy -Description "multi-user registration page" 
-New-PSUApp -Name "Settings" -FilePath "dashboards/Settings/Settings.ps1" -BaseUrl "/Settings" -Environment "Integrated" -AutoDeploy -Description "multi-user Settings page" 
-New-PSUApp -Name "test" -FilePath "dashboards/test/test.ps1" -BaseUrl "/testme" -Environment "PowerShell 7" -Authenticated -Role @('Administrator', 'User') -AutoDeploy 
-New-PSUApp -Name "test_calendars" -FilePath "dashboards/test_calendars/test_calendars.ps1" -BaseUrl "/testcalendar" -Environment "PowerShell 7" -Authenticated -AutoDeploy 
-New-PSUApp -Name "testdynamic" -FilePath "dashboards/testdynamic/testdynamic.ps1" -BaseUrl "/dynamic" -Environment "Integrated" -Authenticated -AutoDeploy -Description "testing dynamic options" 
+﻿New-PSUApp -Name "ActivityTimeline" -FilePath "dashboards/ActivityTimeline/ActivityTimeline.ps1" -BaseUrl "/activitytimeline" -Authenticated -Role @('Administrator', 'User') -AutoDeploy
+New-PSUApp -Name "charts" -FilePath "dashboards/charts/charts.ps1" -BaseUrl "/charts" -Environment "PowerShell 7" -Authenticated -Role @('Administrator', 'User') -AutoDeploy -Description "charts"
+New-PSUApp -Name "entries" -FilePath "dashboards/Entries/Entries.ps1" -BaseUrl "/entries" -Environment "PowerShell 7" -Authenticated -Role @('Administrator', 'User') -AutoDeploy -Description "Add or update entries"
+New-PSUApp -Name "gallery" -FilePath "dashboards/gallery/gallery.ps1" -BaseUrl "/gallery" -Authenticated -Role @('Administrator', 'User') -AutoDeploy -Description "Gallery of incision healing"
+New-PSUApp -Name "HealthTimeline" -FilePath "dashboards/timeline/timeline.ps1" -BaseUrl "/healthtimeline" -Environment "PowerShell 7" -Authenticated -Role @('Administrator', 'User') -AutoDeploy
+New-PSUApp -Name "HomePage" -FilePath "dashboards/home/home-app.ps1" -BaseUrl "/home" -Environment "PowerShell 7" -Authenticated -Role @('Administrator', 'User') -AutoDeploy -Description "Health Dashboard Homepage with Navigation"
+New-PSUApp -Name "Registration" -FilePath "dashboards/Registration/Registration.ps1" -BaseUrl "/register" -Environment "Integrated" -AutoDeploy -Description "multi-user registration page"
+New-PSUApp -Name "Settings" -FilePath "dashboards/Settings/Settings.ps1" -BaseUrl "/Settings" -Environment "Integrated" -AutoDeploy -Description "multi-user Settings page"
+New-PSUApp -Name "test" -FilePath "dashboards/test/test.ps1" -BaseUrl "/testme" -Environment "PowerShell 7" -Authenticated -Role @('Administrator', 'User') -AutoDeploy
+New-PSUApp -Name "test_calendars" -FilePath "dashboards/test_calendars/test_calendars.ps1" -BaseUrl "/testcalendar" -Environment "PowerShell 7" -Authenticated -AutoDeploy
+New-PSUApp -Name "testdynamic" -FilePath "dashboards/testdynamic/testdynamic.ps1" -BaseUrl "/dynamic" -Environment "Integrated" -Authenticated -AutoDeploy -Description "testing dynamic options"
 New-PSUApp -Name "UpdateEntries" -FilePath "dashboards/UpdateEntries/UpdateEntries.ps1" -BaseUrl "/updateentry" -Authenticated -Role @('Administrator', 'User') -AutoDeploy
+New-PSUApp -Name "HeatMap" -FilePath "dashboards/HeatMap/heatmap.ps1" -BaseUrl "/heat" -Authenticated -Role @('Administrator', 'User') -AutoDeploy -Description "Testing heatmap"
