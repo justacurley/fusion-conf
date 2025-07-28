@@ -213,11 +213,11 @@ New-UDApp -Content {
                                                                                     }
                                                                                 }
                                                                                 New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                                                                                    New-UDTypography -Text "ID: $($entry.entry_id)" -Variant caption -Style @{
+                                                                                    New-UDButton -Text "ID: $($entry.entry_id)" -Variant outlined -Style @{
                                                                                         textAlign = 'right'
                                                                                         color = '#666'
                                                                                         fontFamily = 'monospace'
-                                                                                    }
+                                                                                    } -Href "/updateentry/:$($entry.entry_id)"
                                                                                 }
                                                                                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
                                                                                     New-UDGrid -Container -Spacing 1 -Children {
