@@ -6,8 +6,8 @@
 
 $Pages = @()
 
-$Pages += New-UDPage -Name 'test' -url '/test' -Content {
-
+$Pages += New-UDPage -Name 'test' -url '/test/:id' -Content {
+    "User ID: $id"
 }
 
 $Pages += New-UDPage -Name 'test2' -url '/test2' -Content {
