@@ -1,6 +1,6 @@
 ﻿$Pages = @()
-$Pages += New-UDPage -Name 'Dashboard' -Url '/db/:user' -Content {
-    New-UDTypography -Text 'Dashboard for user: $User'
+$Pages += New-UDPage -Name 'App' -Url '/db' -Content {
+    New-UDTypography -Text 'App'
 }
 
 New-UDApp -Title 'Pages' -Pages $Pages
