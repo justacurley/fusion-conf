@@ -1,4 +1,4 @@
-﻿New-UDApp -Content {
+﻿$Pages += New-UDPage -Name 'entry' -url '/entry' -content {
     Import-Module UserManagement -Force
     Import-Module GetFusion -Force
 
@@ -160,10 +160,12 @@
                                                                             $AllEntries | ConvertTo-Json -Depth 10 | Set-Content -Path $UserData.EntriesPath -Encoding UTF8
 
                                                                             Show-UDToast -Message "✅ Successfully updated entry at $($entry.time)" -MessageColor Green -Duration 4000
-                                                                        } else {
+                                                                        }
+                                                                        else {
                                                                             throw "Entry not found in user's data"
                                                                         }
-                                                                    } catch {
+                                                                    }
+                                                                    catch {
                                                                         Show-UDToast -Message "❌ Error updating entry: $($_.Exception.Message)" -MessageColor Red -Duration 6000
                                                                         Write-Error "Error updating entry: $($_.Exception.Message)"
                                                                     }
@@ -229,7 +231,8 @@
                                                                                             Invoke-UDJavaScript -JavaScript @'
                                                                                                 document.getElementById('selectedDate').dispatchEvent(new Event('change'));
 '@
-                                                                                        } catch {
+                                                                                        }
+                                                                                        catch {
                                                                                             Show-UDToast -Message "❌ Error deleting entry: $($_.Exception.Message)" -MessageColor Red -Duration 6000
                                                                                             Write-Error "Error deleting entry: $($_.Exception.Message)"
                                                                                             Hide-UDModal
@@ -264,7 +267,8 @@
                                             $_.entry_types | ForEach-Object {
                                                 if ($entryTypeCount.ContainsKey($_)) {
                                                     $entryTypeCount[$_]++
-                                                } else {
+                                                }
+                                                else {
                                                     $entryTypeCount[$_] = 1
                                                 }
                                             }
@@ -279,19 +283,22 @@
                                         }
 
                                         Show-UDToast -Message "📋 Loaded $($DayEntries.Count) health entries for $($parsedDate.ToString('MM/dd/yyyy'))" -MessageColor Blue -Duration 3000
-                                    } else {
+                                    }
+                                    else {
                                         Set-UDElement -Id 'entriesContainer' -Content {
                                             New-UDAlert -Severity warning -Text "No health entries found for $($parsedDate.ToString('MM/dd/yyyy')). Please select a date that has existing health data."
                                         }
                                         Set-UDElement -Id 'summaryContainer' -Content { }
                                     }
-                                } else {
+                                }
+                                else {
                                     Set-UDElement -Id 'entriesContainer' -Content {
                                         New-UDAlert -Severity error -Text "No entries file found. Please create some health entries first."
                                     }
                                     Set-UDElement -Id 'summaryContainer' -Content { }
                                 }
-                            } catch {
+                            }
+                            catch {
                                 Show-UDToast -Message "❌ Error loading entries: $($_.Exception.Message)" -MessageColor Red -Duration 5000
                                 Write-Error "Error loading entries for date: $($_.Exception.Message)"
                                 Set-UDElement -Id 'entriesContainer' -Content {
@@ -351,3 +358,5 @@
         } -Style @{ marginTop = '30px'; backgroundColor = '#f0f8ff' }
     }
 }
+
+New-UDApp -Title 'Update Entry' -Pages $Pages
