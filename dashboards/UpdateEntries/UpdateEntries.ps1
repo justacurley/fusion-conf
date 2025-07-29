@@ -32,7 +32,31 @@
                     # Current date in Mountain Time
                     $MSTDate = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId((Get-Date), 'Mountain Standard Time')
                     $currentDate = $MSTDate.ToString('yyyy-MM-dd')
+                    if ($Query.Id) {
+                        try {
+                            $entryId = $Query.Id
+                            if ($entryId.Length -eq 10) {
+                                # Parse the composite entry ID (yyMMddHHmm)
+                                $year = "20" + $entryId.Substring(0, 2)  # yy -> yyyy
+                                $month = $entryId.Substring(2, 2)        # MM
+                                $day = $entryId.Substring(4, 2)          # dd
 
+                                # Construct the date in yyyy-MM-dd format
+                                $currentDate = "$year-$month-$day"
+
+                                # Validate the constructed date
+                                $parsedDate = [DateTime]::ParseExact($currentDate, 'yyyy-MM-dd', $null)
+                                Write-Information "Using date from Query.Id: $currentDate (Entry ID: $entryId)"
+                            }
+                            else {
+                                Write-Warning "Invalid Query.Id format: $entryId (expected 10 characters)"
+                            }
+                        }
+                        catch {
+                            Write-Warning "Could not parse Query.Id '$($Query.Id)': $($_.Exception.Message)"
+                            # Keep the default current date
+                        }
+                    }
                     New-UDTextbox -Id 'selectedDate' -Label '📅 Date' -Type 'date' -FullWidth -Value $currentDate -OnChange {
                         # Load entries for selected date
                         $selectedDateValue = $EventData
