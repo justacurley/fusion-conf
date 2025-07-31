@@ -217,7 +217,7 @@ New-UDApp -Content {
                                                                                         textAlign = 'right'
                                                                                         color = '#666'
                                                                                         fontFamily = 'monospace'
-                                                                                    } -Href "/updateentry/:$($entry.entry_id)"
+                                                                                    } -Href "/updateentry/entry:$($entry.entry_id)"
                                                                                 }
                                                                                 New-UDGrid -Item -ExtraSmallSize 12 -Children {
                                                                                     New-UDGrid -Container -Spacing 1 -Children {

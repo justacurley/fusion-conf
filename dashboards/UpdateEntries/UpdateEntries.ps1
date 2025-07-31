@@ -36,15 +36,10 @@
                         try {
                             $entryId = $Query.Id
                             if ($entryId.Length -eq 10) {
-                                # Parse the composite entry ID (yyMMddHHmm)
-                                $year = "20" + $entryId.Substring(0, 2)  # yy -> yyyy
-                                $month = $entryId.Substring(2, 2)        # MM
-                                $day = $entryId.Substring(4, 2)          # dd
-
-                                # Construct the date in yyyy-MM-dd format
+                                $year = "20" + $entryId.Substring(0, 2)
+                                $month = $entryId.Substring(2, 2)
+                                $day = $entryId.Substring(4, 2)
                                 $currentDate = "$year-$month-$day"
-
-                                # Validate the constructed date
                                 $parsedDate = [DateTime]::ParseExact($currentDate, 'yyyy-MM-dd', $null)
                                 Write-Information "Using date from Query.Id: $currentDate (Entry ID: $entryId)"
                             }
@@ -54,7 +49,6 @@
                         }
                         catch {
                             Write-Warning "Could not parse Query.Id '$($Query.Id)': $($_.Exception.Message)"
-                            # Keep the default current date
                         }
                     }
                     New-UDTextbox -Id 'selectedDate' -Label '📅 Date' -Type 'date' -FullWidth -Value $currentDate -OnChange {
