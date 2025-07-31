@@ -1,4 +1,5 @@
-﻿$Pages += New-UDPage -Name 'entry' -url '/entry' -content {
+﻿$Pages += New-UDPage -Name 'entry' -url '/entry:entryid' -content {
+    Show-UDToast -Message $entryid -Persistent
     Import-Module UserManagement -Force
     Import-Module GetFusion -Force
 
