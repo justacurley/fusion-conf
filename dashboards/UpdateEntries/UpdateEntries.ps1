@@ -1,4 +1,4 @@
-﻿$Pages += New-UDPage -Name 'entry' -url '/entry/:entryid' -content {
+﻿$Pages += New-UDPage -Name 'entry' -url '/entry:entryid' -content {
 
     Import-Module UserManagement -Force
     Import-Module GetFusion -Force
