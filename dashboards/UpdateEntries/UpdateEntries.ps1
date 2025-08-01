@@ -1,381 +1,653 @@
-﻿$Pages += New-UDPage -Name 'entry' -url '/entry:entryid' -content {
-    Show-UDToast -Message $entryid -Persistent
+﻿$Pages += New-UDPage -Name 'entry' -url '/entry/:entryid' -content {
+
     Import-Module UserManagement -Force
     Import-Module GetFusion -Force
 
     $UserData = Initialize-UserContext -UserEmail $User
 
+    # Ensure EntriesPath is available
+    if (-not $UserData.EntriesPath -and $UserData.UserDataPath) {
+        $UserData | Add-Member -MemberType NoteProperty -Name 'EntriesPath' -Value (Join-Path $UserData.UserDataPath 'health-data/entries.json') -Force
+    }
+
+    # Load existing entry if entryid is provided
+    $ExistingEntry = $null
+    $IsEditMode = $false
+    if ($entryid -and $entryid -ne 'new') {
+        try {
+            if ($UserData.EntriesPath -and (Test-Path $UserData.EntriesPath)) {
+                $AllEntries = Get-Content $UserData.EntriesPath -Raw | ConvertFrom-Json
+                $ExistingEntry = $AllEntries | Where-Object { $_.entry_id -eq $entryid }
+                if ($ExistingEntry) {
+                    $IsEditMode = $true
+                    Write-Information "Found existing entry for editing: $entryid"
+                }
+                else {
+                    Write-Warning "Entry ID $entryid not found in user's data"
+                }
+            }
+        }
+        catch {
+            Write-Error "Error loading existing entry: $($_.Exception.Message)"
+        }
+    }
+
     New-UDContainer -Children {
         New-UDPaper -Children {
             New-UDGrid -Container -Children {
-                New-UDTypography -Text '✏️ Update Health Entries v2.0' -Variant h4 -Style @{
+                $titleText = if ($IsEditMode) { "✏️ Edit Health Entry" } else { "🏥 Create Health Entry" }
+                New-UDTypography -Text $titleText -Variant h4 -Style @{
                     textAlign    = 'center'
                     marginBottom = '5px'
-                    color        = '#1976d2'
+                    color        = 'var(--theme-palette-primary-main)'
                     fontWeight   = 'bold'
                 }
             }
             New-UDGrid -Container -Children {
-                New-UDTypography -Text 'Select a date to view and edit all health entries for that day' -Variant subtitle1 -Style @{
+                $subtitleText = if ($IsEditMode) { "Update your health entry data" } else { "Track your daily health metrics and recovery progress" }
+                New-UDTypography -Text $subtitleText -Variant subtitle1 -Style @{
                     textAlign    = 'center'
                     marginBottom = '20px'
                     marginTop    = '8px'
-                    color        = '#666'
+                    color        = 'var(--theme-palette-text-secondary)'
                     fontStyle    = 'italic'
                 }
             }
-        } -Style @{ padding = '20px'; marginBottom = '20px'; backgroundColor = '#f8f9fa' }
+        } -Style @{ padding = '20px'; marginBottom = '20px'; backgroundColor = 'var(--theme-palette-background-paper)' }
 
-        # Date Selection Section
-        New-UDCard -Title '📅 Select Date' -Content {
-            New-UDGrid -Container -Children {
-                New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                    # Current date in Mountain Time
-                    $MSTDate = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId((Get-Date), 'Mountain Standard Time')
-                    $currentDate = $MSTDate.ToString('yyyy-MM-dd')
-                    if ($Query.Id) {
+        New-UDForm -Children {
+            # Date and Time fields - prepopulated if editing
+            New-UDCard -Title '📅 Date & Time' -Content {
+                New-UDGrid -Container -Children {
+                    # Determine initial values
+                    if ($IsEditMode -and $ExistingEntry) {
+                        $initialDate = $ExistingEntry.date
+                        $initialTime = $ExistingEntry.time
+                    }
+                    else {
+                        $MSTDate = [System.TimeZoneInfo]::ConvertTimeBySystemTimeZoneId((Get-Date), 'Mountain Standard Time')
+                        $initialDate = $MSTDate.ToString('yyyy-MM-dd')
+                        $initialTime = $MSTDate.ToString('HH:mm')
+                    }
+
+                    New-UDGrid -Item -ExtraSmallSize 6 -Children {
+                        New-UDTextbox -Id 'date' -Label '📅 Date' -Type 'date' -FullWidth -Value $initialDate
+                    }
+                    New-UDGrid -Item -ExtraSmallSize 6 -Children {
+                        New-UDTextbox -Id 'timestamp' -Label '🕐 Time' -Type 'time' -FullWidth -Value $initialTime
+                    }
+                }
+                $helpText = if ($IsEditMode) { "💡 Editing entry from $initialDate at $initialTime" } else { "💡 Automatically set to current Mountain Time - adjust if needed" }
+                New-UDTypography -Text $helpText -Variant caption -Style @{
+                    marginTop = '5px'
+                    color     = 'var(--theme-palette-text-secondary)'
+                    fontStyle = 'italic'
+                    textAlign = 'center'
+                }
+            } -Style @{ marginBottom = '20px' }
+
+            # Medications Section - Enhanced with prepopulation
+            New-UDCard -Title '💊 Medications' -Content {
+                New-UDContainer -Children {
+                    $medButtonText = if ($IsEditMode -and $ExistingEntry.entry_types -contains 'medications') { '🔽 Hide Medications' } else { '🔽 Show Medications' }
+                    $medInitialState = $IsEditMode -and $ExistingEntry.entry_types -contains 'medications'
+
+                    New-UDButton -Text $medButtonText -Id 'medications_toggle' -Color primary -Variant outlined -OnClick {
+                        $currentState = Get-UDElement -Id 'medications_transition'
+                        $newState = -not $currentState.in
+
+                        Set-UDElement -Id 'medications_transition' -Properties @{
+                            in = $newState
+                        }
+
+                        if ($newState) {
+                            Set-UDElement -Id 'medications_toggle' -Properties @{
+                                text = '🔺 Hide Medications'
+                            }
+                        }
+                        else {
+                            Set-UDElement -Id 'medications_toggle' -Properties @{
+                                text = '🔽 Show Medications'
+                            }
+                        }
+                    } -Style @{
+                        marginBottom = '15px'
+                        width        = '100%'
+                    }
+                }
+
+                New-UDTransition -Id 'medications_transition' -Content {
+                    New-UDGrid -Container -Children {
                         try {
-                            $entryId = $Query.Id
-                            if ($entryId.Length -eq 10) {
-                                $year = "20" + $entryId.Substring(0, 2)
-                                $month = $entryId.Substring(2, 2)
-                                $day = $entryId.Substring(4, 2)
-                                $currentDate = "$year-$month-$day"
-                                $parsedDate = [DateTime]::ParseExact($currentDate, 'yyyy-MM-dd', $null)
-                                Write-Information "Using date from Query.Id: $currentDate (Entry ID: $entryId)"
+                            Import-Module UserManagement -Force
+                            $CurrentUserResult = Get-CurrentUser
+
+                            if ($CurrentUserResult.Success -and $CurrentUserResult.Data.Preferences.Tracking.Medications) {
+                                $UserMedications = $CurrentUserResult.Data.Preferences.Tracking.Medications.medications_list
+
+                                # Get existing medications if in edit mode
+                                $ExistingMedications = @()
+                                if ($IsEditMode -and $ExistingEntry.data.medications) {
+                                    $ExistingMedications = $ExistingEntry.data.medications
+                                }
+
+                                foreach ($medication in $UserMedications) {
+                                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -MediumSize 4 -Children {
+                                        New-UDPaper -Children {
+                                            New-UDTypography -Text "💊 $($medication.name.ToUpper())" -Variant subtitle1 -Style @{
+                                                fontWeight   = 'bold'
+                                                marginBottom = '10px'
+                                                color        = 'var(--theme-palette-primary-main)'
+                                                textAlign    = 'center'
+                                            }
+
+                                            # Check if this medication was taken in the existing entry
+                                            $isChecked = $false
+                                            if ($IsEditMode) {
+                                                $isChecked = $ExistingMedications | Where-Object {
+                                                    $_.name -eq $medication.name -and $_.dosage -eq $medication.dosage
+                                                }
+                                            }
+
+                                            New-UDCheckBox -Id "med_$($medication.name -replace '\W', '_')_$($medication.dosage -replace '\W', '_')" -Label "$($medication.dosage)" -Checked:$isChecked
+                                        } -Style @{
+                                            padding         = '15px'
+                                            margin          = '5px'
+                                            backgroundColor = 'var(--theme-palette-background-default)'
+                                            borderLeft      = '4px solid var(--theme-palette-primary-main)'
+                                            borderRadius    = '8px'
+                                            minHeight       = '120px'
+                                            border          = '1px solid var(--theme-palette-divider)'
+                                        }
+                                    }
+                                }
                             }
                             else {
-                                Write-Warning "Invalid Query.Id format: $entryId (expected 10 characters)"
+                                New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                    New-UDAlert -Severity info -Text 'No medications configured. Add your medications in Settings to track them here.'
+                                }
                             }
                         }
                         catch {
-                            Write-Warning "Could not parse Query.Id '$($Query.Id)': $($_.Exception.Message)"
-                        }
-                    }
-                    New-UDTextbox -Id 'selectedDate' -Label '📅 Date' -Type 'date' -FullWidth -Value $currentDate -OnChange {
-                        # Load entries for selected date
-                        $selectedDateValue = $EventData
-                        if (-not [string]::IsNullOrWhiteSpace($selectedDateValue)) {
-                            try {
-                                # Parse the selected date
-                                $parsedDate = [datetime]::Parse($selectedDateValue)
-                                $selectedDateFormatted = $parsedDate.ToString('yyyy-MM-dd')
-
-                                # Import UserManagement for context
-                                Import-Module UserManagement -Force
-                                $UserData = Initialize-UserContext -UserEmail $User
-
-                                # Ensure EntriesPath is available
-                                if (-not $UserData.EntriesPath -and $UserData.UserDataPath) {
-                                    $UserData | Add-Member -MemberType NoteProperty -Name 'EntriesPath' -Value (Join-Path $UserData.UserDataPath 'health-data/entries.json') -Force
-                                }
-
-                                # Load user's v2 entries
-                                if ($UserData.EntriesPath -and (Test-Path $UserData.EntriesPath)) {
-                                    $AllEntries = Get-Content $UserData.EntriesPath -Raw | ConvertFrom-Json
-
-                                    # Filter entries for the selected date
-                                    $DayEntries = $AllEntries | Where-Object { $_.date -eq $selectedDateFormatted }
-
-                                    if ($DayEntries.Count -gt 0) {
-                                        # Sort entries by time
-                                        $SortedEntries = $DayEntries | Sort-Object time
-
-                                        # Build the entries display
-                                        $entriesContent = @()
-
-                                        foreach ($entry in $SortedEntries) {
-                                            $entryJson = $entry | ConvertTo-Json -Depth 10 -Compress:$false
-
-                                            # Create entry type badges
-                                            $entryTypeBadges = $entry.entry_types | ForEach-Object {
-                                                $badgeColor = switch ($_) {
-                                                    'mood' { 'success' }
-                                                    'vitals' { 'primary' }
-                                                    'medications' { 'warning' }
-                                                    'activities' { 'info' }
-                                                    'pain' { 'error' }
-                                                    'weight' { 'secondary' }
-                                                    'sleep' { 'default' }
-                                                    default { 'default' }
-                                                }
-                                                New-UDChip -Label $_ -Color $badgeColor -Size small
-                                            }
-
-                                            $entriesContent += New-UDPaper -Children {
-                                                New-UDGrid -Container -Children {
-                                                    # Entry header with time and ID
-                                                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                                        New-UDGrid -Container -Children {
-                                                            New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                                                                New-UDTypography -Text "🕐 $($entry.time)" -Variant h6 -Style @{
-                                                                    marginBottom = '10px'
-                                                                    color        = '#1976d2'
-                                                                    fontWeight   = '600'
-                                                                }
-                                                            }
-                                                            New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                                                                New-UDTypography -Text "ID: $($entry.entry_id)" -Variant caption -Style @{
-                                                                    marginBottom = '10px'
-                                                                    color        = '#666'
-                                                                    textAlign    = 'right'
-                                                                    fontFamily   = 'monospace'
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-
-                                                    # Entry type badges
-                                                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                                        New-UDGrid -Container -Spacing 1 -Children {
-                                                            $entryTypeBadges
-                                                        }
-                                                    } -Style @{ marginBottom = '15px' }
-
-                                                    # JSON editor
-                                                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                                        New-UDTextbox -Id "entry_$($entry.entry_id)" -Label 'Health Entry Data (JSON)' -Multiline -Rows 20 -FullWidth -Value $entryJson -Style @{
-                                                            fontFamily = 'monospace'
-                                                            fontSize   = '12px'
-                                                        }
-                                                    }
-
-                                                    # Action buttons
-                                                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
-                                                        New-UDGrid -Container -Children {
-                                                            New-UDGrid -Item -ExtraSmallSize 8 -Children {
-                                                                New-UDButton -Text "💾 Update Entry ($($entry.time))" -Color primary -FullWidth -OnClick {
-                                                                    try {
-                                                                        # Get the updated JSON data
-                                                                        $updatedJson = (Get-UDElement -Id "entry_$($entry.entry_id)").value
-                                                                        $updatedEntry = $updatedJson | ConvertFrom-Json
-
-                                                                        # Validate entry has required fields
-                                                                        $requiredFields = @('entry_id', 'user_email', 'date', 'time', 'entry_types', 'data', 'notes')
-                                                                        $missingFields = $requiredFields | Where-Object { -not $updatedEntry.PSObject.Properties.Name.Contains($_) }
-
-                                                                        if ($missingFields.Count -gt 0) {
-                                                                            throw "Missing required fields: $($missingFields -join ', ')"
-                                                                        }
-
-                                                                        # Load current entries
-                                                                        Import-Module UserManagement -Force
-                                                                        $UserData = Initialize-UserContext -UserEmail $User
-
-                                                                        # Ensure EntriesPath is available
-                                                                        if (-not $UserData.EntriesPath -and $UserData.UserDataPath) {
-                                                                            $UserData | Add-Member -MemberType NoteProperty -Name 'EntriesPath' -Value (Join-Path $UserData.UserDataPath 'health-data/entries.json') -Force
-                                                                        }
-
-                                                                        $AllEntries = Get-Content $UserData.EntriesPath -Raw | ConvertFrom-Json
-
-                                                                        # Find and update the specific entry
-                                                                        $entryIndex = $AllEntries | ForEach-Object { $i = 0 } { if ($_.entry_id -eq $entry.entry_id) { $i }; $i++ }
-
-                                                                        if ($entryIndex -ne $null) {
-                                                                            $AllEntries[$entryIndex] = $updatedEntry
-
-                                                                            # Save back to file
-                                                                            $AllEntries | ConvertTo-Json -Depth 10 | Set-Content -Path $UserData.EntriesPath -Encoding UTF8
-
-                                                                            Show-UDToast -Message "✅ Successfully updated entry at $($entry.time)" -MessageColor Green -Duration 4000
-                                                                        }
-                                                                        else {
-                                                                            throw "Entry not found in user's data"
-                                                                        }
-                                                                    }
-                                                                    catch {
-                                                                        Show-UDToast -Message "❌ Error updating entry: $($_.Exception.Message)" -MessageColor Red -Duration 6000
-                                                                        Write-Error "Error updating entry: $($_.Exception.Message)"
-                                                                    }
-                                                                }
-                                                            }
-                                                            New-UDGrid -Item -ExtraSmallSize 4 -Children {
-                                                                New-UDButton -Text '🗑️ Delete' -Color secondary -FullWidth -OnClick {
-                                                                    # Show confirmation dialog
-                                                                    Show-UDModal -Content {
-                                                                        New-UDCard -Title '⚠️ Confirm Deletion' -Content {
-                                                                            New-UDTypography -Text "Are you sure you want to delete the entry at $($entry.time) on $($parsedDate.ToString('MM/dd/yyyy'))?" -Variant body1 -Style @{
-                                                                                marginBottom = '20px'
-                                                                                textAlign    = 'center'
-                                                                            }
-                                                                            New-UDTypography -Text "Entry Types: $($entry.entry_types -join ', ')" -Variant body2 -Style @{
-                                                                                marginBottom = '20px'
-                                                                                textAlign    = 'center'
-                                                                                fontWeight   = 'bold'
-                                                                            }
-                                                                            New-UDTypography -Text 'This action cannot be undone. A backup will be created automatically.' -Variant caption -Style @{
-                                                                                marginBottom = '20px'
-                                                                                textAlign    = 'center'
-                                                                                color        = '#666'
-                                                                                fontStyle    = 'italic'
-                                                                            }
-
-                                                                            New-UDGrid -Container -Children {
-                                                                                New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                                                                                    New-UDButton -Text '❌ Cancel' -Color default -FullWidth -OnClick {
-                                                                                        Hide-UDModal
-                                                                                    }
-                                                                                }
-                                                                                New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                                                                                    New-UDButton -Text '🗑️ Delete Entry' -Color secondary -FullWidth -OnClick {
-                                                                                        try {
-                                                                                            # Create backup first
-                                                                                            Import-Module UserManagement -Force
-                                                                                            $UserData = Initialize-UserContext -UserEmail $User
-
-                                                                                            # Ensure EntriesPath is available
-                                                                                            if (-not $UserData.EntriesPath -and $UserData.UserDataPath) {
-                                                                                                $UserData | Add-Member -MemberType NoteProperty -Name 'EntriesPath' -Value (Join-Path $UserData.UserDataPath 'health-data/entries.json') -Force
-                                                                                            }
-
-                                                                                            $AllEntries = Get-Content $UserData.EntriesPath -Raw | ConvertFrom-Json
-
-                                                                                            # Create backup file
-                                                                                            $backupPath = $UserData.EntriesPath + ".backup_$(Get-Date -Format 'yyyyMMdd_HHmmss')"
-                                                                                            $AllEntries | ConvertTo-Json -Depth 10 | Set-Content -Path $backupPath -Encoding UTF8
-
-                                                                                            # Remove the entry
-                                                                                            $UpdatedEntries = $AllEntries | Where-Object { $_.entry_id -ne $entry.entry_id }
-
-                                                                                            # Save updated entries
-                                                                                            $UpdatedEntries | ConvertTo-Json -Depth 10 | Set-Content -Path $UserData.EntriesPath -Encoding UTF8
-
-                                                                                            Show-UDToast -Message "✅ Successfully deleted entry at $($entry.time). Backup created." -MessageColor Green -Duration 4000
-
-                                                                                            # Hide the modal
-                                                                                            Hide-UDModal
-
-                                                                                            # Refresh the data by triggering date change
-                                                                                            Invoke-UDJavaScript -JavaScript @'
-                                                                                                document.getElementById('selectedDate').dispatchEvent(new Event('change'));
-'@
-                                                                                        }
-                                                                                        catch {
-                                                                                            Show-UDToast -Message "❌ Error deleting entry: $($_.Exception.Message)" -MessageColor Red -Duration 6000
-                                                                                            Write-Error "Error deleting entry: $($_.Exception.Message)"
-                                                                                            Hide-UDModal
-                                                                                        }
-                                                                                    }
-                                                                                }
-                                                                            }
-                                                                        }
-                                                                    } -FullWidth -MaxWidth 'sm'
-                                                                }
-                                                            }
-                                                        }
-                                                    }
-                                                }
-                                            } -Style @{
-                                                padding         = '20px'
-                                                margin          = '10px 0'
-                                                backgroundColor = '#f8f9fa'
-                                                borderLeft      = '4px solid #007bff'
-                                                borderRadius    = '8px'
-                                            }
-                                        }
-
-                                        # Update the entries container
-                                        Set-UDElement -Id 'entriesContainer' -Content {
-                                            $entriesContent
-                                        }
-
-                                        # Show summary info
-                                        $entryTypeCount = @{}
-                                        $DayEntries | ForEach-Object {
-                                            $_.entry_types | ForEach-Object {
-                                                if ($entryTypeCount.ContainsKey($_)) {
-                                                    $entryTypeCount[$_]++
-                                                }
-                                                else {
-                                                    $entryTypeCount[$_] = 1
-                                                }
-                                            }
-                                        }
-
-                                        $summaryItems = $entryTypeCount.GetEnumerator() | ForEach-Object {
-                                            "$($_.Key): $($_.Value)"
-                                        }
-
-                                        Set-UDElement -Id 'summaryContainer' -Content {
-                                            New-UDAlert -Severity info -Text "📊 Day Summary: $($DayEntries.Count) entries | $($summaryItems -join ' | ')"
-                                        }
-
-                                        Show-UDToast -Message "📋 Loaded $($DayEntries.Count) health entries for $($parsedDate.ToString('MM/dd/yyyy'))" -MessageColor Blue -Duration 3000
-                                    }
-                                    else {
-                                        Set-UDElement -Id 'entriesContainer' -Content {
-                                            New-UDAlert -Severity warning -Text "No health entries found for $($parsedDate.ToString('MM/dd/yyyy')). Please select a date that has existing health data."
-                                        }
-                                        Set-UDElement -Id 'summaryContainer' -Content { }
-                                    }
-                                }
-                                else {
-                                    Set-UDElement -Id 'entriesContainer' -Content {
-                                        New-UDAlert -Severity error -Text "No entries file found. Please create some health entries first."
-                                    }
-                                    Set-UDElement -Id 'summaryContainer' -Content { }
-                                }
-                            }
-                            catch {
-                                Show-UDToast -Message "❌ Error loading entries: $($_.Exception.Message)" -MessageColor Red -Duration 5000
-                                Write-Error "Error loading entries for date: $($_.Exception.Message)"
-                                Set-UDElement -Id 'entriesContainer' -Content {
-                                    New-UDAlert -Severity error -Text "Error loading entries: $($_.Exception.Message)"
-                                }
+                            Write-Error "Failed to load user medications: $_"
+                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                New-UDAlert -Severity error -Text 'Unable to load your medication preferences. Please check your Settings.'
                             }
                         }
                     }
+
+                    New-UDTypography -Text '💡 Select all medications taken at the time of entry' -Variant caption -Style @{
+                        marginTop = '15px'
+                        color     = 'var(--theme-palette-text-secondary)'
+                        fontStyle = 'italic'
+                        textAlign = 'center'
+                    }
+                } -In:$medInitialState -Collapse -Timeout 500
+            } -Style @{ marginBottom = '20px' }
+
+            # Activities Section - Enhanced with prepopulation
+            $activityInitialChecked = $IsEditMode -and $ExistingEntry.entry_types -contains 'activities'
+            New-UDCheckBox -Id 'add_activity' -Label '🏃‍♂️ Add Activity Entry' -Checked:$activityInitialChecked -OnChange {
+                if ($EventData) {
+                    Set-UDElement -Id 'activities_section' -Content {
+                        New-UDCard -Title '🏃‍♂️ Physical Activities' -Content {
+                            # Prepopulate activities if editing
+                            if ($IsEditMode -and $ExistingEntry.data.activities) {
+                                $existingActivities = $ExistingEntry.data.activities
+                                for ($i = 0; $i -lt $existingActivities.Count; $i++) {
+                                    $activity = $existingActivities[$i]
+                                    $entryNum = $i + 1
+
+                                    New-UDPaper -Id $(if ($entryNum -eq 1) { $null } else { "activities_entry_$entryNum" }) -Children {
+                                        New-UDGrid -Container -Children {
+                                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                                New-UDTypography -Text "Activity #$entryNum" -Variant subtitle2 -Style @{
+                                                    marginBottom = '15px'
+                                                    color        = 'var(--theme-palette-primary-main)'
+                                                    fontWeight   = '500'
+                                                }
+                                            }
+                                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 5 -Children {
+                                                New-UDTextbox -Id "activities_type_$entryNum" -Label '🏃‍♂️ Activity Type' -Type text -Placeholder 'Walking, Running, Swimming, etc.' -FullWidth -Value $activity.name
+                                            }
+                                            New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 3 -Children {
+                                                New-UDTextbox -Id "activities_length_$entryNum" -Label '⏱️ Duration (min)' -Type number -Placeholder '20' -FullWidth -Value $activity.duration_minutes
+                                            }
+                                            New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 4 -Children {
+                                                New-UDTextbox -Id "activities_note_$entryNum" -Label '📝 Note' -Type text -Placeholder 'Optional note' -FullWidth -Value $activity.note
+                                            }
+                                        }
+                                    } -Style @{
+                                        padding         = '15px'
+                                        margin          = '10px 0'
+                                        backgroundColor = 'var(--theme-palette-background-paper)'
+                                        borderLeft      = '4px solid var(--theme-palette-success-main)'
+                                        borderRadius    = '8px'
+                                        border          = '1px solid var(--theme-palette-divider)'
+                                    }
+                                }
+                            }
+                            else {
+                                # Default single activity entry
+                                New-ActivityEntryElement -EntryNumber 1 -IncludeRemoveButton $false
+                            }
+
+                            New-UDElement -Id 'additional_activities_container' -Tag 'div'
+
+                            New-UDContainer -Children {
+                                New-UDButton -Text '➕ Add Another Activity' -Color primary -Variant outlined -OnClick {
+                                    if (-not $Session:ActivityEntryCounter) { $Session:ActivityEntryCounter = 2 }
+                                    $entryCount = $Session:ActivityEntryCounter
+                                    $Session:ActivityEntryCounter++
+
+                                    Show-UDToast -Message "Adding Activity #$entryCount" -Duration 2000
+
+                                    Add-UDElement -ParentId 'additional_activities_container' -Content {
+                                        $currentEntryCount = $entryCount
+                                        New-ActivityEntryElement -EntryNumber $currentEntryCount -IncludeRemoveButton $true
+                                    }
+                                }
+                            }
+
+                            New-UDTypography -Text '💡 Track your physical activities and exercise duration' -Variant caption -Style @{
+                                marginTop = '15px'
+                                color     = 'var(--theme-palette-text-secondary)'
+                                fontStyle = 'italic'
+                                textAlign = 'center'
+                            }
+                        } -Style @{ marginBottom = '20px' }
+                    }
                 }
-                New-UDGrid -Item -ExtraSmallSize 6 -Children {
-                    New-UDButton -Text '🔄 Refresh Data' -Color secondary -FullWidth -OnClick {
-                        # Trigger the date change event to reload data
-                        $currentSelectedDate = (Get-UDElement -Id 'selectedDate').value
-                        if (-not [string]::IsNullOrWhiteSpace($currentSelectedDate)) {
-                            Invoke-UDJavaScript -JavaScript @'
-                                document.getElementById('selectedDate').dispatchEvent(new Event('change'));
-'@
+                else {
+                    Set-UDElement -Id 'activities_section' -Content { }
+                }
+            }
+            New-UDElement -Id 'activities_section' -Tag 'div'
+
+            # Pain Section - Enhanced with prepopulation
+            $painInitialChecked = $IsEditMode -and $ExistingEntry.entry_types -contains 'pain'
+            New-UDCheckBox -Id 'add_pain' -Label '🩹 Add Pain Entry' -Checked:$painInitialChecked -OnChange {
+                if ($EventData) {
+                    Set-UDElement -Id 'pain_section' -Content {
+                        New-UDCard -Title '🩹 Pain Tracking' -Content {
+                            # Prepopulate pain entries if editing
+                            if ($IsEditMode -and $ExistingEntry.data.pain) {
+                                $existingPain = $ExistingEntry.data.pain
+                                for ($i = 0; $i -lt $existingPain.Count; $i++) {
+                                    $pain = $existingPain[$i]
+                                    $entryNum = $i + 1
+
+                                    New-UDPaper -Id $(if ($entryNum -eq 1) { $null } else { "pain_entry_$entryNum" }) -Children {
+                                        New-UDGrid -Container -Children {
+                                            New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                                New-UDTypography -Text "Pain Entry #$entryNum" -Variant subtitle2 -Style @{
+                                                    marginBottom = '15px'
+                                                    color        = 'var(--theme-palette-primary-main)'
+                                                    fontWeight   = '500'
+                                                }
+                                            }
+                                            New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 4 -Children {
+                                                New-UDSelect -Id "pain_location_$entryNum" -Label '🎯 Pain Location' -FullWidth -Value $pain.location -Option {
+                                                    # Add options based on user preferences
+                                                    New-UDSelectOption -Name 'Back' -Value 'back'
+                                                    New-UDSelectOption -Name 'Right Glute' -Value 'right_glute'
+                                                    New-UDSelectOption -Name 'Left Glute' -Value 'left_glute'
+                                                    New-UDSelectOption -Name 'Glutes' -Value 'glutes'
+                                                    New-UDSelectOption -Name 'Right Hip' -Value 'righthip'
+                                                    New-UDSelectOption -Name 'Left Hip' -Value 'lhip'
+                                                    New-UDSelectOption -Name 'Hips' -Value 'hips'
+                                                    New-UDSelectOption -Name 'Right Quad' -Value 'rquad'
+                                                    New-UDSelectOption -Name 'Left Quad' -Value 'lquad'
+                                                    New-UDSelectOption -Name 'Quads' -Value 'quads'
+                                                    New-UDSelectOption -Name "Other" -Value "other"
+                                                }
+                                            }
+                                            New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 2 -Children {
+                                                New-UDTextbox -Id "pain_level_$entryNum" -Label '📊 Level (0-10)' -Type number -Minimum 0.0 -Maximum 10.0 -FullWidth -Value $pain.severity
+                                            }
+                                            New-UDGrid -Item -ExtraSmallSize 6 -SmallSize 6 -Children {
+                                                New-UDTextbox -Id "pain_note_$entryNum" -Label '📝 Note' -Type text -Placeholder 'Optional note' -FullWidth -Value $pain.note
+                                            }
+                                        }
+                                    } -Style @{
+                                        padding         = '15px'
+                                        margin          = '10px 0'
+                                        backgroundColor = 'var(--theme-palette-background-paper)'
+                                        borderLeft      = '4px solid var(--theme-palette-error-main)'
+                                        borderRadius    = '8px'
+                                        border          = '1px solid var(--theme-palette-divider)'
+                                        boxShadow       = '0 2px 4px rgba(0,0,0,0.1)'
+                                    }
+                                }
+                            }
+                            else {
+                                # Default single pain entry
+                                New-PainEntryElement -EntryNumber 1 -ConfiguredLocations @()
+                            }
+
+                            New-UDElement -Id 'additional_pain_container' -Tag 'div'
+
+                            New-UDContainer -Children {
+                                New-UDButton -Text '➕ Add Another Pain Entry' -Color primary -Variant outlined -OnClick {
+                                    if (-not $Session:PainEntryCounter) { $Session:PainEntryCounter = 2 }
+                                    $entryCount = $Session:PainEntryCounter
+                                    $Session:PainEntryCounter++
+
+                                    Show-UDToast -Message "Adding Pain Entry #$entryCount" -Duration 2000
+
+                                    Add-UDElement -ParentId 'additional_pain_container' -Content {
+                                        $currentEntryCount = $entryCount
+                                        New-PainEntryElement -EntryNumber $currentEntryCount -IncludeRemoveButton $true -ConfiguredLocations @()
+                                    }
+                                }
+                            }
+
+                            New-UDTypography -Text '💡 Track pain levels and locations for better health monitoring' -Variant caption -Style @{
+                                marginTop = '15px'
+                                color     = 'var(--theme-palette-text-secondary)'
+                                fontStyle = 'italic'
+                                textAlign = 'center'
+                            }
+                        } -Style @{ marginBottom = '20px' }
+                    }
+                }
+                else {
+                    Set-UDElement -Id 'pain_section' -Content { }
+                }
+            }
+            New-UDElement -Id 'pain_section' -Tag 'div'
+
+            # Vitals Section - Enhanced with prepopulation
+            $vitalsInitialChecked = $IsEditMode -and $ExistingEntry.entry_types -contains 'vitals'
+            New-UDCheckBox -Id 'add_vitals' -Label '🩺 Add Vital Signs' -Checked:$vitalsInitialChecked -OnChange {
+                if ($EventData) {
+                    Set-UDElement -Id 'vitals_section' -Content {
+                        New-UDCard -Title '🩺 Vital Signs' -Content {
+                            New-UDPaper -Children {
+                                New-UDGrid -Container -Children {
+                                    New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                                        New-UDTypography -Text 'Vital Measurements' -Variant subtitle2 -Style @{
+                                            marginBottom = '15px'
+                                            color        = 'var(--theme-palette-primary-main)'
+                                            fontWeight   = '500'
+                                        }
+                                    }
+
+                                    # Prepopulate vitals if editing
+                                    $o2Value = if ($IsEditMode -and $ExistingEntry.data.vitals) { $ExistingEntry.data.vitals.oxygen_saturation } else { '' }
+                                    $bpValue = if ($IsEditMode -and $ExistingEntry.data.vitals) { $ExistingEntry.data.vitals.blood_pressure } else { '' }
+
+                                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
+                                        New-UDTextbox -Id 'o2' -Label '🫁 Oxygen Saturation (%)' -Type number -Placeholder '95-100' -FullWidth -Value $o2Value
+                                    }
+                                    New-UDGrid -Item -ExtraSmallSize 12 -SmallSize 6 -Children {
+                                        New-UDTextbox -Id 'bpr' -Label '❤️ Blood Pressure' -Type text -Placeholder '120/80' -FullWidth -Value $bpValue
+                                    }
+                                }
+                            } -Style @{
+                                padding         = '15px'
+                                margin          = '10px 0'
+                                backgroundColor = 'var(--theme-palette-background-paper)'
+                                borderLeft      = '4px solid var(--theme-palette-info-main)'
+                                borderRadius    = '8px'
+                                border          = '1px solid var(--theme-palette-divider)'
+                            }
+
+                            New-UDTypography -Text '💡 Record oxygen saturation and blood pressure readings' -Variant caption -Style @{
+                                marginTop = '15px'
+                                color     = 'var(--theme-palette-text-secondary)'
+                                fontStyle = 'italic'
+                                textAlign = 'center'
+                            }
+                        } -Style @{ marginBottom = '20px' }
+                    }
+                }
+                else {
+                    Set-UDElement -Id 'vitals_section' -Content { }
+                }
+            }
+            New-UDElement -Id 'vitals_section' -Tag 'div'
+
+            # Notes and Sleep - prepopulated if editing
+            $notesValue = if ($IsEditMode) { $ExistingEntry.notes } else { '' }
+            $sleepValue = if ($IsEditMode -and $ExistingEntry.data.sleep) { $ExistingEntry.data.sleep.sleep_hours } else { '' }
+
+            New-UDGrid -Container -Children {
+                New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                    New-UDTextbox -Id 'notes' -Label '📝 Additional Notes' -Type text -Placeholder 'Any additional information' -FullWidth -Value $notesValue
+                }
+            }
+
+            New-UDGrid -Container -Children {
+                New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                    New-UDTextbox -Id 'sleep' -Label '😴 Sleep Duration' -Type text -Placeholder 'e.g., 7.5 hours, 8:30, 6h 45m' -FullWidth -Value $sleepValue
+                }
+            }
+
+            # Mood Section - Enhanced with prepopulation
+            $moodValue = if ($IsEditMode -and $ExistingEntry.data.mood) { $ExistingEntry.data.mood.level } else { '' }
+            $moodNoteValue = if ($IsEditMode -and $ExistingEntry.data.mood) { $ExistingEntry.data.mood.note } else { '' }
+
+            New-UDCard -Title '😊 Mood Tracking' -Content {
+                New-UDPaper -Children {
+                    New-UDStack -Direction Column -Children {
+                        New-UDTypography -Text 'How are you feeling?' -Variant subtitle2 -Style @{
+                            marginBottom = '20px'
+                            color        = 'var(--theme-palette-primary-main)'
+                            fontWeight   = '500'
+                            textAlign    = 'center'
                         }
+
+                        New-UDTextbox -Id 'mood' -Type 'text' -Value $moodValue -Style @{ display = 'none' }
+
+                        New-UDStack -Direction Row -JustifyContent center -Spacing 2 -Children {
+                            # Mood buttons with prepopulation
+                            @(1, 2, 3, 4, 5) | ForEach-Object {
+                                $moodLevel = $_
+                                $emoji = switch ($_) {
+                                    1 { '😞' }
+                                    2 { '🙁' }
+                                    3 { '😐' }
+                                    4 { '🙂' }
+                                    5 { '😃' }
+                                }
+                                $label = switch ($_) {
+                                    1 { 'awful' }
+                                    2 { 'bad' }
+                                    3 { 'meh' }
+                                    4 { 'good' }
+                                    5 { 'rad' }
+                                }
+
+                                $isSelected = $IsEditMode -and $moodValue -eq $moodLevel
+                                $buttonColor = if ($isSelected) { 'primary' } else { 'default' }
+                                $buttonVariant = if ($isSelected) { 'contained' } else { 'outlined' }
+
+                                New-UDButton -Id "mood_$moodLevel" -Text $emoji -Variant $buttonVariant -Color $buttonColor -Size large -OnClick {
+                                    $Session:SelectedMood = $moodLevel
+                                    Set-UDElement -Id 'mood_display' -Content {
+                                        New-UDTypography -Text "Feeling: $label $emoji" -Variant body1 -Style @{
+                                            color      = 'var(--theme-palette-success-main)'
+                                            fontWeight = 'bold'
+                                            textAlign  = 'center'
+                                        }
+                                    }
+                                    Set-MoodButtonState -SelectedMood $moodLevel
+                                } -Style @{ fontSize = '2rem'; minWidth = '60px'; minHeight = '60px' }
+                                New-UDTypography -Text $label -Variant caption -Style @{ textAlign = 'center'; marginTop = '5px' }
+                            }
+                        }
+
+                        # Display selected mood
+                        New-UDElement -Id 'mood_display' -Tag 'div' -Content {
+                            if ($IsEditMode -and $moodValue) {
+                                $moodText = switch ($moodValue) {
+                                    1 { "Feeling: Awful 😞" }
+                                    2 { "Feeling: Bad 🙁" }
+                                    3 { "Feeling: Meh 😐" }
+                                    4 { "Feeling: Good 🙂" }
+                                    5 { "Feeling: Rad! 😃" }
+                                    default { "Select your mood above" }
+                                }
+                                New-UDTypography -Text $moodText -Variant body1 -Style @{
+                                    textAlign  = 'center'
+                                    color      = 'var(--theme-palette-success-main)'
+                                    fontWeight = 'bold'
+                                    marginTop  = '15px'
+                                }
+                            }
+                            else {
+                                New-UDTypography -Text 'Select your mood above' -Variant body2 -Style @{
+                                    textAlign = 'center'
+                                    color     = 'var(--theme-palette-text-secondary)'
+                                    marginTop = '15px'
+                                }
+                            }
+                        }
+
+                        New-UDTextbox -Id 'mood_note' -Label '💭 Mood Note (Optional)' -Type text -Placeholder 'How are you feeling?' -FullWidth -Multiline -Rows 2 -Value $moodNoteValue
+                    }
+                }
+
+                New-UDTypography -Text '💡 Track your daily mood to identify patterns and trends' -Variant caption -Style @{
+                    marginTop = '15px'
+                    color     = 'var(--theme-palette-text-secondary)'
+                    fontStyle = 'italic'
+                    textAlign = 'center'
+                }
+            } -Style @{
+                padding         = '20px'
+                margin          = '10px 0'
+                backgroundColor = 'var(--theme-palette-background-paper)'
+                borderLeft      = '4px solid var(--theme-palette-warning-main)'
+                borderRadius    = '8px'
+                border          = '1px solid var(--theme-palette-divider)'
+            }
+
+            New-UDGrid -Container -Children {
+                New-UDGrid -Item -ExtraSmallSize 12 -Children {
+                    New-UDUpload -Id 'ImageFile' -Text 'Select Image to Upload' -Accept 'image/*'
+                }
+            }
+
+        } -OnSubmit {
+            # Enhanced form submission to handle both create and edit modes
+            Import-Module -Name fusion -Force
+            $FormEvent = $EventData[0]
+            $FormEvent.timestamp = [datetime]::Parse($FormEvent.timestamp).ToString('HHmm')
+            $FormEvent.date = [datetime]::Parse($FormEvent.date).ToString('MMdd')
+            $FormEvent.mood = $Session:SelectedMood
+
+            Write-Information "Form input (Edit Mode: $IsEditMode)"
+            Write-Information ($FormEvent | ConvertTo-Json -Depth 99)
+
+            if ($IsEditMode) {
+                # Update existing entry
+                try {
+                    # Convert form data to v2 format
+                    $UpdatedEntry = ConvertTo-EntriesFormat -Entry ($FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json) -UserEmail $User
+
+                    # Preserve the original entry_id
+                    $UpdatedEntry.entry_id = $ExistingEntry.entry_id
+
+                    Write-Information "Updated entry converted"
+                    Write-Information ($UpdatedEntry | ConvertTo-Json -Depth 99)
+
+                    # Load all entries
+                    $AllEntries = Get-Content $UserData.EntriesPath -Raw | ConvertFrom-Json
+
+                    # Find and replace the existing entry
+                    $entryIndex = $AllEntries | ForEach-Object { $i = 0 } { if ($_.entry_id -eq $ExistingEntry.entry_id) { $i }; $i++ }
+
+                    if ($entryIndex -ne $null) {
+                        $AllEntries[$entryIndex] = $UpdatedEntry
+
+                        # Save back to file
+                        $AllEntries | ConvertTo-Json -Depth 10 | Set-Content -Path $UserData.EntriesPath -Encoding UTF8
+
+                        Write-Information 'Successfully updated existing entry'
+                        Show-UDToast -Message 'Entry updated successfully!' -MessageColor Green -Duration 3000
+                    }
+                    else {
+                        throw "Entry not found for update"
+                    }
+                }
+                catch {
+                    Write-Error "Error updating entry: $($_.Exception.Message)"
+                    Show-UDToast -Message "Error updating entry: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+                }
+            }
+            else {
+                # Create new entry (existing logic)
+                $Entry = ConvertTo-EntriesFormat -Entry ($FormEvent | ConvertTo-Json -Depth 99 | ConvertFrom-Json) -UserEmail $User
+                Write-Information "New entry converted"
+                Write-Information ($Entry | ConvertTo-Json -Depth 99)
+
+                try {
+                    $saveResult = Save-ConvertedEntry -ConvertedEntry $Entry -EntriesPath $UserData.EntriesPath
+                    if ($saveResult) {
+                        Write-Information 'Successfully saved new entry to entries.json'
+                        Show-UDToast -Message 'Entry saved successfully!' -MessageColor Green -Duration 3000
+                    }
+                    else {
+                        Write-Warning 'Failed to save entry - function returned false'
+                        Show-UDToast -Message 'Failed to save entry' -MessageColor Red -Duration 5000
+                    }
+                }
+                catch {
+                    Write-Error "Error saving entry: $($_.Exception.Message)"
+                    Show-UDToast -Message "Error saving entry: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+                }
+            }
+
+            # Handle image upload (same for both modes)
+            if ($EventData.ImageFile) {
+                $imageFile = $EventData.ImageFile
+                $imageFolderPath = if ($env:FUSION_DATA_PATH) {
+                    Join-Path $env:FUSION_DATA_PATH 'img'
+                }
+                else {
+                    '/home/data/fusion-data/img'
+                }
+                $imageExt = $imageFile.Name.Split('.')[-1]
+                $imageFileName = "$($EventData.date).$imageExt"
+                $imagePath = Join-Path $imageFolderPath $imageFileName
+
+                try {
+                    if (-not (Test-Path $imageFolderPath)) {
+                        New-Item -ItemType Directory -Path $imageFolderPath -Force
+                    }
+                    Copy-Item $EventData.ImageFile.FileName $imagePath
+                    Write-Information "Image saved to: $imagePath"
+                    Show-UDToast -Message 'Image uploaded successfully!' -MessageColor Green -Duration 3000
+                }
+                catch {
+                    Write-Error "Error saving image: $($_.Exception.Message)"
+                    Show-UDToast -Message "Error uploading image: $($_.Exception.Message)" -MessageColor Red -Duration 5000
+                }
+            }
+
+            # Update cache (same for both modes)
+            try {
+                Import-Module -Name GetFusion -Force
+                if (Test-Path $UserData.EntriesPath) {
+                    try {
+                        $Entries = Get-EntriesData -entriesPath $UserData.EntriesPath
+                        Set-PSUCache -Key 'entriesData' -Value $Entries -AbsoluteExpiration (Get-Date).AddDays(1)
+                        Write-Information 'Cache updated with entries data'
+                    }
+                    catch {
+                        Write-Warning "Error updating cache: $($_.Exception.Message)"
+                        Remove-PSUCache -Key 'entriesData'
                     }
                 }
             }
-
-            New-UDTypography -Text '💡 Select a date above to load all health entries for editing' -Variant caption -Style @{
-                marginTop = '15px'
-                color     = '#666'
-                fontStyle = 'italic'
-                textAlign = 'center'
-            }
-        } -Style @{ marginBottom = '20px' }
-
-        # Summary Information Container
-        New-UDElement -Id 'summaryContainer' -Tag 'div'
-
-        # Entries Container
-        New-UDElement -Id 'entriesContainer' -Tag 'div' -Content {
-            New-UDTypography -Text '👆 Please select a date above to view and edit health entries' -Variant body1 -Style @{
-                textAlign = 'center'
-                color     = '#999'
-                margin    = '40px 0'
-                fontStyle = 'italic'
+            catch {
+                Write-Error "Error updating cache: $($_.Exception.Message)"
+                Show-UDToast -Message "Warning: Cache update failed, but entry was saved" -MessageColor Orange -Duration 3000
             }
         }
-
-        # Help Section
-        New-UDCard -Title 'ℹ️ Help & Tips (Schema v2.0)' -Content {
-            New-UDList -Children {
-                New-UDListItem -Label '📝 Each entry shows the complete v2 schema JSON structure'
-                New-UDListItem -Label '🏷️ Entry type badges show what health data is included in each entry'
-                New-UDListItem -Label '⚠️ Ensure all required fields are present: entry_id, user_email, date, time, entry_types, data, notes'
-                New-UDListItem -Label '🔢 Entry IDs use yyMMddHHmm format (e.g., 2507151430 for July 15, 2025, 2:30 PM)'
-                New-UDListItem -Label '📊 Data section contains arrays for medications, activities, pain; objects for mood, vitals, weight, sleep'
-                New-UDListItem -Label '💾 Click Update Entry to save changes to a health entry'
-                New-UDListItem -Label '�️ Delete operations create automatic timestamped backups'
-                New-UDListItem -Label '� Use Refresh to reload data if it seems outdated'
-                New-UDListItem -Label '� All data is user-specific and isolated from other users'
-            }
-        } -Style @{ marginTop = '30px'; backgroundColor = '#f0f8ff' }
     }
 }
 
-New-UDApp -Title 'Update Entry' -Pages $Pages
+New-UDApp -Title 'Health Entry Form' -Pages $Pages
