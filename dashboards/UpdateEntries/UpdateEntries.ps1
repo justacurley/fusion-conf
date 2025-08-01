@@ -1,4 +1,7 @@
 ﻿$Pages += New-UDPage -Name 'entry' -url '/entry:entryid' -content {
+    if ($entryid) {
+        $entryid = $entryid.replace(":",'')
+    }
     Show-UDToast $entryid -Persistent
     Import-Module UserManagement -Force
     Import-Module GetFusion -Force
