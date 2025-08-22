@@ -1,0 +1,215 @@
+name: Build Modules
+
+on:
+  push:
+    paths:
+      - 'fusion-conf/Modules/**'
+  pull_request:
+    paths:
+      - 'fusion-conf/Modules/**'
+  workflow_dispatch:
+    inputs:
+      modules:
+        description: 'Comma-separated list of modules to build (default: all)'
+        required: false
+        default: 'UserManagement,fusion,GetFusion,HealthEntryClasses'
+
+jobs:
+  determine-modules:
+    name: Determine Modules to Build
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.set-modules.outputs.modules }}
+    steps:
+      - name: Set Modules Matrix
+        id: set-modules
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            MODULES="${{ github.event.inputs.modules }}"
+          else
+            MODULES="UserManagement,fusion,GetFusion,HealthEntryClasses"
+          fi
+
+          # Convert comma-separated string to JSON array
+          MODULES_JSON=$(echo "$MODULES" | jq -R -s -c 'split(",") | map(select(length > 0) | gsub("^\\s+|\\s+$"; ""))')
+          echo "modules=$MODULES_JSON" >> $GITHUB_OUTPUT
+
+  build:
+    name: Build ${{ matrix.module }}
+    runs-on: ubuntu-latest
+    needs: determine-modules
+    strategy:
+      matrix:
+        module: ${{ fromJson(needs.determine-modules.outputs.modules) }}
+      fail-fast: false
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup PowerShell
+      run: |
+        # Install PowerShell 7.4
+        wget -q https://github.com/PowerShell/PowerShell/releases/download/v7.4.0/powershell_7.4.0-1.deb_amd64.deb
+        sudo dpkg -i powershell_7.4.0-1.deb_amd64.deb
+        sudo apt-get install -f -y
+
+        # Verify installation
+        pwsh --version
+
+    - name: Install PowerShell Dependencies
+      run: |
+        pwsh -Command "
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+
+        # Install required modules
+        \$modules = @('Pester', 'PSScriptAnalyzer', 'platyPS', 'Universal')
+        foreach (\$module in \$modules) {
+          try {
+            Write-Host \"Installing \$module...\"
+            Install-Module -Name \$module -Force -Scope CurrentUser -ErrorAction Stop
+            Write-Host \"✅ \$module installed successfully\"
+          } catch {
+            Write-Error \"❌ Failed to install \$module: \$_\"
+            exit 1
+          }
+        }
+        "
+
+    - name: Validate Module Structure
+      run: |
+        MODULE_PATH="Modules/${{ matrix.module }}"
+        echo "$PWD"
+        if [ ! -d "$MODULE_PATH" ]; then
+          echo "❌ Module directory not found: $MODULE_PATH"
+          exit 1
+        fi
+
+        if [ ! -f "$MODULE_PATH/build.ps1" ]; then
+          echo "❌ build.ps1 not found in $MODULE_PATH"
+          exit 1
+        fi
+
+        echo "✅ Module structure validation passed for ${{ matrix.module }}"
+
+    - name: Run Build Script - Test
+      run: |
+        cd Modules/${{ matrix.module }}
+        chmod +x build.ps1
+
+        echo "🧪 Running tests for ${{ matrix.module }}..."
+        pwsh -File ./build.ps1 -Task Test
+      env:
+        POWERSHELL_TELEMETRY_OPTOUT: 1
+
+    - name: Run Build Script - Validate
+      run: |
+        cd Modules/${{ matrix.module }}
+
+        echo "🔍 Validating module manifest for ${{ matrix.module }}..."
+        pwsh -File ./build.ps1 -Task Validate
+      env:
+        POWERSHELL_TELEMETRY_OPTOUT: 1
+
+    - name: Run Build Script - Coverage (if supported)
+      continue-on-error: true
+      run: |
+        cd Modules/${{ matrix.module }}
+
+        echo "📊 Running code coverage for ${{ matrix.module }}..."
+        pwsh -File ./build.ps1 -Task TestWithCoverage
+      env:
+        POWERSHELL_TELEMETRY_OPTOUT: 1
+
+    - name: Upload Test Results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: test-results-${{ matrix.module }}
+        path: |
+          Modules/${{ matrix.module }}/Tests/TestResults*.xml
+          Modules/${{ matrix.module }}/Tests/Coverage*.xml
+          Modules/${{ matrix.module }}/Tests/*.html
+        retention-days: 7
+
+    - name: Create Module Package
+      if: success()
+      run: |
+        cd Modules/${{ matrix.module }}
+
+        # Create a clean package directory
+        mkdir -p package/${{ matrix.module }}
+
+        # Copy module files
+        if [ -f "${{ matrix.module }}.psd1" ]; then
+          cp ${{ matrix.module }}.psd1 package/${{ matrix.module }}/
+        fi
+
+        if [ -f "${{ matrix.module }}.psm1" ]; then
+          cp ${{ matrix.module }}.psm1 package/${{ matrix.module }}/
+        fi
+
+        if [ -d "Public" ]; then
+          cp -r Public package/${{ matrix.module }}/
+        fi
+
+        if [ -d "Private" ]; then
+          cp -r Private package/${{ matrix.module }}/
+        fi
+
+        if [ -d "Classes" ]; then
+          cp -r Classes package/${{ matrix.module }}/
+        fi
+
+        if [ -f "README.md" ]; then
+          cp README.md package/${{ matrix.module }}/
+        fi
+
+    - name: Upload Module Package
+      uses: actions/upload-artifact@v4
+      if: success()
+      with:
+        name: module-package-${{ matrix.module }}
+        path: Modules/${{ matrix.module }}/package/
+        retention-days: 30
+
+  build-summary:
+    name: Build Summary
+    runs-on: ubuntu-latest
+    needs: [determine-modules, build]
+    if: always()
+
+    steps:
+    - name: Generate Build Summary
+      run: |
+        echo "# PowerShell Modules Build Summary" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "**Trigger:** ${{ github.event_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "**Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+
+        echo "## Module Build Results" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "| Module | Status |" >> $GITHUB_STEP_SUMMARY
+        echo "|--------|--------|" >> $GITHUB_STEP_SUMMARY
+
+        # Parse the modules that were supposed to be built
+        MODULES="${{ needs.determine-modules.outputs.modules }}"
+        echo "$MODULES" | jq -r '.[]' | while read module; do
+          if [ "${{ needs.build.result }}" == "success" ]; then
+            echo "| $module | ✅ Success |" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.build.result }}" == "failure" ]; then
+            echo "| $module | ❌ Failed |" >> $GITHUB_STEP_SUMMARY
+          elif [ "${{ needs.build.result }}" == "cancelled" ]; then
+            echo "| $module | ⏹️ Cancelled |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| $module | ⏸️ Skipped |" >> $GITHUB_STEP_SUMMARY
+          fi
+        done
+
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "## Artifacts" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "- Test results and coverage reports are available in the workflow artifacts" >> $GITHUB_STEP_SUMMARY
+        echo "- Module packages are available for successful builds" >> $GITHUB_STEP_SUMMARY

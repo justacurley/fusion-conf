@@ -201,8 +201,9 @@ fusion/
 ├── fusion.psm1              # Main module file
 ├── fusion.psd1              # Module manifest
 ├── README.md                # This documentation
-├── entries_schema.json      # JSON schema definition
-├── medications_lookup.json  # Medication reference data
+├── entries_schema.json      # Legacy JSON schema (v1.0)
+├── entries_schema_v2.json   # Current JSON schema validation (v2.0)
+├── ENTRIES-SCHEMA-v2.md     # Complete schema documentation
 └── tests/
     └── fusion.Tests.ps1     # Comprehensive test suite
 ```

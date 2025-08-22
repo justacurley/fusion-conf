@@ -30,7 +30,7 @@ CompanyName = 'Unknown'
 Copyright = '(c) Alex. All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'PowerShell module for managing health recovery entries, medications, pain tracking, and activities data in JSON format.'
+Description = 'PowerShell module for managing unified health entries with composite keys, multi-user support, medications, pain tracking, activities, vitals, mood, weight, and sleep data in JSON format. Features unified schema v2.0 with yyMMddHHmm composite key system.'
 
 # Minimum version of the PowerShell engine required by this module
 PowerShellVersion = '5.1'
@@ -51,7 +51,7 @@ PowerShellVersion = '5.1'
 # ProcessorArchitecture = ''
 
 # Modules that must be imported into the global environment prior to importing this module
-RequiredModules = @('GetFusion')
+# RequiredModules = @()
 
 # Assemblies that must be loaded prior to importing this module
 # RequiredAssemblies = @()
@@ -70,12 +70,13 @@ RequiredModules = @('GetFusion')
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = @(
-    'Add-Entry',
-    'ConvertTo-EntriesFormat', 
+    'ConvertTo-EntriesFormat',
     'Update-DailyMaxPainLevel',
     'Save-ConvertedEntry',
     'Get-CachedEntriesData',
-    'Remove-TimeEntry'
+    'Remove-TimeEntry',
+    'Get-UserEntriesPath',
+    'New-SampleHealthEntries'
 )
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
@@ -100,8 +101,8 @@ FileList = @(
     'README.md',
     'build.ps1',
     'entries_schema.json',
-    'medications_lookup.json',
-    'tests/fusion.Tests.ps1'
+    'entries_schema_v2.json',
+    'Tests/fusion.Tests.ps1'
 )
 
 # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
@@ -110,7 +111,7 @@ PrivateData = @{
     PSData = @{
 
         # Tags applied to this module. These help with module discovery in online galleries.
-        Tags = @('Health', 'Tracking', 'Data', 'JSON', 'Medical', 'Recovery')
+        Tags = @('Health', 'Tracking', 'Data', 'JSON', 'Medical', 'Recovery', 'Unified', 'Schema', 'MultiUser', 'CompositeKey', 'Vitals', 'Mood', 'Pain', 'Activity', 'Medication', 'Weight', 'Sleep')
 
         # A URL to the license for this module.
         # LicenseUri = ''
@@ -126,13 +127,38 @@ PrivateData = @{
 # Release Notes
 
 ## Version 1.0.0
-- Initial release
-- Add-Entry function for manual entry creation
-- ConvertTo-EntriesFormat for form data conversion
-- Update-DailyMaxPainLevel for pain level calculations
-- Save-ConvertedEntry for data persistence
-- Support for medications, pain tracking, activities, and vitals
-- Comprehensive test coverage with Pester
+### Major Features
+- **Unified Schema v2.0**: Complete rewrite with composite key system (yyMMddHHmm)
+- **Multi-User Support**: Full user isolation with EntriesPath parameter requirements
+- **Seven Health Types**: mood, vitals, medication, activity, pain, weight, sleep
+- **Composite Key System**: Natural sorting, timezone-aware, minute-level precision
+
+### Functions
+- ConvertTo-EntriesFormat: Convert form data to unified entry format
+- Update-DailyMaxPainLevel: Calculate and update daily pain level maximums
+- Save-ConvertedEntry: Persist unified entries with validation
+- Get-CachedEntriesData: Efficient data retrieval with PSU cache integration
+- Remove-TimeEntry: Remove specific timestamped entries
+- Get-UserEntriesPath: Generate user-specific entries.json file paths
+- New-SampleHealthEntries: Generate realistic test data with unified schema
+
+### Testing & Validation
+- 82 comprehensive Pester tests with 100% success rate
+- Full schema validation and edge case coverage
+- Multi-user isolation testing
+- Composite key format validation
+
+### Documentation
+- Complete schema documentation (ENTRIES-SCHEMA-v2.md)
+- JSON schema validation file (entries_schema_v2.json)
+- Migration guide from legacy schema
+- Implementation examples and best practices
+
+### Breaking Changes
+- Replaced fragmented single-type entries with unified multi-type entries
+- Changed from auto-incrementing IDs to composite keys (yyMMddHHmm)
+- Added required EntriesPath parameter for multi-user support
+- Blood pressure format changed to string "120/80" format
 '@
 
         # Prerelease string of this module

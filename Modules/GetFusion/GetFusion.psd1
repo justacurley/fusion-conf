@@ -1,34 +1,34 @@
 @{
     # Script module or binary module file associated with this manifest
     RootModule = 'GetFusion.psm1'
-    
+
     # Version number of this module
-    ModuleVersion = '1.0.0'
-    
+    ModuleVersion = '2.0.0'
+
     # Supported PSEditions
     CompatiblePSEditions = @('Desktop', 'Core')
-    
+
     # ID used to uniquely identify this module
     GUID = '12345678-1234-1234-1234-123456789abc'
-    
+
     # Author of this module
     Author = 'Fusion Health Dashboard'
-    
+
     # Company or vendor of this module
     CompanyName = 'Personal Health Tracking'
-    
+
     # Copyright statement for this module
     Copyright = '(c) 2024 Fusion Health Dashboard. All rights reserved.'
-    
+
     # Description of the functionality provided by this module
-    Description = 'PowerShell module for processing health data from fusion entries.json files. Provides functions for parsing sleep data, calculating pain metrics, and extracting comprehensive health statistics for dashboard visualization.'
-    
+    Description = 'PowerShell module for processing health data from unified entries schema v2.0. Provides functions for parsing sleep data, calculating pain metrics, and extracting comprehensive health statistics for dashboard visualization. Fully supports the new unified schema format with array-based data structures for medications, activities, and pain entries.'
+
     # Minimum version of the PowerShell engine required by this module
     PowerShellVersion = '7.0'
-    
+
     # Functions to export from this module
     FunctionsToExport = @(
-        'Get-SleepHours', 
+        'Get-SleepChartData',
         'Get-AverageBackPain',
         'Get-TotalActivityDuration',
         'Convert-DateToDisplay',
@@ -41,35 +41,40 @@
         'Get-DateVitalsData',
         'Get-HealthMetrics',
         'Clear-CachedData',
-        'Get-PSUCachedEntries'
-    )
-    
-    # Cmdlets to export from this module
+        'Get-PSUCachedEntries',
+        'Find-DuplicateEntries',
+        'Compare-EntryData',
+        'Compare-Medications',
+        'Compare-PainData',
+        'Compare-Activities',
+        'Compare-Vitals',
+        'Compare-NoteText'
+    )    # Cmdlets to export from this module
     CmdletsToExport = @()
-    
+
     # Variables to export from this module
     VariablesToExport = @()
-    
+
     # Aliases to export from this module
     AliasesToExport = @()
-    
+
     # Private data to pass to the module specified in RootModule/ModuleToProcess
     PrivateData = @{
         PSData = @{
             # Tags applied to this module
             Tags = @('Health', 'Dashboard', 'Data', 'PowerShellUniversal', 'JSON')
-            
+
             # A URL to the license for this module
             LicenseUri = ''
-            
+
             # A URL to the main website for this project
             ProjectUri = ''
-            
+
             # A URL to an icon representing this module
             IconUri = ''
-            
+
             # Release notes of this module
-            ReleaseNotes = 'Initial release with health data processing functions for PowerShell Universal dashboards.'
+            ReleaseNotes = 'Version 2.0.0: Updated to fully support unified entries schema v2.0 with array-based data structures for medications, activities, and pain entries. All comparison and data extraction functions now handle the new schema format correctly.'
         }
     }
 }

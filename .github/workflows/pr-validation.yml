@@ -1,0 +1,259 @@
+name: Pull Request Validation
+
+on:
+  pull_request:
+    branches: [ main, develop ]
+    types: [opened, synchronize, reopened]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  detect-changes:
+    name: Detect Module Changes
+    runs-on: ubuntu-latest
+    outputs:
+      modules: ${{ steps.changes.outputs.modules }}
+      has-changes: ${{ steps.changes.outputs.has-changes }}
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Detect Changed Modules
+        id: changes
+        run: |
+          # Get the list of changed files
+          CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }} ${{ github.sha }})
+
+          # Initialize array for changed modules
+          CHANGED_MODULES=()
+
+          # Check each module for changes
+          MODULES=("UserManagement" "fusion" "GetFusion" "HealthEntryClasses")
+
+          for module in "${MODULES[@]}"; do
+            if echo "$CHANGED_FILES" | grep -q "fusion-conf/Modules/$module/"; then
+              CHANGED_MODULES+=("$module")
+              echo "📝 Changes detected in $module module"
+            fi
+          done
+
+          # Convert to JSON array
+          if [ ${#CHANGED_MODULES[@]} -gt 0 ]; then
+            MODULES_JSON=$(printf '%s\n' "${CHANGED_MODULES[@]}" | jq -R -s -c 'split("\n")[:-1]')
+            echo "modules=$MODULES_JSON" >> $GITHUB_OUTPUT
+            echo "has-changes=true" >> $GITHUB_OUTPUT
+            echo "✅ Found changes in ${#CHANGED_MODULES[@]} module(s)"
+          else
+            echo "modules=[]" >> $GITHUB_OUTPUT
+            echo "has-changes=false" >> $GITHUB_OUTPUT
+            echo "ℹ️ No module changes detected"
+          fi
+
+  validate-modules:
+    name: Validate ${{ matrix.module }}
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-changes == 'true'
+    strategy:
+      matrix:
+        module: ${{ fromJson(needs.detect-changes.outputs.modules) }}
+      fail-fast: false
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Setup PowerShell
+      run: |
+        wget -q https://github.com/PowerShell/PowerShell/releases/download/v7.4.0/powershell_7.4.0-1.deb_amd64.deb
+        sudo dpkg -i powershell_7.4.0-1.deb_amd64.deb
+        sudo apt-get install -f -y
+        pwsh --version
+
+    - name: Install Dependencies
+      run: |
+        pwsh -Command "
+        Set-PSRepository -Name PSGallery -InstallationPolicy Trusted
+        Install-Module -Name Pester -Force -Scope CurrentUser
+        Install-Module -Name PSScriptAnalyzer -Force -Scope CurrentUser
+        Install-Module -Name platyPS -Force -Scope CurrentUser
+        Install-Module -Name Universal -Force -Scope CurrentUser
+        "
+
+    - name: Run PSScriptAnalyzer
+      run: |
+        pwsh -Command "
+        \$modulePath = 'fusion-conf/Modules/${{ matrix.module }}'
+        Write-Host '🔍 Running PSScriptAnalyzer on ${{ matrix.module }}...'
+
+        \$results = Invoke-ScriptAnalyzer -Path \$modulePath -Recurse -Severity @('Error', 'Warning', 'Information')
+
+        if (\$results) {
+          Write-Host '⚠️ PSScriptAnalyzer found issues:'
+          \$results | Format-Table -AutoSize
+
+          \$errors = \$results | Where-Object Severity -eq 'Error'
+          \$warnings = \$results | Where-Object Severity -eq 'Warning'
+
+          Write-Host \"📊 Summary: \$(\$errors.Count) errors, \$(\$warnings.Count) warnings\"
+
+          if (\$errors.Count -gt 0) {
+            Write-Host '❌ Build failed due to PSScriptAnalyzer errors'
+            exit 1
+          }
+        } else {
+          Write-Host '✅ No PSScriptAnalyzer issues found'
+        }
+        "
+
+    - name: Run Module Tests
+      run: |
+        cd fusion-conf/Modules/${{ matrix.module }}
+
+        if [ -f "build.ps1" ]; then
+          chmod +x build.ps1
+          echo "🧪 Running tests for ${{ matrix.module }}..."
+          pwsh -File ./build.ps1 -Task Test
+        else
+          echo "⚠️ No build.ps1 found for ${{ matrix.module }}"
+        fi
+
+    - name: Validate Module Manifest
+      run: |
+        cd fusion-conf/Modules/${{ matrix.module }}
+
+        if [ -f "build.ps1" ]; then
+          echo "🔍 Validating module manifest for ${{ matrix.module }}..."
+          pwsh -File ./build.ps1 -Task Validate
+        else
+          echo "⚠️ No build.ps1 found for ${{ matrix.module }}"
+        fi
+
+    - name: Comment on PR
+      uses: actions/github-script@v7
+      if: always()
+      with:
+        script: |
+          const module = '${{ matrix.module }}';
+          const success = '${{ job.status }}' === 'success';
+
+          const body = success
+            ? `✅ **${module}** module validation passed`
+            : `❌ **${module}** module validation failed`;
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: body
+          });
+
+  security-scan:
+    name: Security Scan
+    runs-on: ubuntu-latest
+    needs: detect-changes
+    if: needs.detect-changes.outputs.has-changes == 'true'
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Run Security Scan
+      run: |
+        echo "🔒 Running security scan on PowerShell modules..."
+
+        # Check for common security issues in PowerShell
+        find fusion-conf/Modules -name "*.ps1" -o -name "*.psm1" | xargs grep -l "Invoke-Expression\|iex\|Invoke-Command\|icm" || true
+        find fusion-conf/Modules -name "*.ps1" -o -name "*.psm1" | xargs grep -l "ConvertTo-SecureString.*-AsPlainText" || true
+        find fusion-conf/Modules -name "*.ps1" -o -name "*.psm1" | xargs grep -l "System.Net.WebClient\|Invoke-WebRequest.*-UseBasicParsing" || true
+
+        echo "✅ Security scan completed"
+
+  pr-summary:
+    name: PR Summary
+    runs-on: ubuntu-latest
+    needs: [detect-changes, validate-modules, security-scan]
+    if: always()
+
+    steps:
+    - name: Generate PR Summary
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const hasChanges = '${{ needs.detect-changes.outputs.has-changes }}' === 'true';
+          const modules = JSON.parse('${{ needs.detect-changes.outputs.modules }}');
+          const validationResult = '${{ needs.validate-modules.result }}';
+          const securityResult = '${{ needs.security-scan.result }}';
+
+          let summary = `# 🔄 Pull Request Validation Summary\n\n`;
+
+          if (!hasChanges) {
+            summary += `ℹ️ No PowerShell module changes detected in this PR.\n`;
+          } else {
+            summary += `## 📦 Changed Modules\n\n`;
+            modules.forEach(module => {
+              summary += `- ${module}\n`;
+            });
+
+            summary += `\n## 🧪 Validation Results\n\n`;
+            summary += `| Check | Status |\n`;
+            summary += `|-------|--------|\n`;
+
+            const validationIcon = validationResult === 'success' ? '✅' :
+                                  validationResult === 'failure' ? '❌' : '⏸️';
+            summary += `| Module Validation | ${validationIcon} ${validationResult} |\n`;
+
+            const securityIcon = securityResult === 'success' ? '✅' :
+                                securityResult === 'failure' ? '❌' : '⏸️';
+            summary += `| Security Scan | ${securityIcon} ${securityResult} |\n`;
+          }
+
+          summary += `\n---\n`;
+          summary += `*This summary was automatically generated by the CI/CD pipeline.*`;
+
+          github.rest.issues.createComment({
+            issue_number: context.issue.number,
+            owner: context.repo.owner,
+            repo: context.repo.repo,
+            body: summary
+          });
+
+  auto-merge-check:
+    name: Auto-merge Eligibility
+    runs-on: ubuntu-latest
+    needs: [detect-changes, validate-modules, security-scan]
+    if: |
+      always() &&
+      needs.detect-changes.outputs.has-changes == 'true' &&
+      needs.validate-modules.result == 'success' &&
+      needs.security-scan.result == 'success'
+
+    steps:
+    - name: Check Auto-merge Eligibility
+      uses: actions/github-script@v7
+      with:
+        script: |
+          const pr = context.payload.pull_request;
+
+          // Check if PR is from a trusted source (same repo, not a fork)
+          const isTrusted = pr.head.repo.full_name === pr.base.repo.full_name;
+
+          if (isTrusted) {
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '🤖 This PR is eligible for auto-merge once all checks pass and it receives approval.'
+            });
+          } else {
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '⚠️ This PR is from a fork and requires manual review before merge.'
+            });
+          }

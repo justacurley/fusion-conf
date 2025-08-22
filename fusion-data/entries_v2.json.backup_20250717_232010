@@ -1,0 +1,8621 @@
+[
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-26",
+    "time": "08:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 20
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606260800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-26",
+    "time": "09:00",
+    "data": {
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2606260900"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-26",
+    "time": "14:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 20
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606261400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-26",
+    "time": "21:00",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "2606262100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-26",
+    "time": "22:00",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "2606262200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-26",
+    "time": "13:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 81,
+          "systolic": 126
+        }
+      },
+      "activity": {
+        "name": "Sitting",
+        "duration_minutes": 60
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606261300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-26",
+    "time": "18:00",
+    "data": {
+      "activity": {
+        "name": "driving",
+        "duration_minutes": 50
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606261800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-26",
+    "time": "16:00",
+    "data": {
+      "activity": {
+        "name": "driving",
+        "duration_minutes": 30
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606261600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-26",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260626Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-25",
+    "time": "08:00",
+    "data": {
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2606250800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-25",
+    "time": "09:00",
+    "data": {
+      "activity": {
+        "name": "jerk",
+        "duration_minutes": 1
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606250900"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-25",
+    "time": "10:00",
+    "data": {
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "2mg"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2606251000"
+  },
+  {
+    "notes": "no longer feeling dizzy w/out valium",
+    "user_email": "user@example.com",
+    "date": "2026-06-25",
+    "time": "12:00",
+    "data": {
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "2mg"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2606251200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-25",
+    "time": "13:00",
+    "data": {
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "pain"
+    ],
+    "entry_id": "2606251300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-25",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 83,
+          "systolic": 118
+        }
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606251400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-25",
+    "time": "16:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 110
+        }
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606251600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-25",
+    "time": "19:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 106
+        }
+      },
+      "medication": {
+        "name": "vitaminD",
+        "dosage": "500mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606251900"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-25",
+    "time": "21:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 124
+        }
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606252100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-25",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606252200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-25",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260625Sleep"
+  },
+  {
+    "notes": "changed med schedule",
+    "user_email": "user@example.com",
+    "date": "2026-06-24",
+    "time": "08:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606240800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-24",
+    "time": "09:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606240900"
+  },
+  {
+    "notes": "feel dizzy constantly while standing. trying to stop valium",
+    "user_email": "user@example.com",
+    "date": "2026-06-24",
+    "time": "12:00",
+    "data": {
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "pain"
+    ],
+    "entry_id": "2606241200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-24",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 94,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 100
+        }
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606241400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-24",
+    "time": "16:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 100
+        }
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606241600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-24",
+    "time": "19:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 106
+        }
+      },
+      "medication": {
+        "name": "vitaminD",
+        "dosage": "500mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606241900"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-24",
+    "time": "21:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 124
+        }
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606242100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-24",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606242200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-24",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260624Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-23",
+    "time": "08:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 94,
+        "blood_pressure": {
+          "diastolic": 73,
+          "systolic": 110
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606230800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-23",
+    "time": "10:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 71,
+          "systolic": 105
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606231000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-23",
+    "time": "12:00",
+    "data": {
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "pain"
+    ],
+    "entry_id": "2606231200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-23",
+    "time": "13:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 73,
+          "systolic": 110
+        }
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606231300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-23",
+    "time": "18:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 106
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "vitaminD",
+        "dosage": "500mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606231800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-23",
+    "time": "14:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606231400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-23",
+    "time": "21:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606232100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-23",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606232200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-23",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260623Sleep"
+  },
+  {
+    "notes": "woke up at 10",
+    "user_email": "user@example.com",
+    "date": "2026-06-22",
+    "time": "10:00",
+    "data": {
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2606221000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-22",
+    "time": "13:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 110
+        }
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606221300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-22",
+    "time": "14:00",
+    "data": {
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2606221400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-22",
+    "time": "18:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 71,
+          "systolic": 110
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606221800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-22",
+    "time": "22:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 90,
+        "blood_pressure": {
+          "diastolic": 78,
+          "systolic": 129
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606222200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-22",
+    "time": "08:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606220800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-22",
+    "time": "21:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606222100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-22",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260622Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-20",
+    "time": "08:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 119
+        }
+      },
+      "activity": {
+        "name": "Sitting",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606200800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-20",
+    "time": "10:00",
+    "data": {
+      "activity": {
+        "name": "Sitting",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606201000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-20",
+    "time": "12:19",
+    "data": {
+      "activity": {
+        "name": "bending",
+        "duration_minutes": 2
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606201219"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-20",
+    "time": "13:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 67,
+          "systolic": 102
+        }
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606201300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-20",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 61,
+          "systolic": 99
+        }
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606201400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-20",
+    "time": "18:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 106
+        }
+      },
+      "medication": {
+        "name": "vitaminD",
+        "dosage": "500mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606201800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-20",
+    "time": "22:00",
+    "data": {
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      },
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2606202200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-20",
+    "time": "21:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606202100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-20",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260620Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-19",
+    "time": "10:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 72,
+          "systolic": 107
+        }
+      },
+      "activity": {
+        "name": "Sitting",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606191000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-19",
+    "time": "13:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 108
+        }
+      },
+      "activity": {
+        "name": "Sitting",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606191300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-19",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 81,
+          "systolic": 126
+        }
+      },
+      "activity": {
+        "name": "Sitting",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606191400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-19",
+    "time": "18:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 79,
+          "systolic": 124
+        }
+      },
+      "activity": {
+        "name": "Sitting",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "vitaminD",
+        "dosage": "500mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606191800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-19",
+    "time": "22:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 90,
+        "blood_pressure": {
+          "diastolic": 78,
+          "systolic": 129
+        }
+      },
+      "activity": {
+        "name": "Sitting",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606192200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-19",
+    "time": "08:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606190800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-19",
+    "time": "21:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606192100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-19",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260619Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-18",
+    "time": "09:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 20
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606180900"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-18",
+    "time": "10:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 87,
+          "systolic": 117
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 20
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606181000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-18",
+    "time": "13:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 20
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606181300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-18",
+    "time": "14:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606181400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-18",
+    "time": "18:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 85,
+          "systolic": 117
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "vitaminD",
+        "dosage": "500mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606181800"
+  },
+  {
+    "notes": "took 1/2 dilaudid for breakthrough",
+    "user_email": "user@example.com",
+    "date": "2026-06-18",
+    "time": "21:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 85,
+          "systolic": 117
+        }
+      },
+      "activity": {
+        "name": "Sitting",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "2mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606182100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-18",
+    "time": "22:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 90,
+        "blood_pressure": {
+          "diastolic": 78,
+          "systolic": 129
+        }
+      },
+      "activity": {
+        "name": "Sitting",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606182200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-18",
+    "time": "08:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606180800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-18",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260618Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-17",
+    "time": "08:00",
+    "data": {
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606170800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-17",
+    "time": "10:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 87,
+          "systolic": 117
+        }
+      },
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606171000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-17",
+    "time": "13:00",
+    "data": {
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606171300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-17",
+    "time": "14:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606171400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-17",
+    "time": "18:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 85,
+          "systolic": 117
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "vitaminD",
+        "dosage": "500mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606171800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-17",
+    "time": "21:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 20
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606172100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-17",
+    "time": "22:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 90,
+        "blood_pressure": {
+          "diastolic": 78,
+          "systolic": 129
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 20
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606172200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-17",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260617Sleep"
+  },
+  {
+    "notes": "woke up way too early",
+    "user_email": "user@example.com",
+    "date": "2026-06-16",
+    "time": "06:30",
+    "data": {
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606160630"
+  },
+  {
+    "notes": "woke up way too early",
+    "user_email": "user@example.com",
+    "date": "2026-06-16",
+    "time": "08:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 80,
+          "systolic": 126
+        }
+      },
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606160800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-16",
+    "time": "10:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 80,
+          "systolic": 126
+        }
+      },
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606161000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-16",
+    "time": "13:00",
+    "data": {
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606161300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-16",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 110
+        }
+      },
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606161400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-16",
+    "time": "18:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 75,
+          "systolic": 112
+        }
+      },
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "vitaminD",
+        "dosage": "500mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606161800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-16",
+    "time": "22:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 75,
+          "systolic": 125
+        }
+      },
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606162200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-16",
+    "time": "21:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606162100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-16",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260616Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-15",
+    "time": "08:00",
+    "data": {
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606150800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-15",
+    "time": "10:00",
+    "data": {
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606151000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-15",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 110
+        }
+      },
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606151400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-15",
+    "time": "18:00",
+    "data": {
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "vitaminD",
+        "dosage": "500mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606151800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-15",
+    "time": "22:00",
+    "data": {
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606152200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-15",
+    "time": "13:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606151300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-15",
+    "time": "21:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606152100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-15",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260615Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-14",
+    "time": "08:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 80,
+          "systolic": 131
+        }
+      },
+      "activity": {
+        "name": "standing",
+        "duration_minutes": 20
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606140800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-14",
+    "time": "10:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 96,
+        "blood_pressure": {
+          "diastolic": 79,
+          "systolic": 124
+        }
+      },
+      "activity": {
+        "name": "standing",
+        "duration_minutes": 20
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606141000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-14",
+    "time": "13:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 90,
+        "blood_pressure": {
+          "diastolic": 72,
+          "systolic": 108
+        }
+      },
+      "activity": {
+        "name": "standing",
+        "duration_minutes": 20
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606141300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-14",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 90,
+        "blood_pressure": {
+          "diastolic": 89,
+          "systolic": 137
+        }
+      },
+      "activity": {
+        "name": "standing",
+        "duration_minutes": 20
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606141400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-14",
+    "time": "18:00",
+    "data": {
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "vitaminD",
+        "dosage": "500mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606141800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-14",
+    "time": "22:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 89,
+          "systolic": 121
+        }
+      },
+      "activity": {
+        "name": "Driving",
+        "duration_minutes": 40
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606142200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-14",
+    "time": "21:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606142100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-14",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260614Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-13",
+    "time": "08:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 87,
+        "blood_pressure": {
+          "diastolic": 78,
+          "systolic": 111
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 5.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606130800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-13",
+    "time": "10:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 96,
+        "blood_pressure": {
+          "diastolic": 79,
+          "systolic": 124
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 5.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606131000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-13",
+    "time": "13:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606131300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-13",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 71,
+          "systolic": 116
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606131400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-13",
+    "time": "18:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 90,
+        "blood_pressure": {
+          "diastolic": 81,
+          "systolic": 131
+        }
+      },
+      "activity": {
+        "name": "standing",
+        "duration_minutes": 20
+      },
+      "medication": {
+        "name": "vitaminD",
+        "dosage": "500mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606131800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-13",
+    "time": "21:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 90,
+        "blood_pressure": {
+          "diastolic": 78,
+          "systolic": 119
+        }
+      },
+      "activity": {
+        "name": "standing",
+        "duration_minutes": 20
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606132100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-13",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606132200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-13",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260613Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-12",
+    "time": "08:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 78,
+          "systolic": 124
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 5.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606120800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-12",
+    "time": "10:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 96,
+        "blood_pressure": {
+          "diastolic": 79,
+          "systolic": 124
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 5.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606121000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-12",
+    "time": "13:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 79,
+          "systolic": 119
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606121300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-12",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 80,
+          "systolic": 119
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606121400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-12",
+    "time": "18:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 89,
+        "blood_pressure": {
+          "diastolic": 85,
+          "systolic": 127
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "vitaminD",
+        "dosage": "500mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606121800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-12",
+    "time": "21:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606122100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-12",
+    "time": "22:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 84,
+          "systolic": 118
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606122200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-12",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260612Sleep"
+  },
+  {
+    "notes": "New medication schedule ",
+    "user_email": "user@example.com",
+    "date": "2026-06-11",
+    "time": "08:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 67,
+          "systolic": 102
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "2.5mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606110800"
+  },
+  {
+    "notes": "New medication schedule ",
+    "user_email": "user@example.com",
+    "date": "2026-06-11",
+    "time": "10:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 102
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606111000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-11",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 77,
+          "systolic": 129
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606111400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-11",
+    "time": "18:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 88,
+        "blood_pressure": {
+          "diastolic": 82,
+          "systolic": 130
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "vitaminD",
+        "dosage": "500mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606111800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-11",
+    "time": "22:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606112200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-11",
+    "time": "13:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606111300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-11",
+    "time": "21:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606112100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-11",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260611Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-10",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 110
+        }
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606101400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-10",
+    "time": "16:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 72,
+          "systolic": 116
+        }
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606101600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-10",
+    "time": "19:10",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 77,
+          "systolic": 117
+        }
+      },
+      "activity": {
+        "name": "Sat Upright",
+        "duration_minutes": 60
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "2mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 5.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606101910"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-10",
+    "time": "20:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 77,
+          "systolic": 117
+        }
+      },
+      "activity": {
+        "name": "Sat Upright",
+        "duration_minutes": 60
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606102000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-10",
+    "time": "21:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 89,
+        "blood_pressure": {
+          "diastolic": 72,
+          "systolic": 125
+        }
+      },
+      "activity": {
+        "name": "Sat Upright",
+        "duration_minutes": 60
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606102100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-10",
+    "time": "08:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606100800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-10",
+    "time": "10:00",
+    "data": {
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606101000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-10",
+    "time": "13:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606101300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-10",
+    "time": "18:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606101800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-10",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606102200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-10",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260610Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-09",
+    "time": "08:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 95,
+        "blood_pressure": {
+          "diastolic": 80,
+          "systolic": 130
+        }
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606090800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-09",
+    "time": "10:00",
+    "data": {
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2606091000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-09",
+    "time": "12:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 94,
+        "blood_pressure": {
+          "diastolic": 85,
+          "systolic": 130
+        }
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606091200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-09",
+    "time": "16:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 95,
+        "blood_pressure": {
+          "diastolic": 75,
+          "systolic": 116
+        }
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606091600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-09",
+    "time": "21:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 90,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 107
+        }
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606092100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-09",
+    "time": "14:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606091400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-09",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606092200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-09",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260609Sleep"
+  },
+  {
+    "notes": "Mistakenly took valium instead of dilaudid",
+    "user_email": "user@example.com",
+    "date": "2026-06-08",
+    "time": "08:00",
+    "data": {
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606080800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-08",
+    "time": "10:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 89,
+        "blood_pressure": {
+          "diastolic": 80,
+          "systolic": 110
+        }
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606081000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-08",
+    "time": "12:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 89,
+        "blood_pressure": {
+          "diastolic": 80,
+          "systolic": 110
+        }
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606081200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-08",
+    "time": "16:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 95,
+        "blood_pressure": {
+          "diastolic": 80,
+          "systolic": 106
+        }
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606081600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-08",
+    "time": "21:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 96,
+        "blood_pressure": {
+          "diastolic": 71,
+          "systolic": 106
+        }
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606082100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-08",
+    "time": "14:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606081400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-08",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606082200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-08",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260608Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-07",
+    "time": "10:00",
+    "data": {
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606071000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-07",
+    "time": "12:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 77,
+          "systolic": 112
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606071200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-07",
+    "time": "17:30",
+    "data": {
+      "vitals": {
+        "oxygen_level": 88,
+        "blood_pressure": {
+          "diastolic": 72,
+          "systolic": 109
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606071730"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-07",
+    "time": "21:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 96,
+        "blood_pressure": {
+          "diastolic": 75,
+          "systolic": 112
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606072100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-07",
+    "time": "08:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606070800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-07",
+    "time": "14:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606071400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-07",
+    "time": "16:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606071600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-07",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606072200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-07",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260607Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-06",
+    "time": "07:00",
+    "data": {
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 20
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606060700"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-06",
+    "time": "10:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 89,
+        "blood_pressure": {
+          "diastolic": 79,
+          "systolic": 110
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 20
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606061000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-06",
+    "time": "11:00",
+    "data": {
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606061100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-06",
+    "time": "16:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 88,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 112
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606061600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-06",
+    "time": "21:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 87,
+        "blood_pressure": {
+          "diastolic": 78,
+          "systolic": 110
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606062100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-06",
+    "time": "17:00",
+    "data": {
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606061700"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-06",
+    "time": "08:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606060800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-06",
+    "time": "12:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606061200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-06",
+    "time": "14:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606061400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-06",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606062200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-06",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260606Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-05",
+    "time": "07:00",
+    "data": {
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 5.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606050700"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-05",
+    "time": "08:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 95,
+        "blood_pressure": {
+          "diastolic": 75,
+          "systolic": 110
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 5.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606050800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-05",
+    "time": "10:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 94,
+        "blood_pressure": {
+          "diastolic": 80,
+          "systolic": 115
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606051000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-05",
+    "time": "16:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 90,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 115
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606051600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-05",
+    "time": "20:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 112
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 20
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606052000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-05",
+    "time": "12:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606051200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-05",
+    "time": "14:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606051400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-05",
+    "time": "21:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606052100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-05",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606052200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-05",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260605Sleep"
+  },
+  {
+    "notes": "Stopped taking dilauded at midnight today",
+    "user_email": "user@example.com",
+    "date": "2026-06-04",
+    "time": "08:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 63,
+          "systolic": 102
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606040800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-04",
+    "time": "09:30",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 103
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 5.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606040930"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-04",
+    "time": "10:00",
+    "data": {
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606041000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-04",
+    "time": "12:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606041200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-04",
+    "time": "14:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606041400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-04",
+    "time": "16:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606041600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-04",
+    "time": "21:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606042100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-04",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606042200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-04",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260604Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-02",
+    "time": "08:00",
+    "data": {
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 5.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606020800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-02",
+    "time": "10:15",
+    "data": {
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 5.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606021015"
+  },
+  {
+    "notes": "Big surgeon takeaway: Slow down and recover slowly, you can't help this by pushing yourself",
+    "user_email": "user@example.com",
+    "date": "2026-06-02",
+    "time": "11:00",
+    "data": {
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606021100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-02",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 110
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 5.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606021400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-02",
+    "time": "16:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 110
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606021600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-02",
+    "time": "00:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606020000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-02",
+    "time": "10:00",
+    "data": {
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606021000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-02",
+    "time": "12:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606021200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-02",
+    "time": "18:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606021800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-02",
+    "time": "20:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606022000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-02",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606022200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-02",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260602Sleep"
+  },
+  {
+    "notes": "stopped taking dilauded at 4am because I'd rather be in pain than missing sleep I guess",
+    "user_email": "user@example.com",
+    "date": "2026-06-01",
+    "time": "08:00",
+    "data": {
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606010800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-01",
+    "time": "10:00",
+    "data": {
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2606011000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-01",
+    "time": "12:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 89,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 110
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606011200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-01",
+    "time": "13:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 71,
+          "systolic": 115
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606011300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-01",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 75,
+          "systolic": 117
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606011400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-01",
+    "time": "20:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 96,
+        "blood_pressure": {
+          "diastolic": 76,
+          "systolic": 113
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606012000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-01",
+    "time": "00:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606010000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-01",
+    "time": "16:00",
+    "data": {
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606011600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-01",
+    "time": "18:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606011800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-01",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2606012200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-01",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260601Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-31",
+    "time": "11:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 16
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605311100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-31",
+    "time": "12:00",
+    "data": {
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605311200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-31",
+    "time": "14:30",
+    "data": {
+      "vitals": {
+        "oxygen_level": 99,
+        "blood_pressure": {
+          "diastolic": 64,
+          "systolic": 98
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605311430"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-31",
+    "time": "17:15",
+    "data": {
+      "vitals": {
+        "oxygen_level": 98,
+        "blood_pressure": {
+          "diastolic": 80,
+          "systolic": 115
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 2.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605311715"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-31",
+    "time": "00:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605310000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-31",
+    "time": "04:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605310400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-31",
+    "time": "08:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605310800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-31",
+    "time": "10:00",
+    "data": {
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605311000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-31",
+    "time": "14:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605311400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-31",
+    "time": "16:00",
+    "data": {
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605311600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-31",
+    "time": "18:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605311800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-31",
+    "time": "20:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605312000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-31",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605312200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-31",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260531Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-30",
+    "time": "08:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 94,
+        "blood_pressure": {
+          "diastolic": 76,
+          "systolic": 110
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605300800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-30",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260530Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-30",
+    "time": "12:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 74,
+          "systolic": 106
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605301200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-30",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 80,
+          "systolic": 128
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605301400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-30",
+    "time": "15:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 92,
+        "blood_pressure": {
+          "diastolic": 80,
+          "systolic": 128
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 16
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605301500"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-30",
+    "time": "18:40",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 69,
+          "systolic": 90
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 16
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605301840"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-30",
+    "time": "00:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605300000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-30",
+    "time": "04:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605300400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-30",
+    "time": "10:00",
+    "data": {
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605301000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-30",
+    "time": "16:00",
+    "data": {
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605301600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-30",
+    "time": "18:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605301800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-30",
+    "time": "20:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605302000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-30",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605302200"
+  },
+  {
+    "notes": "finally slept longer than 6 hours",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "12:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 90,
+        "blood_pressure": {
+          "diastolic": 63,
+          "systolic": 93
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605291200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260529Sleep"
+  },
+  {
+    "notes": "first poop",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "13:20",
+    "data": {
+      "vitals": {
+        "oxygen_level": 89,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 105
+        }
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 5.0
+      }
+    },
+    "entry_types": [
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605291320"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "14:00",
+    "data": {
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 5.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605291400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "16:00",
+    "data": {
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2605291600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "18:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 74,
+          "systolic": 107
+        }
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605291800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "20:00",
+    "data": {
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2605292000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "22:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 89,
+        "blood_pressure": {
+          "diastolic": 61,
+          "systolic": 92
+        }
+      },
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605292200"
+  },
+  {
+    "notes": "poop!",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "23:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 94,
+        "blood_pressure": {
+          "diastolic": 74,
+          "systolic": 128
+        }
+      }
+    },
+    "entry_types": [
+      "vitals"
+    ],
+    "entry_id": "2605292300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "13:30",
+    "data": {
+      "vitals": {
+        "oxygen_level": 89,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 105
+        }
+      },
+      "activity": {
+        "name": "Standing",
+        "duration_minutes": 10
+      },
+      "pain": {
+        "location": "back",
+        "severity": 5.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605291330"
+  },
+  {
+    "notes": "hips loosening up",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "14:40",
+    "data": {
+      "vitals": {
+        "oxygen_level": 94,
+        "blood_pressure": {
+          "diastolic": 69,
+          "systolic": 106
+        }
+      }
+    },
+    "entry_types": [
+      "vitals"
+    ],
+    "entry_id": "2605291440"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "23:30",
+    "data": {
+      "vitals": {
+        "oxygen_level": 94,
+        "blood_pressure": {
+          "diastolic": 74,
+          "systolic": 128
+        }
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605292330"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "00:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605290000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "04:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605290400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "08:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605290800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-29",
+    "time": "10:00",
+    "data": {
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605291000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-28",
+    "time": "08:00",
+    "data": {
+      "activity": {
+        "name": "Sitting",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "lhip",
+        "severity": 7.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605280800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-28",
+    "time": "12:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 95,
+        "blood_pressure": {
+          "diastolic": 79,
+          "systolic": 126
+        }
+      },
+      "activity": {
+        "name": "Stairs",
+        "duration_minutes": 1
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "lhip",
+        "severity": 7.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605281200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-28",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 90,
+        "blood_pressure": {
+          "diastolic": 74,
+          "systolic": 119
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605281400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-28",
+    "time": "16:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 94,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 104
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605281600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-28",
+    "time": "19:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 96,
+        "blood_pressure": {
+          "diastolic": 72,
+          "systolic": 105
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "pain": {
+        "location": "back",
+        "severity": 5.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605281900"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-28",
+    "time": "20:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 99
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605282000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-28",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260528Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-28",
+    "time": "00:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605280000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-28",
+    "time": "04:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605280400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-28",
+    "time": "10:00",
+    "data": {
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605281000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-28",
+    "time": "18:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605281800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-28",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605282200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "Sc:ar",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260527ScarImage"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260527Sleep"
+  },
+  {
+    "notes": "took pill, back to bed",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "00:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "lhip",
+        "severity": 7.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605270000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "10:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "journavx",
+        "dosage": "100mg"
+      },
+      "pain": {
+        "location": "lhip",
+        "severity": 7.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605271000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "10:30",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "pain": {
+        "location": "lhip",
+        "severity": 7.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605271030"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 90,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 111
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "lhip",
+        "severity": 7.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605271400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "15:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 94,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 111
+        }
+      },
+      "activity": {
+        "name": "walking",
+        "duration_minutes": 5
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605271500"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "16:00",
+    "data": {
+      "pain": {
+        "location": "back",
+        "severity": 3.0
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2605271600"
+  },
+  {
+    "notes": "Shower!",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "17:00",
+    "data": {
+      "activity": {
+        "name": "standing",
+        "duration_minutes": 15
+      },
+      "pain": {
+        "location": "back",
+        "severity": 4.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605271700"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "19:00",
+    "data": {
+      "activity": {
+        "name": "Sitting",
+        "duration_minutes": 5
+      },
+      "pain": {
+        "location": "lhip",
+        "severity": 7.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605271900"
+  },
+  {
+    "notes": "took pill, back to bed",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "08:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "lhip",
+        "severity": 7.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605270800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "21:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 94,
+        "blood_pressure": {
+          "diastolic": 63,
+          "systolic": 103
+        }
+      },
+      "activity": {
+        "name": "Sitting",
+        "duration_minutes": 5
+      },
+      "pain": {
+        "location": "lhip",
+        "severity": 7.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2605272100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "04:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605270400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "12:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605271200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "18:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605271800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "20:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605272000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-27",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605272200"
+  },
+  {
+    "notes": "back to sleep",
+    "user_email": "user@example.com",
+    "date": "2026-05-26",
+    "time": "08:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605260800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-26",
+    "time": "10:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "journavx",
+        "dosage": "100mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605261000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-26",
+    "time": "12:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605261200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-26",
+    "time": "12:30",
+    "data": {
+      "activity": {
+        "name": "walking",
+        "duration_minutes": 3
+      },
+      "pain": {
+        "location": "back",
+        "severity": 5.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605261230"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-26",
+    "time": "14:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605261400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-26",
+    "time": "16:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "lhip",
+        "severity": 7.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605261600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-26",
+    "time": "20:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "lhip",
+        "severity": 7.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605262000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-26",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260526Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-26",
+    "time": "00:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605260000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-26",
+    "time": "04:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605260400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-26",
+    "time": "18:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605261800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-26",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605262200"
+  },
+  {
+    "notes": "did not sleep well. feel effectiveness of pain meds is waning",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "11:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 2
+      },
+      "medication": {
+        "name": "journavx",
+        "dosage": "100mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 8.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605251100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "13:00",
+    "data": {
+      "activity": {
+        "name": "standing",
+        "duration_minutes": 5
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605251300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "12:27",
+    "data": {
+      "activity": {
+        "name": "standing",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605251227"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "14:00",
+    "data": {
+      "activity": {
+        "name": "standing",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 4.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605251400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "14:30",
+    "data": {
+      "pain": {
+        "location": "back",
+        "severity": 3.0
+      }
+    },
+    "entry_types": [
+      "pain"
+    ],
+    "entry_id": "2605251430"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "16:00",
+    "data": {
+      "activity": {
+        "name": "standing",
+        "duration_minutes": 5
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605251600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "17:50",
+    "data": {
+      "activity": {
+        "name": "standing",
+        "duration_minutes": 5
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605251750"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "20:00",
+    "data": {
+      "activity": {
+        "name": "stretching",
+        "duration_minutes": 4
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605252000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "22:00",
+    "data": {
+      "activity": {
+        "name": "stretching",
+        "duration_minutes": 4
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605252200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "17:30",
+    "data": {
+      "activity": {
+        "name": "stretching",
+        "duration_minutes": 4
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 1.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605251730"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "00:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605250000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "04:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605250400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "08:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605250800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "10:00",
+    "data": {
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605251000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "12:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605251200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "18:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605251800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-25",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260525Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "07:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 8.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605240700"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "08:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 8.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605240800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "08:30",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 8.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605240830"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "10:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 8.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605241000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "12:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 4
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 8.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605241200"
+  },
+  {
+    "notes": "lots of sleeping attempts today",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "14:30",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 5
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 8.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605241430"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "15:30",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 8.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605241530"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "16:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 8.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605241600"
+  },
+  {
+    "notes": "difficult/painful sitting on bed (unstable surface)",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "18:30",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 2
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 8.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605241830"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "20:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 2
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 8.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605242000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "00:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605240000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "04:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605240400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "14:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605241400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "18:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605241800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605242200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-24",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260524Sleep"
+  },
+  {
+    "notes": "Pain is focused on lower back with stabbing shooting pains down my hips and outside of my quads",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "13:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605231300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "08:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605230800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260523Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "14:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "journavx",
+        "dosage": "100mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605231400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "15:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605231500"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "16:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605231600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "17:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605231700"
+  },
+  {
+    "notes": "able to put vest on and stand up",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "18:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605231800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "20:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "lhip",
+        "severity": 7.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605232000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "20:30",
+    "data": {
+      "vitals": {
+        "oxygen_level": 88,
+        "blood_pressure": {
+          "diastolic": 59,
+          "systolic": 129
+        }
+      }
+    },
+    "entry_types": [
+      "vitals"
+    ],
+    "entry_id": "2605232030"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "10:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605231000"
+  },
+  {
+    "notes": " Pain covers entire lower back, wrapping down to my hips and the outside of my legs down my quads. Cannot perform log roll to sit up straight.",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "12:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605231200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "00:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605230000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "04:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605230400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-23",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605232200"
+  },
+  {
+    "notes": "did not attempt log roll due to pain",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "07:00",
+    "data": {
+      "activity": {
+        "name": "LogRoll",
+        "duration_minutes": 1
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "lquad",
+        "severity": 8.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605220700"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "08:00",
+    "data": {
+      "pain": {
+        "location": "lquad",
+        "severity": 8.0
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2605220800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "09:00",
+    "data": {
+      "pain": {
+        "location": "lhip",
+        "severity": 8.0
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2605220900"
+  },
+  {
+    "notes": " log rolling was very painful so I did not attempt to walk",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "14:00",
+    "data": {
+      "activity": {
+        "name": "LogRoll",
+        "duration_minutes": 1
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 7.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605221400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "15:00",
+    "data": {
+      "activity": {
+        "name": "LogRoll",
+        "duration_minutes": 1
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "back",
+        "severity": 7.0
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605221500"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "16:00",
+    "data": {
+      "activity": {
+        "name": "LogRoll",
+        "duration_minutes": 1
+      },
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605221600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "17:00",
+    "data": {
+      "activity": {
+        "name": "LogRoll",
+        "duration_minutes": 1
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605221700"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "18:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605221800"
+  },
+  {
+    "notes": " 4mg dilaudid @ 6pm felt to have done nothing",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "20:00",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 3
+      },
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      },
+      "pain": {
+        "location": "righthip",
+        "severity": 6.5
+      }
+    },
+    "entry_types": [
+      "medication",
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605222000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "00:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605220000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "04:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605220400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "10:00",
+    "data": {
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605221000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "12:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605221200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605222200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-22",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260522Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-20",
+    "time": "08:00",
+    "data": {
+      "pain": {
+        "location": "back",
+        "severity": 8.0
+      },
+      "medication": {
+        "name": "oxycodone",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2605200800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-20",
+    "time": "13:00",
+    "data": {
+      "pain": {
+        "location": "lquad",
+        "severity": 8.0
+      },
+      "medication": {
+        "name": "oxycodone",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2605201300"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-20",
+    "time": "14:00",
+    "data": {
+      "pain": {
+        "location": "lquad",
+        "severity": 8.0
+      },
+      "medication": {
+        "name": "journavx",
+        "dosage": "100mg"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2605201400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-20",
+    "time": "15:00",
+    "data": {
+      "pain": {
+        "location": "lquad",
+        "severity": 8.0
+      }
+    },
+    "entry_types": [
+      "pain"
+    ],
+    "entry_id": "2605201500"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-20",
+    "time": "16:00",
+    "data": {
+      "pain": {
+        "location": "lquad",
+        "severity": 8.0
+      },
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication",
+      "pain"
+    ],
+    "entry_id": "2605201600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-20",
+    "time": "17:00",
+    "data": {
+      "activity": {
+        "name": "LogRoll",
+        "duration_minutes": 1
+      },
+      "pain": {
+        "location": "lquad",
+        "severity": 8.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain"
+    ],
+    "entry_id": "2605201700"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-20",
+    "time": "00:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605200000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-20",
+    "time": "04:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605200400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-20",
+    "time": "10:00",
+    "data": {
+      "medication": {
+        "name": "valium",
+        "dosage": "5mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605201000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-20",
+    "time": "12:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605201200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-20",
+    "time": "18:00",
+    "data": {
+      "medication": {
+        "name": "dilaudid",
+        "dosage": "4mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605201800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-20",
+    "time": "20:00",
+    "data": {
+      "medication": {
+        "name": "tylenol",
+        "dosage": "1g"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605202000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-20",
+    "time": "22:00",
+    "data": {
+      "medication": {
+        "name": "lexapro",
+        "dosage": "20mg"
+      }
+    },
+    "entry_types": [
+      "medication"
+    ],
+    "entry_id": "2605202200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-05-20",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260520Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-27",
+    "time": "08:00",
+    "data": {
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "pain"
+    ],
+    "entry_id": "2606270800"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-27",
+    "time": "09:00",
+    "data": {
+      "pain": {
+        "location": "back",
+        "severity": 3.0
+      }
+    },
+    "entry_types": [
+      "pain"
+    ],
+    "entry_id": "2606270900"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-27",
+    "time": "14:00",
+    "data": {
+      "pain": {
+        "location": "back",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "pain"
+    ],
+    "entry_id": "2606271400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-27",
+    "time": "16:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 93,
+        "blood_pressure": {
+          "diastolic": 70,
+          "systolic": 105
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.0
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606271600"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-27",
+    "time": "21:00",
+    "data": {
+      "pain": {
+        "location": "back",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "pain"
+    ],
+    "entry_id": "2606272100"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-27",
+    "time": "22:00",
+    "data": {
+      "pain": {
+        "location": "back",
+        "severity": 2.0
+      }
+    },
+    "entry_types": [
+      "pain"
+    ],
+    "entry_id": "2606272200"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-27",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260627Sleep"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-28",
+    "time": "14:12",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "2606281412"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-28",
+    "time": "14:00",
+    "data": {
+      "vitals": {
+        "oxygen_level": 91,
+        "blood_pressure": {
+          "diastolic": 71,
+          "systolic": 113
+        }
+      },
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 10
+      },
+      "pain": {
+        "location": "back",
+        "severity": 3.5
+      }
+    },
+    "entry_types": [
+      "activity",
+      "pain",
+      "vitals"
+    ],
+    "entry_id": "2606281400"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-28",
+    "time": "16:51",
+    "data": {
+      "activity": {
+        "name": "Walking",
+        "duration_minutes": 20
+      }
+    },
+    "entry_types": [
+      "activity"
+    ],
+    "entry_id": "2606281651"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-28",
+    "time": "10:00",
+    "data": {
+      "pain": {
+        "location": "back",
+        "severity": 3.0
+      }
+    },
+    "entry_types": [
+      "pain"
+    ],
+    "entry_id": "2606281000"
+  },
+  {
+    "notes": "",
+    "user_email": "user@example.com",
+    "date": "2026-06-28",
+    "time": "Sl:ee",
+    "data": {},
+    "entry_types": [],
+    "entry_id": "260628Sleep"
+  }
+]

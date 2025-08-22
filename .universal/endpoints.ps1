@@ -1,1 +1,2 @@
-﻿New-PSUEndpoint -Url "/test" -Description "return a string" -Method @('GET') -Path "/endpoints/test/test.ps1"
+﻿New-PSUEndpoint -Url "/api/git/sync" -Description "Synchronize Git repository - requires app token authentication" -Method @('POST') -Authentication -Role @('Administrator') -Path "/endpoints/git/sync.ps1" -Environment "Integrated" 
+New-PSUEndpoint -Url "/test" -Description "return a string" -Method @('GET') -Path "/endpoints/test/test.ps1"

@@ -1,4 +1,6 @@
-﻿$Dashboard = New-UDDashboard -Title "Medication Heatmap Dashboard" -Content { 
+﻿$Dashboard = New-UDDashboard -Title 'Medication Heatmap Dashboard' -Content { 
+    Import-Module UserManagement -Force
+    $UserData = Initialize-UserContext -UserEmail $User
     New-UDContainer -Content {
         # New-UDTypography -Text "Medication Adherence Heatmap" -Variant h4 -Align center
         # New-UDTypography -Text "Shows weekly medication patterns - darker colors indicate more medications taken" -Variant body2 -Align center
@@ -7,7 +9,7 @@
         # Import-Module -Name GetFusion -Force
         # Clear-CachedData
         # $Entries = Get-PSUCachedEntries
-        Write-Information "Getting medication data from cache..."
+        Write-Information 'Getting medication data from cache...'
         $Meds = Get-PSUCache -Key 'medicationData' | Select-Object Date, Timestamp, Medication
 
         # Process medication data for calendar format
@@ -22,15 +24,14 @@
                 # Convert date format from MM/dd to yyyy-MM-dd (assuming current year)
                 try {
                     $currentYear = (Get-Date).Year
-                    $parsedDate = [DateTime]::ParseExact("$currentYear/$date", "yyyy/MM/dd", $null)
-                    $formattedDate = $parsedDate.ToString("yyyy-MM-dd")
+                    $parsedDate = [DateTime]::ParseExact("$currentYear/$date", 'yyyy/MM/dd', $null)
+                    $formattedDate = $parsedDate.ToString('yyyy-MM-dd')
                     
                     $CalendarData += @{
                         day   = $formattedDate
                         value = $uniqueMeds
                     }
-                }
-                catch {
+                } catch {
                     Write-Warning "Could not parse date: $date"
                 }
             }
@@ -38,7 +39,7 @@
         
         # Debug: Show first few calendar data entries
         if ($CalendarData.Count -gt 0) {
-            Write-Information "Sample calendar data:"
+            Write-Information 'Sample calendar data:'
             $CalendarData | Select-Object -First 5 | ForEach-Object { 
                 Write-Information "  Day: $($_.day), Value: $($_.value)" 
             }
@@ -58,12 +59,11 @@
             Write-Information "Date range: $From to $To"
             Write-Information "Total calendar data points: $($CalendarData.Count)"
             Write-Information "First date: $firstDate, Last date: $lastDate"
-        }
-        else {
+        } else {
             # Fallback if no data
             $From = (Get-Date).AddDays(-365)
             $To = Get-Date
-            Write-Information "No calendar data found, using fallback dates"
+            Write-Information 'No calendar data found, using fallback dates'
         }
         
         # Create the heatmap chart
@@ -73,7 +73,7 @@
             # Group by month to create a proper heatmap structure
             $MonthGroups = $CalendarData | Group-Object { 
                 $date = [DateTime]::Parse($_.day)
-                $date.ToString("yyyy-MM")
+                $date.ToString('yyyy-MM')
             }
             Write-Information "MonthGroups: $($MonthGroups|ConvertTo-Json -Depth 3)"
             foreach ($monthGroup in $MonthGroups) {
@@ -123,28 +123,28 @@
             Write-Information "Day keys: $($dayKeys -join ', ')"
         }
         $ChartParams = @{
-            Heatmap      =$true
-            Data         =$HeatmapData
-            IndexBy      ='month'
-            Keys         =$dayKeys
-            Height       =500
-            Width        =1200
-            MarginTop    =60
-            MarginRight  =50
-            MarginBottom =60
-            MarginLeft   =100
-            colors = @{
-                type="sequential"
-                scheme="blues"
-                divergeAt=0.5
-                steps=10
-                minValue = 1
-                maxValue = 10
+            Heatmap      = $true
+            Data         = $HeatmapData
+            IndexBy      = 'month'
+            Keys         = $dayKeys
+            Height       = 500
+            Width        = 1200
+            MarginTop    = 60
+            MarginRight  = 50
+            MarginBottom = 60
+            MarginLeft   = 100
+            colors       = @{
+                type      = 'sequential'
+                scheme    = 'blues'
+                divergeAt = 0.5
+                steps     = 10
+                minValue  = 1
+                maxValue  = 10
             }
-            theme = @{
+            theme        = @{
                 emptyColor = '#ff5c5c' # appears to do nothing
             }
-            enableGridX = $true
+            enableGridX  = $true
         }
 
         New-UDNivoChart @ChartParams

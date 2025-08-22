@@ -31,7 +31,7 @@ param(
 $ModulePath = $PSScriptRoot
 $ModuleName = "fusion"
 $ManifestPath = Join-Path $ModulePath "$ModuleName.psd1"
-$TestPath = Join-Path $ModulePath "tests/$ModuleName.Tests.ps1"
+$TestPath = Join-Path $ModulePath "Tests/$ModuleName.Tests.ps1"
 
 function Write-TaskHeader {
     param([string]$Title)
